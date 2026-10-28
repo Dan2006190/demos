@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Алена — CRM</title>
+<style>
+  :root{--bg:#f7f3f5;--card:#fff;--text:#24182a;--muted:#5f5163;--line:#e6dbe0;--accent:#6d2350;--accent-l:#f6e6ee;--danger:#a3122f;--ok:#1d6b3a;--radius:14px}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px}
+  button,input,select,textarea{font:inherit}
+  :focus-visible{outline:3px solid #c99a6e;outline-offset:2px}
+  header.top{background:var(--accent);color:#fff;padding:14px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  header h1{margin:0;font-size:1.35rem}
+  header .sub{opacity:.85;font-size:.85rem}
+  .actions{display:flex;flex-wrap:wrap;gap:8px}
+  .btn{border:1px solid var(--line);background:#fff;color:var(--text);padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:#fff;color:var(--accent);font-weight:700;border-color:#fff}
+  .btn.solid{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.danger{color:var(--danger)}
+  .btn.small{padding:4px 10px;font-size:.85rem}
+  .btn.link{border:0;background:none;color:var(--accent);padding:0;text-decoration:underline;cursor:pointer;text-align:left}
+  header .btn{background:rgba(255,255,255,.12);color:#fff;border-color:rgba(255,255,255,.35)}
+  header .btn.primary{background:#fff;color:var(--accent)}
+  .banner{background:#fff4d6;color:#5c4300;padding:10px 20px;font-size:.9rem;border-bottom:1px solid #ecd9a0}
+  .container{max-width:1300px;margin:0 auto;padding:16px 20px 40px}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px 16px}
+  .stat b{display:block;font-size:1.35rem}
+  .stat span{color:var(--muted);font-size:.85rem}
+  .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+  .tab{padding:9px 16px;border-radius:10px;border:1px solid var(--line);background:#fff;cursor:pointer}
+  .tab[aria-selected="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .filters{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:12px;display:grid;grid-template-columns:2fr repeat(5,1fr) auto;gap:10px;align-items:end;margin-bottom:14px}
+  .filters label,.form label{display:block;font-size:.8rem;color:var(--muted);margin-bottom:3px;font-weight:600}
+  input,select,textarea{width:100%;padding:8px 10px;border:1px solid #cbbcc3;border-radius:9px;background:#fff;color:var(--text)}
+  textarea{min-height:70px;resize:vertical}
+  .panel{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:820px}
+  td select{width:auto;min-width:150px}
+  th,td{padding:10px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+  th{background:#faf6f8;font-size:.82rem;color:var(--muted);text-transform:uppercase;letter-spacing:.03em;position:sticky;top:0}
+  tr:last-child td{border-bottom:0}
+  td.num{text-align:right;white-space:nowrap}
+  .muted{color:var(--muted);font-size:.85rem}
+  .demo-tag{display:inline-block;background:#fff0c2;color:#6b4e00;border:1px solid #e8cf7d;font-size:.7rem;font-weight:700;padding:1px 6px;border-radius:6px;margin-left:6px;vertical-align:middle}
+  .status{display:inline-block;padding:2px 10px;border-radius:999px;font-size:.8rem;font-weight:600}
+  .st-new{background:#e6eefc;color:#1f3f86}
+  .st-confirmed{background:#f6e6ee;color:#6d2350}
+  .st-in_progress{background:#fff0d9;color:#7a4b00}
+  .st-done{background:#e2f3e8;color:#1d6b3a}
+  .st-cancelled{background:#eee;color:#555}
+  .empty{padding:30px;text-align:center;color:var(--muted)}
+  .kanban{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:8px}
+  .col{background:#efe7eb;border-radius:var(--radius);padding:10px;min-height:200px}
+  .col h3{margin:2px 4px 10px;font-size:.95rem;display:flex;justify-content:space-between}
+  .col.drag-over{outline:2px dashed var(--accent)}
+  .kcard{background:#fff;border-radius:10px;padding:10px;margin-bottom:8px;border:1px solid var(--line);cursor:grab}
+  .kcard .t{font-weight:600}
+  .kcard select{margin-top:6px;padding:4px 6px;font-size:.85rem}
+  dialog{border:0;border-radius:16px;padding:0;width:min(720px,94vw);box-shadow:0 20px 60px rgba(0,0,0,.25)}
+  dialog::backdrop{background:rgba(36,24,42,.45)}
+  .dlg-head{display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line)}
+  .dlg-head h2{margin:0;font-size:1.15rem}
+  .dlg-body{padding:16px 20px;max-height:70vh;overflow:auto}
+  .dlg-foot{padding:12px 20px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px}
+  .form{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .form .full{grid-column:1/-1}
+  .info-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-bottom:14px}
+  .cardbox{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:8px;background:#fcfafb}
+  h4{margin:16px 0 8px}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .hidden{display:none!important}
+  footer{color:var(--muted);font-size:.75rem;text-align:center;padding:10px}
+  @media (max-width:900px){
+    .filters{grid-template-columns:1fr 1fr}
+    .filters .search{grid-column:1/-1}
+    .stats{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .form,.info-grid{grid-template-columns:1fr}
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<header class="top">
+  <div>
+    <h1>Алена</h1>
+    <div class="sub">CRM салона красоты · Тамбов</div>
+  </div>
+  <div class="actions">
+    <button class="btn primary" id="btnNewOrder" type="button">+ Запись</button>
+    <button class="btn" id="btnNewClient" type="button">+ Клиент</button>
+    <button class="btn" id="btnExportOrders" type="button">CSV: записи</button>
+    <button class="btn" id="btnExportClients" type="button">CSV: клиенты</button>
+    <button class="btn" id="btnClearDemo" type="button">Очистить демо-данные</button>
+  </div>
+</header>
+<div class="banner hidden" id="demoBanner" role="note">В базе есть демо-записи — они помечены значком <span class="demo-tag">ДЕМО</span>. Удалите их кнопкой «Очистить демо-данные», когда начнёте работать.</div>
+
+<div class="container">
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs" role="tablist">
+    <button class="tab" role="tab" data-tab="orders" aria-selected="true" type="button">Записи</button>
+    <button class="tab" role="tab" data-tab="kanban" aria-selected="false" type="button">Канбан</button>
+    <button class="tab" role="tab" data-tab="clients" aria-selected="false" type="button">Клиенты</button>
+  </div>
+
+  <div class="filters">
+    <div class="search">
+      <label for="q">Поиск</label>
+      <input id="q" type="search" placeholder="Имя, телефон, услуга, мастер, заметки…">
+    </div>
+    <div class="of"><label for="fStatus">Статус</label><select id="fStatus"></select></div>
+    <div class="of"><label for="fCategory">Направление</label><select id="fCategory"></select></div>
+    <div class="of"><label for="fMaster">Мастер</label><select id="fMaster"></select></div>
+    <div class="of"><label for="fFrom">С даты</label><input id="fFrom" type="date"></div>
+    <div class="of"><label for="fTo">По дату</label><input id="fTo" type="date"></div>
+    <div><button class="btn" id="btnReset" type="button">Сбросить</button></div>
+  </div>
+
+  <section id="tab-orders" role="tabpanel"><div class="panel" id="ordersPanel"></div></section>
+  <section id="tab-kanban" role="tabpanel" class="hidden"><div class="kanban" id="kanban"></div></section>
+  <section id="tab-clients" role="tabpanel" class="hidden"><div class="panel" id="clientsPanel"></div></section>
+</div>
+<footer>Данные хранятся только в этом браузере (localStorage). Регулярно делайте экспорт в CSV. · Демо-макет</footer>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form id="dlgForm" method="dialog" novalidate>
+    <div class="dlg-head"><h2 id="dlgTitle"></h2><button class="btn small" type="button" data-close aria-label="Закрыть">✕</button></div>
+    <div class="dlg-body" id="dlgBody"></div>
+    <div class="dlg-foot" id="dlgFoot"></div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  'use strict';
+  var LS_KEY = 'beauty_crm_v1';
+  var STATUSES = [
+    { id: 'new', name: 'Новая' },
+    { id: 'confirmed', name: 'Подтверждена' },
+    { id: 'in_progress', name: 'В работе' },
+    { id: 'done', name: 'Выполнена' },
+    { id: 'cancelled', name: 'Отменена' }
+  ];
+  var CATEGORIES = ['Стрижки и укладки', 'Окрашивание', 'Маникюр и педикюр', 'Косметология', 'Другое'];
+  // «Объекты обслуживания» для салона — карты клиента: волосы, ногти, кожа
+  var CARD_TYPES = ['Волосы', 'Ногти', 'Кожа лица', 'Брови и ресницы', 'Другое'];
+
+  var $ = function (id) { return document.getElementById(id); };
+  var db = load();
+  var currentTab = 'orders';
+
+  // ---------- Хранение ----------
+  function load() {
+    try {
+      var raw = localStorage.getItem(LS_KEY);
+      if (raw) {
+        var d = JSON.parse(raw);
+        d.clients = d.clients || []; d.cards = d.cards || []; d.orders = d.orders || [];
+        return d;
+      }
+    } catch (e) { console.error(e); }
+    var fresh = { clients: [], cards: [], orders: [] };
+    seedDemo(fresh);
+    return fresh;
+  }
+  function save() {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(db)); }
+    catch (e) { alert('Не удалось сохранить данные: ' + e.message); }
+  }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+
+  // ---------- Демо-данные (все с флагом demo: true) ----------
+  function seedDemo(d) {
+    function day(offset) {
+      var x = new Date(); x.setDate(x.getDate() + offset);
+      return x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate());
+    }
+    var c1 = { id: uid(), name: 'Анна Демонстрационная', phone: '+7 900 000-00-01', birthday: '', source: 'Сайт', notes: 'ДЕМО-клиент. Предпочитает утро.', demo: true, createdAt: day(-40) };
+    var c2 = { id: uid(), name: 'Мария Тестова', phone: '+7 900 000-00-02', birthday: '', source: 'Telegram-бот', notes: 'ДЕМО-клиент.', demo: true, createdAt: day(-20) };
+    var c3 = { id: uid(), name: 'Игорь Пример', phone: '+7 900 000-00-03', birthday: '', source: 'Звонок', notes: 'ДЕМО-клиент.', demo: true, createdAt: day(-5) };
+    d.clients.push(c1, c2, c3);
+    d.cards.push(
+      { id: uid(), clientId: c1.id, type: 'Волосы', title: 'Длинные, тонкие', details: 'Формула окрашивания: (демо) 7.1 + 6% 1:1. Аллергий нет.', demo: true },
+      { id: uid(), clientId: c2.id, type: 'Ногти', title: 'Короткая длина, форма «овал»', details: 'Любит нюдовые оттенки. Чувствительная кутикула.', demo: true },
+      { id: uid(), clientId: c3.id, type: 'Волосы', title: 'Короткие, густые', details: 'Машинка 3 мм по бокам.', demo: true }
+    );
+    // Суммы в демо-записях — условные, для примера
+    d.orders.push(
+      { id: uid(), clientId: c1.id, date: day(-30), time: '11:00', category: 'Окрашивание', service: 'Окрашивание в один тон', master: 'Мастер Ольга (демо)', amount: 3500, status: 'done', notes: '', demo: true },
+      { id: uid(), clientId: c1.id, date: day(2), time: '10:00', category: 'Стрижки и укладки', service: 'Женская стрижка', master: 'Мастер Ольга (демо)', amount: 1800, status: 'confirmed', notes: 'Освежить концы', demo: true },
+      { id: uid(), clientId: c2.id, date: day(-14), time: '15:00', category: 'Маникюр и педикюр', service: 'Маникюр с покрытием', master: 'Мастер Светлана (демо)', amount: 1900, status: 'done', notes: '', demo: true },
+      { id: uid(), clientId: c2.id, date: day(1), time: '16:00', category: 'Маникюр и педикюр', service: 'Маникюр с покрытием', master: 'Мастер Светлана (демо)', amount: 1900, status: 'new', notes: 'Заявка из бота', demo: true },
+      { id: uid(), clientId: c3.id, date: day(0), time: '18:00', category: 'Стрижки и укладки', service: 'Мужская стрижка', master: 'Мастер Ольга (демо)', amount: 1000, status: 'in_progress', notes: '', demo: true },
+      { id: uid(), clientId: c3.id, date: day(-3), time: '12:00', category: 'Косметология', service: 'Консультация косметолога', master: 'Мастер Елена (демо)', amount: 500, status: 'cancelled', notes: 'Перенёс', demo: true }
+    );
+  }
+
+  // ---------- Утилиты ----------
+  function pad(n) { return (n < 10 ? '0' : '') + n; }
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (ch) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch];
+    });
+  }
+  function money(n) { return (Number(n) || 0).toLocaleString('ru-RU') + ' ₽'; }
+  function fmtDate(iso) {
+    if (!iso) return '—';
+    var p = iso.split('-');
+    return p.length === 3 ? p[2] + '.' + p[1] + '.' + p[0] : iso;
+  }
+  function todayIso() { var x = new Date(); return x.getFullYear() + '-' + pad(x.getMonth() + 1) + '-' + pad(x.getDate()); }
+  function statusName(id) { for (var i = 0; i < STATUSES.length; i++) if (STATUSES[i].id === id) return STATUSES[i].name; return id; }
+  function statusBadge(id) { return '<span class="status st-' + esc(id) + '">' + esc(statusName(id)) + '</span>'; }
+  function demoTag(x) { return x && x.demo ? '<span class="demo-tag">ДЕМО</span>' : ''; }
+  function clientById(id) { for (var i = 0; i < db.clients.length; i++) if (db.clients[i].id === id) return db.clients[i]; return null; }
+  function orderById(id) { for (var i = 0; i < db.orders.length; i++) if (db.orders[i].id === id) return db.orders[i]; return null; }
+  function cardById(id) { for (var i = 0; i < db.cards.length; i++) if (db.cards[i].id === id) return db.cards[i]; return null; }
+  function options(list, selected, emptyLabel) {
+    var h = emptyLabel != null ? '<option value="">' + esc(emptyLabel) + '</option>' : '';
+    list.forEach(function (o) {
+      var v = typeof o === 'string' ? o : o.id, t = typeof o === 'string' ? o : o.name;
+      h += '<option value="' + esc(v) + '"' + (v === selected ? ' selected' : '') + '>' + esc(t) + '</option>';
+    });
+    return h;
+  }
+  function masters() {
+    var set = {};
+    db.orders.forEach(function (o) { if (o.master) set[o.master] = true; });
+    return Object.keys(set).sort(function (a, b) { return a.localeCompare(b, 'ru'); });
+  }
+  function sortOrders(list) {
+    return list.slice().sort(function (a, b) {
+      return (b.date + ' ' + b.time).localeCompare(a.date + ' ' + a.time);
+    });
+  }
+
+  // ---------- Фильтры ----------
+  function fillFilters() {
+    var st = $('fStatus').value, cat = $('fCategory').value, m = $('fMaster').value;
+    $('fStatus').innerHTML = options(STATUSES, st, 'Все');
+    $('fCategory').innerHTML = options(CATEGORIES, cat, 'Все');
+    var ms = masters();
+    $('fMaster').innerHTML = options(ms, ms.indexOf(m) >= 0 ? m : '', 'Все');
+  }
+  function query() { return $('q').value.trim().toLowerCase(); }
+  function matchText(hay, q) { return !q || hay.toLowerCase().indexOf(q) >= 0; }
+  function filteredOrders(ignoreStatus) {
+    var q = query(), st = $('fStatus').value, cat = $('fCategory').value, m = $('fMaster').value,
+        from = $('fFrom').value, to = $('fTo').value;
+    return db.orders.filter(function (o) {
+      var c = clientById(o.clientId) || {};
+      if (!ignoreStatus && st && o.status !== st) return false;
+      if (cat && o.category !== cat) return false;
+      if (m && o.master !== m) return false;
+      if (from && o.date < from) return false;
+      if (to && o.date > to) return false;
+      return matchText([c.name, c.phone, o.service, o.category, o.master, o.notes].join(' '), q);
+    });
+  }
+
+  // ---------- Отрисовка ----------
+  function render() {
+    fillFilters();
+    var hasDemo = db.clients.concat(db.orders, db.cards).some(function (x) { return x.demo; });
+    $('demoBanner').classList.toggle('hidden', !hasDemo);
+    $('btnClearDemo').disabled = !hasDemo;
+    // На вкладке «Канбан» фильтр статуса не нужен — статусы и так в колонках
+    document.querySelectorAll('.filters .of').forEach(function (el) {
+      el.classList.toggle('hidden', currentTab === 'clients');
+    });
+    $('fStatus').parentNode.classList.toggle('hidden', currentTab !== 'orders');
+    renderStats();
+    if (currentTab === 'orders') renderOrders();
+    if (currentTab === 'kanban') renderKanban();
+    if (currentTab === 'clients') renderClients();
+  }
+
+  function renderStats() {
+    var t = todayIso(), month = t.slice(0, 7);
+    var today = db.orders.filter(function (o) { return o.date === t && o.status !== 'cancelled'; }).length;
+    var fresh = db.orders.filter(function (o) { return o.status === 'new'; }).length;
+    var revenue = db.orders.filter(function (o) { return o.status === 'done' && o.date.slice(0, 7) === month; })
+      .reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    $('stats').innerHTML =
+      '<div class="stat"><b>' + today + '</b><span>записей сегодня</span></div>' +
+      '<div class="stat"><b>' + fresh + '</b><span>новых заявок</span></div>' +
+      '<div class="stat"><b>' + money(revenue) + '</b><span>выполнено за месяц</span></div>' +
+      '<div class="stat"><b>' + db.clients.length + '</b><span>клиентов в базе</span></div>';
+  }
+
+  function renderOrders() {
+    var list = sortOrders(filteredOrders(false));
+    if (!list.length) { $('ordersPanel').innerHTML = '<div class="empty">Записей не найдено. Нажмите «+ Запись», чтобы добавить.</div>'; return; }
+    var h = '<table><thead><tr><th>Дата и время</th><th>Клиент</th><th>Услуга</th><th>Мастер</th><th>Сумма</th><th>Статус</th><th>Действия</th></tr></thead><tbody>';
+    list.forEach(function (o) {
+      var c = clientById(o.clientId);
+      h += '<tr><td>' + fmtDate(o.date) + '<br><span class="muted">' + esc(o.time || '') + '</span></td>' +
+        '<td>' + (c ? '<button type="button" class="btn link" data-act="client" data-id="' + c.id + '">' + esc(c.name) + '</button><br><span class="muted">' + esc(c.phone) + '</span>' : '<span class="muted">клиент удалён</span>') + '</td>' +
+        '<td>' + esc(o.service) + demoTag(o) + '<br><span class="muted">' + esc(o.category) + '</span>' + (o.notes ? '<br><span class="muted">' + esc(o.notes) + '</span>' : '') + '</td>' +
+        '<td>' + esc(o.master || '—') + '</td>' +
+        '<td class="num">' + money(o.amount) + '</td>' +
+        '<td><select data-act="status" data-id="' + o.id + '" aria-label="Статус записи">' + options(STATUSES, o.status) + '</select></td>' +
+        '<td><div class="row-actions"><button type="button" class="btn small" data-act="edit-order" data-id="' + o.id + '">Изменить</button>' +
+        '<button type="button" class="btn small danger" data-act="del-order" data-id="' + o.id + '">Удалить</button></div></td></tr>';
+    });
+    $('ordersPanel').innerHTML = h + '</tbody></table>';
+  }
+
+  function renderKanban() {
+    var list = sortOrders(filteredOrders(true)).reverse();
+    var h = '';
+    STATUSES.forEach(function (s) {
+      var items = list.filter(function (o) { return o.status === s.id; });
+      var sum = items.reduce(function (a, o) { return a + (Number(o.amount) || 0); }, 0);
+      h += '<div class="col" data-status="' + s.id + '"><h3><span>' + esc(s.name) + ' · ' + items.length + '</span><span class="muted">' + money(sum) + '</span></h3>';
+      items.forEach(function (o) {
+        var c = clientById(o.clientId);
+        h += '<div class="kcard" draggable="true" data-id="' + o.id + '">' +
+          '<div class="t">' + esc(o.service) + demoTag(o) + '</div>' +
+          '<div class="muted">' + fmtDate(o.date) + ' ' + esc(o.time || '') + ' · ' + esc(o.master || 'мастер не указан') + '</div>' +
+          '<div>' + (c ? '<button type="button" class="btn link" data-act="client" data-id="' + c.id + '">' + esc(c.name) + '</button>' : '—') + ' · <b>' + money(o.amount) + '</b></div>' +
+          '<select data-act="status" data-id="' + o.id + '" aria-label="Переместить в статус">' + options(STATUSES, o.status) + '</select>' +
+          '</div>';
+      });
+      h += '</div>';
+    });
+    $('kanban').innerHTML = h;
+  }
+
+  function clientStats(c) {
+    var os = db.orders.filter(function (o) { return o.clientId === c.id; });
+    var done = os.filter(function (o) { return o.status === 'done'; });
+    var last = done.map(function (o) { return o.date; }).sort().pop() || '';
+    return { count: os.length, total: done.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0), last: last };
+  }
+
+  function renderClients() {
+    var q = query();
+    var list = db.clients.filter(function (c) {
+      var cardsText = db.cards.filter(function (k) { return k.clientId === c.id; }).map(function (k) { return k.title + ' ' + k.details; }).join(' ');
+      return matchText([c.name, c.phone, c.notes, c.source, cardsText].join(' '), q);
+    }).sort(function (a, b) { return a.name.localeCompare(b.name, 'ru'); });
+    if (!list.length) { $('clientsPanel').innerHTML = '<div class="empty">Клиентов не найдено. Нажмите «+ Клиент», чтобы добавить.</div>'; return; }
+    var h = '<table><thead><tr><th>Клиент</th><th>Телефон</th><th>Источник</th><th>Визитов</th><th>Оплачено</th><th>Последний визит</th><th>Действия</th></tr></thead><tbody>';
+    list.forEach(function (c) {
+      var s = clientStats(c);
+      h += '<tr><td><button type="button" class="btn link" data-act="client" data-id="' + c.id + '">' + esc(c.name) + '</button>' + demoTag(c) + '</td>' +
+        '<td>' + esc(c.phone) + '</td><td>' + esc(c.source || '—') + '</td><td>' + s.count + '</td>' +
+        '<td class="num">' + money(s.total) + '</td><td>' + fmtDate(s.last) + '</td>' +
+        '<td><div class="row-actions"><button type="button" class="btn small" data-act="new-order-for" data-id="' + c.id + '">+ Запись</button>' +
+        '<button type="button" class="btn small" data-act="edit-client" data-id="' + c.id + '">Изменить</button>' +
+        '<button type="button" class="btn small danger" data-act="del-client" data-id="' + c.id + '">Удалить</button></div></td></tr>';
+    });
+    $('clientsPanel').innerHTML = h + '</tbody></table>';
+  }
+
+  // ---------- Диалог ----------
+  var dlg = $('dlg'), dlgForm = $('dlgForm'), onSubmit = null;
+  function openDialog(title, bodyHtml, submitLabel, handler) {
+    $('dlgTitle').textContent = title;
+    $('dlgBody').innerHTML = bodyHtml;
+    $('dlgFoot').innerHTML = (handler ? '<button type="submit" class="btn solid">' + esc(submitLabel || 'Сохранить') + '</button>' : '') +
+      '<button type="button" class="btn" data-close>' + (handler ? 'Отмена' : 'Закрыть') + '</button>';
+    onSubmit = handler || null;
+    if (!dlg.open) dlg.showModal();
+    var first = dlg.querySelector('.dlg-body input, .dlg-body select, .dlg-body textarea');
+    if (first) first.focus();
+  }
+  dlgForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!onSubmit) { dlg.close(); return; }
+    var data = {};
+    Array.prototype.forEach.call(dlgForm.elements, function (el) { if (el.name) data[el.name] = el.value.trim(); });
+    if (onSubmit(data) !== false) { dlg.close(); render(); }
+  });
+  dlg.addEventListener('click', function (e) {
+    if (e.target.closest('[data-close]')) { dlg.close(); return; }
+    handleAction(e);
+  });
+
+  // ---------- Формы ----------
+  function clientForm(c) {
+    c = c || {};
+    return '<div class="form">' +
+      '<div><label for="c-name">Имя *</label><input id="c-name" name="name" value="' + esc(c.name) + '" required></div>' +
+      '<div><label for="c-phone">Телефон *</label><input id="c-phone" name="phone" type="tel" value="' + esc(c.phone) + '" required></div>' +
+      '<div><label for="c-bd">День рождения</label><input id="c-bd" name="birthday" type="date" value="' + esc(c.birthday) + '"></div>' +
+      '<div><label for="c-src">Источник</label><select id="c-src" name="source">' + options(['Сайт', 'Telegram-бот', 'Звонок', 'Пришёл сам', 'Рекомендация', 'Соцсети'], c.source, '—') + '</select></div>' +
+      '<div class="full"><label for="c-notes">Заметки</label><textarea id="c-notes" name="notes">' + esc(c.notes) + '</textarea></div>' +
+      '</div>';
+  }
+  function validClient(d) {
+    if (!d.name) { alert('Укажите имя клиента'); return false; }
+    if (d.phone.replace(/\D/g, '').length < 10) { alert('Укажите телефон полностью (не меньше 10 цифр)'); return false; }
+    return true;
+  }
+  function editClient(id) {
+    var c = id ? clientById(id) : null;
+    openDialog(c ? 'Клиент: ' + c.name : 'Новый клиент', clientForm(c), 'Сохранить', function (d) {
+      if (!validClient(d)) return false;
+      if (c) { c.name = d.name; c.phone = d.phone; c.birthday = d.birthday; c.source = d.source; c.notes = d.notes; }
+      else db.clients.push({ id: uid(), name: d.name, phone: d.phone, birthday: d.birthday, source: d.source, notes: d.notes, demo: false, createdAt: todayIso() });
+      save();
+    });
+  }
+
+  function editOrder(id, presetClientId) {
+    var o = id ? orderById(id) : null;
+    if (!o && !db.clients.length) {
+      // Нет клиентов — сначала предложим форму с полями нового клиента
+      presetClientId = '__new';
+    }
+    var cid = o ? o.clientId : (presetClientId || '');
+    var clientOpts = '<option value="">— выберите клиента —</option><option value="__new"' + (cid === '__new' ? ' selected' : '') + '>+ Новый клиент</option>' +
+      db.clients.slice().sort(function (a, b) { return a.name.localeCompare(b.name, 'ru'); }).map(function (c) {
+        return '<option value="' + c.id + '"' + (c.id === cid ? ' selected' : '') + '>' + esc(c.name + ' · ' + c.phone) + '</option>';
+      }).join('');
+    var m = masters().map(function (x) { return '<option value="' + esc(x) + '">'; }).join('');
+    var html = '<div class="form">' +
+      '<div class="full"><label for="o-client">Клиент *</label><select id="o-client" name="clientId">' + clientOpts + '</select></div>' +
+      '<div class="newc' + (cid === '__new' ? '' : ' hidden') + '"><label for="o-nname">Имя нового клиента</label><input id="o-nname" name="newName"></div>' +
+      '<div class="newc' + (cid === '__new' ? '' : ' hidden') + '"><label for="o-nphone">Телефон нового клиента</label><input id="o-nphone" name="newPhone" type="tel"></div>' +
+      '<div><label for="o-date">Дата *</label><input id="o-date" name="date" type="date" value="' + esc(o ? o.date : todayIso()) + '"></div>' +
+      '<div><label for="o-time">Время</label><input id="o-time" name="time" type="time" value="' + esc(o ? o.time : '') + '"></div>' +
+      '<div><label for="o-cat">Направление</label><select id="o-cat" name="category">' + options(CATEGORIES, o ? o.category : CATEGORIES[0]) + '</select></div>' +
+      '<div><label for="o-svc">Услуга *</label><input id="o-svc" name="service" value="' + esc(o ? o.service : '') + '" placeholder="Например, женская стрижка"></div>' +
+      '<div><label for="o-master">Мастер</label><input id="o-master" name="master" list="mastersList" value="' + esc(o ? o.master : '') + '"><datalist id="mastersList">' + m + '</datalist></div>' +
+      '<div><label for="o-amount">Сумма, ₽</label><input id="o-amount" name="amount" type="number" min="0" step="50" value="' + esc(o ? o.amount : '') + '"></div>' +
+      '<div><label for="o-status">Статус</label><select id="o-status" name="status">' + options(STATUSES, o ? o.status : 'new') + '</select></div>' +
+      '<div class="full"><label for="o-notes">Комментарий</label><textarea id="o-notes" name="notes">' + esc(o ? o.notes : '') + '</textarea></div>' +
+      '</div>';
+    openDialog(o ? 'Изменить запись' : 'Новая запись', html, 'Сохранить', function (d) {
+      var clientId = d.clientId;
+      if (!clientId) { alert('Выберите клиента'); return false; }
+      if (!d.date) { alert('Укажите дату'); return false; }
+      if (!d.service) { alert('Укажите услугу'); return false; }
+      if (clientId === '__new') {
+        var nc = { name: d.newName, phone: d.newPhone };
+        if (!validClient(nc)) return false;
+        var c = { id: uid(), name: nc.name, phone: nc.phone, birthday: '', source: '', notes: '', demo: false, createdAt: todayIso() };
+        db.clients.push(c); clientId = c.id;
+      }
+      var fields = { clientId: clientId, date: d.date, time: d.time, category: d.category, service: d.service, master: d.master, amount: Number(d.amount) || 0, status: d.status, notes: d.notes };
+      if (o) Object.keys(fields).forEach(function (k) { o[k] = fields[k]; });
+      else { fields.id = uid(); fields.demo = false; fields.createdAt = todayIso(); db.orders.push(fields); }
+      save();
+    });
+    $('o-client').addEventListener('change', function () {
+      var isNew = this.value === '__new';
+      dlg.querySelectorAll('.newc').forEach(function (el) { el.classList.toggle('hidden', !isNew); });
+    });
+  }
+
+  function editCard(clientId, cardId) {
+    var k = cardId ? cardById(cardId) : null;
+    var html = '<div class="form">' +
+      '<div><label for="k-type">Тип</label><select id="k-type" name="type">' + options(CARD_TYPES, k ? k.type : CARD_TYPES[0]) + '</select></div>' +
+      '<div><label for="k-title">Кратко *</label><input id="k-title" name="title" value="' + esc(k ? k.title : '') + '" placeholder="Например, длинные окрашенные"></div>' +
+      '<div class="full"><label for="k-details">Подробности: формула окрашивания, материалы, аллергии, пожелания</label><textarea id="k-details" name="details">' + esc(k ? k.details : '') + '</textarea></div>' +
+      '</div>';
+    openDialog(k ? 'Изменить карту' : 'Новая карта клиента', html, 'Сохранить', function (d) {
+      if (!d.title) { alert('Заполните поле «Кратко»'); return false; }
+      if (k) { k.type = d.type; k.title = d.title; k.details = d.details; }
+      else db.cards.push({ id: uid(), clientId: clientId, type: d.type, title: d.title, details: d.details, demo: false });
+      save();
+      setTimeout(function () { showClient(clientId); }, 0);
+    });
+  }
+
+  function showClient(id) {
+    var c = clientById(id);
+    if (!c) return;
+    var s = clientStats(c);
+    var cards = db.cards.filter(function (k) { return k.clientId === id; });
+    var orders = sortOrders(db.orders.filter(function (o) { return o.clientId === id; }));
+    var h = '<div class="info-grid">' +
+      '<div><span class="muted">Телефон</span><br><b>' + esc(c.phone) + '</b></div>' +
+      '<div><span class="muted">День рождения</span><br>' + fmtDate(c.birthday) + '</div>' +
+      '<div><span class="muted">Источник</span><br>' + esc(c.source || '—') + '</div>' +
+      '<div><span class="muted">Визитов / оплачено</span><br>' + s.count + ' / ' + money(s.total) + '</div>' +
+      (c.notes ? '<div style="grid-column:1/-1"><span class="muted">Заметки</span><br>' + esc(c.notes) + '</div>' : '') +
+      '</div>' +
+      '<div class="row-actions"><button type="button" class="btn small" data-act="edit-client" data-id="' + c.id + '">Изменить клиента</button>' +
+      '<button type="button" class="btn small" data-act="new-order-for" data-id="' + c.id + '">+ Запись</button>' +
+      '<button type="button" class="btn small" data-act="new-card" data-id="' + c.id + '">+ Карта клиента</button></div>' +
+      '<h4>Карты клиента (волосы, ногти, кожа)</h4>';
+    if (!cards.length) h += '<p class="muted">Пока нет. Добавьте тип волос, формулу окрашивания, аллергии.</p>';
+    cards.forEach(function (k) {
+      h += '<div class="cardbox"><b>' + esc(k.type) + ':</b> ' + esc(k.title) + demoTag(k) +
+        (k.details ? '<div class="muted">' + esc(k.details) + '</div>' : '') +
+        '<div class="row-actions" style="margin-top:6px"><button type="button" class="btn small" data-act="edit-card" data-id="' + k.id + '">Изменить</button>' +
+        '<button type="button" class="btn small danger" data-act="del-card" data-id="' + k.id + '">Удалить</button></div></div>';
+    });
+    h += '<h4>История визитов</h4>';
+    if (!orders.length) h += '<p class="muted">Записей пока нет.</p>';
+    else {
+      h += '<div class="panel"><table style="min-width:0"><thead><tr><th>Дата</th><th>Услуга</th><th>Мастер</th><th>Сумма</th><th>Статус</th></tr></thead><tbody>';
+      orders.forEach(function (o) {
+        h += '<tr><td>' + fmtDate(o.date) + ' ' + esc(o.time || '') + '</td><td>' + esc(o.service) + demoTag(o) + '</td><td>' + esc(o.master || '—') + '</td><td class="num">' + money(o.amount) + '</td><td>' + statusBadge(o.status) + '</td></tr>';
+      });
+      h += '</tbody></table></div>';
+    }
+    openDialog(c.name + (c.demo ? ' (демо)' : ''), h, null, null);
+  }
+
+  // ---------- Действия ----------
+  function handleAction(e) {
+    var el = e.target.closest('[data-act]');
+    if (!el || el.tagName === 'SELECT') return;
+    var id = el.getAttribute('data-id'), act = el.getAttribute('data-act');
+    if (act === 'client') showClient(id);
+    else if (act === 'edit-client') editClient(id);
+    else if (act === 'new-order-for') editOrder(null, id);
+    else if (act === 'edit-order') editOrder(id);
+    else if (act === 'new-card') editCard(id, null);
+    else if (act === 'edit-card') { var k = cardById(id); if (k) editCard(k.clientId, id); }
+    else if (act === 'del-card') {
+      var kc = cardById(id);
+      if (kc && confirm('Удалить карту клиента?')) {
+        db.cards = db.cards.filter(function (x) { return x.id !== id; }); save(); showClient(kc.clientId); render();
+      }
+    }
+    else if (act === 'del-order') {
+      if (confirm('Удалить запись?')) { db.orders = db.orders.filter(function (x) { return x.id !== id; }); save(); render(); }
+    }
+    else if (act === 'del-client') {
+      var c = clientById(id);
+      if (c && confirm('Удалить клиента «' + c.name + '» вместе с его записями и картами?')) {
+        db.clients = db.clients.filter(function (x) { return x.id !== id; });
+        db.orders = db.orders.filter(function (x) { return x.clientId !== id; });
+        db.cards = db.cards.filter(function (x) { return x.clientId !== id; });
+        save(); render();
+      }
+    }
+  }
+  document.querySelector('.container').addEventListener('click', handleAction);
+  document.querySelector('.container').addEventListener('change', function (e) {
+    var el = e.target;
+    if (el.getAttribute('data-act') === 'status') {
+      var o = orderById(el.getAttribute('data-id'));
+      if (o) { o.status = el.value; save(); render(); }
+    }
+  });
+
+  // Перетаскивание в канбане
+  var kanban = $('kanban');
+  kanban.addEventListener('dragstart', function (e) {
+    var card = e.target.closest('.kcard');
+    if (card) { e.dataTransfer.setData('text/plain', card.getAttribute('data-id')); e.dataTransfer.effectAllowed = 'move'; }
+  });
+  kanban.addEventListener('dragover', function (e) {
+    var col = e.target.closest('.col');
+    if (col) { e.preventDefault(); col.classList.add('drag-over'); }
+  });
+  kanban.addEventListener('dragleave', function (e) {
+    var col = e.target.closest('.col');
+    if (col && !col.contains(e.relatedTarget)) col.classList.remove('drag-over');
+  });
+  kanban.addEventListener('drop', function (e) {
+    var col = e.target.closest('.col');
+    if (!col) return;
+    e.preventDefault();
+    var o = orderById(e.dataTransfer.getData('text/plain'));
+    if (o) { o.status = col.getAttribute('data-status'); save(); }
+    render();
+  });
+
+  // Вкладки
+  document.querySelectorAll('.tab').forEach(function (t) {
+    t.addEventListener('click', function () {
+      currentTab = t.getAttribute('data-tab');
+      document.querySelectorAll('.tab').forEach(function (x) { x.setAttribute('aria-selected', x === t ? 'true' : 'false'); });
+      ['orders', 'kanban', 'clients'].forEach(function (n) { $('tab-' + n).classList.toggle('hidden', n !== currentTab); });
+      render();
+    });
+  });
+
+  ['q', 'fStatus', 'fCategory', 'fMaster', 'fFrom', 'fTo'].forEach(function (id) {
+    $(id).addEventListener(id === 'q' ? 'input' : 'change', render);
+  });
+  $('btnReset').addEventListener('click', function () {
+    ['q', 'fStatus', 'fCategory', 'fMaster', 'fFrom', 'fTo'].forEach(function (id) { $(id).value = ''; });
+    render();
+  });
+
+  $('btnNewOrder').addEventListener('click', function () { editOrder(null, null); });
+  $('btnNewClient').addEventListener('click', function () { editClient(null); });
+
+  $('btnClearDemo').addEventListener('click', function () {
+    if (!confirm('Удалить все демо-записи, демо-клиентов и их карты? Ваши собственные данные останутся.')) return;
+    var demoClients = {};
+    db.clients.forEach(function (c) { if (c.demo) demoClients[c.id] = true; });
+    db.clients = db.clients.filter(function (c) { return !c.demo; });
+    db.orders = db.orders.filter(function (o) { return !o.demo && !demoClients[o.clientId]; });
+    db.cards = db.cards.filter(function (k) { return !k.demo && !demoClients[k.clientId]; });
+    save(); render();
+  });
+
+  // ---------- Экспорт CSV (разделитель «;» и BOM — корректно открывается в Excel) ----------
+  function downloadCsv(filename, header, rows) {
+    var cell = function (v) {
+      var s = String(v == null ? '' : v);
+      return /[";\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    };
+    var text = [header].concat(rows).map(function (r) { return r.map(cell).join(';'); }).join('\r\n');
+    var blob = new Blob(['﻿' + text], { type: 'text/csv;charset=utf-8' });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+  $('btnExportOrders').addEventListener('click', function () {
+    var rows = sortOrders(filteredOrders(currentTab !== 'orders')).map(function (o) {
+      var c = clientById(o.clientId) || {};
+      return [fmtDate(o.date), o.time, c.name, c.phone, o.category, o.service, o.master, o.amount, statusName(o.status), o.notes, o.demo ? 'да' : ''];
+    });
+    downloadCsv('zapisi-' + todayIso() + '.csv', ['Дата', 'Время', 'Клиент', 'Телефон', 'Направление', 'Услуга', 'Мастер', 'Сумма', 'Статус', 'Комментарий', 'Демо'], rows);
+  });
+  $('btnExportClients').addEventListener('click', function () {
+    var rows = db.clients.map(function (c) {
+      var s = clientStats(c);
+      var cards = db.cards.filter(function (k) { return k.clientId === c.id; }).map(function (k) { return k.type + ': ' + k.title + (k.details ? ' (' + k.details + ')' : ''); }).join(' | ');
+      return [c.name, c.phone, fmtDate(c.birthday), c.source, s.count, s.total, fmtDate(s.last), cards, c.notes, c.demo ? 'да' : ''];
+    });
+    downloadCsv('klienty-' + todayIso() + '.csv', ['Имя', 'Телефон', 'День рождения', 'Источник', 'Визитов', 'Оплачено', 'Последний визит', 'Карты клиента', 'Заметки', 'Демо'], rows);
+  });
+
+  save();
+  render();
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

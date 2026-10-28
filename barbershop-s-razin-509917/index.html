@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BARBERSHOP S.Razin — барбершоп в Тамбове: мужские стрижки и борода, запись онлайн</title>
+<meta name="description" content="BARBERSHOP S.Razin — барбершоп в Тамбове. Мужские стрижки, борода и усы. Запись к барберу онлайн за 30 секунд или по телефону +7 953 709-03-23.">
+<meta name="theme-color" content="#121110">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BeautySalon",
+  "name": "BARBERSHOP S.Razin",
+  "telephone": "+7 953 709-03-23",
+  "address": { "@type": "PostalAddress", "streetAddress": "Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "52.728124", "longitude": "41.458602" },
+  "hasMap": "https://yandex.ru/maps/?pt=41.458602,52.728124&amp;z=17&amp;l=map"
+}
+</script>
+<style>
+  /* BARBERSHOP S.Razin: тёмный брутальный образ — графит, кость и медь.
+     Острые углы, жёсткие тени, сжатые заголовки капсом, узор-«ромб» и полосы барбер-пола на первом экране.
+     Все пары «текст/фон» — контраст не ниже 4.5:1. */
+  :root{
+    color-scheme:dark;
+    --color-bg:#121110;              /* фон страницы */
+    --color-surface:#1B1917;         /* карточки */
+    --color-surface-2:#24211E;       /* вторые плашки, наведение */
+    --color-line:#38322C;            /* линии и рамки */
+    --color-foreground:#EDE6DA;      /* «кость», 15:1 на фоне */
+    --color-muted-foreground:#B3AA9C;/* второстепенный текст, 7.5:1 */
+    --color-accent:#D08A45;          /* медь: главная кнопка, тёмный текст на ней 6.6:1 */
+    --color-accent-hover:#E39D58;
+    --color-on-accent:#141210;
+    --color-destructive:#FF8A75;
+    --color-ring:#E39D58;
+    --step-1:#EF6A52;  /* шаг 1 — задача */
+    --step-2:#D9A048;  /* шаг 2 — решение */
+    --step-3:#8FBF7A;  /* шаг 3 — запись */
+    --radius:3px;
+    --radius-sm:2px;
+    --shadow:4px 4px 0 #000;
+    --max:1160px;
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-head:"Bahnschrift SemiBold Condensed","Bahnschrift","Arial Narrow","Roboto Condensed","Helvetica Neue",Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:76px;overflow-x:hidden}
+  body{margin:0;font-family:var(--font);color:var(--color-foreground);background:var(--color-bg);line-height:1.6;font-size:17px;overflow-x:clip;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+  a{color:var(--color-accent)}
+  svg{display:block}
+  h1,h2,h3{font-family:var(--font-head);font-stretch:condensed;letter-spacing:.01em}
+  h1,h2{text-transform:uppercase}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--color-accent);color:var(--color-on-accent);padding:10px 16px;z-index:100}
+  .skip:focus{left:0}
+  :focus-visible{outline:3px solid var(--color-ring);outline-offset:3px}
+
+  /* Шапка */
+  header.top{position:sticky;top:0;z-index:50;background:rgba(18,17,16,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-line)}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.2rem;letter-spacing:.06em;text-transform:uppercase;color:var(--color-foreground);text-decoration:none;min-width:0}
+  .logo-mark{flex:none;width:34px;height:34px;border-radius:2px;background:var(--color-accent);display:grid;place-items:center;color:var(--color-on-accent)}
+  .logo-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  nav.menu{display:flex;gap:26px}
+  nav.menu a{color:var(--color-foreground);text-decoration:none;font-size:.9rem;font-weight:600;text-transform:uppercase;letter-spacing:.08em;transition:color .2s}
+  nav.menu a:hover{color:var(--color-accent)}
+  .top-phone{font-weight:700;text-decoration:none;white-space:nowrap;color:var(--color-accent);letter-spacing:.02em}
+
+  /* Кнопки. Сдвиг и масштаб при наведении/нажатии делает Motion (скрипт внизу). */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border-radius:var(--radius-sm);font-weight:700;font-size:.95rem;line-height:1.25;letter-spacing:.06em;text-transform:uppercase;text-align:center;text-decoration:none;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+  .btn svg{width:20px;height:20px;flex:none}
+  .btn-accent{background:var(--color-accent);color:var(--color-on-accent);box-shadow:4px 4px 0 #000}
+  .btn-accent:hover{background:var(--color-accent-hover)}
+  .btn-primary{background:var(--color-foreground);color:var(--color-bg);box-shadow:4px 4px 0 #000}
+  .btn-primary:hover{background:#fff}
+  .btn-ghost{background:transparent;color:var(--color-foreground);border-color:var(--color-accent)}
+  .btn-ghost:hover{background:var(--color-surface-2)}
+  .btn-sm{min-height:42px;padding:9px 16px;font-size:.85rem}
+
+  /* Первый экран: графит, ромбовидный узор и полосы барбер-пола */
+  .hero{position:relative;overflow:hidden;padding:88px 0 96px;background:linear-gradient(160deg,#1E1A16 0%,#121110 55%,#0C0B0A 100%);border-bottom:1px solid var(--color-line)}
+  .hero-bg{position:absolute;inset:-80px 0 -80px 0;pointer-events:none;will-change:transform}
+  .hero-bg span{position:absolute}
+  .hero-bg .grid{inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cpath d='M28 2 54 28 28 54 2 28Z' fill='none' stroke='%23D08A45' stroke-opacity='.09' stroke-width='1'/%3E%3Ccircle cx='28' cy='28' r='1.5' fill='%23D08A45' fill-opacity='.18'/%3E%3C/svg%3E")}
+  .hero-bg .b1{width:120px;top:0;bottom:0;right:7%;transform:skewX(-12deg);opacity:.5;
+    background:repeating-linear-gradient(135deg,rgba(239,106,82,.55) 0 18px,rgba(237,230,218,.18) 18px 36px,rgba(18,17,16,0) 36px 54px);
+    -webkit-mask-image:linear-gradient(180deg,transparent,#000 25%,#000 75%,transparent);mask-image:linear-gradient(180deg,transparent,#000 25%,#000 75%,transparent)}
+  .hero-bg .b2{width:520px;height:520px;left:-160px;bottom:-60px;border-radius:50%;background:radial-gradient(circle,rgba(208,138,69,.18),transparent 70%)}
+  .hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 12px;border:1px solid var(--color-accent);color:var(--color-accent);font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em}
+  .eyebrow::before{content:"";width:8px;height:8px;background:var(--step-1);transform:rotate(45deg)}
+  .hero h1{font-size:clamp(2.3rem,5.4vw,4rem);line-height:1.02;margin:20px 0 18px;font-weight:700}
+  .hero h1 .hl{color:var(--color-accent)}
+  .hero .lead{font-size:1.15rem;color:var(--color-muted-foreground);max-width:560px;margin:0 0 30px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px}
+  .hero-points{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:0;list-style:none;color:var(--color-foreground);font-size:.95rem;font-weight:500}
+  .hero-points li{display:flex;align-items:center;gap:8px}
+  .hero-points svg{width:18px;height:18px;color:var(--color-accent);flex:none}
+  .hero-panel{background:var(--color-surface);border:1px solid var(--color-line);border-top:4px solid var(--color-accent);border-radius:var(--radius);padding:22px;box-shadow:8px 8px 0 #000}
+  .hero-panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--color-muted-foreground)}
+  .hero-panel-title b{color:var(--color-accent)}
+  .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  .tile{border-radius:var(--radius-sm);padding:18px 16px;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;background:var(--color-surface-2);border:1px solid var(--color-line)}
+  .tile svg{width:30px;height:30px;color:var(--color-accent)}
+  .tile strong{font-family:var(--font-head);font-size:1.1rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;line-height:1.15}
+  .tile.dark{background:var(--color-accent);border-color:var(--color-accent);color:var(--color-on-accent)}
+  .tile.dark svg{color:var(--color-on-accent)}
+  .tile.warm{border-color:var(--step-1)}
+  .tile.warm svg{color:var(--step-1)}
+
+  /* Воронка: три шага по странице */
+  .funnel{background:var(--color-bg);border-bottom:1px solid var(--color-line)}
+  .funnel ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .funnel a{display:flex;align-items:center;gap:14px;padding:20px 18px;text-decoration:none;color:var(--color-foreground);border-top:3px solid transparent;transition:background-color .2s}
+  .funnel a:hover{background:var(--color-surface)}
+  .funnel li:nth-child(1) a{border-top-color:var(--step-1)}
+  .funnel li:nth-child(2) a{border-top-color:var(--step-2)}
+  .funnel li:nth-child(3) a{border-top-color:var(--step-3)}
+  .num{flex:none;width:36px;height:36px;border-radius:2px;display:grid;place-items:center;color:#141210;font-weight:800;font-size:.95rem}
+  .n1{background:var(--step-1)}.n2{background:var(--step-2)}.n3{background:var(--step-3)}
+  .funnel small{display:block;color:var(--color-muted-foreground);font-size:.78rem;line-height:1.35;text-transform:uppercase;letter-spacing:.12em}
+  .funnel strong{display:block;font-weight:700;line-height:1.3}
+
+  /* Секции */
+  section{padding:88px 0}
+  section.tint{background:#171513;border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line)}
+  .section-head{max-width:720px;margin:0 0 44px}
+  .section-head.center{text-align:center;margin-left:auto;margin-right:auto}
+  .kicker{display:inline-flex;align-items:center;gap:10px;font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.14em;margin-bottom:12px}
+  .kicker .num{width:28px;height:28px;font-size:.85rem}
+  .k1{color:var(--step-1)}.k2{color:var(--step-2)}.k3{color:var(--step-3)}
+  .section-head h2{font-size:clamp(1.9rem,4vw,2.9rem);line-height:1.05;margin:0 0 14px;font-weight:700}
+  .section-head p{color:var(--color-muted-foreground);margin:0}
+  .mini-cta{margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
+  .mini-cta p{margin:0;color:var(--color-muted-foreground)}
+  .note{font-size:.88rem;color:var(--color-muted-foreground);margin:22px 0 0}
+
+  /* Шаг 1: знакомые ситуации */
+  .pains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .pain{background:var(--color-surface);border:1px solid var(--color-line);border-left:4px solid var(--step-1);border-radius:var(--radius);padding:24px}
+  .pain h3{margin:0 0 8px;font-size:1.3rem;font-weight:700;text-transform:uppercase;line-height:1.15}
+  .pain p{margin:0;color:var(--color-muted-foreground);font-size:.97rem}
+
+  /* Услуги */
+  .services{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .card{background:var(--color-surface);border:1px solid var(--color-line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .service{padding:26px 22px;display:flex;flex-direction:column;border-top:3px solid var(--color-accent)}
+  .icon{width:52px;height:52px;border-radius:2px;display:grid;place-items:center;background:var(--color-bg);border:1px solid var(--color-line);color:var(--color-accent);margin-bottom:16px;flex:none}
+  .icon svg{width:28px;height:28px}
+  .service h3{margin:0 0 10px;font-size:1.45rem;font-weight:700;text-transform:uppercase;line-height:1.1}
+  .price-list{list-style:none;margin:0 0 20px;padding:0;flex:1}
+  .price-list li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px dashed var(--color-line);font-size:.95rem}
+  .price-list li:last-child{border-bottom:0}
+  .price-list b{white-space:nowrap;font-weight:600;color:var(--color-accent)}
+
+  /* Портфолио — заглушки в тонах графита и меди */
+  .portfolio{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:200px;gap:10px}
+  .work{position:relative;border-radius:var(--radius);overflow:hidden;display:flex;align-items:flex-end;padding:16px;border:1px solid var(--color-line)}
+  .work span{position:relative;background:var(--color-bg);color:var(--color-foreground);font-weight:700;font-size:.8rem;text-transform:uppercase;letter-spacing:.1em;padding:6px 12px;border-left:3px solid var(--color-accent)}
+  .work.big{grid-column:span 2;grid-row:span 2}
+  .w1{background:linear-gradient(135deg,#0E0D0C 0%,#3A2B1D 55%,#D08A45 100%)}
+  .w2{background:repeating-linear-gradient(135deg,#2A201A 0 16px,#1B1917 16px 32px)}
+  .w3{background:linear-gradient(200deg,#4A3F35,#151311)}
+  .w4{background:radial-gradient(circle at 30% 30%,#E39D58,#5A3418 70%)}
+  .w5{background:linear-gradient(120deg,#3B1A14,#EF6A52)}
+
+  /* Почему мы */
+  .why{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .why-item{padding:24px}
+  .why-item h3{margin:0 0 6px;font-size:1.3rem;font-weight:700;text-transform:uppercase;line-height:1.15}
+  .why-item p{margin:0;color:var(--color-muted-foreground);font-size:.96rem}
+
+  /* Шаги визита */
+  .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;counter-reset:step;list-style:none;margin:0;padding:0}
+  .step{position:relative;padding:26px 22px 22px}
+  .step::before{counter-increment:step;content:"0" counter(step);display:block;font-family:var(--font-head);font-size:2.4rem;line-height:1;font-weight:700;color:var(--color-accent);margin-bottom:12px}
+  .step h3{margin:0 0 6px;font-size:1.25rem;font-weight:700;text-transform:uppercase}
+  .step p{margin:0;color:var(--color-muted-foreground);font-size:.95rem}
+
+  /* Форма записи */
+  .booking{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+  .booking-info h2{font-size:clamp(1.9rem,4vw,2.9rem);margin:0 0 12px;line-height:1.05;font-weight:700}
+  .booking-info p{color:var(--color-muted-foreground)}
+  .booking-info .call{color:var(--color-foreground)}
+  form.card{padding:30px;box-shadow:8px 8px 0 #000}
+  .progress{display:flex;gap:6px;margin:0 0 22px}
+  .progress span{flex:1;height:4px;background:var(--step-1)}
+  .progress span:nth-child(2){background:var(--step-2)}
+  .progress span:nth-child(3){background:var(--step-3)}
+  .form-title{margin:0 0 18px;font-family:var(--font-head);font-size:1.4rem;font-weight:700;text-transform:uppercase}
+  .field{margin-bottom:16px;min-width:0}
+  .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  label{display:block;font-weight:600;margin-bottom:6px;font-size:.95rem}
+  .opt{font-weight:400;color:var(--color-muted-foreground)}
+  input,select{width:100%;min-width:0;max-width:100%;min-height:48px;padding:11px 14px;border:1.5px solid #6E655B;border-radius:var(--radius-sm);font:inherit;font-size:1rem;color:var(--color-foreground);background:var(--color-bg);transition:border-color .2s,box-shadow .2s}
+  input::placeholder{color:#8F877C}
+  select{cursor:pointer}
+  input:focus,select:focus{border-color:var(--color-accent);outline:none;box-shadow:0 0 0 3px rgba(208,138,69,.35)}
+  .error{color:var(--color-destructive);font-size:.88rem;margin-top:4px;min-height:1.2em}
+  input[aria-invalid="true"]{border-color:var(--color-destructive)}
+  form .btn{width:100%}
+  .hint{font-size:.85rem;color:var(--color-muted-foreground);margin:10px 0 0}
+  .success{display:none;margin-top:16px;padding:16px;border-radius:var(--radius-sm);background:#1C2618;color:#CFE8C2;font-weight:600;text-align:center;border:1px solid var(--step-3)}
+  .success.show{display:block}
+
+  /* Контакты */
+  .contacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch}
+  .contact-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+  .contact-list li{display:flex;gap:14px;align-items:flex-start;padding:18px;min-width:0}
+  .contact-list .icon{margin:0;width:44px;height:44px}
+  .contact-list .icon svg{width:22px;height:22px}
+  .contact-list small{display:block;color:var(--color-muted-foreground);font-size:.78rem;text-transform:uppercase;letter-spacing:.12em}
+  .contact-list a,.contact-list .val{font-weight:700;font-size:1.05rem;text-decoration:none;color:var(--color-foreground)}
+  .contact-list a:hover{color:var(--color-accent)}
+  .map-card{border-radius:var(--radius);padding:32px;color:var(--color-foreground);display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;position:relative;overflow:hidden;border:1px solid var(--color-line);box-shadow:var(--shadow);
+    background:
+      repeating-linear-gradient(0deg,rgba(208,138,69,.08) 0 1px,transparent 1px 44px),
+      repeating-linear-gradient(90deg,rgba(208,138,69,.08) 0 1px,transparent 1px 44px),
+      linear-gradient(135deg,#0C0B0A,#1E1A16 60%,#2A2119)}
+  .map-card .pin{position:absolute;top:22%;left:50%;margin-left:-30px;width:60px;height:60px;color:var(--color-accent)}
+  .map-card h3{margin:0 0 6px;font-size:1.6rem;font-weight:700;text-transform:uppercase}
+  .map-card p{margin:0 0 18px;color:var(--color-muted-foreground)}
+  .map-card .btn{align-self:flex-start}
+
+  /* Подвал */
+  footer{background:#0A0909;color:var(--color-muted-foreground);padding:40px 0 26px;border-top:3px solid var(--color-accent)}
+  footer strong{color:var(--color-foreground);font-family:var(--font-head);text-transform:uppercase;letter-spacing:.08em;font-size:1.1rem}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px}
+  footer a{color:var(--color-foreground)}
+  .demo{width:100%;text-align:center;font-size:.75rem;color:#9A9184;margin:18px 0 0}
+
+  .mobile-bar{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none!important}
+  }
+  @media (max-width:1024px){
+    .steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .why,.pains{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .portfolio{grid-template-columns:repeat(2,minmax(0,1fr))}
+    nav.menu{display:none}
+    .hero-bg .b1{right:-30px;opacity:.35}
+  }
+  @media (max-width:768px){
+    body{font-size:16px;padding-bottom:76px}
+    section{padding:60px 0}
+    .hero{padding:48px 0 60px}
+    .hero .wrap,.booking,.contacts{grid-template-columns:minmax(0,1fr);gap:32px}
+    .services{grid-template-columns:minmax(0,1fr)}
+    .funnel ol{grid-template-columns:minmax(0,1fr)}
+    .funnel a{padding:14px 4px;border-top:0;border-left:3px solid transparent;padding-left:14px}
+    .funnel li:nth-child(1) a{border-left-color:var(--step-1)}
+    .funnel li:nth-child(2) a{border-left-color:var(--step-2)}
+    .funnel li:nth-child(3) a{border-left-color:var(--step-3)}
+    .funnel li + li{border-top:1px solid var(--color-line)}
+    .pains,.why{grid-template-columns:minmax(0,1fr)}
+    .top-phone{display:none}
+    form.card{padding:22px;box-shadow:var(--shadow)}
+    .hero-panel{box-shadow:var(--shadow)}
+    .mobile-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 12px;background:rgba(18,17,16,.97);border-top:1px solid var(--color-line)}
+    .mobile-bar .btn{padding:10px 8px;min-width:0;gap:8px;white-space:nowrap;box-shadow:none}
+  }
+  @media (max-width:520px){
+    .steps,.row2{grid-template-columns:minmax(0,1fr)}
+    .portfolio{grid-auto-rows:150px}
+    .hero-actions .btn{flex:1 1 100%}
+    .tile{min-height:96px;padding:14px}
+    .tile strong{font-size:1rem}
+    .hero .lead{font-size:1.05rem}
+  }
+  @media (max-width:360px){
+    .mobile-bar .btn{font-size:.8rem;letter-spacing:.03em}
+    .mobile-bar .btn svg{width:18px;height:18px}
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Набор SVG-иконок (в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 18h2"/></g></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></g></symbol>
+  <symbol id="i-razor" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h13l3 3H6a3 3 0 0 1-3-3z"/><path d="M16 8l2-3h3"/><path d="M11 11l-3 9h3l3-9"/></g></symbol>
+  <symbol id="i-beard" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6v4a8 8 0 0 0 16 0V6"/><path d="M8 12c1.3-1 2.7-1 4 0 1.3-1 2.7-1 4 0"/><path d="M10 16h4"/></g></symbol>
+  <symbol id="i-pole" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="4" width="8" height="16" rx="1"/><path d="M7 2h10M7 22h10M8 8l8-3M8 13l8-3M8 18l8-3"/></g></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></g></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></g></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15v14H5a2 2 0 0 1-2-2V5"/><path d="M16 14h.01"/></g></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <span class="logo-mark" aria-hidden="true"><svg width="18" height="18"><use href="#i-scissors"/></svg></span>
+      <span class="logo-text">BARBERSHOP S.Razin</span>
+    </a>
+    <nav class="menu" aria-label="Основное меню">
+      <a href="#services">Услуги</a>
+      <a href="#portfolio">Работы</a>
+      <a href="#why">Почему мы</a>
+      <a href="#booking">Запись</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:+79537090323">+7 953 709-03-23</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"><span class="grid"></span><span class="b1"></span><span class="b2"></span></div>
+    <div class="wrap">
+      <div>
+        <span class="eyebrow" data-hero>барбершоп · Тамбов</span>
+        <h1 id="hero-title" data-hero>BARBERSHOP S.Razin — <span class="hl">запись к барберу за 30 секунд</span>, без звонка</h1>
+        <p class="lead" data-hero>Мужские стрижки и борода. Барбер с клиентом и не может взять трубку? Оставьте заявку на сайте в любое время — вам перезвонят и подтвердят время.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+79537090323" data-hero><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+          <a class="btn btn-accent" href="#booking" data-hero><svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+        </div>
+        <ul class="hero-points" data-hero>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Заявка — имя и телефон</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Без ожидания на линии</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Маршрут на Яндекс Картах</li>
+        </ul>
+      </div>
+      <div class="hero-panel" data-hero role="group" aria-label="Направления барбершопа">
+        <p class="hero-panel-title"><span>Что делаем</span><b>S.Razin</b></p>
+        <div class="tiles">
+          <div class="tile dark"><svg aria-hidden="true"><use href="#i-scissors"/></svg><strong>Мужские стрижки</strong></div>
+          <div class="tile"><svg aria-hidden="true"><use href="#i-beard"/></svg><strong>Борода и усы</strong></div>
+          <div class="tile"><svg aria-hidden="true"><use href="#i-razor"/></svg><strong>Стрижка + борода</strong></div>
+          <div class="tile warm"><svg aria-hidden="true"><use href="#i-calendar"/></svg><strong>Заявка онлайн в любое время</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Воронка: путь посетителя в три шага -->
+  <nav class="funnel" aria-label="Три шага до записи">
+    <div class="wrap">
+      <ol data-stagger>
+        <li><a href="#pains"><span class="num n1" aria-hidden="true">1</span><span><small>Шаг 1</small><strong>Не дозвонились?</strong></span></a></li>
+        <li><a href="#services"><span class="num n2" aria-hidden="true">2</span><span><small>Шаг 2</small><strong>Выберите услугу</strong></span></a></li>
+        <li><a href="#booking"><span class="num n3" aria-hidden="true">3</span><span><small>Шаг 3</small><strong>Запись к барберу</strong></span></a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Шаг 1: знакомые ситуации -->
+  <section id="pains" aria-labelledby="pains-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="kicker k1"><span class="num n1" aria-hidden="true">1</span>Знакомо?</div>
+        <h2 id="pains-title">Пора стричься, а дозвониться не выходит</h2>
+        <p>Барбер работает руками — ему не до телефона. Поэтому запись в S.Razin можно оставить без звонка.</p>
+      </div>
+      <div class="pains" data-stagger>
+        <div class="pain">
+          <h3>Звонок в пустоту</h3>
+          <p>Мастер с клиентом и трубку не берёт. Заявка с сайта не потеряется — вам перезвонят сами.</p>
+        </div>
+        <div class="pain">
+          <h3>Неудобно звонить</h3>
+          <p>На работе, в дороге или поздно вечером — форма записи доступна в любое время суток.</p>
+        </div>
+        <div class="pain">
+          <h3>Сколько стоит — непонятно</h3>
+          <p>Стоимость назовут до начала стрижки, по телефону или при подтверждении записи.</p>
+        </div>
+      </div>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-ghost btn-sm" href="#services">Посмотреть услуги</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 2: услуги. Цен в данных нет — владелец добавляет их сам. -->
+  <section id="services" class="tint" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="kicker k2"><span class="num n2" aria-hidden="true">2</span>Решение</div>
+        <h2 id="services-title">Услуги</h2>
+        <p>Мужская классика барбершопа. Цены уточняйте по телефону или при записи.</p>
+      </div>
+      <div class="services" data-stagger>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-scissors"/></svg></div>
+          <h3>Мужские стрижки</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Стрижка ножницами и машинкой</li>
+            <li>Окантовка</li>
+            <li>Укладка</li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Мужские стрижки">Записаться</a>
+        </article>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-beard"/></svg></div>
+          <h3>Борода и усы</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Оформление бороды</li>
+            <li>Контур и форма</li>
+            <li>Усы</li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Борода и усы">Записаться</a>
+        </article>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-razor"/></svg></div>
+          <h3>Стрижка + борода</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Стрижка и борода за один визит</li>
+            <li>Одно окно в расписании</li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Стрижка + борода">Записаться</a>
+        </article>
+      </div>
+      <p class="note" data-reveal>Точный перечень услуг и цены уточняйте по телефону <a href="tel:+79537090323">+7 953 709-03-23</a>.</p>
+    </div>
+  </section>
+
+  <!-- Портфолио. В макете — градиентные заглушки; владелец заменяет их на фото работ мастеров. -->
+  <section id="portfolio" aria-labelledby="portfolio-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="portfolio-title">Работы</h2>
+        <p>Здесь будут фотографии стрижек и бород из S.Razin — посмотрите стиль заранее.</p>
+      </div>
+      <div class="portfolio" data-stagger>
+        <div class="work big w1" role="img" aria-label="Место для фото: мужская стрижка"><span>Стрижка</span></div>
+        <div class="work w2" role="img" aria-label="Место для фото: борода"><span>Борода</span></div>
+        <div class="work w3" role="img" aria-label="Место для фото: окантовка"><span>Окантовка</span></div>
+        <div class="work w4" role="img" aria-label="Место для фото: стрижка и борода"><span>Стрижка + борода</span></div>
+        <div class="work w5" role="img" aria-label="Место для фото: укладка"><span>Укладка</span></div>
+      </div>
+      <p class="note" data-reveal>В демо-макете вместо фото — цветные заглушки.</p>
+    </div>
+  </section>
+
+  <!-- Почему мы. Формулировки общие — владелец проверяет, что каждое утверждение про его барбершоп верно. -->
+  <section id="why" class="tint" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="why-title">Почему BARBERSHOP S.Razin</h2>
+        <p>Пришёл, подстригся, ушёл довольным — без лишней суеты.</p>
+      </div>
+      <div class="why" data-stagger>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-user"/></svg></div>
+          <h3>Свой барбер</h3>
+          <p>Нашли своего мастера — записывайтесь к нему снова, он помнит, как вы стрижётесь.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-beard"/></svg></div>
+          <h3>Обсуждаем до начала</h3>
+          <p>Длину, форму и контур бороды обговариваем до того, как включится машинка.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-shield"/></svg></div>
+          <h3>Аккуратная работа</h3>
+          <p>Ровные контуры и чистое рабочее место — то, за чем приходят в барбершоп.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-wallet"/></svg></div>
+          <h3>Цена до стрижки</h3>
+          <p>Стоимость называем заранее — без доплат в конце.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-calendar"/></svg></div>
+          <h3>Запись без звонка</h3>
+          <p>Форма на сайте работает в любое время: оставили заявку — вам перезвонили.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-pin"/></svg></div>
+          <h3>Есть на картах</h3>
+          <p>BARBERSHOP S.Razin отмечен на Яндекс Картах в Тамбове — маршрут в один тап.</p>
+        </div>
+      </div>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-accent btn-sm" href="#booking">Выбрать время</a>
+        <p>или позвоните: <a href="tel:+79537090323"><strong>+7 953 709-03-23</strong></a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Как проходит визит -->
+  <section aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="steps-title">Как проходит визит</h2>
+        <p>Четыре шага — от заявки до свежей стрижки.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li class="step card"><h3>Заявка</h3><p>Оставьте имя и телефон на сайте или позвоните — это полминуты.</p></li>
+        <li class="step card"><h3>Подтверждение</h3><p>Вам перезвонят, подберут барбера и удобное время.</p></li>
+        <li class="step card"><h3>В кресле</h3><p>Барбер уточнит, что хотите, и назовёт стоимость.</p></li>
+        <li class="step card"><h3>Готово</h3><p>Уходите со свежей стрижкой — и записываетесь на следующий раз.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Шаг 3: форма записи -->
+  <section id="booking" class="tint" aria-labelledby="booking-title">
+    <div class="wrap booking">
+      <div class="booking-info" data-reveal>
+        <div class="kicker k3"><span class="num n3" aria-hidden="true">3</span>Запись</div>
+        <h2 id="booking-title">Запишитесь к барберу</h2>
+        <p>Имя и телефон — всё, что нужно. Вам перезвонят, подтвердят время и ответят на вопросы.</p>
+        <p class="call">Удобнее голосом? Звоните: <a href="tel:+79537090323"><strong>+7 953 709-03-23</strong></a></p>
+      </div>
+      <form class="card" id="bookingForm" novalidate data-reveal>
+        <div class="progress" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="form-title">Заявка на запись</p>
+        <div class="field">
+          <label for="f-name">Ваше имя</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+          <div class="error" id="e-name" aria-live="polite"></div>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 900 123-45-67" required aria-describedby="e-phone">
+          <div class="error" id="e-phone" aria-live="polite"></div>
+        </div>
+        <div class="field">
+          <label for="f-service">Услуга</label>
+          <select id="f-service" name="service">
+            <option value="">Пока не знаю — нужна консультация</option>
+            <option>Мужские стрижки</option>
+            <option>Борода и усы</option>
+            <option>Стрижка + борода</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f-date">Удобная дата <span class="opt">(необязательно)</span></label>
+            <input id="f-date" name="date" type="date">
+          </div>
+          <div class="field">
+            <label for="f-time">Удобное время</label>
+            <select id="f-time" name="time">
+              <option value="">Любое</option>
+              <option>Утро (до 12:00)</option>
+              <option>День (12:00–17:00)</option>
+              <option>Вечер (после 17:00)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-accent" type="submit">Отправить заявку</button>
+        <p class="hint">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</p>
+        <div class="success" id="formSuccess" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="contacts-title">Контакты</h2>
+        <p>Ждём вас в BARBERSHOP S.Razin.</p>
+      </div>
+      <div class="contacts">
+        <ul class="contact-list" data-stagger>
+          <li class="card">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-pin"/></svg></div>
+            <div><small>Адрес</small><span class="val">Тамбов — точка на Яндекс Картах</span></div>
+          </li>
+          <li class="card">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-phone"/></svg></div>
+            <div><small>Телефон</small><a href="tel:+79537090323">+7 953 709-03-23</a></div>
+          </li>
+          <li class="card" id="hoursRow">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></div>
+            <div><small>Часы работы</small><span class="val" id="hoursVal">10:00-21:00</span></div>
+          </li>
+        </ul>
+        <div class="map-card" data-reveal>
+          <svg class="pin" aria-hidden="true"><use href="#i-pin"/></svg>
+          <h3>Как нас найти</h3>
+          <p>Тамбов. Точный вход и маршрут — на Яндекс Картах.</p>
+          <a class="btn btn-accent" href="https://yandex.ru/maps/?pt=41.458602,52.728124&amp;z=17&amp;l=map" target="_blank" rel="noopener">Открыть на карте<span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"> (в новой вкладке)</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong>BARBERSHOP S.Razin</strong><br>барбершоп · Тамбов</div>
+    <div><a href="tel:+79537090323">+7 953 709-03-23</a><br>Тамбов</div>
+    <div>© 2026 BARBERSHOP S.Razin</div>
+    <p class="demo">Демо-макет</p>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-primary" href="tel:+79537090323"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-accent" href="#booking"><svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+/* Логика страницы — работает и без motion.js */
+(function () {
+  // Если часы работы не заданы — прячем строку
+  var hoursVal = document.getElementById('hoursVal');
+  if (hoursVal && !hoursVal.textContent.trim()) {
+    document.getElementById('hoursRow').style.display = 'none';
+  }
+
+  // Кнопка «Записаться» в карточке услуги подставляет услугу в форму
+  var serviceSelect = document.getElementById('f-service');
+  document.querySelectorAll('[data-service]').forEach(function (a) {
+    a.addEventListener('click', function () { serviceSelect.value = a.getAttribute('data-service'); });
+  });
+
+  // Нельзя выбрать прошедшую дату
+  var dateInput = document.getElementById('f-date');
+  var now = new Date();
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  dateInput.min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  // Форма записи. Данные никуда не отправляются (демо).
+  // Сюда можно подключить отправку: в Telegram-бота, CRM или на почту.
+  var form = document.getElementById('bookingForm');
+  var nameInput = document.getElementById('f-name');
+  var phoneInput = document.getElementById('f-phone');
+  var success = document.getElementById('formSuccess');
+
+  function setError(input, msg) {
+    document.getElementById(input.getAttribute('aria-describedby')).textContent = msg;
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    success.classList.remove('show');
+    success.textContent = '';
+    var ok = true;
+    if (nameInput.value.trim().length < 2) { setError(nameInput, 'Укажите имя'); ok = false; } else { setError(nameInput, ''); }
+    var digits = phoneInput.value.replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 15) { setError(phoneInput, 'Укажите телефон полностью, например +7 900 123-45-67'); ok = false; } else { setError(phoneInput, ''); }
+    if (!ok) {
+      (nameInput.getAttribute('aria-invalid') === 'true' ? nameInput : phoneInput).focus();
+      return;
+    }
+    form.reset();
+    success.textContent = 'Заявка принята, перезвоним!';
+    success.classList.add('show');
+    if (window.Motion && !reduceMotion()) {
+      try { Motion.animate(success, { opacity: [0, 1], y: [8, 0] }, { duration: 0.3 }); } catch (err) { success.style.opacity = ''; }
+    }
+  });
+
+  function reduceMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  window.__reduceMotion = reduceMotion;
+})();
+
+/* Анимации на Motion: только transform и opacity, 200–600 мс.
+   Исходная прозрачность ставится здесь, из JS: без motion.js весь текст виден сразу. */
+(function () {
+  var M = window.Motion;
+  if (!M || !M.animate || window.__reduceMotion()) return;
+
+  var ease = [0.22, 1, 0.36, 1];
+  var hidden = [];
+  function hide(el) { el.style.opacity = '0'; hidden.push(el); }
+  function showAll() { hidden.forEach(function (el) { el.style.opacity = ''; el.style.transform = ''; }); }
+
+  try {
+    // 1. Первый экран: элементы появляются по очереди
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll('[data-hero]'));
+    heroItems.forEach(hide);
+    M.animate(heroItems, { opacity: [0, 1], y: [18, 0] }, { duration: 0.5, delay: M.stagger(0.09), ease: ease });
+
+    // 2. Блоки при прокрутке
+    var single = document.querySelectorAll('[data-reveal]');
+    single.forEach(hide);
+    if (M.inView) {
+      M.inView('[data-reveal]', function (el) {
+        M.animate(el, { opacity: [0, 1], y: [24, 0] }, { duration: 0.55, ease: ease });
+      }, { amount: 0.15 });
+    }
+
+    // Группы карточек — со stagger
+    var groups = document.querySelectorAll('[data-stagger]');
+    groups.forEach(function (g) { Array.prototype.forEach.call(g.children, hide); });
+    if (M.inView) {
+      M.inView('[data-stagger]', function (g) {
+        M.animate(g.children, { opacity: [0, 1], y: [24, 0] },
+          { duration: 0.5, delay: M.stagger(0.08), ease: ease });
+      }, { amount: 0.1 });
+    }
+
+    // 3. Наведение и нажатие: кнопки и карточки
+    if (M.hover) {
+      M.hover('.btn, [data-lift]', function (el) {
+        M.animate(el, { y: -3 }, { duration: 0.22, ease: ease });
+        return function () { M.animate(el, { y: 0 }, { duration: 0.22, ease: ease }); };
+      });
+    }
+    if (M.press) {
+      M.press('.btn', function (el) {
+        M.animate(el, { scale: 0.97 }, { duration: 0.2, ease: ease });
+        return function () { M.animate(el, { scale: 1 }, { duration: 0.25, ease: ease }); };
+      });
+    }
+
+    // 4. Лёгкий параллакс фона первого экрана
+    var hero = document.querySelector('.hero');
+    var heroBg = document.querySelector('.hero-bg');
+    if (M.scroll && hero && heroBg) {
+      M.scroll(function (progress) {
+        heroBg.style.transform = 'translate3d(0,' + (progress * 70).toFixed(1) + 'px,0)';
+      }, { target: hero, offset: ['start start', 'end start'] });
+    }
+  } catch (err) {
+    // Если что-то пошло не так — просто показываем всё без анимаций
+    showAll();
+  }
+
+  // Страховка: если блок так и не попал в зону видимости (например, печать или очень высокий экран),
+  // через 4 секунды показываем всё, что осталось скрытым.
+  setTimeout(function () {
+    hidden.forEach(function (el) {
+      if (el.style.opacity === '0' && el.getBoundingClientRect().top < window.innerHeight) {
+        el.style.opacity = '';
+      }
+    });
+  }, 4000);
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

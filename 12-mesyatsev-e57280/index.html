@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>12 месяцев — салон красоты в Тамбове: онлайн-запись без звонка</title>
+<meta name="description" content="12 месяцев — салон красоты в Тамбове. Оставьте заявку на сайте в любое время или позвоните +7(4752)428300 — подберём мастера и удобный день.">
+<meta name="theme-color" content="#7A2E2A">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BeautySalon",
+  "name": "12 месяцев",
+  "telephone": "+7(4752)428300",
+  "address": { "@type": "PostalAddress", "streetAddress": "Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "52.704710", "longitude": "41.396973" },
+  "hasMap": "https://yandex.ru/maps/?pt=41.396973,52.704710&amp;z=17&amp;l=map"
+}
+</script>
+<style>
+  /* «12 месяцев»: тёплый семейный салон, образ — круг года и смена сезонов.
+     Палитра — винно-терракотовая на сливочном фоне, акцент — осенний янтарь.
+     Цвета с текстом подобраны под контраст не ниже 4.5:1. */
+  :root{
+    --color-primary:#A8483B;          /* декоративные элементы */
+    --color-primary-strong:#8E3A2E;   /* ссылки и текст на светлом фоне (≈7:1 на белом) */
+    --color-primary-deep:#6E2A26;     /* кнопки с белым текстом (≈10:1) */
+    --color-primary-darker:#521E1B;
+    --color-secondary:#D9A35B;
+    --color-accent:#B45309;           /* главная кнопка «Записаться», белый текст ≈5:1 */
+    --color-accent-hover:#92400E;
+    --color-background:#FBF3E8;       /* сливочный */
+    --color-paper:#FFFCF7;
+    --color-foreground:#3A2320;       /* тёмный шоколад */
+    --color-card:#FFFFFF;
+    --color-muted:#F3E7DA;
+    --color-muted-foreground:#6B4E44; /* ≈7:1 на сливочном */
+    --color-border:#E9CFB4;
+    --color-line:#EEDFCE;
+    --color-destructive:#B42318;
+    --color-ring:#B45309;
+    /* шаги воронки — как времена года: зима, осень, весна */
+    --step-1:#B42318;
+    --step-2:#B45309;
+    --step-3:#4D7C0F;
+    --season-winter:#E6EEF3;
+    --season-spring:#EAF3DE;
+    --season-summer:#FCEFD3;
+    --season-autumn:#F8E1D5;
+    --radius:22px;
+    --radius-sm:999px;
+    --shadow:0 2px 4px rgba(82,30,27,.05),0 14px 34px -10px rgba(82,30,27,.18);
+    --max:1160px;
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-head:Georgia,Cambria,"Times New Roman",Times,serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:76px;overflow-x:hidden}
+  body{margin:0;font-family:var(--font);color:var(--color-foreground);background:var(--color-paper);line-height:1.6;font-size:17px;overflow-x:clip;overflow-wrap:break-word;-webkit-font-smoothing:antialiased}
+  a{color:var(--color-primary-strong)}
+  svg{display:block}
+  h1,h2,h3{letter-spacing:-.01em;font-family:var(--font-head)}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+  .skip{position:absolute;left:-9999px;top:0;background:var(--color-primary-deep);color:#fff;padding:10px 16px;z-index:100;border-radius:0 0 8px 0}
+  .skip:focus{left:0}
+  :focus-visible{outline:3px solid var(--color-ring);outline-offset:3px}
+
+  /* Шапка */
+  header.top{position:sticky;top:0;z-index:50;background:rgba(255,252,247,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-line)}
+  .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--font-head);font-weight:700;font-size:1.2rem;color:var(--color-foreground);text-decoration:none;min-width:0}
+  .logo-mark{flex:none;width:36px;height:36px;border-radius:50%;background:var(--color-primary-deep);display:grid;place-items:center;color:#FCEFD3;box-shadow:0 0 0 3px var(--color-background),0 0 0 4px var(--color-border)}
+  .logo-text{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  nav.menu{display:flex;gap:26px}
+  nav.menu a{color:var(--color-foreground);text-decoration:none;font-size:.95rem;font-weight:500;transition:color .2s}
+  nav.menu a:hover{color:var(--color-accent)}
+  .top-phone{font-weight:600;text-decoration:none;white-space:nowrap;color:var(--color-foreground)}
+
+  /* Кнопки. Сдвиг и масштаб при наведении/нажатии делает Motion (скрипт внизу). */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:48px;padding:12px 24px;border-radius:var(--radius-sm);font-weight:600;font-size:1rem;line-height:1.25;text-align:center;text-decoration:none;border:2px solid transparent;cursor:pointer;font-family:inherit;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+  .btn svg{width:20px;height:20px;flex:none}
+  .btn-accent{background:var(--color-accent);color:#fff;box-shadow:0 8px 20px -6px rgba(180,83,9,.45)}
+  .btn-accent:hover{background:var(--color-accent-hover)}
+  .btn-primary{background:var(--color-primary-deep);color:#fff}
+  .btn-primary:hover{background:var(--color-primary-darker)}
+  .btn-ghost{background:transparent;color:var(--color-primary-deep);border-color:var(--color-primary-deep)}
+  .btn-ghost:hover{background:var(--color-background)}
+  .btn-sm{min-height:42px;padding:9px 16px;font-size:.93rem}
+
+  /* Первый экран */
+  /* Фон: тёплый градиент «от зимы к осени» + круг года из 12 секторов и россыпь точек */
+  .hero{position:relative;overflow:hidden;padding:88px 0 96px;background:
+      linear-gradient(115deg,#F4EEEA 0%,var(--color-background) 35%,#FBEBD6 70%,#F8E1D5 100%)}
+  .hero-bg{position:absolute;inset:-80px 0 -80px 0;pointer-events:none;will-change:transform}
+  .hero-bg span{position:absolute;border-radius:50%}
+  .hero-bg .b1{width:640px;height:640px;right:-200px;top:-40px;
+      background:repeating-conic-gradient(from -15deg,rgba(168,72,59,.13) 0 15deg,rgba(217,163,91,.10) 15deg 30deg);
+      -webkit-mask:radial-gradient(circle,transparent 0 37%,#000 37.5% 49%,transparent 49.5%);
+              mask:radial-gradient(circle,transparent 0 37%,#000 37.5% 49%,transparent 49.5%)}
+  .hero-bg .b2{width:420px;height:420px;left:-140px;bottom:-60px;background:radial-gradient(circle,rgba(217,163,91,.30),transparent 70%)}
+  .hero-bg .grid{inset:0;border-radius:0;opacity:.9;background:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23A8483B' stroke-opacity='.12' stroke-width='1.2'%3E%3Ccircle cx='60' cy='60' r='5'/%3E%3Cpath d='M60 47v-8M60 73v8M47 60h-8M73 60h8'/%3E%3C/g%3E%3Ccircle cx='0' cy='0' r='2' fill='%23B45309' fill-opacity='.14'/%3E%3Ccircle cx='120' cy='120' r='2' fill='%23B45309' fill-opacity='.14'/%3E%3C/svg%3E")}
+  .hero .wrap{position:relative;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,.9fr);gap:48px;align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:var(--color-paper);border:1px solid var(--color-border);color:var(--color-primary-deep);font-size:.85rem;font-weight:600}
+  .eyebrow::before{content:"";width:10px;height:10px;border-radius:50%;background:conic-gradient(#7FA6BF 0 25%,#6C9A2E 25% 50%,#D9A35B 50% 75%,#A8483B 75%)}
+  .hero h1{font-size:clamp(2.1rem,5vw,3.4rem);line-height:1.1;margin:20px 0 16px;font-weight:700}
+  .hero h1 .hl{color:var(--color-primary-strong);font-style:italic}
+  .hero .lead{font-size:1.15rem;color:var(--color-muted-foreground);max-width:560px;margin:0 0 30px}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px}
+  .hero-points{display:flex;flex-wrap:wrap;gap:10px 22px;margin:28px 0 0;padding:0;list-style:none;color:var(--color-foreground);font-size:.95rem;font-weight:500}
+  .hero-points li{display:flex;align-items:center;gap:8px}
+  .hero-points svg{width:18px;height:18px;color:var(--color-primary-strong);flex:none}
+  .hero-panel{background:var(--color-card);border:1px solid var(--color-line);border-radius:28px;padding:22px;box-shadow:var(--shadow)}
+  .hero-panel-title{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:0 0 14px;font-size:.9rem;font-weight:600;color:var(--color-muted-foreground)}
+  .hero-panel-title b{color:var(--color-primary-strong);font-family:var(--font-head)}
+  .tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+  /* Плитки — четыре времени года */
+  .tile{border-radius:18px;padding:18px 16px;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;gap:12px;background:var(--season-winter);border:1px solid transparent}
+  .tile svg{width:28px;height:28px;color:var(--color-primary-strong)}
+  .tile strong{font-size:1rem;font-weight:600}
+  .tile:nth-child(2){background:var(--season-spring)}
+  .tile:nth-child(2) svg{color:#3F6212}
+  .tile:nth-child(4){background:var(--season-summer)}
+  .tile.dark{background:var(--color-primary-deep);color:#fff}
+  .tile.dark svg{color:#FCEFD3}
+  .tile.warm{background:var(--season-autumn)}
+  .tile.warm svg{color:var(--color-accent-hover)}
+
+  /* Воронка: три шага по странице */
+  .funnel{background:var(--color-paper);border-bottom:1px solid var(--color-line)}
+  .funnel ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  .funnel a{display:flex;align-items:center;gap:14px;padding:20px 18px;text-decoration:none;color:var(--color-foreground);border-top:3px solid transparent;transition:background-color .2s}
+  .funnel a:hover{background:var(--color-background)}
+  .funnel li:nth-child(1) a{border-top-color:var(--step-1)}
+  .funnel li:nth-child(2) a{border-top-color:var(--step-2)}
+  .funnel li:nth-child(3) a{border-top-color:var(--step-3)}
+  .num{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:.95rem}
+  .n1{background:var(--step-1)}.n2{background:var(--step-2)}.n3{background:var(--step-3)}
+  .funnel small{display:block;color:var(--color-muted-foreground);font-size:.85rem;line-height:1.35}
+  .funnel strong{display:block;font-weight:600;line-height:1.3}
+
+  /* Секции */
+  section{padding:88px 0}
+  section.tint{background:var(--color-background)}
+  .section-head{max-width:720px;margin:0 0 44px}
+  .section-head.center{text-align:center;margin-left:auto;margin-right:auto}
+  .kicker{display:inline-flex;align-items:center;gap:10px;font-size:.85rem;font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+  .kicker .num{width:28px;height:28px;font-size:.85rem}
+  .k1{color:var(--step-1)}.k2{color:var(--step-2)}.k3{color:var(--step-3)}
+  .section-head h2{font-size:clamp(1.75rem,3.6vw,2.5rem);line-height:1.15;margin:0 0 12px;font-weight:700}
+  .section-head p{color:var(--color-muted-foreground);margin:0}
+  .mini-cta{margin-top:36px;display:flex;flex-wrap:wrap;align-items:center;gap:14px 20px}
+  .mini-cta p{margin:0;color:var(--color-muted-foreground)}
+  .note{font-size:.88rem;color:var(--color-muted-foreground);margin:22px 0 0}
+
+  /* Шаг 1: знакомые ситуации */
+  .pains{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .pain{background:var(--color-card);border:1px solid var(--color-line);border-top:4px solid var(--step-1);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow)}
+  .pain h3{margin:0 0 8px;font-size:1.1rem;font-weight:600}
+  .pain p{margin:0;color:var(--color-muted-foreground);font-size:.97rem}
+
+  /* Услуги */
+  .services{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px}
+  .card{background:var(--color-card);border:1px solid var(--color-line);border-radius:var(--radius);box-shadow:var(--shadow)}
+  .service{padding:26px 22px;display:flex;flex-direction:column}
+  .icon{width:54px;height:54px;border-radius:50%;display:grid;place-items:center;background:var(--color-background);color:var(--color-primary-strong);margin-bottom:16px;flex:none;box-shadow:inset 0 0 0 1px var(--color-border)}
+  .icon svg{width:26px;height:26px}
+  /* Иконки услуг окрашены «по сезонам» */
+  .services .service:nth-child(1) .icon{background:var(--season-winter);color:#1E4E6B}
+  .services .service:nth-child(2) .icon{background:var(--season-spring);color:#3F6212}
+  .services .service:nth-child(3) .icon{background:var(--season-summer);color:var(--color-accent-hover)}
+  .services .service:nth-child(4) .icon{background:var(--season-autumn);color:var(--color-primary-strong)}
+  .service h3{margin:0 0 10px;font-size:1.15rem;font-weight:600}
+  .price-list{list-style:none;margin:0 0 20px;padding:0;flex:1}
+  .price-list li{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:9px 0;border-bottom:1px solid var(--color-muted);font-size:.95rem}
+  .price-list li:last-child{border-bottom:0}
+  .price-list b{white-space:nowrap;font-weight:600;color:var(--color-primary-deep)}
+
+  /* Портфолио */
+  .portfolio{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));grid-auto-rows:200px;gap:14px}
+  .work{position:relative;border-radius:var(--radius);overflow:hidden;display:flex;align-items:flex-end;padding:16px}
+  .work span{position:relative;background:var(--color-paper);color:var(--color-foreground);font-weight:600;font-size:.9rem;padding:6px 12px;border-radius:999px}
+  .work.big{grid-column:span 2;grid-row:span 2}
+  .w1{background:linear-gradient(135deg,#521E1B 0%,#A8483B 55%,#E9B98A 100%)}
+  .w2{background:linear-gradient(160deg,#C9DCE7,#F1F5F8)}
+  .w3{background:linear-gradient(200deg,#7FA35A,#EAF3DE)}
+  .w4{background:radial-gradient(circle at 30% 30%,#FCEFD3,#D9A35B)}
+  .w5{background:linear-gradient(120deg,#3A2320,#8E5A4A)}
+
+  /* Почему мы */
+  .why{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
+  .why-item{padding:24px}
+  .why-item h3{margin:0 0 6px;font-size:1.08rem;font-weight:600}
+  .why-item p{margin:0;color:var(--color-muted-foreground);font-size:.96rem}
+
+  /* Шаги визита */
+  .steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;counter-reset:step;list-style:none;margin:0;padding:0}
+  .step{position:relative;padding:26px 22px 22px}
+  .step::before{counter-increment:step;content:counter(step);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--color-primary-deep);color:#fff;font-family:var(--font-head);font-weight:700;margin-bottom:14px}
+  .step h3{margin:0 0 6px;font-size:1.06rem;font-weight:600}
+  .step p{margin:0;color:var(--color-muted-foreground);font-size:.95rem}
+
+  /* Форма записи */
+  .booking{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:48px;align-items:start}
+  .booking-info h2{font-size:clamp(1.75rem,3.6vw,2.5rem);margin:0 0 12px;line-height:1.15;font-weight:700}
+  .booking-info p{color:var(--color-muted-foreground)}
+  .booking-info .call{color:var(--color-foreground)}
+  form.card{padding:30px}
+  .progress{display:flex;gap:6px;margin:0 0 22px}
+  .progress span{flex:1;height:4px;border-radius:2px;background:var(--step-1)}
+  .progress span:nth-child(2){background:var(--step-2)}
+  .progress span:nth-child(3){background:var(--step-3)}
+  .form-title{margin:0 0 18px;font-size:1.15rem;font-weight:600}
+  .field{margin-bottom:16px;min-width:0}
+  .row2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+  label{display:block;font-weight:600;margin-bottom:6px;font-size:.95rem}
+  .opt{font-weight:400;color:var(--color-muted-foreground)}
+  input,select{width:100%;min-width:0;max-width:100%;min-height:48px;padding:11px 14px;border:1.5px solid #A08A7E;border-radius:14px;font:inherit;font-size:1rem;color:var(--color-foreground);background:#fff;transition:border-color .2s,box-shadow .2s}
+  select{cursor:pointer}
+  input:focus,select:focus{border-color:var(--color-primary-strong);outline:none;box-shadow:0 0 0 3px rgba(180,83,9,.28)}
+  .error{color:var(--color-destructive);font-size:.88rem;margin-top:4px;min-height:1.2em}
+  input[aria-invalid="true"]{border-color:var(--color-destructive)}
+  form .btn{width:100%}
+  .hint{font-size:.85rem;color:var(--color-muted-foreground);margin:10px 0 0}
+  .success{display:none;margin-top:16px;padding:16px;border-radius:16px;background:var(--season-spring);color:#2F4A0E;font-weight:600;text-align:center;border:1px solid #C5DCA6}
+  .success.show{display:block}
+
+  /* Контакты */
+  .contacts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;align-items:stretch}
+  .contact-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+  .contact-list li{display:flex;gap:14px;align-items:flex-start;padding:18px;min-width:0}
+  .contact-list .icon{margin:0;width:44px;height:44px}
+  .contact-list .icon svg{width:22px;height:22px}
+  .contact-list small{display:block;color:var(--color-muted-foreground);font-size:.85rem}
+  .contact-list a,.contact-list .val{font-weight:600;font-size:1.05rem;text-decoration:none;color:var(--color-foreground)}
+  .contact-list a:hover{color:var(--color-accent)}
+  .map-card{border-radius:var(--radius);padding:32px;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;min-height:300px;position:relative;overflow:hidden;
+    background:
+      radial-gradient(circle at 50% 30%,rgba(252,239,211,.16) 0 18%,transparent 18.5%),
+      repeating-conic-gradient(from -15deg at 50% 30%,rgba(255,255,255,.07) 0 15deg,transparent 15deg 30deg),
+      linear-gradient(150deg,#521E1B,#6E2A26 55%,#8E3A2E)}
+  .map-card .pin{position:absolute;top:22%;left:50%;margin-left:-30px;width:60px;height:60px;color:#fff}
+  .map-card h3{margin:0 0 6px;font-size:1.3rem;font-weight:600}
+  .map-card p{margin:0 0 18px}
+  .map-card .btn{align-self:flex-start}
+
+  /* Подвал */
+  footer{background:#3A2320;color:#F3E7DA;padding:40px 0 26px}
+  footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px}
+  footer a{color:#fff}
+  .demo{width:100%;text-align:center;font-size:.75rem;color:#E9CFB4;margin:18px 0 0}
+
+  .mobile-bar{display:none}
+
+  @media (prefers-reduced-motion:reduce){
+    html{scroll-behavior:auto}
+    *{transition:none!important}
+  }
+  @media (max-width:1024px){
+    .services,.steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .why,.pains{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .portfolio{grid-template-columns:repeat(2,minmax(0,1fr))}
+    nav.menu{display:none}
+  }
+  @media (max-width:768px){
+    body{font-size:16px;padding-bottom:76px}
+    section{padding:60px 0}
+    .hero{padding:48px 0 60px}
+    .hero .wrap,.booking,.contacts{grid-template-columns:minmax(0,1fr);gap:32px}
+    .funnel ol{grid-template-columns:minmax(0,1fr)}
+    .funnel a{padding:14px 4px;border-top:0;border-left:3px solid transparent;padding-left:14px}
+    .funnel li:nth-child(1) a{border-left-color:var(--step-1)}
+    .funnel li:nth-child(2) a{border-left-color:var(--step-2)}
+    .funnel li:nth-child(3) a{border-left-color:var(--step-3)}
+    .funnel li + li{border-top:1px solid var(--color-line)}
+    .pains,.why{grid-template-columns:minmax(0,1fr)}
+    .top-phone{display:none}
+    form.card{padding:22px}
+    .mobile-bar{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;position:fixed;left:0;right:0;bottom:0;z-index:60;padding:10px 12px;background:rgba(255,252,247,.97);border-top:1px solid var(--color-line)}
+    .mobile-bar .btn{padding:10px 8px;min-width:0;gap:8px;white-space:nowrap}
+  }
+  @media (max-width:520px){
+    .services,.steps,.row2{grid-template-columns:minmax(0,1fr)}
+    .portfolio{grid-auto-rows:150px}
+    .hero-actions .btn{flex:1 1 100%}
+    .tile{min-height:96px;padding:14px}
+    .hero .lead{font-size:1.05rem}
+  }
+  @media (max-width:360px){
+    .mobile-bar .btn{font-size:.9rem}
+    .mobile-bar .btn svg{width:18px;height:18px}
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Набор SVG-иконок (в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.7 2z"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 18h2"/></g></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></g></symbol>
+  <symbol id="i-palette" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a10 10 0 0 0 0 20c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 22 10.8C22 5.9 17.5 2 12 2z"/><circle cx="7.5" cy="10.5" r="1.2"/><circle cx="11" cy="6.5" r="1.2"/><circle cx="16" cy="7.5" r="1.2"/></g></symbol>
+  <symbol id="i-nail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22V10a4 4 0 0 1 8 0v12"/><path d="M9.5 10.5a2.5 2.5 0 0 1 5 0V14h-5z"/><path d="M5 22h14"/></g></symbol>
+  <symbol id="i-sparkle" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/></g></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M7 3.3l1.2 2.2M15.8 18.5 17 20.7M3.3 7l2.2 1.2M18.5 15.8l2.2 1.2M3.3 17l2.2-1.2M18.5 8.2 20.7 7M7 20.7l1.2-2.2M15.8 5.5 17 3.3"/></g></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></g></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l1 1.1L12 21l7.8-7.5 1-1.1a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></g></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></g></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8 12 3 3 5-6"/></g></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 7V5a2 2 0 0 0-2-2H5a2 2 0 0 0 0 4h15v14H5a2 2 0 0 1-2-2V5"/><path d="M16 14h.01"/></g></symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top">
+      <span class="logo-mark" aria-hidden="true"><svg width="20" height="20"><use href="#i-sun"/></svg></span>
+      <span class="logo-text">12 месяцев</span>
+    </a>
+    <nav class="menu" aria-label="Основное меню">
+      <a href="#services">Услуги</a>
+      <a href="#portfolio">Работы</a>
+      <a href="#why">Почему мы</a>
+      <a href="#booking">Запись</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:+74752428300">+7(4752)428300</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"><span class="grid"></span><span class="b1"></span><span class="b2"></span></div>
+    <div class="wrap">
+      <div>
+        <span class="eyebrow" data-hero>салон красоты «12 месяцев» · Тамбов</span>
+        <h1 id="hero-title" data-hero>Красота в любой месяц года — <span class="hl">запись онлайн за минуту, без звонка</span></h1>
+        <p class="lead" data-hero>Не дозвонились на городской номер или вспомнили о записи поздно вечером? Оставьте заявку здесь — администратор «12 месяцев» перезвонит, подберёт мастера и удобный день.</p>
+        <div class="hero-actions">
+          <a class="btn btn-primary" href="tel:+74752428300" data-hero><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+          <a class="btn btn-accent" href="#booking" data-hero><svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+        </div>
+        <ul class="hero-points" data-hero>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Заявка — в любое время суток</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Без ожидания на линии</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Стоимость — до начала процедуры</li>
+        </ul>
+      </div>
+      <div class="hero-panel" data-hero role="group" aria-label="Направления салона">
+        <p class="hero-panel-title"><span>Направления (уточняются)</span><b>12 месяцев</b></p>
+        <div class="tiles">
+          <div class="tile dark"><svg aria-hidden="true"><use href="#i-scissors"/></svg><strong>Стрижки и укладки</strong></div>
+          <div class="tile"><svg aria-hidden="true"><use href="#i-palette"/></svg><strong>Окрашивание</strong></div>
+          <div class="tile warm"><svg aria-hidden="true"><use href="#i-nail"/></svg><strong>Маникюр и педикюр</strong></div>
+          <div class="tile"><svg aria-hidden="true"><use href="#i-sparkle"/></svg><strong>Косметология</strong></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Воронка: путь посетителя в три шага -->
+  <nav class="funnel" aria-label="Три шага до записи">
+    <div class="wrap">
+      <ol data-stagger>
+        <li><a href="#pains"><span class="num n1" aria-hidden="true">1</span><span><small>Шаг 1</small><strong>Что хочется изменить</strong></span></a></li>
+        <li><a href="#services"><span class="num n2" aria-hidden="true">2</span><span><small>Шаг 2</small><strong>Направления и работы</strong></span></a></li>
+        <li><a href="#booking"><span class="num n3" aria-hidden="true">3</span><span><small>Шаг 3</small><strong>Запись к мастеру</strong></span></a></li>
+      </ol>
+    </div>
+  </nav>
+
+  <!-- Шаг 1: знакомые ситуации -->
+  <section id="pains" aria-labelledby="pains-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="kicker k1"><span class="num n1" aria-hidden="true">1</span>Знакомо?</div>
+        <h2 id="pains-title">Хочется записаться, а звонить неудобно</h2>
+        <p>Мы сделали так, чтобы записаться в «12 месяцев» можно было в пару касаний.</p>
+      </div>
+      <div class="pains" data-stagger>
+        <div class="pain">
+          <h3>Вспомнили о записи поздно вечером</h3>
+          <p>Оставьте заявку прямо сейчас — утром администратор перезвонит и предложит время.</p>
+        </div>
+        <div class="pain">
+          <h3>Линия занята или нет времени говорить</h3>
+          <p>Имя, телефон и услуга — всё. Остальное уточним сами, когда вам будет удобно.</p>
+        </div>
+        <div class="pain">
+          <h3>Неясно, сколько это будет стоить</h3>
+          <p>Стоимость зависит от процедуры — администратор назовёт её до начала работы.</p>
+        </div>
+      </div>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-ghost btn-sm" href="#services">Посмотреть направления</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 2: услуги.
+       ПЕРЕЧЕНЬ НАПРАВЛЕНИЙ — ЧЕРНОВИК: в разборе услуги и цены салона не указаны, владелец сверяет и дополняет. -->
+  <section id="services" class="tint" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <div class="kicker k2"><span class="num n2" aria-hidden="true">2</span>Решение</div>
+        <h2 id="services-title">Направления салона</h2>
+        <p>Перечень процедур и цены уточняйте у администратора — он подскажет, к какому мастеру и на какое время лучше записаться.</p>
+      </div>
+      <div class="services" data-stagger>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-scissors"/></svg></div>
+          <h3>Стрижки и укладки</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Стрижка <b>цены уточняйте</b></li>
+            <li>Укладка <b>цены уточняйте</b></li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Стрижки и укладки">Записаться</a>
+        </article>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-palette"/></svg></div>
+          <h3>Окрашивание</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Окрашивание <b>цены уточняйте</b></li>
+            <li>Тонирование <b>цены уточняйте</b></li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Окрашивание">Записаться</a>
+        </article>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-nail"/></svg></div>
+          <h3>Маникюр и педикюр</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: перечень и цены указывает владелец -->
+            <li>Маникюр <b>цены уточняйте</b></li>
+            <li>Педикюр <b>цены уточняйте</b></li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Маникюр и педикюр">Записаться</a>
+        </article>
+        <article class="service card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-sparkle"/></svg></div>
+          <h3>Косметология</h3>
+          <ul class="price-list">
+            <!-- ЗАМЕНИТЬ: цены и перечень процедур указывает владелец -->
+            <li>Уход за лицом <b>цены уточняйте</b></li>
+            <li>Брови и ресницы <b>цены уточняйте</b></li>
+          </ul>
+          <a class="btn btn-ghost btn-sm" href="#booking" data-service="Косметология">Записаться</a>
+        </article>
+      </div>
+      <p class="note" data-reveal>Актуальный перечень услуг и цены — у администратора по телефону <a href="tel:+74752428300">+7(4752)428300</a>.</p>
+    </div>
+  </section>
+
+  <!-- Портфолио. В макете — градиентные заглушки; владелец заменяет их на фото работ мастеров. -->
+  <section id="portfolio" aria-labelledby="portfolio-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="portfolio-title">Портфолио работ</h2>
+        <p>Здесь появятся фотографии работ мастеров «12 месяцев» — чтобы заранее увидеть стиль салона.</p>
+      </div>
+      <div class="portfolio" data-stagger>
+        <div class="work big w1" role="img" aria-label="Место для фото: окрашивание"><span>Окрашивание</span></div>
+        <div class="work w2" role="img" aria-label="Место для фото: стрижка"><span>Стрижка</span></div>
+        <div class="work w3" role="img" aria-label="Место для фото: укладка"><span>Укладка</span></div>
+        <div class="work w4" role="img" aria-label="Место для фото: маникюр"><span>Маникюр</span></div>
+        <div class="work w5" role="img" aria-label="Место для фото: брови и ресницы"><span>Брови и ресницы</span></div>
+      </div>
+      <p class="note" data-reveal>В демо-макете вместо фото — цветные заглушки.</p>
+    </div>
+  </section>
+
+  <!-- Почему мы. Формулировки общие — владелец проверяет, что каждое утверждение про его салон верно. -->
+  <section id="why" class="tint" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="why-title">Почему удобно с «12 месяцев»</h2>
+        <p>Красота — не к празднику, а круглый год: записаться к нам можно так, как удобно вам.</p>
+      </div>
+      <div class="why" data-stagger>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-calendar"/></svg></div>
+          <h3>Заявка в любое время</h3>
+          <p>Форма на сайте работает днём и ночью — не нужно ловить момент, чтобы дозвониться.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-phone"/></svg></div>
+          <h3>Или по телефону</h3>
+          <p>Если удобнее голосом — звоните на городской номер +7(4752)428300.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-user"/></svg></div>
+          <h3>Подберём мастера</h3>
+          <p>Расскажите, что хотите, — администратор предложит мастера и свободное окно.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-wallet"/></svg></div>
+          <h3>Цена — заранее</h3>
+          <p>Стоимость процедуры называем до начала работы.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-heart"/></svg></div>
+          <h3>Ваши пожелания</h3>
+          <p>Укажите в заявке удобный день и время — постараемся под них подстроиться.</p>
+        </div>
+        <div class="why-item card" data-lift>
+          <div class="icon" aria-hidden="true"><svg><use href="#i-pin"/></svg></div>
+          <h3>Легко найти</h3>
+          <p>Мы в Тамбове — точка салона отмечена на Яндекс Картах.</p>
+        </div>
+      </div>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-accent btn-sm" href="#booking">Выбрать время</a>
+        <p>или позвоните: <a href="tel:+74752428300"><strong>+7(4752)428300</strong></a></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Как проходит визит -->
+  <section aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="steps-title">Как проходит визит</h2>
+        <p>Четыре простых шага от заявки до результата.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li class="step card"><h3>Заявка</h3><p>Позвоните или оставьте заявку на сайте — это займёт минуту.</p></li>
+        <li class="step card"><h3>Подбор времени</h3><p>Администратор перезвонит, подберёт мастера и удобное время.</p></li>
+        <li class="step card"><h3>Консультация</h3><p>Мастер уточнит пожелания, предложит варианты и назовёт стоимость.</p></li>
+        <li class="step card"><h3>Результат</h3><p>Вы уходите с новым образом и рекомендациями по домашнему уходу.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Шаг 3: форма записи -->
+  <section id="booking" class="tint" aria-labelledby="booking-title">
+    <div class="wrap booking">
+      <div class="booking-info" data-reveal>
+        <div class="kicker k3"><span class="num n3" aria-hidden="true">3</span>Запись</div>
+        <h2 id="booking-title">Запишитесь к мастеру</h2>
+        <p>Оставьте имя и телефон — администратор перезвонит, подтвердит время и ответит на вопросы.</p>
+        <p class="call">Удобнее голосом? Звоните: <a href="tel:+74752428300"><strong>+7(4752)428300</strong></a></p>
+      </div>
+      <form class="card" id="bookingForm" novalidate data-reveal>
+        <div class="progress" aria-hidden="true"><span></span><span></span><span></span></div>
+        <p class="form-title">Заявка на запись</p>
+        <div class="field">
+          <label for="f-name">Ваше имя</label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+          <div class="error" id="e-name" aria-live="polite"></div>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон</label>
+          <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 900 123-45-67" required aria-describedby="e-phone">
+          <div class="error" id="e-phone" aria-live="polite"></div>
+        </div>
+        <div class="field">
+          <label for="f-service">Услуга</label>
+          <select id="f-service" name="service">
+            <option value="">Пока не знаю — нужна консультация</option>
+            <option>Стрижки и укладки</option>
+            <option>Окрашивание</option>
+            <option>Маникюр и педикюр</option>
+            <option>Косметология</option>
+          </select>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="f-date">Удобная дата <span class="opt">(необязательно)</span></label>
+            <input id="f-date" name="date" type="date">
+          </div>
+          <div class="field">
+            <label for="f-time">Удобное время</label>
+            <select id="f-time" name="time">
+              <option value="">Любое</option>
+              <option>Утро (до 12:00)</option>
+              <option>День (12:00–17:00)</option>
+              <option>Вечер (после 17:00)</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-accent" type="submit">Отправить заявку</button>
+        <p class="hint">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</p>
+        <div class="success" id="formSuccess" role="status" aria-live="polite"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <h2 id="contacts-title">Контакты</h2>
+        <p>Ждём вас в салоне «12 месяцев» в любое время года.</p>
+      </div>
+      <div class="contacts">
+        <ul class="contact-list" data-stagger>
+          <li class="card">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-pin"/></svg></div>
+            <div><small>Адрес</small><span class="val">Тамбов — точка на Яндекс Картах</span></div>
+          </li>
+          <li class="card">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-phone"/></svg></div>
+            <div><small>Телефон</small><a href="tel:+74752428300">+7(4752)428300</a></div>
+          </li>
+          <li class="card" id="hoursRow">
+            <div class="icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></div>
+            <div><small>Часы работы</small><span class="val" id="hoursVal"></span></div>
+          </li>
+        </ul>
+        <div class="map-card" data-reveal>
+          <svg class="pin" aria-hidden="true"><use href="#i-pin"/></svg>
+          <h3>Как нас найти</h3>
+          <p>Тамбов. Точный маршрут — по кнопке ниже.</p>
+          <a class="btn btn-accent" href="https://yandex.ru/maps/?pt=41.396973,52.704710&amp;z=17&amp;l=map" target="_blank" rel="noopener">Открыть на карте<span class="sr-only" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)"> (в новой вкладке)</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong>12 месяцев</strong><br>салон красоты · Тамбов · круглый год</div>
+    <div><a href="tel:+74752428300">+7(4752)428300</a><br>Тамбов</div>
+    <div>© 2026 12 месяцев</div>
+    <p class="demo">Демо-макет</p>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-primary" href="tel:+74752428300"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-accent" href="#booking"><svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+/* Логика страницы — работает и без motion.js */
+(function () {
+  // Если часы работы не заданы — прячем строку
+  var hoursVal = document.getElementById('hoursVal');
+  if (hoursVal && !hoursVal.textContent.trim()) {
+    document.getElementById('hoursRow').style.display = 'none';
+  }
+
+  // Кнопка «Записаться» в карточке услуги подставляет услугу в форму
+  var serviceSelect = document.getElementById('f-service');
+  document.querySelectorAll('[data-service]').forEach(function (a) {
+    a.addEventListener('click', function () { serviceSelect.value = a.getAttribute('data-service'); });
+  });
+
+  // Нельзя выбрать прошедшую дату
+  var dateInput = document.getElementById('f-date');
+  var now = new Date();
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  dateInput.min = now.getFullYear() + '-' + pad(now.getMonth() + 1) + '-' + pad(now.getDate());
+
+  // Форма записи. Данные никуда не отправляются (демо).
+  // Сюда можно подключить отправку: в Telegram-бота, CRM или на почту.
+  var form = document.getElementById('bookingForm');
+  var nameInput = document.getElementById('f-name');
+  var phoneInput = document.getElementById('f-phone');
+  var success = document.getElementById('formSuccess');
+
+  function setError(input, msg) {
+    document.getElementById(input.getAttribute('aria-describedby')).textContent = msg;
+    input.setAttribute('aria-invalid', msg ? 'true' : 'false');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    success.classList.remove('show');
+    success.textContent = '';
+    var ok = true;
+    if (nameInput.value.trim().length < 2) { setError(nameInput, 'Укажите имя'); ok = false; } else { setError(nameInput, ''); }
+    var digits = phoneInput.value.replace(/\D/g, '');
+    if (digits.length < 10 || digits.length > 15) { setError(phoneInput, 'Укажите телефон полностью, например +7 900 123-45-67'); ok = false; } else { setError(phoneInput, ''); }
+    if (!ok) {
+      (nameInput.getAttribute('aria-invalid') === 'true' ? nameInput : phoneInput).focus();
+      return;
+    }
+    form.reset();
+    success.textContent = 'Заявка принята, перезвоним!';
+    success.classList.add('show');
+    if (window.Motion && !reduceMotion()) {
+      try { Motion.animate(success, { opacity: [0, 1], y: [8, 0] }, { duration: 0.3 }); } catch (err) { success.style.opacity = ''; }
+    }
+  });
+
+  function reduceMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+  window.__reduceMotion = reduceMotion;
+})();
+
+/* Анимации на Motion: только transform и opacity, 200–600 мс.
+   Исходная прозрачность ставится здесь, из JS: без motion.js весь текст виден сразу. */
+(function () {
+  var M = window.Motion;
+  if (!M || !M.animate || window.__reduceMotion()) return;
+
+  var ease = [0.22, 1, 0.36, 1];
+  var hidden = [];
+  function hide(el) { el.style.opacity = '0'; hidden.push(el); }
+  function showAll() { hidden.forEach(function (el) { el.style.opacity = ''; el.style.transform = ''; }); }
+
+  try {
+    // 1. Первый экран: элементы появляются по очереди
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll('[data-hero]'));
+    heroItems.forEach(hide);
+    M.animate(heroItems, { opacity: [0, 1], y: [18, 0] }, { duration: 0.5, delay: M.stagger(0.09), ease: ease });
+
+    // 2. Блоки при прокрутке
+    var single = document.querySelectorAll('[data-reveal]');
+    single.forEach(hide);
+    if (M.inView) {
+      M.inView('[data-reveal]', function (el) {
+        M.animate(el, { opacity: [0, 1], y: [24, 0] }, { duration: 0.55, ease: ease });
+      }, { amount: 0.15 });
+    }
+
+    // Группы карточек — со stagger
+    var groups = document.querySelectorAll('[data-stagger]');
+    groups.forEach(function (g) { Array.prototype.forEach.call(g.children, hide); });
+    if (M.inView) {
+      M.inView('[data-stagger]', function (g) {
+        M.animate(g.children, { opacity: [0, 1], y: [24, 0] },
+          { duration: 0.5, delay: M.stagger(0.08), ease: ease });
+      }, { amount: 0.1 });
+    }
+
+    // 3. Наведение и нажатие: кнопки и карточки
+    if (M.hover) {
+      M.hover('.btn, [data-lift]', function (el) {
+        M.animate(el, { y: -3 }, { duration: 0.22, ease: ease });
+        return function () { M.animate(el, { y: 0 }, { duration: 0.22, ease: ease }); };
+      });
+    }
+    if (M.press) {
+      M.press('.btn', function (el) {
+        M.animate(el, { scale: 0.97 }, { duration: 0.2, ease: ease });
+        return function () { M.animate(el, { scale: 1 }, { duration: 0.25, ease: ease }); };
+      });
+    }
+
+    // 4. Лёгкий параллакс фона первого экрана
+    var hero = document.querySelector('.hero');
+    var heroBg = document.querySelector('.hero-bg');
+    if (M.scroll && hero && heroBg) {
+      M.scroll(function (progress) {
+        heroBg.style.transform = 'translate3d(0,' + (progress * 70).toFixed(1) + 'px,0)';
+      }, { target: hero, offset: ['start start', 'end start'] });
+    }
+  } catch (err) {
+    // Если что-то пошло не так — просто показываем всё без анимаций
+    showAll();
+  }
+
+  // Страховка: если блок так и не попал в зону видимости (например, печать или очень высокий экран),
+  // через 4 секунды показываем всё, что осталось скрытым.
+  setTimeout(function () {
+    hidden.forEach(function (el) {
+      if (el.style.opacity === '0' && el.getBoundingClientRect().top < window.innerHeight) {
+        el.style.opacity = '';
+      }
+    });
+  }, 4000);
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

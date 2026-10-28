@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бурьян — грузовая мойка в Тамбове: запись на время, две точки</title>
+<meta name="description" content="Бурьян (Тамбов) — мойка грузовых автомобилей: тягачи, прицепы и автопоезда. Запись на конкретное время, две точки — Советская ул., 206 и Моршанское ш., 23а ст1. 5.0 на 2ГИС.">
+<meta name="theme-color" content="#0A0D11">
+<style>
+  :root{
+    --color-primary:#7DD3FC;
+    --color-primary-dark:#38BDF8;
+    --color-on-primary:#0B1015;
+    --color-secondary:#BAE6FD;
+    --color-accent:#F5A524;
+    --color-accent-dark:#D98A0F;
+    --color-on-accent:#14181D;
+    --color-background:#0E1116;
+    --color-foreground:#E7ECF2;
+    --color-card:#161B21;
+    --color-muted:#1C232B;
+    --color-muted-foreground:#A7B2BF;
+    --color-border:#2B333D;
+    --color-destructive:#F87171;
+    --color-ring:#7DD3FC;
+    --step-1:#EF4444;
+    --step-2:#F5A524;
+    --step-3:#34D399;
+    --radius:4px;
+    --shadow:0 1px 0 rgba(255,255,255,.04) inset,0 14px 34px rgba(0,0,0,.42);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:ui-monospace,SFMono-Regular,Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;text-size-adjust:100%;color-scheme:dark}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+  body{margin:0;overflow-x:clip;font-family:var(--font);font-size:17px;line-height:1.6;color:var(--color-foreground);background:var(--color-background);-webkit-font-smoothing:antialiased}
+  img,svg{display:block;max-width:100%}
+  a{color:var(--color-primary-dark)}
+  a,button,select,label[for],summary{cursor:pointer}
+  :focus-visible{outline:3px solid var(--color-ring);outline-offset:3px;border-radius:6px}
+  .container{width:min(1160px,100% - 40px);margin-inline:auto}
+  .skip{position:absolute;left:-9999px;top:8px;background:var(--color-accent);color:var(--color-on-accent);padding:8px 14px;border-radius:8px;z-index:100;font-weight:600}
+  .skip:focus{left:8px}
+  h1,h2,h3{line-height:1.13;margin:0 0 .5em;letter-spacing:-.025em}
+  h1{font-size:clamp(2.1rem,5.4vw,3.5rem);font-weight:700}
+  h2{font-size:clamp(1.7rem,3.6vw,2.4rem);font-weight:700}
+  h3{font-size:1.12rem;font-weight:600;letter-spacing:-.01em}
+  p{margin:0 0 1em}
+  .eyebrow{display:inline-block;font-family:var(--font-mono);font-size:.76rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--color-primary-dark);margin-bottom:.9em}
+  .lead{font-size:1.1rem;color:var(--color-muted-foreground);max-width:640px}
+  section{padding:88px 0}
+  @media (max-width:640px){section{padding:64px 0}}
+
+  /* Кнопки */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 24px;border-radius:var(--radius);border:2px solid transparent;font:600 1rem/1 var(--font);text-decoration:none;transition:background-color .2s,border-color .2s,color .2s,box-shadow .2s}
+  .btn svg{width:20px;height:20px;flex:none}
+  .btn-accent{background:var(--color-accent);color:var(--color-on-accent)}
+  .btn-accent:hover{background:#FFB94D}
+  .btn-primary{background:var(--color-primary);color:var(--color-on-primary)}
+  .btn-primary:hover{background:var(--color-secondary)}
+  .btn-ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.7)}
+  .btn-ghost:hover{background:rgba(255,255,255,.12);border-color:#fff}
+  .btn-outline{background:transparent;color:var(--color-foreground);border-color:var(--color-foreground)}
+  .btn-outline:hover{background:var(--color-foreground);color:#fff}
+
+  /* Шапка */
+  .header{position:sticky;top:0;z-index:50;background:rgba(10,13,17,.92);backdrop-filter:blur(10px);color:#fff;border-bottom:1px solid #1E252D}
+  .header .container{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
+  .logo{display:flex;align-items:center;gap:10px;color:#fff;text-decoration:none;font-weight:700;font-size:1.1rem;letter-spacing:-.01em}
+  .logo-mark{width:36px;height:36px;border-radius:7px;background:var(--color-accent);display:grid;place-items:center}
+  .logo-mark svg{width:20px;height:20px;color:#14181D}
+  .nav{display:flex;gap:22px}
+  .nav a{color:#A7B2BF;text-decoration:none;font-weight:500;font-size:.95rem}
+  .nav a:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
+  .header-phone{color:#fff;font-weight:600;text-decoration:none;white-space:nowrap}
+  .header-phone:hover{text-decoration:underline}
+  .logo{min-width:0}
+  .logo span:last-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  @media (max-width:900px){.nav{display:none}}
+  @media (max-width:420px){.header-phone{font-size:.9rem}.logo{font-size:1rem}}
+
+  /* Первый экран */
+  .hero{position:relative;overflow:hidden;color:#F2F6FA;background:#0A0D11;padding:96px 0 104px}
+  .hero-bg{position:absolute;inset:-10% 0 -10% 0;z-index:0;will-change:transform;
+    background:
+      radial-gradient(860px 440px at 82% 12%,rgba(125,211,252,.20),transparent 62%),
+      radial-gradient(640px 400px at 6% 94%,rgba(245,165,36,.16),transparent 64%),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' viewBox='0 0 96 96'%3E%3Cg fill='none' stroke='%237DD3FC' stroke-opacity='.16' stroke-width='1.5'%3E%3Cpath d='M24 14c-5 7-8 11-8 15a8 8 0 0 0 16 0c0-4-3-8-8-15z'/%3E%3Cpath d='M72 58c-4 5-6 8-6 11a6 6 0 0 0 12 0c0-3-2-6-6-11z'/%3E%3C/g%3E%3C/svg%3E"),
+      repeating-linear-gradient(135deg,rgba(245,165,36,.05) 0 10px,transparent 10px 44px),
+      linear-gradient(165deg,#0F1B26 0%,#0A0D11 72%)}
+  .hero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;z-index:1;background:repeating-linear-gradient(135deg,var(--color-accent) 0 14px,#14181D 14px 28px);opacity:.85}
+  .hero-grid{position:absolute;inset:0;z-index:0;opacity:.09;background-image:linear-gradient(rgba(255,255,255,.6) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.6) 1px,transparent 1px);background-size:64px 64px;mask-image:linear-gradient(180deg,#000 0%,transparent 85%);-webkit-mask-image:linear-gradient(180deg,#000 0%,transparent 85%)}
+  .hero .container{position:relative;z-index:1;display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:center}
+  .hero .eyebrow{color:var(--color-accent)}
+  .hero h1 span{color:var(--color-accent)}
+  .hero p.lead{color:#C4CFDB}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin:28px 0 22px}
+  .hero-points{display:flex;flex-wrap:wrap;gap:10px 22px;padding:0;margin:0;list-style:none;color:#C4CFDB;font-size:.95rem}
+  .hero-points li{display:flex;align-items:center;gap:8px}
+  .hero-points svg{width:18px;height:18px;color:var(--color-accent)}
+  .hero .container>*{min-width:0}
+  .hero-card{background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.13);border-left:4px solid var(--color-primary);border-radius:var(--radius);padding:26px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
+  .hero-card h2{font-size:1.05rem;color:#fff;margin-bottom:14px;letter-spacing:-.01em}
+  .status-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-top:1px solid rgba(255,255,255,.11)}
+  .status-row:first-of-type{border-top:0}
+  .dot{width:12px;height:12px;border-radius:50%;flex:none}
+  .status-row b{display:block;font-weight:600;color:#fff}
+  .status-row small{color:#9AA6B4}
+  .plate{margin-left:auto;font:600 .8rem/1 var(--font-mono);background:#F2F6FA;color:#111820;border:2px solid #111820;border-radius:4px;padding:5px 7px;white-space:nowrap;letter-spacing:.04em}
+  .hero-card .note{font-size:.8rem;color:#93A0AE;margin:14px 0 0}
+  @media (max-width:900px){.hero .container{grid-template-columns:1fr}.hero{padding:64px 0 72px}}
+
+  /* Шаги воронки */
+  .funnel-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:-52px;position:relative;z-index:2}
+  .fstep{background:var(--color-card);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px 22px;display:flex;gap:14px;align-items:flex-start;border-top:4px solid var(--c)}
+  .fstep .num{width:34px;height:34px;border-radius:50%;background:var(--c);color:#fff;font-weight:700;display:grid;place-items:center;flex:none}
+  .fstep .num{color:#0B1015}
+  .fstep b{display:block}
+  .fstep span{font-size:.92rem;color:var(--color-muted-foreground)}
+  .fstep a{font-weight:600;font-size:.92rem}
+  @media (max-width:800px){.funnel-steps{grid-template-columns:1fr;margin-top:-36px}}
+
+  /* Проблемы */
+  .problems{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:32px}
+  .problem{background:var(--color-card);border:1px solid rgba(239,68,68,.32);border-radius:var(--radius);padding:20px}
+  .problem svg{width:28px;height:28px;color:var(--step-1);margin-bottom:10px}
+  .problem p{margin:0;color:var(--color-muted-foreground);font-size:.95rem}
+  @media (max-width:900px){.problems{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:520px){.problems{grid-template-columns:1fr}}
+
+  /* Услуги */
+  .services{background:var(--color-card)}
+  .services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  .service{display:flex;flex-direction:column;background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius);padding:24px;transition:box-shadow .2s,border-color .2s}
+  .service:hover{box-shadow:var(--shadow);border-color:var(--color-secondary)}
+  .icon{width:48px;height:48px;border-radius:7px;background:rgba(245,165,36,.12);border:1px solid rgba(245,165,36,.28);color:var(--color-accent);display:grid;place-items:center;margin-bottom:16px}
+  .icon svg{width:24px;height:24px}
+  .service p{color:var(--color-muted-foreground);font-size:.95rem;flex:1}
+  .service ul{margin:0 0 16px;padding-left:18px;color:var(--color-muted-foreground);font-size:.92rem}
+  .price{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px dashed var(--color-border);padding-top:14px}
+  .price strong{font-size:1.25rem}
+  .price a{font-weight:600;font-size:.95rem}
+  .prices-note{margin-top:20px;font-size:.9rem;color:var(--color-muted-foreground)}
+  @media (max-width:960px){.services-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:600px){.services-grid{grid-template-columns:1fr}}
+
+  /* Почему мы */
+  .why-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:36px}
+  .why{background:var(--color-card);border-radius:var(--radius);padding:24px;border:1px solid var(--color-border)}
+  .why p{margin:0;color:var(--color-muted-foreground);font-size:.95rem}
+  @media (max-width:900px){.why-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.why-grid{grid-template-columns:1fr}}
+
+  /* Как проходит работа */
+  .process{background:#090C10;color:#fff;border-top:1px solid #1E252D;border-bottom:1px solid #1E252D}
+  .process .eyebrow{color:var(--color-accent)}
+  .process .lead{color:#B6C1CD}
+  .steps{list-style:none;padding:0;margin:40px 0 0;display:grid;grid-template-columns:repeat(5,1fr);gap:16px;counter-reset:s}
+  .steps li{position:relative;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.1);border-radius:var(--radius);padding:22px 18px;counter-increment:s}
+  .steps li::before{content:counter(s);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;margin-bottom:14px;font:700 .95rem/1 var(--font-mono);background:var(--c,#7DD3FC);color:#14181D}
+  .steps li:nth-child(1){--c:#F87171}
+  .steps li:nth-child(2),.steps li:nth-child(3){--c:#F5A524}
+  .steps li:nth-child(4),.steps li:nth-child(5){--c:#34D399}
+  .steps p{margin:0;color:#B6C1CD;font-size:.93rem}
+  .process-cta{margin-top:32px;display:flex;flex-wrap:wrap;gap:14px;align-items:center}
+  .process-cta span{color:#B6C1CD}
+  @media (max-width:1000px){.steps{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:560px){.steps{grid-template-columns:1fr}}
+
+  /* Форма */
+  .booking .container{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;align-items:start}
+  .form{background:var(--color-card);border-radius:10px;box-shadow:var(--shadow);padding:30px;border-top:4px solid var(--color-accent)}
+  .field{margin-bottom:16px}
+  .field label{display:block;font-weight:600;font-size:.95rem;margin-bottom:6px}
+  .field .hint{font-weight:400;color:var(--color-muted-foreground)}
+  .field input,.field select,.field textarea{width:100%;min-height:50px;padding:12px 14px;font:inherit;color:var(--color-foreground);background:#0E1319;border:1.5px solid #3A4450;border-radius:6px;transition:border-color .2s,box-shadow .2s}
+  .field textarea{min-height:90px;resize:vertical}
+  .field ::placeholder{color:#7F8B98;opacity:1}
+  .field select option{background:#161B21;color:var(--color-foreground)}
+  .field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--color-primary);box-shadow:0 0 0 3px rgba(125,211,252,.28)}
+  .field [aria-invalid="true"]{border-color:var(--color-destructive)}
+  .error{display:block;min-height:1.2em;color:var(--color-destructive);font-size:.85rem;margin-top:4px}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media (max-width:560px){.row{grid-template-columns:1fr}}
+  .form .btn{width:100%}
+  .consent{font-size:.82rem;color:var(--color-muted-foreground);margin:12px 0 0}
+  .success{display:none;text-align:center;padding:24px 8px}
+  .success.show{display:block}
+  .success svg{width:56px;height:56px;color:var(--color-primary);margin:0 auto 12px}
+  .booking-info ul{list-style:none;padding:0;margin:24px 0 0}
+  .booking-info li{display:flex;gap:12px;margin-bottom:14px}
+  .booking-info li svg{width:22px;height:22px;color:var(--color-primary);flex:none;margin-top:2px}
+  @media (max-width:900px){.booking .container{grid-template-columns:1fr}}
+
+  /* Контакты */
+  .contacts{background:var(--color-card)}
+  .contacts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}
+  .contact{background:var(--color-background);border:1px solid var(--color-border);border-radius:var(--radius);padding:24px}
+  .contact h3{display:flex;align-items:center;gap:10px}
+  .contact h3 svg{width:22px;height:22px;color:var(--color-primary)}
+  .contact p{margin:0 0 12px;color:var(--color-muted-foreground)}
+  .contact a.big{font-size:1.2rem;font-weight:700;color:var(--color-foreground);text-decoration:none}
+  .contact a.big:hover{text-decoration:underline}
+  @media (max-width:860px){.contacts-grid{grid-template-columns:1fr}}
+
+  /* Подвал */
+  .footer{background:#080A0D;color:#A7B2BF;padding:36px 0 24px;font-size:.92rem;border-top:1px solid #1C232B}
+  .footer .container{display:flex;flex-wrap:wrap;justify-content:space-between;gap:16px}
+  .footer a{color:#fff}
+  .demo{width:100%;text-align:center;font-size:.75rem;color:#8B96A3;opacity:.95;margin-top:12px;font-family:var(--font-mono);letter-spacing:.06em}
+
+  /* Мобильная кнопка звонка */
+  .mobile-call{display:none}
+  @media (max-width:640px){
+    .mobile-call{display:flex;position:fixed;left:12px;right:12px;bottom:12px;z-index:60;gap:10px}
+    .mobile-call .btn{flex:1 1 0;min-width:0;padding:0 12px;gap:8px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
+    body{padding-bottom:76px}
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- SVG-иконки (по мотивам Lucide, MIT) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.1 9.9a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.9.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-wrench" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></symbol>
+    <symbol id="i-scan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2"/><path d="M7 12h3l2-4 2 8 2-4h1"/></symbol>
+    <symbol id="i-engine" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h6M10 7V4M8 4h4"/><path d="M4 11v6M2 14h2"/><path d="M4 10h3l2-3h5l2 3h2v2h2v-2h2v8h-2v-2h-2v2h-2l-2 2H8l-2-2H4z"/></symbol>
+    <symbol id="i-disc" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3"/></symbol>
+    <symbol id="i-zap" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-3.4A2 2 0 0 0 13.7 6H8.3a2 2 0 0 0-1.6.8L4 10l-1.5.6C1.7 10.9 1 11.6 1 12.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></symbol>
+    <symbol id="i-oil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5S5 13 5 15a7 7 0 0 0 7 7z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="M22 4 12 14.01l-3-3"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+    <symbol id="i-message" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5M12 7v5l4 2"/></symbol>
+    <symbol id="i-paint" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 11h-1a2 2 0 0 1-2-2V3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2z"/><path d="M12 13v4a2 2 0 0 1-4 0v-4"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+    <symbol id="i-box" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></symbol>
+    <symbol id="i-spray" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></symbol>
+    <symbol id="i-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="5" rx="2"/><path d="M2 10h20"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+  </defs>
+</svg>
+
+<header class="header">
+  <div class="container">
+    <a class="logo" href="#top" aria-label="Бурьян — на главную">
+      <span class="logo-mark"><svg aria-hidden="true"><use href="#i-truck"/></svg></span>
+      <span>Бурьян</span>
+    </a>
+    <nav class="nav" aria-label="Основное меню">
+      <a href="#services">Услуги</a>
+      <a href="#why">Почему мы</a>
+      <a href="#process">Как записаться</a>
+      <a href="#booking">Запись</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="header-phone" href="tel:"></a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="hero-grid" aria-hidden="true"></div>
+    <div class="container">
+      <div>
+        <span class="eyebrow" data-hero>Грузовая мойка · Тамбов · две точки</span>
+        <h1 id="hero-title" data-hero>Бурьян — <span>мойка грузовиков</span> по записи, без очереди</h1>
+        <p class="lead" data-hero>Моем тягачи, фуры и прицепы. Записываетесь на конкретное время — заезжаете сразу на пост, а не стоите в живой очереди. Две точки в Тамбове — выбирайте ту, что ближе к рейсу.</p>
+        <div class="hero-actions">
+          <a class="btn btn-accent" href="tel:" data-hero data-press>
+            <svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить
+          </a>
+          <a class="btn btn-ghost" href="#booking" data-hero data-press>
+            <svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться
+          </a>
+        </div>
+        <ul class="hero-points" data-hero>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Запись на конкретное время</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>Советская, 206 и Моршанское ш., 23а</li>
+          <li><svg aria-hidden="true"><use href="#i-check"/></svg>5.0 на 2ГИС, 5 оценок</li>
+        </ul>
+      </div>
+      <aside class="hero-card" data-hero aria-labelledby="status-title">
+        <h2 id="status-title">Так выглядит ваша запись</h2>
+        <div class="status-row">
+          <span class="dot" style="background:#F87171" aria-hidden="true"></span>
+          <div><b>Заявка</b><small>Время, точка и тип машины</small></div>
+          <span class="plate" aria-label="Пример госномера">А 000 АА 00</span>
+        </div>
+        <div class="status-row">
+          <span class="dot" style="background:#F5A524" aria-hidden="true"></span>
+          <div><b>Подтверждено</b><small>Окно на посту закреплено за вами</small></div>
+        </div>
+        <div class="status-row">
+          <span class="dot" style="background:#34D399" aria-hidden="true"></span>
+          <div><b>Заезд на пост</b><small>Без ожидания в очереди</small></div>
+        </div>
+        <p class="note">Пример. Данные условные.</p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Три шага воронки -->
+  <div class="container">
+    <div class="funnel-steps" data-stagger>
+      <div class="fstep" style="--c:var(--step-1)" data-item>
+        <span class="num" aria-hidden="true">1</span>
+        <div><b>Стоите в очереди?</b><span>Машина простаивает, рейс ждёт.</span><br><a href="#problems">Как это решаем</a></div>
+      </div>
+      <div class="fstep" style="--c:var(--step-2)" data-item>
+        <span class="num" aria-hidden="true">2</span>
+        <div><b>Выбираете время</b><span>Свободное окно на удобной точке.</span><br><a href="#services">Смотреть услуги</a></div>
+      </div>
+      <div class="fstep" style="--c:var(--step-3)" data-item>
+        <span class="num" aria-hidden="true">3</span>
+        <div><b>Заезжаете на пост</b><span>По записи, без ожидания.</span><br><a href="#booking">Записаться</a></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Шаг 1: проблема -->
+  <section id="problems" aria-labelledby="problems-title">
+    <div class="container" data-reveal>
+      <span class="eyebrow" style="color:#F87171">Шаг 1 · Знакомо?</span>
+      <h2 id="problems-title">Грузовик стоит — рейс и деньги уходят</h2>
+      <p class="lead">Мойка по живой очереди съедает полдня, а автопарку ещё нужно закрыть документы. Эти четыре ситуации решает запись на время.</p>
+      <div class="problems" data-stagger>
+        <div class="problem" data-item><svg aria-hidden="true"><use href="#i-alert"/></svg><h3>Живая очередь</h3><p>Приехали — и стоите, пока освободится пост. Никто не скажет, когда точно заедете.</p></div>
+        <div class="problem" data-item><svg aria-hidden="true"><use href="#i-clock"/></svg><h3>Простой вместо рейса</h3><p>Час в очереди — час без работы. По записи время заезда известно заранее.</p></div>
+        <div class="problem" data-item><svg aria-hidden="true"><use href="#i-file"/></svg><h3>Автопарку нужен безнал</h3><p>Расчёт по счёту и закрывающие документы, а не наличные из кармана водителя.</p></div>
+        <div class="problem" data-item><svg aria-hidden="true"><use href="#i-calendar"/></svg><h3>Машины ходят по кругу</h3><p>Нужна мойка по графику, а не звонок в день рейса: «есть ли окно?»</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 2: услуги -->
+  <section class="services" id="services" aria-labelledby="services-title">
+    <div class="container">
+      <div data-reveal>
+        <span class="eyebrow" style="color:var(--color-accent)">Шаг 2 · Что моем</span>
+        <h2 id="services-title">Грузовая техника — наш профиль</h2>
+        <p class="lead">Тягачи, прицепы и автопоезда. Стоимость зависит от типа машины, длины прицепа и загрязнения — назовём при записи.</p>
+      </div>
+      <!-- ЦЕНЫ: в разборе их нет — не выдумываем, пишем «цену уточняйте» -->
+      <div class="services-grid" data-stagger>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></div>
+          <h3>Мойка тягача</h3>
+          <p>Грузовой автомобиль целиком: кабина и кузов.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a href="#booking" data-service="Мойка тягача">Записаться</a></div>
+        </article>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-box"/></svg></div>
+          <h3>Мойка прицепа</h3>
+          <p>Прицепы и полуприцепы — в том числе после рейса по грязи.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a href="#booking" data-service="Мойка прицепа">Записаться</a></div>
+        </article>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-spray"/></svg></div>
+          <h3>Автопоезд целиком</h3>
+          <p>Тягач с прицепом за один заезд — не нужно приезжать дважды.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a href="#booking" data-service="Автопоезд целиком">Записаться</a></div>
+        </article>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-users"/></svg></div>
+          <h3>Автопаркам</h3>
+          <p>Мойка по графику: несколько машин, одно согласованное время.</p>
+          <div class="price"><strong>По договорённости</strong><a href="#booking" data-service="Мойка для автопарка">Записаться</a></div>
+        </article>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-card"/></svg></div>
+          <h3>Безнал и документы</h3>
+          <p>Нужен расчёт по счёту для организации — спросите при записи, условия обсудим.</p>
+          <div class="price"><strong>Уточняйте</strong><a href="#booking" data-service="Безнал, документы">Уточнить</a></div>
+        </article>
+        <article class="service" data-item data-card>
+          <div class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></div>
+          <h3>Две точки в городе</h3>
+          <p>Советская ул., 206 и Моршанское ш., 23а ст1 — скажите, куда удобнее.</p>
+          <div class="price"><strong>Выбор при записи</strong><a href="#booking">Выбрать</a></div>
+        </article>
+      </div>
+      <p class="prices-note">Прайс зависит от типа машины и степени загрязнения, поэтому публичных цен нет — стоимость назовём при записи. Информация не является публичной офертой.</p>
+    </div>
+  </section>
+
+  <!-- Почему мы -->
+  <section id="why" aria-labelledby="why-title">
+    <div class="container">
+      <div data-reveal>
+        <span class="eyebrow">Почему Бурьян</span>
+        <h2 id="why-title">Мойка по записи — машина не простаивает</h2>
+      </div>
+      <div class="why-grid" data-stagger>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-calendar"/></svg></div><h3>Запись на конкретное время</h3><p>Знаете, когда заедете, — не тратите смену на очередь и не гадаете.</p></div>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></div><h3>Две точки в Тамбове</h3><p>Советская ул., 206 и Моршанское ш., 23а ст1 — та, что ближе к рейсу.</p></div>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-shield"/></svg></div><h3>5.0 на 2ГИС, 5 оценок</h3><p>Оценки по точке на Моршанском шоссе.</p></div>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-card"/></svg></div><h3>Удобно автопаркам</h3><p>Несколько машин — одно согласованное время; условия оплаты обсудим при записи.</p></div>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-clock"/></svg></div><h3>Водителям и автопаркам</h3><p>Одна машина или колонна по графику — записываем и тех, и других.</p></div>
+        <div class="why" data-item data-card><div class="icon"><svg aria-hidden="true"><use href="#i-truck"/></svg></div><h3>Только грузовой транспорт</h3><p>Тягачи, фуры, прицепы и автопоезда — не «всё подряд».</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Как проходит работа -->
+  <section class="process" id="process" aria-labelledby="process-title">
+    <div class="container">
+      <div data-reveal>
+        <span class="eyebrow">Как проходит запись</span>
+        <h2 id="process-title">Пять шагов — от заявки до выезда</h2>
+        <p class="lead">Каждый этап согласуем с вами — по телефону или в мессенджере.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Заявка</h3><p>Оставляете заявку на сайте или звоните: тип машины и удобное время.</p></li>
+        <li data-item><h3>Подтверждение</h3><p>Согласуем время и точку — Советская, 206 или Моршанское шоссе.</p></li>
+        <li data-item><h3>Заезд</h3><p>Приезжаете к своему окну и сразу заезжаете на пост.</p></li>
+        <li data-item><h3>Мойка</h3><p>Моем машину. Если что-то меняется — предупредим заранее.</p></li>
+        <li data-item><h3>Расчёт</h3><p>Способ оплаты согласуем заранее — при записи.</p></li>
+      </ol>
+      <div class="process-cta" data-reveal>
+        <a class="btn btn-accent" href="#booking" data-press><svg aria-hidden="true"><use href="#i-calendar"/></svg>Выбрать время</a>
+        <span>или позвоните: <a href="tel:" style="color:#fff;font-weight:600"></a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 3: запись -->
+  <section class="booking" id="booking" aria-labelledby="booking-title">
+    <div class="container">
+      <div class="booking-info" data-reveal>
+        <span class="eyebrow">Шаг 3 · Запись</span>
+        <h2 id="booking-title">Запишитесь на мойку</h2>
+        <p class="lead">Оставьте заявку — перезвоним, уточним тип машины и подтвердим время и точку.</p>
+        <ul>
+          <li><svg aria-hidden="true"><use href="#i-phone"/></svg><span>Подтвердим время и адрес точки</span></li>
+          <li><svg aria-hidden="true"><use href="#i-truck"/></svg><span>Уточним, что заезжает: тягач, прицеп или автопоезд</span></li>
+          <li><svg aria-hidden="true"><use href="#i-check-circle"/></svg><span>Заявка ни к чему не обязывает</span></li>
+        </ul>
+      </div>
+      <div class="form" data-reveal>
+        <form id="booking-form" novalidate aria-describedby="form-note">
+          <div class="field">
+            <label for="f-name">Ваше имя</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+            <span class="error" id="e-name" role="alert"></span>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" required aria-describedby="e-phone">
+            <span class="error" id="e-phone" role="alert"></span>
+          </div>
+          <div class="row">
+            <div class="field">
+              <label for="f-service">Услуга</label>
+              <select id="f-service" name="service" required aria-describedby="e-service">
+                <option value="">Выберите услугу</option>
+                <option>Мойка тягача</option>
+                <option>Мойка прицепа</option>
+                <option>Автопоезд целиком</option>
+                <option>Мойка для автопарка</option>
+                <option>Безнал, документы</option>
+                <option>Другое / уточню</option>
+              </select>
+              <span class="error" id="e-service" role="alert"></span>
+            </div>
+            <div class="field">
+              <label for="f-time">Удобное время</label>
+              <input id="f-time" name="time" type="datetime-local" aria-describedby="e-time">
+              <span class="error" id="e-time" role="alert"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-car">Автомобиль <span class="hint">(необязательно)</span></label>
+            <input id="f-car" name="car" type="text" placeholder="Тягач, прицеп, госномер">
+          </div>
+          <button class="btn btn-accent" type="submit" data-press>Отправить заявку</button>
+          <p class="consent" id="form-note">Нажимая кнопку, вы соглашаетесь на обработку персональных данных для связи с вами.</p>
+        </form>
+        <div class="success" id="form-success" role="status" aria-live="polite" tabindex="-1">
+          <svg aria-hidden="true"><use href="#i-check-circle"/></svg>
+          <h3>Заявка принята, перезвоним</h3>
+          <p>Администратор Бурьян свяжется с вами, чтобы подтвердить время. Если срочно — звоните: <a href="tel:"></a>.</p>
+          <button class="btn btn-outline" type="button" id="form-again">Отправить ещё одну</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section class="contacts" id="contacts" aria-labelledby="contacts-title">
+    <div class="container">
+      <div data-reveal>
+        <span class="eyebrow">Контакты</span>
+        <h2 id="contacts-title">Как нас найти</h2>
+      </div>
+      <div class="contacts-grid" data-stagger>
+        <div class="contact" data-item>
+          <h3><svg aria-hidden="true"><use href="#i-pin"/></svg>Адрес</h3>
+          <p>Тамбов, Советская ул., 206<br>и Моршанское ш., 23а ст1</p>
+          <a class="btn btn-outline" href="https://yandex.ru/maps/?pt=41.435432,52.766159&amp;z=17&amp;l=map" target="_blank" rel="noopener" data-press>Открыть на карте</a>
+        </div>
+        <div class="contact" data-item>
+          <h3><svg aria-hidden="true"><use href="#i-phone"/></svg>Телефон</h3>
+          <p>Запись на мойку, вопросы по точкам</p>
+          <a class="big" href="tel:"></a>
+        </div>
+        <div class="contact" data-item id="hours-card">
+          <h3><svg aria-hidden="true"><use href="#i-clock"/></svg>Часы работы</h3>
+          <p id="hours-text"></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <div>© 2026 Бурьян · мойка грузовых автомобилей · Тамбов</div>
+    <div><a href="tel:"></a> · <a href="https://yandex.ru/maps/?pt=41.435432,52.766159&amp;z=17&amp;l=map" target="_blank" rel="noopener">Советская улица</a></div>
+    <p class="demo">Демо-макет</p>
+  </div>
+</footer>
+
+<div class="mobile-call">
+  <a class="btn btn-accent" href="tel:"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-primary" href="#booking"><svg aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* Часы работы: если  пустые или не подставлены — показываем нейтральный текст */
+  var hoursEl = document.getElementById("hours-text");
+  var hoursRaw = hoursEl.textContent.trim();
+  if (!hoursRaw || /^\{\{.*\}\}$/.test(hoursRaw)) {
+    hoursEl.textContent = "Уточняйте по телефону";
+  }
+
+  /* Кнопки «Записаться» у услуг подставляют услугу в форму */
+  var serviceSelect = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () { serviceSelect.value = a.getAttribute("data-service"); });
+  });
+
+  /* Минимальная дата для поля времени — сейчас */
+  var timeInput = document.getElementById("f-time");
+  (function () {
+    var d = new Date(); d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+    timeInput.min = d.toISOString().slice(0, 16);
+  })();
+
+  /* Форма записи — без отправки на сервер */
+  var form = document.getElementById("booking-form");
+  var success = document.getElementById("form-success");
+
+  function setError(input, msg) {
+    var err = document.getElementById("e-" + input.name);
+    if (err) err.textContent = msg || "";
+    input.setAttribute("aria-invalid", msg ? "true" : "false");
+    return !msg;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var ok = true, first = null;
+    var name = form.elements.name, phone = form.elements.phone, service = form.elements.service, time = form.elements.time;
+    function check(input, msg) { if (!setError(input, msg)) { ok = false; if (!first) first = input; } }
+
+    check(name, name.value.trim().length < 2 ? "Введите имя" : "");
+    var digits = phone.value.replace(/\D/g, "");
+    check(phone, digits.length < 10 || digits.length > 15 ? "Введите телефон, например +7 900 000-00-00" : "");
+    check(service, !service.value ? "Выберите услугу" : "");
+    check(time, time.value && time.min && time.value < time.min ? "Выберите время в будущем" : "");
+
+    if (!ok) { first.focus(); return; }
+    form.hidden = true;
+    success.classList.add("show");
+    success.focus();
+    if (window.Motion && !reduce) {
+      Motion.animate(success, { opacity: [0, 1], transform: ["translateY(12px)", "none"] }, { duration: 0.4 });
+    }
+  });
+
+  document.getElementById("form-again").addEventListener("click", function () {
+    form.reset();
+    form.hidden = false;
+    success.classList.remove("show");
+    form.elements.name.focus();
+  });
+
+  /* ===== Анимации (Motion). Без motion.js или при reduced-motion — всё видно сразу ===== */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!window.Motion || reduce) return;
+
+  var animate = Motion.animate, inView = Motion.inView, stagger = Motion.stagger;
+  var ease = [0.22, 1, 0.36, 1];
+
+  // Первый экран: элементы появляются по очереди
+  var heroItems = document.querySelectorAll("[data-hero]");
+  heroItems.forEach(function (el) { el.style.opacity = "0"; el.style.transform = "translateY(20px)"; });
+  animate(heroItems, { opacity: 1, transform: "translateY(0px)" }, { duration: 0.55, delay: stagger(0.09), ease: ease });
+
+  // Блоки при прокрутке
+  document.querySelectorAll("[data-reveal]").forEach(function (block) {
+    block.style.opacity = "0"; block.style.transform = "translateY(24px)";
+    inView(block, function () {
+      animate(block, { opacity: 1, transform: "translateY(0px)" }, { duration: 0.5, ease: ease });
+    }, { amount: 0.15 });
+  });
+
+  // Группы карточек — со stagger
+  document.querySelectorAll("[data-stagger]").forEach(function (group) {
+    var items = group.querySelectorAll("[data-item]");
+    items.forEach(function (el) { el.style.opacity = "0"; el.style.transform = "translateY(24px)"; });
+    inView(group, function () {
+      animate(items, { opacity: 1, transform: "translateY(0px)" }, { duration: 0.45, delay: stagger(0.08), ease: ease });
+    }, { amount: 0.1 });
+  });
+
+  // Наведение на карточки
+  function elOf(a) { return a && a.nodeType === 1 ? a : (a && a.currentTarget) || null; }
+  if (Motion.hover) {
+    Motion.hover("[data-card]", function (a) {
+      var el = elOf(a); if (!el) return;
+      animate(el, { transform: "translateY(-4px)" }, { duration: 0.25, ease: ease });
+      return function () { animate(el, { transform: "translateY(0px)" }, { duration: 0.25, ease: ease }); };
+    });
+    Motion.hover("[data-press]", function (a) {
+      var el = elOf(a); if (!el) return;
+      animate(el, { transform: "translateY(-2px)" }, { duration: 0.2 });
+      return function () { animate(el, { transform: "translateY(0px)" }, { duration: 0.2 }); };
+    });
+  }
+  // Нажатие на кнопки
+  if (Motion.press) {
+    Motion.press("[data-press], [data-card]", function (a) {
+      var el = elOf(a); if (!el) return;
+      animate(el, { transform: "scale(0.97)" }, { duration: 0.2 });
+      return function () { animate(el, { transform: "scale(1)" }, { duration: 0.25 }); };
+    });
+  }
+
+  // Лёгкий параллакс фона первого экрана
+  var heroBg = document.querySelector(".hero-bg");
+  var hero = document.querySelector(".hero");
+  if (Motion.scroll && heroBg && hero) {
+    Motion.scroll(animate(heroBg, { transform: ["translateY(0px)", "translateY(80px)"] }, { ease: "linear" }), {
+      target: hero,
+      offset: ["start start", "end start"]
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

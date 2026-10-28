@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Бурьян — CRM автосервиса</title>
+<style>
+  :root{
+    --primary:#059669;--primary-dark:#047857;--accent:#EA580C;--bg:#F1F5F4;--fg:#0F2E25;--card:#fff;
+    --muted:#E8F1F3;--muted-fg:#475569;--border:#CBD5D1;--danger:#DC2626;--radius:10px;
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  body{margin:0;font:15px/1.5 var(--font);color:var(--fg);background:var(--bg)}
+  button,select,a{cursor:pointer}
+  :focus-visible{outline:3px solid var(--primary);outline-offset:2px}
+  h1,h2,h3{margin:0;line-height:1.2}
+  .top{background:#064E3B;color:#fff;padding:12px 20px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  .top h1{font-size:1.2rem}
+  .top small{color:#A7F3D0;font-weight:400;margin-left:8px}
+  .top-actions{display:flex;flex-wrap:wrap;gap:8px}
+  .demo-banner{background:#FFF7ED;color:#7C2D12;border-bottom:1px solid #FED7AA;padding:8px 20px;font-size:.9rem;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .demo-banner[hidden]{display:none}
+  .btn{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:8px;border:1px solid var(--border);background:#fff;color:var(--fg);font:500 .9rem var(--font);transition:background-color .15s,border-color .15s}
+  .btn:hover{background:var(--muted)}
+  .btn-primary{background:var(--primary);border-color:var(--primary);color:#000}
+  .btn-primary:hover{background:#10B981}
+  .btn-danger{color:var(--danger);border-color:#FCA5A5}
+  .btn-danger:hover{background:#FEF2F2}
+  .btn-sm{min-height:30px;padding:0 10px;font-size:.85rem}
+  .top .btn{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+  .top .btn:hover{background:rgba(255,255,255,.12)}
+  .top .btn-primary{background:var(--accent);border-color:var(--accent);color:#000}
+  .top .btn-primary:hover{background:#F97316}
+  .wrap{padding:16px 20px 40px;max-width:1400px;margin:0 auto}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+  .stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+  .stat b{display:block;font-size:1.35rem}
+  .stat span{color:var(--muted-fg);font-size:.85rem}
+  @media (max-width:760px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin-bottom:14px;overflow-x:auto}
+  .tab{border:0;background:none;padding:10px 14px;font:600 .95rem var(--font);color:var(--muted-fg);border-bottom:3px solid transparent;white-space:nowrap}
+  .tab[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--primary)}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  .toolbar input,.toolbar select{min-height:36px;padding:0 10px;border:1px solid var(--border);border-radius:8px;font:inherit;background:#fff;color:var(--fg)}
+  .toolbar input[type=search]{flex:1;min-width:220px}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:auto}
+  table{width:100%;border-collapse:collapse;min-width:720px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #E5ECE9;vertical-align:top}
+  th{background:#F8FAF9;font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;color:var(--muted-fg);position:sticky;top:0}
+  tr:hover td{background:#F8FBFA}
+  td.num,th.num{text-align:right;white-space:nowrap}
+  .link{background:none;border:0;padding:0;color:var(--primary-dark);font:inherit;font-weight:600;text-decoration:underline;text-underline-offset:2px;text-align:left}
+  .plate{display:inline-block;font:600 .8rem/1 ui-monospace,Consolas,monospace;border:1.5px solid #111;border-radius:4px;padding:3px 5px;background:#fff;color:#111;white-space:nowrap}
+  .badge{display:inline-block;padding:2px 8px;border-radius:999px;font-size:.78rem;font-weight:600;white-space:nowrap}
+  .demo-tag{display:inline-block;margin-left:6px;padding:0 6px;border-radius:4px;background:#FFEDD5;color:#9A3412;font-size:.7rem;font-weight:700;vertical-align:middle}
+  .empty{padding:28px;text-align:center;color:var(--muted-fg)}
+  .muted{color:var(--muted-fg)}
+  /* Канбан */
+  .kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:12px;overflow-x:auto;padding-bottom:8px}
+  .col{background:#E7EEEB;border-radius:var(--radius);padding:10px;min-height:200px;display:flex;flex-direction:column;gap:8px}
+  .col.drag-over{outline:2px dashed var(--primary);outline-offset:-2px}
+  .col h3{font-size:.9rem;display:flex;justify-content:space-between;align-items:center;gap:6px;padding:2px 2px 6px;border-bottom:3px solid var(--c)}
+  .col h3 small{color:var(--muted-fg);font-weight:500}
+  .kcard{background:#fff;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:.88rem;cursor:grab}
+  .kcard:active{cursor:grabbing}
+  .kcard .row{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:4px}
+  .kcard select{width:100%;margin-top:6px;min-height:30px;border:1px solid var(--border);border-radius:6px;font:inherit;font-size:.82rem;background:#fff}
+  /* Модальные окна */
+  dialog{border:0;border-radius:14px;padding:0;width:min(720px,calc(100% - 24px));max-height:calc(100vh - 40px);box-shadow:0 20px 60px rgba(0,0,0,.3);color:var(--fg)}
+  dialog::backdrop{background:rgba(4,38,28,.5)}
+  .dlg-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-bottom:1px solid var(--border);position:sticky;top:0;background:#fff;z-index:1}
+  .dlg-head h2{font-size:1.1rem}
+  .dlg-body{padding:16px 18px}
+  .dlg-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 18px;border-top:1px solid var(--border);flex-wrap:wrap}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:560px){.grid2{grid-template-columns:1fr}}
+  .f{display:flex;flex-direction:column;gap:4px;margin-bottom:10px}
+  .f label{font-weight:600;font-size:.88rem}
+  .f input,.f select,.f textarea{min-height:38px;padding:7px 10px;border:1px solid #94A3B8;border-radius:8px;font:inherit;color:var(--fg);background:#fff}
+  .f textarea{min-height:70px;resize:vertical}
+  .section-title{font-size:.95rem;margin:16px 0 8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  .carlist{display:grid;gap:8px}
+  .caritem{border:1px solid var(--border);border-radius:8px;padding:10px;display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap}
+  .history{list-style:none;padding:0;margin:0;border-left:2px solid var(--border)}
+  .history li{position:relative;padding:4px 0 12px 16px}
+  .history li::before{content:"";position:absolute;left:-6px;top:10px;width:10px;height:10px;border-radius:50%;background:var(--c,#94A3B8)}
+  .toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:#064E3B;color:#fff;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s;z-index:1000}
+  .toast.show{opacity:1}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<header class="top">
+  <h1>Бурьян <small>CRM автосервиса</small></h1>
+  <div class="top-actions">
+    <button class="btn btn-primary" id="btn-new-order" type="button">+ Заказ</button>
+    <button class="btn" id="btn-new-client" type="button">+ Клиент</button>
+    <button class="btn" id="btn-export" type="button">Экспорт CSV</button>
+  </div>
+</header>
+<div class="demo-banner" id="demo-banner" hidden>
+  <span>Сейчас в базе есть <b>демо-записи</b> (помечены «ДЕМО») — они выдуманы для примера.</span>
+  <button class="btn btn-sm btn-danger" id="btn-clear-demo" type="button">Очистить демо-данные</button>
+</div>
+
+<main class="wrap">
+  <div class="stats" id="stats"></div>
+
+  <div class="tabs" role="tablist" aria-label="Разделы">
+    <button class="tab" role="tab" id="tab-orders" aria-selected="true" aria-controls="view" data-view="orders">Заказы</button>
+    <button class="tab" role="tab" id="tab-kanban" aria-selected="false" aria-controls="view" data-view="kanban">Канбан</button>
+    <button class="tab" role="tab" id="tab-clients" aria-selected="false" aria-controls="view" data-view="clients">Клиенты</button>
+    <button class="tab" role="tab" id="tab-cars" aria-selected="false" aria-controls="view" data-view="cars">Машины</button>
+  </div>
+
+  <div class="toolbar">
+    <label class="sr" for="q">Поиск</label>
+    <input type="search" id="q" placeholder="Поиск: имя, телефон, госномер, VIN, марка, услуга…">
+    <label class="sr" for="f-status">Статус</label>
+    <select id="f-status"><option value="">Все статусы</option></select>
+    <label class="sr" for="f-period">Период</label>
+    <select id="f-period">
+      <option value="">За всё время</option>
+      <option value="7">7 дней</option>
+      <option value="30">30 дней</option>
+      <option value="90">90 дней</option>
+    </select>
+    <label class="sr" for="f-demo">Демо</label>
+    <select id="f-demo">
+      <option value="">Все записи</option>
+      <option value="real">Без демо</option>
+      <option value="demo">Только демо</option>
+    </select>
+  </div>
+
+  <div id="view" role="tabpanel"></div>
+</main>
+
+<!-- Диалог: заказ -->
+<dialog id="dlg-order" aria-labelledby="dlg-order-title">
+  <form method="dialog" id="form-order">
+    <div class="dlg-head"><h2 id="dlg-order-title">Заказ</h2><button class="btn btn-sm" value="cancel" formnovalidate aria-label="Закрыть">✕</button></div>
+    <div class="dlg-body">
+      <input type="hidden" name="id">
+      <div class="grid2">
+        <div class="f"><label for="o-client">Клиент</label><select id="o-client" name="clientId" required></select></div>
+        <div class="f"><label for="o-car">Машина</label><select id="o-car" name="carId"></select></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label for="o-service">Работы / услуга</label><input id="o-service" name="service" list="services-list" required placeholder="Например: ТО-2, замена колодок"></div>
+        <div class="f"><label for="o-status">Статус</label><select id="o-status" name="status"></select></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label for="o-date">Дата и время записи</label><input id="o-date" name="date" type="datetime-local" required></div>
+        <div class="f"><label for="o-amount">Сумма, ₽</label><input id="o-amount" name="amount" type="number" min="0" step="1" inputmode="numeric"></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label for="o-mileage">Пробег при приёмке, км</label><input id="o-mileage" name="mileage" type="number" min="0" step="1" inputmode="numeric"></div>
+        <div class="f"><label for="o-master">Мастер</label><input id="o-master" name="master"></div>
+      </div>
+      <div class="f"><label for="o-comment">Комментарий (жалобы, что сделано)</label><textarea id="o-comment" name="comment"></textarea></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-danger" type="button" id="o-delete">Удалить</button>
+      <button class="btn" value="cancel" formnovalidate>Отмена</button>
+      <button class="btn btn-primary" value="save" id="o-save">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+<datalist id="services-list">
+  <option value="Компьютерная диагностика"><option value="Техобслуживание (ТО)"><option value="Замена масла и фильтров">
+  <option value="Ремонт двигателя"><option value="Замена ремня/цепи ГРМ"><option value="Ходовая: диагностика подвески">
+  <option value="Замена тормозных колодок"><option value="Автоэлектрика"><option value="Кузовной ремонт"><option value="Шиномонтаж">
+</datalist>
+
+<!-- Диалог: клиент -->
+<dialog id="dlg-client" aria-labelledby="dlg-client-title">
+  <form method="dialog" id="form-client">
+    <div class="dlg-head"><h2 id="dlg-client-title">Клиент</h2><button class="btn btn-sm" value="cancel" formnovalidate aria-label="Закрыть">✕</button></div>
+    <div class="dlg-body">
+      <input type="hidden" name="id">
+      <div class="grid2">
+        <div class="f"><label for="c-name">Имя</label><input id="c-name" name="name" required></div>
+        <div class="f"><label for="c-phone">Телефон</label><input id="c-phone" name="phone" type="tel" required></div>
+      </div>
+      <div class="f"><label for="c-note">Заметка</label><textarea id="c-note" name="note"></textarea></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-danger" type="button" id="c-delete">Удалить</button>
+      <button class="btn" value="cancel" formnovalidate>Отмена</button>
+      <button class="btn btn-primary" value="save">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Диалог: машина -->
+<dialog id="dlg-car" aria-labelledby="dlg-car-title">
+  <form method="dialog" id="form-car">
+    <div class="dlg-head"><h2 id="dlg-car-title">Машина</h2><button class="btn btn-sm" value="cancel" formnovalidate aria-label="Закрыть">✕</button></div>
+    <div class="dlg-body">
+      <input type="hidden" name="id">
+      <div class="f"><label for="a-client">Владелец</label><select id="a-client" name="clientId" required></select></div>
+      <div class="grid2">
+        <div class="f"><label for="a-make">Марка</label><input id="a-make" name="make" required></div>
+        <div class="f"><label for="a-model">Модель</label><input id="a-model" name="model" required></div>
+      </div>
+      <div class="grid2">
+        <div class="f"><label for="a-plate">Госномер</label><input id="a-plate" name="plate" placeholder="А000АА00"></div>
+        <div class="f"><label for="a-year">Год выпуска</label><input id="a-year" name="year" type="number" min="1950" max="2100"></div>
+      </div>
+      <div class="f"><label for="a-vin">VIN</label><input id="a-vin" name="vin" maxlength="17" placeholder="17 символов"></div>
+    </div>
+    <div class="dlg-foot">
+      <button class="btn btn-danger" type="button" id="a-delete">Удалить</button>
+      <button class="btn" value="cancel" formnovalidate>Отмена</button>
+      <button class="btn btn-primary" value="save">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Диалог: карточка клиента -->
+<dialog id="dlg-card" aria-labelledby="card-title">
+  <div class="dlg-head"><h2 id="card-title">Карточка клиента</h2><button class="btn btn-sm" type="button" id="card-close" aria-label="Закрыть">✕</button></div>
+  <div class="dlg-body" id="card-body"></div>
+</dialog>
+
+<!-- Диалог: экспорт -->
+<dialog id="dlg-export" aria-labelledby="exp-title">
+  <form method="dialog">
+    <div class="dlg-head"><h2 id="exp-title">Экспорт в CSV</h2><button class="btn btn-sm" value="cancel" aria-label="Закрыть">✕</button></div>
+    <div class="dlg-body">
+      <p class="muted">Файл откроется в Excel (разделитель «;», кодировка UTF-8).</p>
+      <div class="toolbar">
+        <button class="btn" type="button" data-export="orders">Заказы</button>
+        <button class="btn" type="button" data-export="clients">Клиенты</button>
+        <button class="btn" type="button" data-export="cars">Машины</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "autoservice_crm_v1";
+  var STATUSES = [
+    { id: "new",      name: "Новый",          color: "#64748B" },
+    { id: "diag",     name: "Диагностика",    color: "#DC2626" },
+    { id: "approval", name: "Согласование",   color: "#D97706" },
+    { id: "parts",    name: "Ждёт запчасти",  color: "#7C3AED" },
+    { id: "work",     name: "В работе",       color: "#EA580C" },
+    { id: "ready",    name: "Готов к выдаче", color: "#059669" },
+    { id: "done",     name: "Выдан",          color: "#0F766E" },
+    { id: "canceled", name: "Отменён",        color: "#94A3B8" }
+  ];
+  var ACTIVE = ["new", "diag", "approval", "parts", "work", "ready"];
+
+  function $(s, r) { return (r || document).querySelector(s); }
+  function $$(s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function money(n) { return (Number(n) || 0).toLocaleString("ru-RU") + " ₽"; }
+  function fmtDate(s) {
+    if (!s) return "";
+    var d = new Date(s); if (isNaN(d)) return s;
+    return d.toLocaleDateString("ru-RU") + " " + d.toLocaleTimeString("ru-RU", { hour: "2-digit", minute: "2-digit" });
+  }
+  function localISO(d) { d = new Date(d); d.setMinutes(d.getMinutes() - d.getTimezoneOffset()); return d.toISOString().slice(0, 16); }
+  function status(id) { return STATUSES.filter(function (s) { return s.id === id; })[0] || STATUSES[0]; }
+  function badge(id) { var s = status(id); return '<span class="badge" style="background:' + s.color + '22;color:' + darker(s.color) + ';border:1px solid ' + s.color + '66">' + esc(s.name) + "</span>"; }
+  function darker(hex) {
+    var n = parseInt(hex.slice(1), 16), k = 0.6;
+    var r = Math.round((n >> 16) * k), g = Math.round(((n >> 8) & 255) * k), b = Math.round((n & 255) * k);
+    return "rgb(" + r + "," + g + "," + b + ")";
+  }
+  function demoTag(x) { return x && x.demo ? '<span class="demo-tag" title="Демо-запись">ДЕМО</span>' : ""; }
+  function toast(msg) { var t = $("#toast"); t.textContent = msg; t.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(function () { t.classList.remove("show"); }, 2200); }
+
+  /* ===== Хранилище ===== */
+  var db;
+  function save() { try { localStorage.setItem(KEY, JSON.stringify(db)); } catch (e) { alert("Не удалось сохранить данные: " + e.message); } }
+  function load() {
+    try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { db = null; }
+    if (!db || !Array.isArray(db.clients)) { db = demoData(); save(); }
+    db.cars = db.cars || []; db.orders = db.orders || [];
+  }
+  function demoData() {
+    // ДЕМО: вымышленные люди, номера и машины — только для примера
+    var now = Date.now(), day = 864e5;
+    var c1 = uid(), c2 = uid(), c3 = uid(), c4 = uid();
+    var a1 = uid(), a2 = uid(), a3 = uid(), a4 = uid(), a5 = uid();
+    function at(daysAgo, h) { var d = new Date(now - daysAgo * day); d.setHours(h, 0, 0, 0); return localISO(d); }
+    return {
+      demoSeeded: true,
+      clients: [
+        { id: c1, name: "Иван Петров (демо)", phone: "+7 900 000-00-01", note: "Предпочитает звонок после 18:00", demo: true, createdAt: at(120, 10) },
+        { id: c2, name: "Анна Смирнова (демо)", phone: "+7 900 000-00-02", note: "", demo: true, createdAt: at(60, 12) },
+        { id: c3, name: "Сергей Козлов (демо)", phone: "+7 900 000-00-03", note: "Две машины в семье", demo: true, createdAt: at(30, 9) },
+        { id: c4, name: "ООО «Пример» (демо)", phone: "+7 900 000-00-04", note: "Корпоративный клиент, оплата по счёту", demo: true, createdAt: at(10, 11) }
+      ],
+      cars: [
+        { id: a1, clientId: c1, make: "Toyota", model: "Camry", plate: "А001АА00", vin: "DEMO0000000000001", year: 2018, demo: true },
+        { id: a2, clientId: c2, make: "Kia", model: "Rio", plate: "В002ВВ00", vin: "DEMO0000000000002", year: 2020, demo: true },
+        { id: a3, clientId: c3, make: "Lada", model: "Vesta", plate: "Е003ЕЕ00", vin: "DEMO0000000000003", year: 2021, demo: true },
+        { id: a4, clientId: c3, make: "Hyundai", model: "Creta", plate: "К004КК00", vin: "DEMO0000000000004", year: 2019, demo: true },
+        { id: a5, clientId: c4, make: "Volkswagen", model: "Polo", plate: "М005ММ00", vin: "DEMO0000000000005", year: 2017, demo: true }
+      ],
+      orders: [
+        { id: uid(), clientId: c1, carId: a1, service: "Техобслуживание (ТО)", status: "done", amount: 9500, date: at(90, 10), mileage: 75000, master: "Мастер 1", comment: "Замена масла, фильтров", demo: true },
+        { id: uid(), clientId: c1, carId: a1, service: "Замена тормозных колодок", status: "ready", amount: 4200, date: at(1, 11), mileage: 82000, master: "Мастер 2", comment: "Передние колодки", demo: true },
+        { id: uid(), clientId: c2, carId: a2, service: "Компьютерная диагностика", status: "diag", amount: 1500, date: at(0, 9), mileage: 41000, master: "Мастер 1", comment: "Горит Check Engine", demo: true },
+        { id: uid(), clientId: c3, carId: a3, service: "Ходовая: диагностика подвески", status: "approval", amount: 12000, date: at(2, 14), mileage: 38000, master: "Мастер 2", comment: "Стук спереди справа, согласовать замену стойки", demo: true },
+        { id: uid(), clientId: c3, carId: a4, service: "Автоэлектрика", status: "parts", amount: 7800, date: at(3, 15), mileage: 64000, master: "Мастер 3", comment: "Ждём генератор", demo: true },
+        { id: uid(), clientId: c4, carId: a5, service: "Ремонт двигателя", status: "work", amount: 35000, date: at(4, 10), mileage: 120000, master: "Мастер 1", comment: "Замена ремня ГРМ с роликами", demo: true },
+        { id: uid(), clientId: c4, carId: a5, service: "Кузовной ремонт", status: "new", amount: 0, date: at(-2, 12), mileage: "", master: "", comment: "Вмятина на двери, оценить", demo: true },
+        { id: uid(), clientId: c2, carId: a2, service: "Шиномонтаж", status: "canceled", amount: 0, date: at(40, 16), mileage: 36000, master: "", comment: "Клиент перенёс", demo: true }
+      ]
+    };
+  }
+
+  function client(id) { return db.clients.filter(function (c) { return c.id === id; })[0]; }
+  function car(id) { return db.cars.filter(function (a) { return a.id === id; })[0]; }
+  function carLabel(a) { return a ? (a.make + " " + a.model + (a.plate ? " · " + a.plate : "")) : "—"; }
+
+  /* ===== Фильтры ===== */
+  var state = { view: "orders" };
+  STATUSES.forEach(function (s) { $("#f-status").insertAdjacentHTML("beforeend", '<option value="' + s.id + '">' + esc(s.name) + "</option>"); });
+
+  function norm(s) { return String(s || "").toLowerCase().replace(/ё/g, "е").replace(/\s+/g, ""); }
+  function matchQ(texts) {
+    var q = norm($("#q").value); if (!q) return true;
+    return texts.some(function (t) { return norm(t).indexOf(q) !== -1; });
+  }
+  function demoOk(x) { var v = $("#f-demo").value; return !v || (v === "demo" ? !!x.demo : !x.demo); }
+  function periodOk(dateStr) {
+    var p = Number($("#f-period").value); if (!p) return true;
+    var d = new Date(dateStr); return !isNaN(d) && (Date.now() - d.getTime()) <= p * 864e5;
+  }
+  function filteredOrders(ignoreStatus) {
+    var st = $("#f-status").value;
+    return db.orders.filter(function (o) {
+      var c = client(o.clientId) || {}, a = car(o.carId) || {};
+      return demoOk(o) && periodOk(o.date) && (ignoreStatus || !st || o.status === st) &&
+        matchQ([c.name, c.phone, a.make, a.model, a.plate, a.vin, o.service, o.comment, o.master]);
+    }).sort(function (x, y) { return String(y.date).localeCompare(String(x.date)); });
+  }
+
+  /* ===== Отрисовка ===== */
+  function render() {
+    $("#demo-banner").hidden = !hasDemo();
+    renderStats();
+    $$(".tab").forEach(function (t) { t.setAttribute("aria-selected", String(t.dataset.view === state.view)); });
+    $("#f-status").disabled = state.view === "kanban" || state.view === "clients" || state.view === "cars";
+    $("#f-period").disabled = state.view === "clients" || state.view === "cars";
+    var v = $("#view");
+    v.setAttribute("aria-labelledby", "tab-" + state.view);
+    if (state.view === "orders") v.innerHTML = renderOrders();
+    else if (state.view === "kanban") { v.innerHTML = renderKanban(); bindKanban(); }
+    else if (state.view === "clients") v.innerHTML = renderClients();
+    else v.innerHTML = renderCars();
+  }
+  function hasDemo() { return db.clients.concat(db.cars, db.orders).some(function (x) { return x.demo; }); }
+
+  function renderStats() {
+    var active = db.orders.filter(function (o) { return ACTIVE.indexOf(o.status) !== -1; });
+    var ready = db.orders.filter(function (o) { return o.status === "ready"; });
+    var monthAgo = Date.now() - 30 * 864e5;
+    var revenue = db.orders.filter(function (o) { return o.status === "done" && new Date(o.date).getTime() >= monthAgo; })
+      .reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    $("#stats").innerHTML =
+      '<div class="stat"><b>' + active.length + '</b><span>Заказов в работе</span></div>' +
+      '<div class="stat"><b>' + ready.length + '</b><span>Готовы к выдаче</span></div>' +
+      '<div class="stat"><b>' + db.clients.length + '</b><span>Клиентов · машин: ' + db.cars.length + '</span></div>' +
+      '<div class="stat"><b>' + money(revenue) + '</b><span>Выдано за 30 дней</span></div>';
+  }
+
+  function renderOrders() {
+    var list = filteredOrders(false);
+    if (!list.length) return '<div class="panel"><p class="empty">Заказов не найдено. Нажмите «+ Заказ», чтобы добавить.</p></div>';
+    var total = list.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    return '<div class="panel"><table><thead><tr><th>Дата</th><th>Клиент</th><th>Машина</th><th>Работы</th><th>Статус</th><th class="num">Сумма</th><th></th></tr></thead><tbody>' +
+      list.map(function (o) {
+        var c = client(o.clientId), a = car(o.carId);
+        return "<tr><td>" + esc(fmtDate(o.date)) + "</td>" +
+          "<td>" + (c ? '<button class="link" data-open-client="' + c.id + '">' + esc(c.name) + "</button><br><span class=\"muted\">" + esc(c.phone) + "</span>" : "—") + demoTag(o) + "</td>" +
+          "<td>" + (a ? esc(a.make + " " + a.model) + (a.plate ? '<br><span class="plate">' + esc(a.plate) + "</span>" : "") : "—") + "</td>" +
+          "<td>" + esc(o.service) + (o.comment ? '<br><span class="muted">' + esc(o.comment) + "</span>" : "") + "</td>" +
+          "<td>" + badge(o.status) + "</td>" +
+          '<td class="num">' + money(o.amount) + "</td>" +
+          '<td><button class="btn btn-sm" data-edit-order="' + o.id + '">Изменить</button></td></tr>';
+      }).join("") +
+      '</tbody><tfoot><tr><th colspan="5">Итого: ' + list.length + '</th><th class="num">' + money(total) + "</th><th></th></tr></tfoot></table></div>";
+  }
+
+  function renderKanban() {
+    var list = filteredOrders(true);
+    return '<p class="muted" style="margin:0 0 8px">Перетащите карточку в нужную колонку или смените статус в списке на карточке.</p><div class="kanban">' +
+      STATUSES.map(function (s) {
+        var items = list.filter(function (o) { return o.status === s.id; });
+        var sum = items.reduce(function (t, o) { return t + (Number(o.amount) || 0); }, 0);
+        return '<section class="col" data-status="' + s.id + '" style="--c:' + s.color + '" aria-label="' + esc(s.name) + '">' +
+          "<h3>" + esc(s.name) + " <small>" + items.length + " · " + money(sum) + "</small></h3>" +
+          items.map(function (o) {
+            var c = client(o.clientId), a = car(o.carId);
+            return '<article class="kcard" draggable="true" data-id="' + o.id + '">' +
+              '<div class="row"><b>' + esc(o.service) + "</b>" + demoTag(o) + "</div>" +
+              (a ? '<div class="row"><span>' + esc(a.make + " " + a.model) + "</span>" + (a.plate ? '<span class="plate">' + esc(a.plate) + "</span>" : "") + "</div>" : "") +
+              '<div class="row"><button class="link" data-open-client="' + (c ? c.id : "") + '">' + esc(c ? c.name : "—") + "</button><b>" + money(o.amount) + "</b></div>" +
+              '<div class="muted">' + esc(fmtDate(o.date)) + "</div>" +
+              '<label class="sr" for="ks-' + o.id + '">Статус</label><select id="ks-' + o.id + '" data-kstatus="' + o.id + '">' +
+              STATUSES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === o.status ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") +
+              "</select>" +
+              '<div style="margin-top:6px"><button class="btn btn-sm" data-edit-order="' + o.id + '">Открыть</button></div></article>';
+          }).join("") + "</section>";
+      }).join("") + "</div>";
+  }
+  function bindKanban() {
+    $$(".kcard").forEach(function (k) {
+      k.addEventListener("dragstart", function (e) { e.dataTransfer.setData("text/plain", k.dataset.id); e.dataTransfer.effectAllowed = "move"; });
+    });
+    $$(".col").forEach(function (col) {
+      col.addEventListener("dragover", function (e) { e.preventDefault(); col.classList.add("drag-over"); });
+      col.addEventListener("dragleave", function () { col.classList.remove("drag-over"); });
+      col.addEventListener("drop", function (e) {
+        e.preventDefault(); col.classList.remove("drag-over");
+        setStatus(e.dataTransfer.getData("text/plain"), col.dataset.status);
+      });
+    });
+  }
+  function setStatus(orderId, st) {
+    var o = db.orders.filter(function (x) { return x.id === orderId; })[0];
+    if (!o || o.status === st) return;
+    o.status = st; o.updatedAt = new Date().toISOString(); save(); render();
+    toast("Статус: " + status(st).name);
+  }
+
+  function renderClients() {
+    var list = db.clients.filter(function (c) {
+      var cars = db.cars.filter(function (a) { return a.clientId === c.id; });
+      var texts = [c.name, c.phone, c.note];
+      cars.forEach(function (a) { texts.push(a.make, a.model, a.plate, a.vin); });
+      return demoOk(c) && matchQ(texts);
+    }).sort(function (x, y) { return x.name.localeCompare(y.name, "ru"); });
+    if (!list.length) return '<div class="panel"><p class="empty">Клиентов не найдено.</p></div>';
+    return '<div class="panel"><table><thead><tr><th>Клиент</th><th>Телефон</th><th>Машины</th><th class="num">Заказов</th><th class="num">Сумма</th><th>Последний визит</th></tr></thead><tbody>' +
+      list.map(function (c) {
+        var cars = db.cars.filter(function (a) { return a.clientId === c.id; });
+        var orders = db.orders.filter(function (o) { return o.clientId === c.id && o.status !== "canceled"; });
+        var sum = orders.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+        var last = orders.map(function (o) { return o.date; }).sort().pop();
+        return '<tr><td><button class="link" data-open-client="' + c.id + '">' + esc(c.name) + "</button>" + demoTag(c) + "</td>" +
+          '<td><a href="tel:' + esc(c.phone.replace(/[^\d+]/g, "")) + '">' + esc(c.phone) + "</a></td>" +
+          "<td>" + (cars.map(function (a) { return esc(a.make + " " + a.model) + (a.plate ? ' <span class="plate">' + esc(a.plate) + "</span>" : ""); }).join("<br>") || '<span class="muted">—</span>') + "</td>" +
+          '<td class="num">' + orders.length + '</td><td class="num">' + money(sum) + "</td><td>" + esc(fmtDate(last)) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+
+  function renderCars() {
+    var list = db.cars.filter(function (a) {
+      var c = client(a.clientId) || {};
+      return demoOk(a) && matchQ([a.make, a.model, a.plate, a.vin, c.name, c.phone]);
+    });
+    if (!list.length) return '<div class="panel"><p class="empty">Машин не найдено. Добавьте машину в карточке клиента.</p></div>';
+    return '<div class="panel"><table><thead><tr><th>Марка / модель</th><th>Госномер</th><th>VIN</th><th>Год</th><th>Владелец</th><th class="num">Визитов</th><th></th></tr></thead><tbody>' +
+      list.map(function (a) {
+        var c = client(a.clientId);
+        var n = db.orders.filter(function (o) { return o.carId === a.id && o.status !== "canceled"; }).length;
+        return "<tr><td>" + esc(a.make + " " + a.model) + demoTag(a) + "</td><td>" + (a.plate ? '<span class="plate">' + esc(a.plate) + "</span>" : "—") + "</td>" +
+          "<td><code>" + esc(a.vin || "—") + "</code></td><td>" + esc(a.year || "") + "</td>" +
+          "<td>" + (c ? '<button class="link" data-open-client="' + c.id + '">' + esc(c.name) + "</button>" : "—") + "</td>" +
+          '<td class="num">' + n + '</td><td><button class="btn btn-sm" data-edit-car="' + a.id + '">Изменить</button></td></tr>';
+      }).join("") + "</tbody></table></div>";
+  }
+
+  /* ===== Карточка клиента ===== */
+  var cardClientId = null;
+  function openCard(id) {
+    var c = client(id); if (!c) return;
+    cardClientId = id;
+    var cars = db.cars.filter(function (a) { return a.clientId === id; });
+    var orders = db.orders.filter(function (o) { return o.clientId === id; }).sort(function (x, y) { return String(y.date).localeCompare(String(x.date)); });
+    var sum = orders.filter(function (o) { return o.status !== "canceled"; }).reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    $("#card-title").innerHTML = esc(c.name) + demoTag(c);
+    $("#card-body").innerHTML =
+      '<p><a href="tel:' + esc(c.phone.replace(/[^\d+]/g, "")) + '"><b>' + esc(c.phone) + "</b></a>" + (c.note ? '<br><span class="muted">' + esc(c.note) + "</span>" : "") + "</p>" +
+      '<p class="muted">Заказов: ' + orders.length + " · сумма: " + money(sum) + "</p>" +
+      '<div class="toolbar"><button class="btn btn-sm" data-edit-client="' + c.id + '">Изменить клиента</button>' +
+      '<button class="btn btn-sm btn-primary" data-new-order-for="' + c.id + '">+ Заказ</button>' +
+      '<button class="btn btn-sm" data-new-car-for="' + c.id + '">+ Машина</button></div>' +
+      '<h3 class="section-title">Машины</h3><div class="carlist">' +
+      (cars.length ? cars.map(function (a) {
+        var last = orders.filter(function (o) { return o.carId === a.id && o.status === "done"; })[0];
+        return '<div class="caritem"><div><b>' + esc(a.make + " " + a.model) + "</b> " + (a.plate ? '<span class="plate">' + esc(a.plate) + "</span>" : "") +
+          '<br><span class="muted">VIN: ' + esc(a.vin || "—") + (a.year ? " · " + esc(a.year) + " г." : "") +
+          (last ? "<br>Последнее обслуживание: " + esc(fmtDate(last.date)) + (last.mileage ? ", " + esc(last.mileage) + " км" : "") : "") + "</span></div>" +
+          '<button class="btn btn-sm" data-edit-car="' + a.id + '">Изменить</button></div>';
+      }).join("") : '<p class="muted">Машин пока нет.</p>') + "</div>" +
+      '<h3 class="section-title">История обслуживания</h3>' +
+      (orders.length ? '<ul class="history">' + orders.map(function (o) {
+        var a = car(o.carId);
+        return '<li style="--c:' + status(o.status).color + '"><b>' + esc(fmtDate(o.date)) + "</b> · " + esc(o.service) + " " + badge(o.status) +
+          '<br><span class="muted">' + esc(carLabel(a)) + (o.mileage ? " · " + esc(o.mileage) + " км" : "") + " · " + money(o.amount) +
+          (o.master ? " · " + esc(o.master) : "") + (o.comment ? "<br>" + esc(o.comment) : "") + "</span> " +
+          '<button class="link" data-edit-order="' + o.id + '">открыть</button></li>';
+      }).join("") + "</ul>" : '<p class="muted">Заказов пока нет.</p>');
+    var d = $("#dlg-card"); if (!d.open) d.showModal();
+  }
+  function refreshCard() { if ($("#dlg-card").open && cardClientId) { if (client(cardClientId)) openCard(cardClientId); else $("#dlg-card").close(); } }
+  $("#card-close").addEventListener("click", function () { $("#dlg-card").close(); });
+
+  /* ===== Формы ===== */
+  function fillClientSelect(sel, selected) {
+    sel.innerHTML = '<option value="">— выберите —</option>' + db.clients.slice().sort(function (x, y) { return x.name.localeCompare(y.name, "ru"); })
+      .map(function (c) { return '<option value="' + c.id + '"' + (c.id === selected ? " selected" : "") + ">" + esc(c.name + " · " + c.phone) + "</option>"; }).join("");
+  }
+  function fillCarSelect(clientId, selected) {
+    var cars = db.cars.filter(function (a) { return a.clientId === clientId; });
+    $("#o-car").innerHTML = '<option value="">— без машины —</option>' + cars.map(function (a) {
+      return '<option value="' + a.id + '"' + (a.id === selected ? " selected" : "") + ">" + esc(carLabel(a)) + "</option>";
+    }).join("");
+  }
+  $("#o-status").innerHTML = STATUSES.map(function (s) { return '<option value="' + s.id + '">' + esc(s.name) + "</option>"; }).join("");
+  $("#o-client").addEventListener("change", function () { fillCarSelect(this.value, ""); });
+
+  function openOrder(id, presetClient) {
+    if (!db.clients.length) { toast("Сначала добавьте клиента"); openClient(null); return; }
+    var f = $("#form-order"), o = db.orders.filter(function (x) { return x.id === id; })[0];
+    f.reset();
+    $("#dlg-order-title").textContent = o ? "Заказ" : "Новый заказ";
+    f.elements.id.value = o ? o.id : "";
+    fillClientSelect($("#o-client"), o ? o.clientId : (presetClient || ""));
+    fillCarSelect(o ? o.clientId : (presetClient || ""), o ? o.carId : "");
+    if (!o && presetClient) { var cs = db.cars.filter(function (a) { return a.clientId === presetClient; }); if (cs.length === 1) $("#o-car").value = cs[0].id; }
+    f.elements.service.value = o ? o.service : "";
+    f.elements.status.value = o ? o.status : "new";
+    f.elements.date.value = o ? o.date : localISO(new Date());
+    f.elements.amount.value = o && o.amount ? o.amount : "";
+    f.elements.mileage.value = o && o.mileage ? o.mileage : "";
+    f.elements.master.value = o ? (o.master || "") : "";
+    f.elements.comment.value = o ? (o.comment || "") : "";
+    $("#o-delete").hidden = !o;
+    $("#dlg-order").returnValue = "";
+    $("#dlg-order").showModal();
+  }
+  $("#dlg-order").addEventListener("close", function () {
+    if (this.returnValue !== "save") return;
+    var f = $("#form-order"), id = f.elements.id.value;
+    var data = {
+      clientId: f.elements.clientId.value, carId: f.elements.carId.value, service: f.elements.service.value.trim(),
+      status: f.elements.status.value, date: f.elements.date.value, amount: Number(f.elements.amount.value) || 0,
+      mileage: f.elements.mileage.value ? Number(f.elements.mileage.value) : "", master: f.elements.master.value.trim(),
+      comment: f.elements.comment.value.trim(), updatedAt: new Date().toISOString()
+    };
+    if (id) { var o = db.orders.filter(function (x) { return x.id === id; })[0]; if (o) Object.assign(o, data); }
+    else { data.id = uid(); data.createdAt = data.updatedAt; db.orders.push(data); }
+    save(); render(); refreshCard(); toast("Заказ сохранён");
+  });
+  $("#o-delete").addEventListener("click", function () {
+    var id = $("#form-order").elements.id.value;
+    if (!id || !confirm("Удалить заказ?")) return;
+    db.orders = db.orders.filter(function (o) { return o.id !== id; });
+    save(); $("#dlg-order").close(); render(); refreshCard(); toast("Заказ удалён");
+  });
+
+  function openClient(id) {
+    var f = $("#form-client"), c = client(id);
+    f.reset();
+    $("#dlg-client-title").textContent = c ? "Клиент" : "Новый клиент";
+    f.elements.id.value = c ? c.id : "";
+    f.elements.name.value = c ? c.name : "";
+    f.elements.phone.value = c ? c.phone : "";
+    f.elements.note.value = c ? (c.note || "") : "";
+    $("#c-delete").hidden = !c;
+    $("#dlg-client").returnValue = "";
+    $("#dlg-client").showModal();
+  }
+  $("#dlg-client").addEventListener("close", function () {
+    if (this.returnValue !== "save") return;
+    var f = $("#form-client"), id = f.elements.id.value;
+    var data = { name: f.elements.name.value.trim(), phone: f.elements.phone.value.trim(), note: f.elements.note.value.trim() };
+    var newId = id;
+    if (id) { var c = client(id); if (c) Object.assign(c, data); }
+    else { newId = uid(); data.id = newId; data.createdAt = localISO(new Date()); db.clients.push(data); }
+    save(); render();
+    if (!id) openCard(newId); else refreshCard();
+    toast("Клиент сохранён");
+  });
+  $("#c-delete").addEventListener("click", function () {
+    var id = $("#form-client").elements.id.value;
+    if (!id || !confirm("Удалить клиента вместе с его машинами и заказами?")) return;
+    db.clients = db.clients.filter(function (c) { return c.id !== id; });
+    db.cars = db.cars.filter(function (a) { return a.clientId !== id; });
+    db.orders = db.orders.filter(function (o) { return o.clientId !== id; });
+    save(); $("#dlg-client").close(); render(); refreshCard(); toast("Клиент удалён");
+  });
+
+  function openCar(id, presetClient) {
+    var f = $("#form-car"), a = car(id);
+    f.reset();
+    $("#dlg-car-title").textContent = a ? "Машина" : "Новая машина";
+    f.elements.id.value = a ? a.id : "";
+    fillClientSelect($("#a-client"), a ? a.clientId : (presetClient || ""));
+    f.elements.make.value = a ? a.make : "";
+    f.elements.model.value = a ? a.model : "";
+    f.elements.plate.value = a ? (a.plate || "") : "";
+    f.elements.year.value = a && a.year ? a.year : "";
+    f.elements.vin.value = a ? (a.vin || "") : "";
+    $("#a-delete").hidden = !a;
+    $("#dlg-car").returnValue = "";
+    $("#dlg-car").showModal();
+  }
+  $("#dlg-car").addEventListener("close", function () {
+    if (this.returnValue !== "save") return;
+    var f = $("#form-car"), id = f.elements.id.value;
+    var data = {
+      clientId: f.elements.clientId.value, make: f.elements.make.value.trim(), model: f.elements.model.value.trim(),
+      plate: f.elements.plate.value.trim().toUpperCase().replace(/\s+/g, ""), year: f.elements.year.value ? Number(f.elements.year.value) : "",
+      vin: f.elements.vin.value.trim().toUpperCase()
+    };
+    if (id) { var a = car(id); if (a) Object.assign(a, data); }
+    else { data.id = uid(); db.cars.push(data); }
+    save(); render(); refreshCard(); toast("Машина сохранена");
+  });
+  $("#a-delete").addEventListener("click", function () {
+    var id = $("#form-car").elements.id.value;
+    if (!id || !confirm("Удалить машину? Заказы останутся без привязки к машине.")) return;
+    db.cars = db.cars.filter(function (a) { return a.id !== id; });
+    db.orders.forEach(function (o) { if (o.carId === id) o.carId = ""; });
+    save(); $("#dlg-car").close(); render(); refreshCard(); toast("Машина удалена");
+  });
+
+  /* ===== Экспорт CSV ===== */
+  function csv(rows) {
+    return "﻿" + rows.map(function (r) {
+      return r.map(function (v) { v = String(v == null ? "" : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }).join(";");
+    }).join("\r\n");
+  }
+  function download(name, text) {
+    var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+  function exportCsv(kind) {
+    var d = localISO(new Date()).slice(0, 10), rows;
+    if (kind === "orders") {
+      rows = [["Дата", "Клиент", "Телефон", "Марка", "Модель", "Госномер", "VIN", "Работы", "Статус", "Сумма", "Пробег", "Мастер", "Комментарий", "Демо"]];
+      filteredOrders(state.view === "kanban").forEach(function (o) {
+        var c = client(o.clientId) || {}, a = car(o.carId) || {};
+        rows.push([fmtDate(o.date), c.name, c.phone, a.make, a.model, a.plate, a.vin, o.service, status(o.status).name, o.amount, o.mileage, o.master, o.comment, o.demo ? "да" : ""]);
+      });
+    } else if (kind === "clients") {
+      rows = [["Имя", "Телефон", "Заметка", "Машины", "Заказов", "Сумма", "Демо"]];
+      db.clients.filter(demoOk).forEach(function (c) {
+        var cars = db.cars.filter(function (a) { return a.clientId === c.id; }).map(carLabel).join(", ");
+        var os = db.orders.filter(function (o) { return o.clientId === c.id && o.status !== "canceled"; });
+        rows.push([c.name, c.phone, c.note, cars, os.length, os.reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0), c.demo ? "да" : ""]);
+      });
+    } else {
+      rows = [["Марка", "Модель", "Госномер", "VIN", "Год", "Владелец", "Телефон", "Демо"]];
+      db.cars.filter(demoOk).forEach(function (a) {
+        var c = client(a.clientId) || {};
+        rows.push([a.make, a.model, a.plate, a.vin, a.year, c.name, c.phone, a.demo ? "да" : ""]);
+      });
+    }
+    download(kind + "_" + d + ".csv", csv(rows));
+    toast("Выгружено строк: " + (rows.length - 1));
+  }
+
+  /* ===== События ===== */
+  document.addEventListener("click", function (e) {
+    var t = e.target.closest("button, a"); if (!t) return;
+    var ds = t.dataset;
+    if (ds.view) { state.view = ds.view; render(); }
+    else if (ds.openClient) openCard(ds.openClient);
+    else if (ds.editOrder) openOrder(ds.editOrder);
+    else if (ds.editClient) openClient(ds.editClient);
+    else if (ds.editCar) openCar(ds.editCar);
+    else if (ds.newOrderFor) openOrder(null, ds.newOrderFor);
+    else if (ds.newCarFor) openCar(null, ds.newCarFor);
+    else if (ds.export) exportCsv(ds.export);
+  });
+  document.addEventListener("change", function (e) { if (e.target.dataset.kstatus) setStatus(e.target.dataset.kstatus, e.target.value); });
+  // Стрелки влево/вправо по вкладкам
+  $(".tabs").addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    var tabs = $$(".tab"), i = tabs.indexOf(document.activeElement); if (i < 0) return;
+    var n = tabs[(i + (e.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length];
+    n.focus(); n.click();
+  });
+  $("#btn-new-order").addEventListener("click", function () { openOrder(null); });
+  $("#btn-new-client").addEventListener("click", function () { openClient(null); });
+  $("#btn-export").addEventListener("click", function () { $("#dlg-export").showModal(); });
+  $("#btn-clear-demo").addEventListener("click", function () {
+    if (!confirm("Удалить все демо-записи? Ваши собственные записи останутся.")) return;
+    var demoClients = db.clients.filter(function (c) { return c.demo; }).map(function (c) { return c.id; });
+    db.clients = db.clients.filter(function (c) { return !c.demo; });
+    db.cars = db.cars.filter(function (a) { return !a.demo && demoClients.indexOf(a.clientId) === -1; });
+    db.orders = db.orders.filter(function (o) { return !o.demo && demoClients.indexOf(o.clientId) === -1; });
+    save(); render(); toast("Демо-данные удалены");
+  });
+  ["#q", "#f-status", "#f-period", "#f-demo"].forEach(function (s) { $(s).addEventListener("input", render); });
+
+  load();
+  render();
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>
