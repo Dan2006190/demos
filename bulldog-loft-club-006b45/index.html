@@ -1,0 +1,816 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Bulldog loft club — кальянный лофт в Тамбове: бронь зоны и кальян к приходу</title>
+  <meta name="description" content="Bulldog loft club — кальянный лофт в Тамбове на Советской, 73. Бронь зоны под компанию онлайн и предзаказ кальяна к приходу — без долгого ожидания. 4.8 на Яндекс Картах, 483 оценки.">
+  <meta name="theme-color" content="#15120F">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Bulldog loft club",
+    "telephone": "+79996870707",
+    "address": { "@type": "PostalAddress", "streetAddress": "Советская ул., 73, Тамбов", "addressLocality": "Тамбов" },
+    "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+    "hasMap": "https://yandex.ru/maps/?text=Bulldog%20loft%20club%2C%20%D0%A1%D0%BE%D0%B2%D0%B5%D1%82%D1%81%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB.%2C%2073%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+  }
+  </script>
+  <style>
+    /* Образ: индустриальный лофт — кирпич, бетон, тёплый свет ламп накаливания, медь */
+    :root {
+      --color-primary: #D9783F;        /* медь */
+      --color-on-primary: #15120F;
+      --color-secondary: #E8935C;
+      --color-on-secondary: #15120F;
+      --color-accent: #F0A63A;         /* тёплый свет лампы */
+      --color-on-accent: #15120F;
+      --color-background: #15120F;     /* тёмный бетон */
+      --color-foreground: #F3EDE4;
+      --color-card: #221D19;
+      --color-card-foreground: #F3EDE4;
+      --color-muted: #2E2722;
+      --color-muted-foreground: #BFB3A5;
+      --color-border: #3A322B;
+      --color-destructive: #F87171;
+      --color-ring: #F0A63A;
+      --brick: #9C3B25;
+      --hero-bg: #0F0D0B;
+      --hero-text: #F3EDE4;
+      --hero-muted: #CFC4B6;
+      --step-1: #F08A6C;   /* шаг 1 — кирпичный */
+      --step-2: #F0A63A;   /* шаг 2 — янтарный */
+      --step-3: #9BCB8F;   /* шаг 3 — зелёный */
+      --radius: 4px;
+      --shadow: 6px 6px 0 rgba(0, 0, 0, .35);
+      --font: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-head: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Arial Narrow", "Segoe UI", system-ui, sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--color-foreground);
+      background: var(--color-background);
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; }
+    a { color: inherit; }
+    h1, h2, h3 { font-family: var(--font-head); line-height: 1.1; margin: 0 0 .5em; letter-spacing: .01em; }
+    h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 700; text-transform: uppercase; }
+    h3 { font-size: 20px; font-weight: 600; }
+    p { margin: 0 0 1em; }
+    .container { width: min(1160px, 100% - 40px); margin-inline: auto; }
+    .section { padding: clamp(64px, 9vw, 112px) 0; }
+    .section--alt {
+      background:
+        linear-gradient(180deg, rgba(243, 237, 228, .025), transparent 40%),
+        #1B1714;
+      border-block: 1px solid var(--color-border);
+    }
+    .eyebrow {
+      display: inline-flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 700; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--color-accent); margin-bottom: 14px;
+    }
+    .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--brick); }
+    .section--alt .eyebrow, .section .eyebrow { color: var(--color-accent); }
+    .lead { font-size: 19px; color: var(--color-muted-foreground); max-width: 640px; }
+    .skip-link {
+      position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px;
+      background: var(--color-accent); color: var(--color-on-accent); border-radius: var(--radius); font-weight: 600;
+    }
+    .skip-link:focus { top: 12px; }
+    :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; border-radius: 2px; }
+
+    /* Кнопки */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 52px; padding: 14px 26px; border-radius: var(--radius); border: 2px solid transparent;
+      font: 700 15px/1 var(--font-head); letter-spacing: .08em; text-transform: uppercase; text-decoration: none; cursor: pointer;
+      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease;
+      will-change: transform;
+    }
+    .btn svg { width: 20px; height: 20px; flex: none; }
+    .btn--accent { background: var(--color-accent); color: var(--color-on-accent); box-shadow: 4px 4px 0 var(--brick); }
+    .btn--accent:hover { background: #F6B85C; box-shadow: 6px 6px 0 var(--brick); }
+    .btn--primary { background: var(--color-primary); color: var(--color-on-primary); }
+    .btn--primary:hover { background: var(--color-secondary); }
+    .btn--ghost { background: transparent; color: var(--hero-text); border-color: rgba(243, 237, 228, .55); }
+    .btn--ghost:hover { border-color: var(--color-accent); color: var(--color-accent); background: rgba(240, 166, 58, .08); }
+    .btn--outline { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+    .btn--outline:hover { background: var(--color-foreground); color: var(--color-background); }
+    .btn--sm { min-height: 44px; padding: 10px 18px; font-size: 14px; }
+
+    /* Шапка */
+    .header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(15, 13, 11, .94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+      color: var(--hero-text); border-bottom: 1px solid var(--color-border);
+    }
+    .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 68px; }
+    .logo { display: flex; align-items: center; gap: 10px; font: 700 19px/1 var(--font-head); letter-spacing: .06em; text-transform: uppercase; text-decoration: none; }
+    .logo svg { width: 30px; height: 30px; color: var(--color-accent); }
+    .nav { display: flex; gap: 24px; }
+    .nav a { text-decoration: none; font-size: 15px; font-weight: 500; color: var(--hero-muted); transition: color .2s; }
+    .nav a:hover { color: var(--color-accent); }
+    @media (max-width: 900px) { .nav { display: none; } }
+
+    /* Первый экран: кирпичная кладка + тёплый свет ламп */
+    .hero {
+      position: relative; overflow: hidden; color: var(--hero-text); background: var(--hero-bg);
+      padding: clamp(72px, 12vw, 140px) 0 clamp(80px, 12vw, 140px);
+      border-bottom: 4px solid var(--brick);
+    }
+    .hero__bg {
+      position: absolute; inset: -20% -10% -10%; pointer-events: none;
+      background:
+        radial-gradient(28% 38% at 16% 18%, rgba(240, 166, 58, .30), transparent 70%),
+        radial-gradient(22% 30% at 72% 10%, rgba(240, 166, 58, .18), transparent 70%),
+        radial-gradient(55% 60% at 90% 85%, rgba(156, 59, 37, .45), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='60'%3E%3Cg fill='none' stroke='%23F3EDE4' stroke-opacity='.08' stroke-width='2'%3E%3Cpath d='M0 1h120M0 31h120M1 1v30M61 1v30M31 31v30M91 31v30'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(180deg, #0F0D0B 0%, #1E1713 100%);
+    }
+    .hero::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none;
+      background: linear-gradient(90deg, rgba(15, 13, 11, .85) 0%, rgba(15, 13, 11, .4) 60%, transparent 100%);
+    }
+    .hero__smoke { position: absolute; right: -60px; bottom: -40px; width: min(560px, 70vw); opacity: .2; color: var(--color-accent); pointer-events: none; z-index: 1; }
+    .hero__content { position: relative; z-index: 2; max-width: 780px; }
+    .hero h1 { font-size: clamp(40px, 7vw, 78px); font-weight: 700; text-transform: uppercase; margin-bottom: 20px; }
+    .hero h1 span { color: var(--color-accent); }
+    .hero__lead { font-size: clamp(18px, 2.2vw, 21px); color: var(--hero-muted); max-width: 620px; margin-bottom: 32px; }
+    .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 36px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
+    .chips li {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 2px;
+      background: rgba(243, 237, 228, .06); border: 1px solid rgba(240, 166, 58, .35);
+      font-size: 14px; color: var(--hero-text);
+    }
+    .chips svg { width: 16px; height: 16px; color: var(--color-accent); }
+
+    /* Сетка карточек */
+    .grid { display: grid; gap: 20px; }
+    .grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .grid--4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 1024px) { .grid--4 { grid-template-columns: repeat(2, 1fr); } .grid--3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .grid--3, .grid--4 { grid-template-columns: 1fr; } }
+    .section__head { margin-bottom: 40px; }
+    .card {
+      background: var(--color-card); color: var(--color-card-foreground); border: 1px solid var(--color-border);
+      border-top: 3px solid var(--brick);
+      border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow);
+      transition: box-shadow .22s ease, border-color .22s ease; will-change: transform;
+    }
+    .card:hover { border-color: var(--color-accent); box-shadow: 8px 8px 0 rgba(156, 59, 37, .55); }
+    .section--alt .card { background: var(--color-card); }
+    .icon {
+      width: 48px; height: 48px; border-radius: 2px; display: grid; place-items: center; margin-bottom: 18px;
+      background: var(--color-muted); color: var(--color-accent); border: 1px solid #4A3F36;
+    }
+    .icon svg { width: 24px; height: 24px; }
+    .card p { color: var(--color-muted-foreground); font-size: 16px; margin: 0; }
+
+    /* Меню */
+    .menu-card { display: flex; flex-direction: column; }
+    .menu-card p { flex: 1; margin-bottom: 18px; }
+    .price { font: 600 15px/1.3 var(--font-head); letter-spacing: .06em; text-transform: uppercase; color: var(--color-accent); }
+    .price small { font-size: 14px; font-weight: 500; color: var(--color-muted-foreground); }
+    .note { font-size: 14px; color: var(--color-muted-foreground); margin-top: 20px; }
+
+    /* Афиша */
+    .afisha { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+    @media (max-width: 900px) { .afisha { grid-template-columns: 1fr; } }
+    .checklist { list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 14px; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; }
+    .checklist svg { width: 22px; height: 22px; color: var(--color-accent); flex: none; margin-top: 3px; }
+    .tg-post {
+      background: #0F0D0B; color: #F3EDE4; border-radius: 10px; padding: 22px; max-width: 420px; margin-inline: auto;
+      box-shadow: 10px 10px 0 rgba(156, 59, 37, .45); border: 1px solid var(--color-border);
+    }
+    .tg-post__head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .tg-post__ava { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #9C3B25, #F0A63A); }
+    .tg-post__name { font-weight: 600; font-size: 15px; }
+    .tg-post__meta { font-size: 13px; color: #BFB3A5; }
+    .tg-post__cover {
+      height: 150px; border-radius: 6px; margin-bottom: 14px;
+      background:
+        radial-gradient(40% 70% at 30% 30%, rgba(240, 166, 58, .55), transparent 70%),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='30'%3E%3Cg fill='none' stroke='%23F3EDE4' stroke-opacity='.12' stroke-width='1.5'%3E%3Cpath d='M0 .5h60M0 15.5h60M.5 .5v15M30.5 .5v15M15.5 15.5v15M45.5 15.5v15'/%3E%3C/g%3E%3C/svg%3E"),
+        linear-gradient(135deg, #5A2416, #1E1713);
+    }
+    .tg-post p { font-size: 15px; color: #E5DDD2; margin-bottom: 14px; }
+    .tg-post__btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tg-post__btns span {
+      text-align: center; padding: 10px; border-radius: 4px; font-size: 14px; font-weight: 600;
+      background: rgba(240, 166, 58, .16); color: #F6C47A;
+    }
+    .demo-tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 2px; background: rgba(240,166,58,.18); color: #F6C47A; margin-left: 6px; }
+
+    /* Рейтинг и отзывы (блок #promo) */
+    .promo { position: relative; overflow: hidden; }
+    .promo__day { font: 700 13px/1.2 var(--font-head); letter-spacing: .14em; text-transform: uppercase; color: var(--color-accent); margin-bottom: 8px; }
+    .promo::after {
+      content: ""; position: absolute; right: -40px; top: -40px; width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(240,166,58,.16), transparent 70%); pointer-events: none;
+    }
+
+    /* Шаги (воронка) */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; }
+    @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+    .step { position: relative; border-top: 4px solid var(--step-c); }
+    .step__num {
+      display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 2px;
+      background: var(--step-c); color: #15120F; font: 700 18px/1 var(--font-head); margin-bottom: 16px;
+    }
+    .step__cta { display: inline-block; margin-top: 16px; font-weight: 600; color: var(--step-c); text-decoration: underline; text-underline-offset: 4px; }
+    .progress { display: flex; gap: 8px; margin-bottom: 28px; }
+    .progress span { height: 6px; flex: 1; border-radius: 0; }
+
+    /* Форма */
+    .booking { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; align-items: start; }
+    @media (max-width: 900px) { .booking { grid-template-columns: 1fr; } }
+    .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 560px) { .form { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field--full { grid-column: 1 / -1; }
+    label { font-weight: 600; font-size: 15px; }
+    input, select, textarea {
+      font: 400 17px/1.4 var(--font); color: var(--color-foreground); background: #15120F;
+      border: 1.5px solid #857566; border-radius: var(--radius); padding: 13px 14px; min-height: 50px; width: 100%;
+      transition: border-color .2s, box-shadow .2s; color-scheme: dark;
+    }
+    input::placeholder, textarea::placeholder { color: #9C8F80; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-ring); box-shadow: 0 0 0 4px rgba(240, 166, 58, .25); }
+    [aria-invalid="true"] { border-color: var(--color-destructive); }
+    .error { font-size: 14px; color: #FCA5A5; min-height: 1em; }
+    .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .form__hint { font-size: 14px; color: var(--color-muted-foreground); margin: 0; }
+    .success {
+      display: none; grid-column: 1 / -1; padding: 18px 20px; border-radius: var(--radius);
+      background: rgba(240, 166, 58, .12); border: 1px solid var(--color-accent); color: var(--color-foreground); font-weight: 600;
+    }
+    .success.is-visible { display: flex; gap: 12px; align-items: center; }
+    .success svg { width: 24px; height: 24px; color: var(--color-accent); flex: none; }
+
+    /* Контакты */
+    .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .contacts { grid-template-columns: 1fr; } }
+    .contacts a { font-weight: 600; color: var(--color-accent); }
+    .contact-value { font-size: 19px; font-weight: 600; color: var(--color-foreground); margin-bottom: 14px; }
+
+    /* Подвал */
+    .footer { background: var(--hero-bg); color: var(--hero-muted); padding: 40px 0 28px; font-size: 15px; border-top: 4px solid var(--brick); }
+    .footer__inner { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; }
+    .footer a { color: var(--hero-text); }
+    .footer__demo { margin-top: 24px; font-size: 12px; color: #A39686; text-align: center; }
+
+    /* Плавающая кнопка звонка на телефоне */
+    .call-fab { display: none; }
+    @media (max-width: 640px) {
+      .call-fab {
+        display: inline-flex; position: fixed; right: 16px; bottom: 16px; z-index: 60;
+        width: 58px; height: 58px; border-radius: 4px; align-items: center; justify-content: center;
+        background: var(--color-accent); color: #15120F; box-shadow: 4px 4px 0 var(--brick);
+      }
+      .call-fab svg { width: 26px; height: 26px; }
+      .header .btn { display: none; }
+    }
+
+    /* Узкие экраны: ничего не вылезает за край */
+    html, body { overflow-x: clip; }
+    .grid > *, .afisha > *, .booking > *, .contacts > *, .steps > *, .form > * { min-width: 0; }
+    h1, h2, h3, .contact-value { overflow-wrap: break-word; }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: clamp(30px, 9vw, 40px); }
+      .hero__actions .btn { flex: 1 1 100%; }
+      .chips li { font-size: 13px; }
+    }
+  </style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- Набор SVG-иконок (стиль Lucide) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></symbol>
+    <symbol id="i-citrus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></symbol>
+    <symbol id="i-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M5 2h14l-1.5 9a5.5 5.5 0 0 1-11 0Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-armchair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-bulb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v3"/><path d="M9 18h6M10 22h4"/><path d="M8.5 14.5A5 5 0 1 1 15.5 14.5c-.8.8-1.5 1.8-1.5 3.5h-4c0-1.7-.7-2.7-1.5-3.5Z"/><path d="m11 9 1 3 1-3"/></symbol>
+    <symbol id="i-brick" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="M2 9.33h20M2 14.67h20M12 4v5.33M7 9.33v5.34M17 9.33v5.34M12 14.67V20"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.1 6.3 6.9 1-5 4.9 1.2 6.8L12 17.8 5.8 21l1.2-6.8-5-4.9 6.9-1Z"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4c-2 2-2 4 0 6s2 4 0 6"/><path d="M11 18h10l-1.5 6h-7z"/><path d="M12.5 24 11 28h10l-1.5-4"/><path d="M21 21h4a2 2 0 0 1 2 2v1"/></symbol>
+  </svg>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="#top" aria-label="Bulldog loft club — на главную">
+        <svg aria-hidden="true"><use href="#i-logo"/></svg>
+        <span>Bulldog loft club</span>
+      </a>
+      <nav class="nav" aria-label="Разделы сайта">
+        <a href="#menu">Меню</a>
+        <a href="#afisha">Афиша</a>
+        <a href="#promo">Отзывы</a>
+        <a href="#how">Как забронировать</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <a class="btn btn--accent btn--sm" href="#booking">Забронировать</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 1. Первый экран -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <svg class="hero__smoke" viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M40 280c40-40 10-80 60-110s90 10 120-30 0-90 60-110"/>
+        <path d="M90 290c30-50 0-90 50-120s80 20 110-20 10-80 70-100"/>
+        <path d="M150 295c20-40-10-70 40-100s70 10 100-20 20-60 80-80"/>
+      </svg>
+      <div class="container hero__content">
+        <p class="eyebrow" data-hero style="color:#F0A63A">кальянный лофт · Советская, 73</p>
+        <h1 id="hero-title" data-hero>Bulldog loft club — <span>столик и&nbsp;кальян готовы к&nbsp;вашему приходу</span></h1>
+        <p class="hero__lead" data-hero>Забронируйте зону под свою компанию и сразу закажите кальян — его начнут готовить заранее. Без долгого ожидания и без поиска, куда посадить всех друзей.</p>
+        <div class="hero__actions" data-hero>
+          <a class="btn btn--accent" href="tel:+79996870707">
+            <svg aria-hidden="true"><use href="#i-phone"/></svg> Позвонить
+          </a>
+          <a class="btn btn--ghost" href="#booking">
+            <svg aria-hidden="true"><use href="#i-calendar"/></svg> Забронировать зону
+          </a>
+        </div>
+        <ul class="chips" data-hero aria-label="Коротко о нас">
+          <li><svg aria-hidden="true"><use href="#i-star"/></svg> 4.8 на Яндекс Картах · 483 оценки</li>
+          <li><svg aria-hidden="true"><use href="#i-users"/></svg> Зона под вашу компанию</li>
+          <li><svg aria-hidden="true"><use href="#i-flame"/></svg> Кальян к приходу</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. Меню -->
+    <section class="section" id="menu" aria-labelledby="menu-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Меню</span>
+          <h2 id="menu-title">Кальяны, чай и бар</h2>
+          <p class="lead">Одно актуальное меню — здесь, а не разные цены на картах. Кальянщик подберёт крепость и вкус под ваш вечер.</p>
+        </div>
+        <!-- ЦЕНЫ: в открытых источниках цены расходятся — владелец впишет актуальные. -->
+        <div class="grid grid--3" data-stagger>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-flame"/></svg></div>
+            <h3>Кальян</h3>
+            <p>Вкус и крепость — под настроение компании, кальянщик подскажет, если сложно выбрать.</p>
+            <div class="price">Цены уточняйте</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+            <h3>Кальян к приходу</h3>
+            <p>Укажите вкус при брони — кальян начнут готовить заранее, и ждать не придётся.</p>
+            <div class="price">При брони столика</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-cup"/></svg></div>
+            <h3>Чай</h3>
+            <p>Большой выбор чая — гости отмечают это в отзывах.</p>
+            <div class="price">Цены уточняйте</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-glass"/></svg></div>
+            <h3>Бар</h3>
+            <p>Большой выбор алкоголя к кальяну — ещё одна сильная сторона по отзывам гостей.</p>
+            <div class="price">Цены уточняйте</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-armchair"/></svg></div>
+            <h3>Зона для компании</h3>
+            <p>Укажите, сколько вас, — подберём зону, где компания сядет вместе.</p>
+            <div class="price">Условия уточняйте</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-brick"/></svg></div>
+            <h3>Лофт-интерьер</h3>
+            <p>Кирпич, тёплый свет и своя атмосфера — то, за что гости хвалят клуб чаще всего.</p>
+            <div class="price">Советская, 73</div>
+          </article>
+        </div>
+        <p class="note">Актуальные цены уточняйте по телефону +7 999 687-07-07. Услуги — только для гостей старше 18 лет.</p>
+      </div>
+    </section>
+
+    <!-- 3. Афиша -->
+    <section class="section section--alt" id="afisha" aria-labelledby="afisha-title" data-reveal>
+      <div class="container afisha">
+        <div data-reveal-item>
+          <span class="eyebrow">Афиша</span>
+          <h2 id="afisha-title">Вечера в лофте — анонсы в одном месте</h2>
+          <p class="lead">Новости клуба — во ВКонтакте, а записаться на вечер или забронировать столик можно прямо из поста в Telegram — одной кнопкой.</p>
+          <ul class="checklist">
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Кнопка «Записаться» в посте открывает бота — без звонков и переписки.</span></li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Бот напомнит о визите и спросит, какой кальян подготовить.</span></li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>На входе вас уже ждут: зона накрыта, кальян в работе.</span></li>
+          </ul>
+          <a class="btn btn--primary" href="#booking" data-preset="Событие из афиши">Записаться на вечер</a>
+        </div>
+        <div data-reveal-item>
+          <div class="tg-post" role="img" aria-label="Пример поста афиши в Telegram-канале с кнопками записи">
+            <div class="tg-post__head">
+              <div class="tg-post__ava"></div>
+              <div>
+                <div class="tg-post__name">Bulldog loft club <span class="demo-tag">пример</span></div>
+                <div class="tg-post__meta">Telegram-канал · афиша</div>
+              </div>
+            </div>
+            <div class="tg-post__cover"></div>
+            <p><strong>Здесь будет анонс вечера.</strong><br>Дата, время и пара слов о событии — гость жмёт кнопку и сразу попадает в список.</p>
+            <div class="tg-post__btns">
+              <span>В список гостей</span>
+              <span>Бронь столика</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Рейтинг и отзывы -->
+    <section class="section" id="promo" aria-labelledby="promo-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Отзывы</span>
+          <h2 id="promo-title">Что говорят гости</h2>
+          <p class="lead">Оценки — с открытых площадок, без фильтров. Читайте отзывы целиком на Яндекс Картах и в 2ГИС.</p>
+        </div>
+        <div class="grid grid--4" data-stagger>
+          <article class="card promo" data-card>
+            <div class="promo__day">Яндекс Карты</div>
+            <h3>4.8 из 5</h3>
+            <p>483 оценки и 192 отзыва — больше всех среди кальянных Тамбова.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">2ГИС</div>
+            <h3>3.9 из 5</h3>
+            <p>48 оценок.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">Интерьер</div>
+            <h3>98% — позитивно</h3>
+            <p>Так в отзывах оценивают интерьер и атмосферу лофта.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">Слышим вас</div>
+            <h3>Без ожидания</h3>
+            <p>Гости просили ждать меньше — поэтому кальян теперь можно заказать вместе с бронью.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Почему мы -->
+    <section class="section section--alt" id="why" aria-labelledby="why-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Почему к нам</span>
+          <h2 id="why-title">Приходите — и сразу отдыхайте</h2>
+        </div>
+        <div class="grid grid--4" data-stagger>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-users"/></svg></div>
+            <h3>Посадим всю компанию</h3>
+            <p>Выберите зону и число гостей при брони — без пересаживаний на месте.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-flame"/></svg></div>
+            <h3>Кальян без ожидания</h3>
+            <p>Закажите вкус заранее — к приходу всё будет готово.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-bell"/></svg></div>
+            <h3>Напомним о брони</h3>
+            <p>Бот пришлёт напоминание в день визита.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-bulb"/></svg></div>
+            <h3>Атмосфера лофта</h3>
+            <p>Интерьер, большой выбор чая и бара — за это клуб хвалят в отзывах.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Как проходит: 3 шага -->
+    <section class="section" id="how" aria-labelledby="how-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Как это работает</span>
+          <h2 id="how-title">Три шага до вечера без ожидания</h2>
+        </div>
+        <div class="progress" aria-hidden="true" data-reveal-item>
+          <span style="background:var(--step-1)"></span><span style="background:var(--step-2)"></span><span style="background:var(--step-3)"></span>
+        </div>
+        <ol class="steps" data-stagger style="list-style:none;padding:0;margin:0">
+          <li class="card step" style="--step-c:var(--step-1)" data-card>
+            <span class="step__num">1</span>
+            <h3>Выберите зону</h3>
+            <p>День, время и сколько вас — чтобы компания сидела вместе.</p>
+            <a class="step__cta" href="#booking">Выбрать зону</a>
+          </li>
+          <li class="card step" style="--step-c:var(--step-2)" data-card>
+            <span class="step__num">2</span>
+            <h3>Закажите кальян заранее</h3>
+            <p>Напишите вкус в комментарии к брони — мы подтвердим и напомним.</p>
+            <a class="step__cta" href="#booking">Заполнить форму</a>
+          </li>
+          <li class="card step" style="--step-c:var(--step-3)" data-card>
+            <span class="step__num">3</span>
+            <h3>Приходите</h3>
+            <p>Назовите имя на входе — зона ваша, кальян уже готовится.</p>
+            <a class="step__cta" href="#contacts">Как добраться</a>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 7. Форма записи -->
+    <section class="section section--alt" id="booking" aria-labelledby="booking-title" data-reveal>
+      <div class="container booking">
+        <div data-reveal-item>
+          <span class="eyebrow">Бронь</span>
+          <h2 id="booking-title">Забронировать зону</h2>
+          <p class="lead">Укажите число гостей — подберём зону для всей компании. Вкус кальяна напишите в комментарии, подготовим к приходу. Если удобнее голосом:</p>
+          <a class="btn btn--outline" href="tel:+79996870707">
+            <svg aria-hidden="true"><use href="#i-phone"/></svg> +7 999 687-07-07
+          </a>
+        </div>
+        <form class="form card" id="booking-form" novalidate data-reveal-item>
+          <div class="field">
+            <label for="f-name">Имя</label>
+            <input id="f-name" name="name" type="text" autocomplete="given-name" required aria-describedby="e-name">
+            <span class="error" id="e-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" required aria-describedby="e-phone">
+            <span class="error" id="e-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-service">Что бронируем</label>
+            <select id="f-service" name="service">
+              <option>Столик в зале</option>
+              <option>Диванная зона для компании</option>
+              <option>Событие из афиши</option>
+              <option>День рождения / праздник</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-guests">Гостей</label>
+            <select id="f-guests" name="guests">
+              <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7 и больше</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-date">Дата</label>
+            <input id="f-date" name="date" type="date" required aria-describedby="e-date">
+            <span class="error" id="e-date" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-time">Удобное время</label>
+            <input id="f-time" name="time" type="time" value="20:00" required aria-describedby="e-time">
+            <span class="error" id="e-time" aria-live="polite"></span>
+          </div>
+          <div class="field field--full">
+            <label for="f-comment">Комментарий (необязательно)</label>
+            <textarea id="f-comment" name="comment" rows="2" placeholder="Например: у окна, отмечаем день рождения"></textarea>
+          </div>
+          <div class="form__foot">
+            <button class="btn btn--accent" type="submit">Отправить заявку</button>
+            <p class="form__hint">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для связи по брони.</p>
+          </div>
+          <div class="success" id="form-success" role="status" aria-live="polite">
+            <svg aria-hidden="true"><use href="#i-check"/></svg>
+            <span>Заявка принята, перезвоним.</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 8. Контакты -->
+    <section class="section" id="contacts" aria-labelledby="contacts-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title">Ждём вас в лофте</h2>
+        </div>
+        <div class="contacts" data-stagger>
+          <div class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></div>
+            <h3>Адрес</h3>
+            <p class="contact-value">Советская ул., 73, Тамбов</p>
+            <a href="https://yandex.ru/maps/?text=Bulldog%20loft%20club%2C%20%D0%A1%D0%BE%D0%B2%D0%B5%D1%82%D1%81%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB.%2C%2073%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener">Открыть на карте<span class="visually-hidden"> (в новой вкладке)</span></a>
+          </div>
+          <div class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-phone"/></svg></div>
+            <h3>Телефон</h3>
+            <p class="contact-value">+7 999 687-07-07</p>
+            <a href="tel:+79996870707">Позвонить</a>
+          </div>
+          <div class="card" data-card id="hours-card">
+            <div class="icon"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+            <h3>Часы работы</h3>
+            <p class="contact-value" id="hours-value"></p>
+            <a href="#booking">Забронировать</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <div>© 2026 Bulldog loft club · Советская ул., 73, Тамбов</div>
+        <div><a href="tel:+79996870707">+7 999 687-07-07</a> · <a href="https://vk.com/bulldogloft" target="_blank" rel="noopener">ВКонтакте<span class="visually-hidden"> (в новой вкладке)</span></a></div>
+        <div>Только для гостей старше 18 лет</div>
+      </div>
+      <p class="footer__demo">Демо-макет</p>
+    </div>
+  </footer>
+
+  <a class="call-fab" href="tel:+79996870707" aria-label="Позвонить +7 999 687-07-07">
+    <svg aria-hidden="true"><use href="#i-phone"/></svg>
+  </a>
+
+  <style>.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+
+  <script src="motion.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ---------- Часы работы: если пусто — показываем подсказку ---------- */
+    var hours = document.getElementById('hours-value');
+    if (hours) {
+      var h = hours.textContent.trim();
+      if (!h || h === '{' + '{HOURS}}') hours.textContent = 'Уточняйте по телефону';
+    }
+
+    /* ---------- Форма брони (без отправки на сервер) ---------- */
+    var form = document.getElementById('booking-form');
+    var dateInput = document.getElementById('f-date');
+    var today = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var todayStr = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+    dateInput.min = todayStr;
+    dateInput.value = todayStr;
+
+    // Кнопки с data-preset выбирают нужный пункт в форме
+    document.querySelectorAll('[data-preset]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('f-service').value = link.getAttribute('data-preset');
+      });
+    });
+
+    function setError(input, msg) {
+      var err = document.getElementById('e-' + input.name);
+      if (err) err.textContent = msg || '';
+      if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+      return !msg;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = form.elements.name, phone = form.elements.phone, date = form.elements.date, time = form.elements.time;
+      var ok = true;
+      ok = setError(name, name.value.trim().length < 2 ? 'Укажите имя' : '') && ok;
+      var digits = phone.value.replace(/\D/g, '');
+      ok = setError(phone, digits.length < 10 || digits.length > 15 ? 'Укажите телефон, например +7 900 000-00-00' : '') && ok;
+      ok = setError(date, !date.value || date.value < todayStr ? 'Выберите дату не раньше сегодняшней' : '') && ok;
+      ok = setError(time, !time.value ? 'Укажите время' : '') && ok;
+      if (!ok) {
+        var firstBad = form.querySelector('[aria-invalid="true"]');
+        if (firstBad) firstBad.focus();
+        return;
+      }
+      var success = document.getElementById('form-success');
+      success.classList.add('is-visible');
+      form.reset();
+      dateInput.value = todayStr;
+      if (window.Motion && !reduceMotion) {
+        window.Motion.animate(success, { opacity: [0, 1], transform: ['translateY(8px)', 'translateY(0)'] }, { duration: 0.35 });
+      }
+    });
+
+    /* ---------- Анимации (Motion). Без motion.js или при reduced-motion всё просто видно ---------- */
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var M = window.Motion;
+    if (!M || reduceMotion || typeof M.animate !== 'function') return;
+
+    var animate = M.animate;
+    var stagger = M.stagger;
+    var ease = [0.22, 1, 0.36, 1];
+
+    function hide(els, offset) {
+      els.forEach(function (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }
+    function show(els, delayStep) {
+      return animate(els, { opacity: [0, 1], transform: ['translateY(18px)', 'translateY(0px)'] }, {
+        duration: 0.5,
+        ease: ease,
+        delay: (typeof stagger === 'function' && els.length > 1) ? stagger(delayStep) : 0
+      });
+    }
+
+    try {
+      // Первый экран: элементы по очереди
+      var heroItems = Array.prototype.slice.call(document.querySelectorAll('[data-hero]'));
+      hide(heroItems, 18);
+      show(heroItems, 0.1);
+
+      // Появление блоков при прокрутке
+      if (typeof M.inView === 'function') {
+        document.querySelectorAll('[data-reveal]').forEach(function (section) {
+          var heads = Array.prototype.slice.call(section.querySelectorAll('[data-reveal-item]'));
+          var cards = [];
+          section.querySelectorAll('[data-stagger]').forEach(function (g) {
+            cards = cards.concat(Array.prototype.slice.call(g.children));
+          });
+          var targets = heads.concat(cards);
+          if (!targets.length) return;
+          hide(targets, 18);
+          var done = false;
+          M.inView(section, function () {
+            if (done) return;
+            done = true;
+            show(heads, 0.1);
+            if (cards.length) show(cards, 0.08);
+          }, { amount: 0.15 });
+        });
+      }
+
+      // Лёгкий параллакс фона первого экрана
+      var hero = document.querySelector('.hero');
+      var heroBg = document.querySelector('.hero__bg');
+      var smoke = document.querySelector('.hero__smoke');
+      if (typeof M.scroll === 'function' && hero && heroBg) {
+        M.scroll(animate(heroBg, { transform: ['translateY(0px)', 'translateY(90px)'] }, { ease: 'linear' }),
+          { target: hero, offset: ['start start', 'end start'] });
+        if (smoke) {
+          M.scroll(animate(smoke, { transform: ['translateY(0px)', 'translateY(-60px)'] }, { ease: 'linear' }),
+            { target: hero, offset: ['start start', 'end start'] });
+        }
+      }
+
+      // Реакция на наведение (карточки и кнопки)
+      var lift = function (node, dy) {
+        if (typeof M.hover !== 'function') return;
+        M.hover(node, function () {
+          animate(node, { transform: 'translateY(' + dy + 'px)' }, { duration: 0.22, ease: ease });
+          return function () {
+            animate(node, { transform: 'translateY(0px)' }, { duration: 0.22, ease: ease });
+          };
+        });
+      };
+      document.querySelectorAll('[data-card]').forEach(function (n) { lift(n, -4); });
+      document.querySelectorAll('.btn').forEach(function (n) { lift(n, -2); });
+
+      // Мягкое нажатие
+      document.querySelectorAll('.btn, .call-fab').forEach(function (n) {
+        n.addEventListener('pointerdown', function () {
+          animate(n, { transform: 'scale(0.97)' }, { duration: 0.2 });
+        });
+        var release = function () { animate(n, { transform: 'scale(1)' }, { duration: 0.2 }); };
+        n.addEventListener('pointerup', release);
+        n.addEventListener('pointerleave', release);
+      });
+    } catch (err) {
+      // Если что-то пошло не так — показываем всё без анимации
+      document.querySelectorAll('[data-hero], [data-reveal-item], [data-stagger] > *').forEach(function (el) {
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+    }
+  })();
+  </script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

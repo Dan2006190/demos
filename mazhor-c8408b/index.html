@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Мажор — караоке-бар в Тамбове: бронь столика и афиша вечеров</title>
+  <meta name="description" content="Мажор — караоке-бар в Тамбове. Бронь столика на вечер онлайн, афиша вечеров, праздники и банкеты. 4.5 в 2ГИС, 90 оценок. ул. Максима Горького, 17. Открываемся в 20:00">
+  <meta name="theme-color" content="#0B0A12">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BarOrPub",
+    "name": "Мажор",
+    "telephone": "+79537011999",
+    "address": { "@type": "PostalAddress", "streetAddress": "ул. Максима Горького, 17, Тамбов", "addressLocality": "Тамбов" },
+    "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+    "sameAs": "https://vk.com/major.karaoke_bar",
+    "hasMap": "https://yandex.ru/maps/?text=%D0%9C%D0%B0%D0%B6%D0%BE%D1%80%2C%20%D1%83%D0%BB.%20%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D0%B0%20%D0%93%D0%BE%D1%80%D1%8C%D0%BA%D0%BE%D0%B3%D0%BE%2C%2017%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+  }
+  </script>
+  <style>
+    :root {
+      /* Ночная сцена: тёмный фон, фуксия и тёплое золото прожектора */
+      --color-primary: #E879F9;
+      --color-on-primary: #1B0A22;
+      --color-secondary: #C084FC;
+      --color-on-secondary: #140A1D;
+      --color-accent: #F5C453;
+      --color-on-accent: #1A1205;
+      --color-background: #0B0A12;
+      --color-foreground: #F4F1FA;
+      --color-card: #14121F;
+      --color-card-foreground: #F4F1FA;
+      --color-muted: #1E1B2C;
+      --color-muted-foreground: #BDB6CD;
+      --color-border: #2E2740;
+      --color-destructive: #FB7185;
+      --color-ring: #E879F9;
+      --hero-bg: #120A19;
+      --hero-text: #F7F3FF;
+      --hero-muted: #C9BFDD;
+      --step-1: #FB7185;   /* шаг 1 — «пришли без брони» */
+      --step-2: #FBBF24;   /* шаг 2 — «оставили заявку» */
+      --step-3: #34D399;   /* шаг 3 — «вечер ваш» */
+      --radius: 18px;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 14px 34px -20px rgba(0, 0, 0, .85);
+      --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+      --font-display: Georgia, "Times New Roman", "PT Serif", serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+    body {
+      margin: 0;
+      font-family: var(--font);
+      font-size: 17px;
+      line-height: 1.6;
+      color: var(--color-foreground);
+      background: var(--color-background);
+      -webkit-font-smoothing: antialiased;
+    }
+    img, svg { display: block; }
+    a { color: inherit; }
+    h1, h2, h3 { font-family: var(--font-display); line-height: 1.12; margin: 0 0 .5em; letter-spacing: -.005em; }
+    h2 { font-size: clamp(28px, 4vw, 42px); font-weight: 600; }
+    h3 { font-size: 21px; font-weight: 600; }
+    p { margin: 0 0 1em; }
+    .container { width: min(1160px, 100% - 40px); margin-inline: auto; }
+    .section { padding: clamp(64px, 9vw, 112px) 0; }
+    .section--alt { background: var(--color-card); }
+    .eyebrow {
+      display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: .16em;
+      text-transform: uppercase; color: var(--color-primary); margin-bottom: 14px;
+    }
+    .section--alt .eyebrow, .section .eyebrow { color: var(--color-primary); }
+    .lead { font-size: 18px; color: var(--color-muted-foreground); max-width: 640px; }
+    .link-accent { color: var(--color-primary); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+    .link-accent:hover { color: #F5D0FE; }
+    .skip-link {
+      position: absolute; left: 12px; top: -60px; z-index: 100; padding: 10px 16px;
+      background: var(--color-card); color: var(--color-foreground); border-radius: 8px; font-weight: 600;
+    }
+    .skip-link:focus { top: 12px; }
+    :focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; border-radius: 6px; }
+
+    /* Кнопки */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+      min-height: 52px; padding: 14px 26px; border-radius: 999px; border: 2px solid transparent;
+      font: 600 16px/1 var(--font); letter-spacing: .02em; text-decoration: none; cursor: pointer;
+      transition: background-color .2s ease, border-color .2s ease, box-shadow .2s ease, color .2s ease;
+      will-change: transform;
+    }
+    .btn svg { width: 20px; height: 20px; flex: none; }
+    .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+    .btn--accent:hover { background: #FFD97A; box-shadow: 0 10px 28px -10px rgba(245, 196, 83, .55); }
+    .btn--primary { background: var(--color-primary); color: var(--color-on-primary); }
+    .btn--primary:hover { background: var(--color-secondary); }
+    .btn--ghost { background: transparent; color: var(--hero-text); border-color: rgba(247, 243, 255, .45); }
+    .btn--ghost:hover { border-color: var(--color-primary); color: #F5D0FE; background: rgba(232, 121, 249, .1); }
+    .btn--outline { background: transparent; color: var(--color-foreground); border-color: rgba(244, 241, 250, .5); }
+    .btn--outline:hover { background: var(--color-foreground); color: var(--color-background); border-color: var(--color-foreground); }
+    .btn--sm { min-height: 44px; padding: 10px 20px; font-size: 15px; }
+
+    /* Шапка */
+    .header {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(11, 10, 18, .88); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      color: var(--hero-text); border-bottom: 1px solid rgba(244, 241, 250, .08);
+    }
+    .header__inner { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 70px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 600; font-size: 21px; letter-spacing: .01em; text-decoration: none; }
+    .logo svg { width: 28px; height: 28px; color: var(--color-accent); }
+    .nav { display: flex; gap: 26px; }
+    .nav a { text-decoration: none; font-size: 14px; font-weight: 500; letter-spacing: .03em; color: var(--hero-muted); transition: color .2s; }
+    .nav a:hover { color: var(--color-accent); }
+    @media (max-width: 900px) { .nav { display: none; } }
+
+    /* Первый экран */
+    .hero {
+      position: relative; overflow: hidden; color: var(--hero-text); background: var(--hero-bg);
+      padding: clamp(72px, 12vw, 140px) 0 clamp(80px, 12vw, 140px);
+    }
+    .hero__bg {
+      position: absolute; inset: -20% -10% -10%; pointer-events: none;
+      background:
+        radial-gradient(38% 46% at 16% 24%, rgba(217, 70, 239, .30), transparent 70%),
+        radial-gradient(32% 40% at 84% 18%, rgba(245, 196, 83, .16), transparent 70%),
+        radial-gradient(55% 60% at 62% 96%, rgba(139, 92, 246, .26), transparent 72%),
+        linear-gradient(165deg, #1A0C26 0%, #120A19 55%, #0B0A12 100%);
+    }
+    .hero__smoke { position: absolute; right: -70px; bottom: -30px; width: min(520px, 68vw); opacity: .28; color: #E879F9; pointer-events: none; }
+    .hero__content { position: relative; max-width: 760px; }
+    .hero h1 { font-size: clamp(40px, 7vw, 78px); font-weight: 600; margin-bottom: 20px; }
+    .hero h1 span { color: #F5C453; font-style: italic; }
+    .hero__lead { font-size: clamp(18px, 2.2vw, 21px); color: var(--hero-muted); max-width: 620px; margin-bottom: 32px; }
+    .hero__actions { display: flex; flex-wrap: wrap; gap: 14px; margin-bottom: 36px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
+    .chips li {
+      display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 999px;
+      background: rgba(244, 241, 250, .05); border: 1px solid rgba(232, 121, 249, .24);
+      font-size: 14px; color: var(--hero-text);
+    }
+    .chips svg { width: 16px; height: 16px; color: #F0ABFC; flex: none; }
+
+    /* Сетка карточек */
+    .grid { display: grid; gap: 20px; }
+    .grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .grid--4 { grid-template-columns: repeat(4, 1fr); }
+    @media (max-width: 1024px) { .grid--4 { grid-template-columns: repeat(2, 1fr); } .grid--3 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 640px) { .grid--3, .grid--4 { grid-template-columns: 1fr; } }
+    .section__head { margin-bottom: 40px; }
+    .card {
+      background: var(--color-card); color: var(--color-card-foreground); border: 1px solid var(--color-border);
+      border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow);
+      transition: box-shadow .25s ease, border-color .25s ease; will-change: transform;
+    }
+    .card:hover { border-color: rgba(232, 121, 249, .55); box-shadow: 0 1px 2px rgba(0, 0, 0, .5), 0 22px 40px -22px rgba(217, 70, 239, .55); }
+    .section--alt .card { background: var(--color-background); }
+    .icon {
+      width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; margin-bottom: 18px;
+      background: rgba(232, 121, 249, .1); border: 1px solid rgba(232, 121, 249, .18); color: #F0ABFC;
+    }
+    .icon svg { width: 24px; height: 24px; }
+    .card p { color: var(--color-muted-foreground); font-size: 16px; margin: 0; }
+
+    /* Форматы вечера */
+    .menu-card { display: flex; flex-direction: column; }
+    .menu-card p { flex: 1; margin-bottom: 18px; }
+    .price {
+      font-size: 12px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase;
+      color: #F0ABFC;
+    }
+    .price small { font-size: 14px; font-weight: 500; letter-spacing: 0; text-transform: none; color: var(--color-muted-foreground); }
+    .note { font-size: 14px; color: var(--color-muted-foreground); margin-top: 20px; }
+
+    /* Афиша */
+    .afisha { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: center; }
+    @media (max-width: 900px) { .afisha { grid-template-columns: 1fr; } }
+    .checklist { list-style: none; padding: 0; margin: 0 0 28px; display: grid; gap: 14px; }
+    .checklist li { display: flex; gap: 12px; align-items: flex-start; color: var(--color-muted-foreground); }
+    .checklist svg { width: 22px; height: 22px; color: var(--color-accent); flex: none; margin-top: 3px; }
+    .tg-post {
+      background: #171123; color: #EFE9F7; border-radius: 18px; padding: 22px; max-width: 420px; margin-inline: auto;
+      box-shadow: 0 30px 60px -30px rgba(0, 0, 0, .8); border: 1px solid rgba(232, 121, 249, .22);
+    }
+    .tg-post__head { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+    .tg-post__ava { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #E879F9, #F5C453); }
+    .tg-post__name { font-weight: 600; font-size: 15px; }
+    .tg-post__meta { font-size: 13px; color: #B9AECB; }
+    .tg-post__cover {
+      height: 150px; border-radius: 12px; margin-bottom: 14px;
+      background: radial-gradient(60% 80% at 30% 40%, rgba(232,121,249,.55), transparent 70%),
+                  radial-gradient(50% 70% at 80% 60%, rgba(245,196,83,.5), transparent 70%), #0D0A16;
+    }
+    .tg-post p { font-size: 15px; color: #DED6EC; margin-bottom: 14px; }
+    .tg-post__btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .tg-post__btns span {
+      text-align: center; padding: 10px; border-radius: 10px; font-size: 14px; font-weight: 600;
+      background: rgba(232, 121, 249, .16); color: #F5D0FE;
+    }
+    .demo-tag { display: inline-block; font-size: 12px; padding: 2px 8px; border-radius: 6px; background: rgba(245,196,83,.16); color: #F7D08A; margin-left: 6px; }
+
+    /* Праздники */
+    .promo { position: relative; overflow: hidden; }
+    .promo__day { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: #F5C453; margin-bottom: 8px; }
+    .promo::after {
+      content: ""; position: absolute; right: -40px; top: -40px; width: 120px; height: 120px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(232,121,249,.18), transparent 70%);
+    }
+
+    /* Шаги (воронка) */
+    .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; }
+    @media (max-width: 900px) { .steps { grid-template-columns: 1fr; } }
+    .step { position: relative; border-top: 3px solid var(--step-c); }
+    .step__num {
+      display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%;
+      background: var(--step-c); color: #120E1A; font-weight: 700; margin-bottom: 16px;
+    }
+    .step__cta { display: inline-block; margin-top: 16px; font-weight: 600; color: var(--step-c); text-decoration: underline; text-underline-offset: 4px; }
+    .progress { display: flex; gap: 8px; margin-bottom: 28px; }
+    .progress span { height: 4px; flex: 1; border-radius: 2px; }
+
+    /* Форма */
+    .booking { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; align-items: start; }
+    @media (max-width: 900px) { .booking { grid-template-columns: 1fr; } }
+    .form { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 560px) { .form { grid-template-columns: 1fr; } }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field--full { grid-column: 1 / -1; }
+    label { font-weight: 600; font-size: 15px; color: var(--color-foreground); }
+    input, select, textarea {
+      font: 400 17px/1.4 var(--font); color: var(--color-foreground); background: #17131F;
+      border: 1.5px solid #4A4160; border-radius: 12px; padding: 13px 14px; min-height: 50px; width: 100%;
+      color-scheme: dark;
+      transition: border-color .2s, box-shadow .2s;
+    }
+    input::placeholder, textarea::placeholder { color: #8F87A6; }
+    input:focus, select:focus, textarea:focus { outline: none; border-color: var(--color-ring); box-shadow: 0 0 0 4px rgba(232, 121, 249, .25); }
+    [aria-invalid="true"] { border-color: var(--color-destructive); }
+    .error { font-size: 14px; color: #FDA4AF; min-height: 1em; }
+    .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; }
+    .form__hint { font-size: 14px; color: var(--color-muted-foreground); margin: 0; max-width: 420px; }
+    .success {
+      display: none; grid-column: 1 / -1; padding: 18px 20px; border-radius: 12px;
+      background: rgba(52, 211, 153, .1); border: 1px solid #34D399; color: #C7F9E4; font-weight: 600;
+    }
+    .success.is-visible { display: flex; gap: 12px; align-items: center; }
+    .success svg { width: 24px; height: 24px; color: #34D399; flex: none; }
+
+    /* Контакты */
+    .contacts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    @media (max-width: 900px) { .contacts { grid-template-columns: 1fr; } }
+    .contacts a { font-weight: 600; }
+    .contact-links { display: flex; flex-direction: column; gap: 8px; align-items: flex-start; }
+    .contact-value { font-size: 19px; font-weight: 600; color: var(--color-foreground); margin-bottom: 14px; }
+
+    /* Подвал */
+    .footer { background: #08070E; color: var(--hero-muted); padding: 40px 0 28px; font-size: 15px; border-top: 1px solid rgba(244, 241, 250, .08); }
+    .footer__inner { display: flex; flex-wrap: wrap; gap: 16px 32px; justify-content: space-between; align-items: center; }
+    .footer a { color: var(--hero-text); }
+    .footer__demo { margin-top: 24px; font-size: 12px; color: #938BA8; text-align: center; }
+
+    /* Плавающая кнопка звонка на телефоне */
+    .call-fab { display: none; }
+    @media (max-width: 640px) {
+      .call-fab {
+        display: inline-flex; position: fixed; right: 16px; bottom: 16px; z-index: 60;
+        width: 58px; height: 58px; border-radius: 50%; align-items: center; justify-content: center;
+        background: var(--color-accent); color: var(--color-on-accent); box-shadow: 0 12px 28px -8px rgba(0,0,0,.7);
+      }
+      .call-fab svg { width: 26px; height: 26px; }
+      .header .btn { display: none; }
+    }
+
+    /* Узкие экраны: ничего не вылезает за край */
+    html, body { overflow-x: clip; }
+    .grid > *, .afisha > *, .booking > *, .contacts > *, .steps > *, .form > * { min-width: 0; }
+    h1, h2, h3, .contact-value { overflow-wrap: break-word; }
+    @media (max-width: 480px) {
+      .hero h1 { font-size: clamp(30px, 9vw, 40px); }
+      .hero__actions .btn { flex: 1 1 100%; }
+      .chips li { font-size: 13px; }
+    }
+  </style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+  <a class="skip-link" href="#main">Перейти к содержимому</a>
+
+  <!-- Набор SVG-иконок (стиль Lucide) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.6 2.6A2 2 0 0 0 11.2 2H4a2 2 0 0 0-2 2v7.2a2 2 0 0 0 .6 1.4l8.7 8.7a2.4 2.4 0 0 0 3.4 0l6.6-6.6a2.4 2.4 0 0 0 0-3.4z"/><circle cx="7.5" cy="7.5" r="1.5"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-leaf" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></symbol>
+    <symbol id="i-cup" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></symbol>
+    <symbol id="i-citrus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6 5.6 18.4"/></symbol>
+    <symbol id="i-sparkles" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3-1.9 5.8a2 2 0 0 1-1.3 1.3L3 12l5.8 1.9a2 2 0 0 1 1.3 1.3L12 21l1.9-5.8a2 2 0 0 1 1.3-1.3L21 12l-5.8-1.9a2 2 0 0 1-1.3-1.3Z"/></symbol>
+    <symbol id="i-glass" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8M12 15v7M5 2h14l-1.5 9a5.5 5.5 0 0 1-11 0Z"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-armchair" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 9V6a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v3"/><path d="M3 16a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v2H7v-2a2 2 0 0 0-4 0Z"/><path d="M5 18v2M19 18v2"/></symbol>
+    <symbol id="i-mic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/><path d="M8 22h8"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+    <symbol id="i-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 1 4 1 2.5-1 4-1 2.5 1 4 1 2-1 2-1"/><path d="M2 21h20"/><path d="M7 8v3M12 8v3M17 8v3"/><path d="M7 4h.01M12 4h.01M17 4h.01"/></symbol>
+    <symbol id="i-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/></symbol>
+  </svg>
+
+  <header class="header">
+    <div class="container header__inner">
+      <a class="logo" href="#top" aria-label="Мажор — на главную">
+        <svg aria-hidden="true"><use href="#i-logo"/></svg>
+        <span>Мажор</span>
+      </a>
+      <nav class="nav" aria-label="Разделы сайта">
+        <a href="#menu">Форматы</a>
+        <a href="#afisha">Афиша</a>
+        <a href="#promo">Праздники</a>
+        <a href="#how">Как забронировать</a>
+        <a href="#contacts">Контакты</a>
+      </nav>
+      <a class="btn btn--accent btn--sm" href="#booking">Забронировать</a>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- 1. Первый экран -->
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero__bg" aria-hidden="true"></div>
+      <svg class="hero__smoke" viewBox="0 0 400 300" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M200 50a16 16 0 0 0-16 16v58a16 16 0 0 0 32 0V66a16 16 0 0 0-16-16z"/>
+        <path d="M190 72h20M190 88h20M190 104h20"/>
+        <path d="M168 112v6a32 32 0 0 0 64 0v-6"/>
+        <path d="M200 158v32M178 190h44"/>
+        <path d="M134 96a44 44 0 0 0 0 68M112 82a72 72 0 0 0 0 96"/>
+        <path d="M266 96a44 44 0 0 1 0 68M288 82a72 72 0 0 1 0 96"/>
+        <path d="M96 150h22M282 150h22"/>
+      </svg>
+      <div class="container hero__content">
+        <p class="eyebrow" data-hero style="color:#F5C453">караоке-бар · Тамбов · открываемся в 20:00</p>
+        <h1 id="hero-title" data-hero>Мажор — вечер, где поёт <span>весь зал</span></h1>
+        <p class="hero__lead" data-hero>Столик на вечер караоке бронируется за минуту на сайте — без звонков, переписки и «а вдруг мест нет». Праздники и компании — тоже здесь.</p>
+        <div class="hero__actions" data-hero>
+          <a class="btn btn--accent" href="#booking">
+            <svg aria-hidden="true"><use href="#i-calendar"/></svg> Забронировать столик
+          </a>
+          <a class="btn btn--ghost" href="tel:+79537011999">
+            <svg aria-hidden="true"><use href="#i-phone"/></svg> +7 953 701-19-99
+          </a>
+        </div>
+        <ul class="chips" data-hero aria-label="Коротко о нас">
+          <li><svg aria-hidden="true"><use href="#i-clock"/></svg> С 20:00</li>
+          <li><svg aria-hidden="true"><use href="#i-star"/></svg> 4.5 в 2ГИС · 90 оценок</li>
+          <li><svg aria-hidden="true"><use href="#i-mic"/></svg> Вечер караоке</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 2. Форматы вечера -->
+    <section class="section" id="menu" aria-labelledby="menu-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Форматы</span>
+          <h2 id="menu-title">Как вы проведёте вечер</h2>
+          <p class="lead">Караоке в зале, стол на компанию, день рождения или банкет. Кухню, бар и свободные столы уточняйте у администратора.</p>
+        </div>
+        <!-- Цены и меню уточняются по телефону: в разборе их нет. -->
+        <div class="grid grid--3" data-stagger>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-mic"/></svg></div>
+            <h3>Караоке в зале</h3>
+            <p>Микрофон, песня на выбор и зал, который подпевает. Открываемся в 20:00.</p>
+            <div class="price">Цены уточняйте</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-armchair"/></svg></div>
+            <h3>Столик на вечер</h3>
+            <p>Забронируйте стол заранее — место останется за вами до прихода.</p>
+            <div class="price">Условия по телефону</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-cake"/></svg></div>
+            <h3>День рождения</h3>
+            <p>Стол под вашу компанию и место, чтобы всем было видно и слышно.</p>
+            <div class="price">Обсуждаем заранее</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-glass"/></svg></div>
+            <h3>Банкет</h3>
+            <p>Праздник на всю компанию: обсудим столы, время и условия брони.</p>
+            <div class="price">Условия по телефону</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-users"/></svg></div>
+            <h3>Большая компания</h3>
+            <p>Посадим рядом и подберём стол под количество гостей.</p>
+            <div class="price">Бронь заранее</div>
+          </article>
+          <article class="card menu-card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-phone"/></svg></div>
+            <h3>Вопрос по вечеру</h3>
+            <p>Не знаете, сколько столов свободно? Позвоните — администратор подскажет.</p>
+            <div class="price">+7 953 701-19-99</div>
+          </article>
+        </div>
+        <p class="note">Меню, цены и наличие свободных столов уточняйте по телефону +7 953 701-19-99. Только для гостей старше 18 лет.</p>
+      </div>
+    </section>
+
+    <!-- 3. Афиша -->
+    <section class="section section--alt" id="afisha" aria-labelledby="afisha-title" data-reveal>
+      <div class="container afisha">
+        <div data-reveal-item>
+          <span class="eyebrow">Афиша</span>
+          <h2 id="afisha-title">Афиша вечеров — в группе ВК</h2>
+          <p class="lead">События и караоке-вечера публикуем заранее в <a class="link-accent" href="https://vk.com/major.karaoke_bar" target="_blank" rel="noopener">группе vk.com/major.karaoke_bar</a>. Записаться в список гостей или забронировать стол можно прямо из поста — одной кнопкой.</p>
+          <ul class="checklist">
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Кнопка «Записаться» в посте открывает бота — без звонков и переписки.</span></li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>Бот напомнит о событии в день визита.</span></li>
+            <li><svg aria-hidden="true"><use href="#i-check"/></svg><span>На входе вас уже ждут в списке гостей.</span></li>
+          </ul>
+          <a class="btn btn--primary" href="#booking" data-preset="Событие из афиши">Записаться на вечер</a>
+        </div>
+        <div data-reveal-item>
+          <div class="tg-post" role="img" aria-label="Пример поста афиши с кнопками записи">
+            <div class="tg-post__head">
+              <div class="tg-post__ava"></div>
+              <div>
+                <div class="tg-post__name">Мажор <span class="demo-tag">пример</span></div>
+                <div class="tg-post__meta">Пост афиши · караоке-вечер</div>
+              </div>
+            </div>
+            <div class="tg-post__cover"></div>
+            <p><strong>Пятница, 20:00 — караоке-вечер.</strong><br>Свободные столы и места в списке гостей — отмечайтесь заранее.</p>
+            <div class="tg-post__btns">
+              <span>В список гостей</span>
+              <span>Бронь столика</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. Праздники -->
+    <section class="section" id="promo" aria-labelledby="promo-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Праздники</span>
+          <h2 id="promo-title">День рождения и банкет — без суеты</h2>
+          <p class="lead">Соберём компанию за столом и подскажем, как всё устроить. Детали и условия — по телефону.</p>
+        </div>
+        <div class="grid grid--4" data-stagger>
+          <article class="card promo" data-card>
+            <div class="promo__day">День рождения</div>
+            <h3>Стол под компанию</h3>
+            <p>Скажите число гостей и дату — подберём место в зале.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">Банкет</div>
+            <h3>Праздник целиком</h3>
+            <p>Обсудим время, рассадку и условия брони заранее.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">Компания</div>
+            <h3>Один большой стол</h3>
+            <p>Посадим рядом, чтобы было слышно и весело.</p>
+          </article>
+          <article class="card promo" data-card>
+            <div class="promo__day">Бронь</div>
+            <h3>Заранее и без звонка</h3>
+            <p>Оставьте заявку на сайте — администратор подтвердит бронь.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. Почему мы -->
+    <section class="section section--alt" id="why" aria-labelledby="why-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Почему к нам</span>
+          <h2 id="why-title">Почему у нас удобно</h2>
+        </div>
+        <div class="grid grid--4" data-stagger>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-calendar"/></svg></div>
+            <h3>Бронь за минуту</h3>
+            <p>На сайте, в боте или по телефону — как удобнее.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-bell"/></svg></div>
+            <h3>Напомним о брони</h3>
+            <p>Бот пришлёт напоминание — не забудете про свой вечер.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-star"/></svg></div>
+            <h3>4.5 в 2ГИС</h3>
+            <p>90 оценок и 61 отзыв гостей — по данным 2ГИС.</p>
+          </article>
+          <article class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-users"/></svg></div>
+            <h3>Для компаний и праздников</h3>
+            <p>День рождения, банкет или встреча друзей — подберём стол.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. Как проходит: 3 шага -->
+    <section class="section" id="how" aria-labelledby="how-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Как это работает</span>
+          <h2 id="how-title">Три шага до вашего вечера</h2>
+        </div>
+        <div class="progress" aria-hidden="true" data-reveal-item>
+          <span style="background:var(--step-1)"></span><span style="background:var(--step-2)"></span><span style="background:var(--step-3)"></span>
+        </div>
+        <ol class="steps" data-stagger style="list-style:none;padding:0;margin:0">
+          <li class="card step" style="--step-c:var(--step-1)" data-card>
+            <span class="step__num">1</span>
+            <h3>Выберите вечер</h3>
+            <p>Загляните в афишу или просто выберите удобный день и время.</p>
+            <a class="step__cta" href="#afisha">Смотреть афишу</a>
+          </li>
+          <li class="card step" style="--step-c:var(--step-2)" data-card>
+            <span class="step__num">2</span>
+            <h3>Оставьте заявку</h3>
+            <p>Форма на сайте, бот или звонок. Подтвердим бронь и напомним о ней.</p>
+            <a class="step__cta" href="#booking">Заполнить форму</a>
+          </li>
+          <li class="card step" style="--step-c:var(--step-3)" data-card>
+            <span class="step__num">3</span>
+            <h3>Приходите к 20:00</h3>
+            <p>Назовите имя на входе — стол готов, микрофон ждёт.</p>
+            <a class="step__cta" href="#contacts">Как добраться</a>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 7. Форма записи -->
+    <section class="section section--alt" id="booking" aria-labelledby="booking-title" data-reveal>
+      <div class="container booking">
+        <div data-reveal-item>
+          <span class="eyebrow">Бронь</span>
+          <h2 id="booking-title">Забронировать столик</h2>
+          <p class="lead">Оставьте заявку — администратор перезвонит и подтвердит бронь. Если удобнее голосом:</p>
+          <a class="btn btn--outline" href="tel:+79537011999">
+            <svg aria-hidden="true"><use href="#i-phone"/></svg> +7 953 701-19-99
+          </a>
+        </div>
+        <form class="form card" id="booking-form" novalidate data-reveal-item>
+          <div class="field">
+            <label for="f-name">Имя</label>
+            <input id="f-name" name="name" type="text" autocomplete="given-name" required aria-describedby="e-name">
+            <span class="error" id="e-name" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00" required aria-describedby="e-phone">
+            <span class="error" id="e-phone" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-service">Что бронируем</label>
+            <select id="f-service" name="service">
+              <option>Столик на вечер караоке</option>
+              <option>Стол для компании</option>
+              <option>Событие из афиши</option>
+              <option>День рождения / праздник</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-guests">Гостей</label>
+            <select id="f-guests" name="guests">
+              <option>1</option><option selected>2</option><option>3</option><option>4</option>
+              <option>5</option><option>6</option><option>7 и больше</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="f-date">Дата</label>
+            <input id="f-date" name="date" type="date" required aria-describedby="e-date">
+            <span class="error" id="e-date" aria-live="polite"></span>
+          </div>
+          <div class="field">
+            <label for="f-time">Удобное время</label>
+            <input id="f-time" name="time" type="time" value="20:00" required aria-describedby="e-time">
+            <span class="error" id="e-time" aria-live="polite"></span>
+          </div>
+          <div class="field field--full">
+            <label for="f-comment">Комментарий (необязательно)</label>
+            <textarea id="f-comment" name="comment" rows="2" placeholder="Например: отмечаем день рождения, стол на 6 человек"></textarea>
+          </div>
+          <div class="form__foot">
+            <button class="btn btn--accent" type="submit">Отправить заявку</button>
+            <p class="form__hint">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для связи по брони.</p>
+          </div>
+          <div class="success" id="form-success" role="status" aria-live="polite">
+            <svg aria-hidden="true"><use href="#i-check"/></svg>
+            <span>Заявка принята, перезвоним.</span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- 8. Контакты -->
+    <section class="section" id="contacts" aria-labelledby="contacts-title" data-reveal>
+      <div class="container">
+        <div class="section__head" data-reveal-item>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title">Ждём вас вечером</h2>
+          <p class="lead">4.5 в 2ГИС — 90 оценок и 61 отзыв. Телефон и адрес — в карточках ниже.</p>
+        </div>
+        <div class="contacts" data-stagger>
+          <div class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-pin"/></svg></div>
+            <h3>Адрес</h3>
+            <p class="contact-value">Тамбов, ул. Максима Горького, 17</p>
+            <div class="contact-links">
+              <a href="https://yandex.ru/maps/?text=%D0%9C%D0%B0%D0%B6%D0%BE%D1%80%2C%20%D1%83%D0%BB.%20%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D0%B0%20%D0%93%D0%BE%D1%80%D1%8C%D0%BA%D0%BE%D0%B3%D0%BE%2C%2017%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener">Открыть на карте<span class="visually-hidden"> (в новой вкладке)</span></a>
+            </div>
+          </div>
+          <div class="card" data-card>
+            <div class="icon"><svg aria-hidden="true"><use href="#i-phone"/></svg></div>
+            <h3>Телефон</h3>
+            <p class="contact-value">+7 953 701-19-99</p>
+            <div class="contact-links">
+              <a href="tel:+79537011999">Позвонить</a>
+              <a class="link-accent" href="https://vk.com/major.karaoke_bar" target="_blank" rel="noopener">Группа ВКонтакте</a>
+            </div>
+          </div>
+          <div class="card" data-card id="hours-card">
+            <div class="icon"><svg aria-hidden="true"><use href="#i-clock"/></svg></div>
+            <h3>Часы работы</h3>
+            <p class="contact-value" id="hours-value">Открываемся в 20:00 · закрытие уточняйте</p>
+            <div class="contact-links">
+              <a href="#booking">Забронировать</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer__inner">
+        <div>© 2026 Мажор · Тамбов, ул. Максима Горького, 17</div>
+        <div><a href="tel:+79537011999">+7 953 701-19-99</a></div>
+        <div>Только для гостей старше 18 лет</div>
+      </div>
+      <p class="footer__demo">Демо-макет</p>
+    </div>
+  </footer>
+
+  <a class="call-fab" href="tel:+79537011999" aria-label="Позвонить +7 953 701-19-99">
+    <svg aria-hidden="true"><use href="#i-phone"/></svg>
+  </a>
+
+  <style>.visually-hidden{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}</style>
+
+  <script src="motion.js"></script>
+  <script>
+  (function () {
+    'use strict';
+
+    /* ---------- Часы работы: если пусто — показываем подсказку ---------- */
+    var hours = document.getElementById('hours-value');
+    if (hours) {
+      var h = hours.textContent.trim();
+      if (!h || h === '{' + '{HOURS}}') hours.textContent = 'Уточняйте по телефону';
+    }
+
+    /* ---------- Форма брони (без отправки на сервер) ---------- */
+    var form = document.getElementById('booking-form');
+    var dateInput = document.getElementById('f-date');
+    var today = new Date();
+    var pad = function (n) { return String(n).padStart(2, '0'); };
+    var todayStr = today.getFullYear() + '-' + pad(today.getMonth() + 1) + '-' + pad(today.getDate());
+    dateInput.min = todayStr;
+    dateInput.value = todayStr;
+
+    // Кнопки с data-preset выбирают нужный пункт в форме
+    document.querySelectorAll('[data-preset]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        document.getElementById('f-service').value = link.getAttribute('data-preset');
+      });
+    });
+
+    function setError(input, msg) {
+      var err = document.getElementById('e-' + input.name);
+      if (err) err.textContent = msg || '';
+      if (msg) input.setAttribute('aria-invalid', 'true'); else input.removeAttribute('aria-invalid');
+      return !msg;
+    }
+
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var name = form.elements.name, phone = form.elements.phone, date = form.elements.date, time = form.elements.time;
+      var ok = true;
+      ok = setError(name, name.value.trim().length < 2 ? 'Укажите имя' : '') && ok;
+      var digits = phone.value.replace(/\D/g, '');
+      ok = setError(phone, digits.length < 10 || digits.length > 15 ? 'Укажите телефон, например +7 900 000-00-00' : '') && ok;
+      ok = setError(date, !date.value || date.value < todayStr ? 'Выберите дату не раньше сегодняшней' : '') && ok;
+      ok = setError(time, !time.value ? 'Укажите время' : '') && ok;
+      if (!ok) {
+        var firstBad = form.querySelector('[aria-invalid="true"]');
+        if (firstBad) firstBad.focus();
+        return;
+      }
+      var success = document.getElementById('form-success');
+      success.classList.add('is-visible');
+      form.reset();
+      dateInput.value = todayStr;
+      if (window.Motion && !reduceMotion) {
+        window.Motion.animate(success, { opacity: [0, 1], transform: ['translateY(8px)', 'translateY(0)'] }, { duration: 0.35 });
+      }
+    });
+
+    /* ---------- Анимации (Motion). Без motion.js или при reduced-motion всё просто видно ---------- */
+    var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var M = window.Motion;
+    if (!M || reduceMotion || typeof M.animate !== 'function') return;
+
+    var animate = M.animate;
+    var stagger = M.stagger;
+    var ease = [0.22, 1, 0.36, 1];
+
+    function hide(els, offset) {
+      els.forEach(function (el) {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(' + offset + 'px)';
+      });
+    }
+    function show(els, delayStep) {
+      return animate(els, { opacity: [0, 1], transform: ['translateY(18px)', 'translateY(0px)'] }, {
+        duration: 0.5,
+        ease: ease,
+        delay: (typeof stagger === 'function' && els.length > 1) ? stagger(delayStep) : 0
+      });
+    }
+
+    try {
+      // Первый экран: элементы по очереди
+      var heroItems = Array.prototype.slice.call(document.querySelectorAll('[data-hero]'));
+      hide(heroItems, 18);
+      show(heroItems, 0.1);
+
+      // Появление блоков при прокрутке
+      if (typeof M.inView === 'function') {
+        document.querySelectorAll('[data-reveal]').forEach(function (section) {
+          var heads = Array.prototype.slice.call(section.querySelectorAll('[data-reveal-item]'));
+          var cards = [];
+          section.querySelectorAll('[data-stagger]').forEach(function (g) {
+            cards = cards.concat(Array.prototype.slice.call(g.children));
+          });
+          var targets = heads.concat(cards);
+          if (!targets.length) return;
+          hide(targets, 18);
+          var done = false;
+          M.inView(section, function () {
+            if (done) return;
+            done = true;
+            show(heads, 0.1);
+            if (cards.length) show(cards, 0.08);
+          }, { amount: 0.15 });
+        });
+      }
+
+      // Лёгкий параллакс фона первого экрана
+      var hero = document.querySelector('.hero');
+      var heroBg = document.querySelector('.hero__bg');
+      var smoke = document.querySelector('.hero__smoke');
+      if (typeof M.scroll === 'function' && hero && heroBg) {
+        M.scroll(animate(heroBg, { transform: ['translateY(0px)', 'translateY(90px)'] }, { ease: 'linear' }),
+          { target: hero, offset: ['start start', 'end start'] });
+        if (smoke) {
+          M.scroll(animate(smoke, { transform: ['translateY(0px)', 'translateY(-60px)'] }, { ease: 'linear' }),
+            { target: hero, offset: ['start start', 'end start'] });
+        }
+      }
+
+      // Реакция на наведение (карточки и кнопки)
+      var lift = function (node, dy) {
+        if (typeof M.hover !== 'function') return;
+        M.hover(node, function () {
+          animate(node, { transform: 'translateY(' + dy + 'px)' }, { duration: 0.22, ease: ease });
+          return function () {
+            animate(node, { transform: 'translateY(0px)' }, { duration: 0.22, ease: ease });
+          };
+        });
+      };
+      document.querySelectorAll('[data-card]').forEach(function (n) { lift(n, -4); });
+      document.querySelectorAll('.btn').forEach(function (n) { lift(n, -2); });
+
+      // Мягкое нажатие
+      document.querySelectorAll('.btn, .call-fab').forEach(function (n) {
+        n.addEventListener('pointerdown', function () {
+          animate(n, { transform: 'scale(0.97)' }, { duration: 0.2 });
+        });
+        var release = function () { animate(n, { transform: 'scale(1)' }, { duration: 0.2 }); };
+        n.addEventListener('pointerup', release);
+        n.addEventListener('pointerleave', release);
+      });
+    } catch (err) {
+      // Если что-то пошло не так — показываем всё без анимации
+      document.querySelectorAll('[data-hero], [data-reveal-item], [data-stagger] > *').forEach(function (el) {
+        el.style.opacity = '';
+        el.style.transform = '';
+      });
+    }
+  })();
+  </script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>
