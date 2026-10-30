@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Арт-кафе &quot;ДК&quot; — CRM кафе</title>
+<style>
+  :root {
+    --primary: #047857; --primary-h: #065F46; --accent: #C2410C; --bg: #F1F5F4; --card: #fff;
+    --fg: #0F2E25; --muted: #475569; --border: #CBD5E1; --soft: #ECFDF5; --danger: #B91C1C;
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 var(--font); color: var(--fg); background: var(--bg); }
+  header { background: var(--primary); color: #fff; padding: 12px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  header h1 { margin: 0; font-size: 1.2rem; }
+  header small { opacity: .9; }
+  nav.tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav.tabs button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.5); border-radius: 8px; padding: 7px 14px; cursor: pointer; font: inherit; }
+  nav.tabs button[aria-selected="true"] { background: #fff; color: var(--primary); font-weight: 600; }
+  main { padding: 18px 20px 40px; max-width: 1400px; margin: 0 auto; }
+  .toolbar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-bottom: 14px; }
+  .toolbar .grow { flex: 1; min-width: 200px; }
+  input, select, textarea { font: inherit; color: var(--fg); padding: 8px 10px; border: 1px solid #94A3B8; border-radius: 8px; background: #fff; min-height: 38px; }
+  textarea { width: 100%; min-height: 70px; }
+  button.b { font: inherit; padding: 8px 14px; min-height: 38px; border-radius: 8px; border: 1px solid var(--primary); background: #fff; color: var(--primary); cursor: pointer; font-weight: 500; }
+  button.b:hover { background: var(--soft); }
+  button.b.primary { background: var(--primary); color: #fff; }
+  button.b.primary:hover { background: var(--primary-h); }
+  button.b.danger { border-color: var(--danger); color: var(--danger); }
+  button.b.danger:hover { background: #FEF2F2; }
+  button.b.sm { padding: 4px 10px; min-height: 30px; font-size: .88rem; }
+  :focus-visible { outline: 3px solid #059669; outline-offset: 2px; }
+  .demo-banner { background: #FFF7ED; border: 1px solid #FDBA74; color: #7C2D12; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; justify-content: space-between; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px; margin-bottom: 14px; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+  .stat b { display: block; font-size: 1.35rem; }
+  .stat span { color: var(--muted); font-size: .88rem; }
+  table { display: table; width: 100%; min-width: 100%; border-collapse: collapse; background: var(--card); }
+  th, td { text-align: left; padding: 9px 10px; border-bottom: 1px solid #E2E8F0; vertical-align: top; }
+  th { background: #F8FAFC; font-size: .85rem; color: var(--muted); font-weight: 600; }
+  tr.click { cursor: pointer; }
+  tr.click:hover td { background: #F0FDF4; }
+  .tbl-wrap { overflow-x: auto; background: var(--card); border: 1px solid var(--border); border-radius: 10px; }
+  .tbl-wrap tr:last-child td { border-bottom: none; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: .8rem; font-weight: 600; border: 1px solid transparent; white-space: nowrap; }
+  .tag.demo { background: #FFEDD5; color: #7C2D12; border-color: #FDBA74; }
+  .tag.s-new { background: #DBEAFE; color: #1E3A8A; }
+  .tag.s-conf { background: #E0E7FF; color: #3730A3; }
+  .tag.s-work { background: #FEF3C7; color: #78350F; }
+  .tag.s-done { background: #D1FAE5; color: #065F46; }
+  .tag.s-cancel { background: #F1F5F9; color: #475569; }
+  .tag.sleep { background: #FEE2E2; color: #7F1D1D; }
+  .kanban { display: grid; grid-template-columns: repeat(5, minmax(220px, 1fr)); gap: 10px; overflow-x: auto; }
+  .col { background: #E2E8F0; border-radius: 10px; padding: 8px; min-height: 200px; }
+  .col.over { outline: 2px dashed var(--primary); }
+  .col h3 { margin: 4px 4px 8px; font-size: .95rem; display: flex; justify-content: space-between; }
+  .kcard { background: #fff; border-radius: 8px; padding: 8px 10px; margin-bottom: 8px; border: 1px solid var(--border); cursor: grab; font-size: .9rem; }
+  .kcard .t { font-weight: 600; }
+  .kcard .m { color: var(--muted); font-size: .84rem; }
+  .kcard select { margin-top: 6px; width: 100%; min-height: 30px; padding: 3px 6px; font-size: .84rem; }
+  .muted { color: var(--muted); }
+  .hidden { display: none !important; }
+  dialog { border: none; border-radius: 12px; padding: 0; width: min(640px, 96vw); max-height: 92vh; box-shadow: 0 20px 60px rgba(0,0,0,.3); color: var(--fg); }
+  dialog::backdrop { background: rgba(15, 23, 42, .45); }
+  .dlg-head { display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border-bottom: 1px solid #E2E8F0; position: sticky; top: 0; background: #fff; }
+  .dlg-head h2 { margin: 0; font-size: 1.1rem; }
+  .dlg-body { padding: 16px 18px; }
+  .dlg-foot { padding: 12px 18px; border-top: 1px solid #E2E8F0; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px 14px; }
+  @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
+  .f label { display: block; font-size: .85rem; font-weight: 600; margin-bottom: 3px; }
+  .f input, .f select { width: 100%; }
+  .f.full { grid-column: 1 / -1; }
+  .history { margin: 0; padding: 0; list-style: none; }
+  .history li { padding: 8px 0; border-bottom: 1px solid #E2E8F0; display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .chk { width: 20px; height: 20px; min-height: 0; cursor: pointer; }
+  .x { background: none; border: none; font-size: 1.4rem; cursor: pointer; color: var(--muted); line-height: 1; padding: 4px 8px; }
+  footer { text-align: center; font-size: .8rem; color: var(--muted); padding: 20px; }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<header>
+  <div>
+    <h1>Арт-кафе &quot;ДК&quot;</h1>
+    <small>CRM кафе · гости, брони, заказы, события</small>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Разделы CRM">
+    <button role="tab" data-tab="orders" aria-selected="true">Заказы и брони</button>
+    <button role="tab" data-tab="kanban" aria-selected="false">Канбан</button>
+    <button role="tab" data-tab="clients" aria-selected="false">Гости</button>
+    <button role="tab" data-tab="events" aria-selected="false">События</button>
+  </nav>
+</header>
+
+<main>
+  <div class="demo-banner" id="demo-banner">
+    <span><b>Демо-данные.</b> Записи с пометкой «ДЕМО» созданы для примера. Данные хранятся только в этом браузере (localStorage).</span>
+    <button class="b danger sm" id="clear-demo">Очистить демо-данные</button>
+  </div>
+
+  <div class="stats" id="stats"></div>
+
+  <!-- Заказы -->
+  <section id="tab-orders" role="tabpanel">
+    <div class="toolbar">
+      <input class="grow" type="search" id="o-search" placeholder="Поиск: имя, телефон, комментарий" aria-label="Поиск заказов">
+      <select id="o-status" aria-label="Фильтр по статусу"></select>
+      <select id="o-type" aria-label="Фильтр по типу"></select>
+      <input type="date" id="o-from" aria-label="Дата с">
+      <input type="date" id="o-to" aria-label="Дата по">
+      <button class="b primary" id="o-add">+ Заказ / бронь</button>
+      <button class="b" id="o-csv">Экспорт CSV</button>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Дата</th><th>Время</th><th>Гость</th><th>Тип</th><th>Персон</th><th>Сумма, ₽</th><th>Статус</th><th>Комментарий</th></tr></thead>
+      <tbody id="o-body"></tbody>
+    </table></div>
+  </section>
+
+  <!-- Канбан -->
+  <section id="tab-kanban" role="tabpanel" class="hidden">
+    <div class="toolbar">
+      <input class="grow" type="search" id="k-search" placeholder="Поиск по гостю" aria-label="Поиск в канбане">
+      <select id="k-type" aria-label="Фильтр по типу"></select>
+      <button class="b primary" id="k-add">+ Заказ / бронь</button>
+    </div>
+    <p class="muted" style="margin-top:0">Перетащите карточку в другую колонку или смените статус в списке на карточке.</p>
+    <div class="kanban" id="kanban"></div>
+  </section>
+
+  <!-- Гости -->
+  <section id="tab-clients" role="tabpanel" class="hidden">
+    <div class="toolbar">
+      <input class="grow" type="search" id="c-search" placeholder="Поиск: имя, телефон, Telegram, заметка" aria-label="Поиск гостей">
+      <select id="c-filter" aria-label="Фильтр гостей">
+        <option value="all">Все гости</option>
+        <option value="sleep">Давно не были (30+ дней)</option>
+        <option value="active">Были за 30 дней</option>
+        <option value="never">Ещё не были</option>
+      </select>
+      <button class="b primary" id="c-add">+ Гость</button>
+      <button class="b" id="c-csv">Экспорт CSV</button>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Имя</th><th>Телефон</th><th>Telegram</th><th>Визитов</th><th>Последний визит</th><th>Потрачено, ₽</th><th>Заметка</th></tr></thead>
+      <tbody id="c-body"></tbody>
+    </table></div>
+  </section>
+
+  <!-- События -->
+  <section id="tab-events" role="tabpanel" class="hidden">
+    <div class="toolbar">
+      <input class="grow" type="search" id="e-search" placeholder="Поиск по названию" aria-label="Поиск событий">
+      <select id="e-when" aria-label="Фильтр событий">
+        <option value="upcoming">Предстоящие</option>
+        <option value="past">Прошедшие</option>
+        <option value="all">Все</option>
+      </select>
+      <button class="b primary" id="e-add">+ Событие</button>
+    </div>
+    <div class="tbl-wrap"><table>
+      <thead><tr><th>Дата</th><th>Время</th><th>Событие</th><th>Вход, ₽</th><th>Записано / мест</th><th>Пришли</th></tr></thead>
+      <tbody id="e-body"></tbody>
+    </table></div>
+  </section>
+</main>
+<footer>Арт-кафе &quot;ДК&quot; · CRM · данные хранятся локально в браузере</footer>
+
+<!-- Диалог: заказ -->
+<dialog id="dlg-order" aria-labelledby="dlg-order-title">
+  <form method="dialog" id="order-form">
+    <div class="dlg-head"><h2 id="dlg-order-title">Заказ / бронь</h2><button type="button" class="x" data-close aria-label="Закрыть">×</button></div>
+    <div class="dlg-body grid2">
+      <div class="f full"><label for="of-client">Гость</label><select id="of-client" required></select></div>
+      <div class="f"><label for="of-type">Тип</label><select id="of-type"></select></div>
+      <div class="f"><label for="of-status">Статус</label><select id="of-status"></select></div>
+      <div class="f"><label for="of-date">Дата</label><input type="date" id="of-date" required></div>
+      <div class="f"><label for="of-time">Время</label><input type="time" id="of-time"></div>
+      <div class="f"><label for="of-persons">Персон</label><input type="number" min="0" id="of-persons"></div>
+      <div class="f"><label for="of-sum">Сумма, ₽</label><input type="number" min="0" step="1" id="of-sum"></div>
+      <div class="f full"><label for="of-note">Комментарий (столик, адрес доставки, пожелания)</label><textarea id="of-note"></textarea></div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="b danger hidden" id="of-del">Удалить</button>
+      <button type="button" class="b" data-close>Отмена</button>
+      <button type="submit" class="b primary">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Диалог: гость -->
+<dialog id="dlg-client" aria-labelledby="dlg-client-title">
+  <form method="dialog" id="client-form">
+    <div class="dlg-head"><h2 id="dlg-client-title">Гость</h2><button type="button" class="x" data-close aria-label="Закрыть">×</button></div>
+    <div class="dlg-body">
+      <div class="grid2">
+        <div class="f"><label for="cf-name">Имя</label><input id="cf-name" required></div>
+        <div class="f"><label for="cf-phone">Телефон</label><input id="cf-phone" type="tel"></div>
+        <div class="f"><label for="cf-tg">Telegram (@ник)</label><input id="cf-tg"></div>
+        <div class="f"><label for="cf-bday">День рождения</label><input id="cf-bday" type="date"></div>
+        <div class="f full"><label for="cf-note">Заметка (любимый столик, аллергии, предпочтения)</label><textarea id="cf-note"></textarea></div>
+      </div>
+      <div id="cf-history" class="hidden">
+        <h3 style="margin:18px 0 6px;font-size:1rem">История гостя</h3>
+        <p class="muted" id="cf-summary" style="margin:0 0 6px"></p>
+        <ul class="history" id="cf-list"></ul>
+        <div style="margin-top:10px"><button type="button" class="b sm" id="cf-new-order">+ Заказ для этого гостя</button></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="b danger hidden" id="cf-del">Удалить</button>
+      <button type="button" class="b" data-close>Отмена</button>
+      <button type="submit" class="b primary">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Диалог: событие -->
+<dialog id="dlg-event" aria-labelledby="dlg-event-title">
+  <form method="dialog" id="event-form">
+    <div class="dlg-head"><h2 id="dlg-event-title">Событие</h2><button type="button" class="x" data-close aria-label="Закрыть">×</button></div>
+    <div class="dlg-body">
+      <div class="grid2">
+        <div class="f full"><label for="ef-title">Название</label><input id="ef-title" required></div>
+        <div class="f"><label for="ef-date">Дата</label><input type="date" id="ef-date" required></div>
+        <div class="f"><label for="ef-time">Время</label><input type="time" id="ef-time"></div>
+        <div class="f"><label for="ef-cap">Мест</label><input type="number" min="0" id="ef-cap"></div>
+        <div class="f"><label for="ef-price">Вход, ₽ (0 — свободный)</label><input type="number" min="0" id="ef-price"></div>
+        <div class="f full"><label for="ef-note">Описание / пост афиши</label><textarea id="ef-note"></textarea></div>
+      </div>
+      <div id="ef-guests-wrap" class="hidden">
+        <h3 style="margin:18px 0 6px;font-size:1rem">Список гостей <span class="muted" id="ef-count"></span></h3>
+        <div class="toolbar">
+          <select id="ef-add-client" class="grow" aria-label="Добавить гостя в список"></select>
+          <button type="button" class="b sm" id="ef-add-btn">Добавить в список</button>
+          <button type="button" class="b sm" id="ef-csv">CSV списка</button>
+        </div>
+        <div class="tbl-wrap"><table>
+          <thead><tr><th>Гость</th><th>Телефон</th><th>Напомнили</th><th>Пришёл</th><th></th></tr></thead>
+          <tbody id="ef-guests"></tbody>
+        </table></div>
+      </div>
+    </div>
+    <div class="dlg-foot">
+      <button type="button" class="b danger hidden" id="ef-del">Удалить</button>
+      <button type="button" class="b" data-close>Отмена</button>
+      <button type="submit" class="b primary">Сохранить</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "cafe_crm_v1";
+  var STATUSES = ["Новая", "Подтверждена", "Готовится / в пути", "Выполнена", "Отменена"];
+  var STATUS_CLS = { "Новая": "s-new", "Подтверждена": "s-conf", "Готовится / в пути": "s-work", "Выполнена": "s-done", "Отменена": "s-cancel" };
+  var TYPES = ["Бронь столика", "Доставка", "Самовывоз", "Банкет / праздник", "Торт на заказ"];
+  var SLEEP_DAYS = 30;
+
+  function $(id) { return document.getElementById(id); }
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function pad(n) { return String(n).padStart(2, "0"); }
+  function isoDate(d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); }
+  function shift(days) { var d = new Date(); d.setDate(d.getDate() + days); return isoDate(d); }
+  function today() { return isoDate(new Date()); }
+  function fmtDate(s) { if (!s) return "—"; var p = s.split("-"); return p[2] + "." + p[1] + "." + p[0]; }
+  function money(n) { return (Number(n) || 0).toLocaleString("ru-RU"); }
+  function daysSince(s) { return Math.floor((new Date(today()) - new Date(s)) / 86400000); }
+  function demoTag(x) { return x && x.demo ? ' <span class="tag demo">ДЕМО</span>' : ""; }
+
+  // ---------- Данные ----------
+  function demoData() {
+    var c = [
+      { id: "d1", name: "Анна (демо)", phone: "+7 900 000-00-01", tg: "@demo_anna", bday: "", note: "Любит столик у окна", demo: true },
+      { id: "d2", name: "Игорь (демо)", phone: "+7 900 000-00-02", tg: "@demo_igor", bday: "", note: "", demo: true },
+      { id: "d3", name: "Мария (демо)", phone: "+7 900 000-00-03", tg: "", bday: "", note: "Без глютена", demo: true },
+      { id: "d4", name: "Сергей (демо)", phone: "+7 900 000-00-04", tg: "@demo_sergey", bday: "", note: "Давно не заходил — пример для рассылки", demo: true }
+    ];
+    var o = [
+      { id: uid(), clientId: "d1", type: "Бронь столика", status: "Подтверждена", date: shift(1), time: "19:00", persons: 2, sum: 0, note: "Столик у окна", demo: true },
+      { id: uid(), clientId: "d2", type: "Доставка", status: "Новая", date: today(), time: "13:30", persons: 0, sum: 1250, note: "Адрес уточнить", demo: true },
+      { id: uid(), clientId: "d3", type: "Самовывоз", status: "Готовится / в пути", date: today(), time: "12:00", persons: 0, sum: 640, note: "", demo: true },
+      { id: uid(), clientId: "d1", type: "Бронь столика", status: "Выполнена", date: shift(-6), time: "20:00", persons: 4, sum: 4300, note: "", demo: true },
+      { id: uid(), clientId: "d4", type: "Бронь столика", status: "Выполнена", date: shift(-64), time: "18:30", persons: 2, sum: 2100, note: "", demo: true },
+      { id: uid(), clientId: "d2", type: "Торт на заказ", status: "Отменена", date: shift(-3), time: "", persons: 0, sum: 0, note: "", demo: true }
+    ];
+    var e = [
+      { id: uid(), title: "Акустический вечер (демо)", date: shift(3), time: "19:30", capacity: 30, price: 0, note: "Пример поста афиши", demo: true,
+        guests: [ { clientId: "d1", reminded: false, came: false }, { clientId: "d2", reminded: false, came: false } ] },
+      { id: uid(), title: "Квиз (демо)", date: shift(-10), time: "19:00", capacity: 40, price: 0, note: "", demo: true,
+        guests: [ { clientId: "d3", reminded: true, came: true }, { clientId: "d1", reminded: true, came: false } ] }
+    ];
+    return { clients: c, orders: o, events: e };
+  }
+
+  var db;
+  function load() {
+    try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { db = null; }
+    if (!db || !Array.isArray(db.clients)) { db = demoData(); save(); }
+    db.orders = db.orders || []; db.events = db.events || [];
+  }
+  function save() { localStorage.setItem(KEY, JSON.stringify(db)); }
+  function client(id) { return db.clients.find(function (c) { return c.id === id; }); }
+  function clientName(id) { var c = client(id); return c ? c.name : "— удалён —"; }
+
+  // Статистика гостя: визиты = выполненные заказы + отметки «пришёл» на событиях
+  function clientStats(id) {
+    var visits = [], spent = 0;
+    db.orders.forEach(function (o) {
+      if (o.clientId === id && o.status === "Выполнена") { visits.push(o.date); spent += Number(o.sum) || 0; }
+    });
+    db.events.forEach(function (ev) {
+      (ev.guests || []).forEach(function (g) { if (g.clientId === id && g.came) visits.push(ev.date); });
+    });
+    visits.sort();
+    return { count: visits.length, last: visits[visits.length - 1] || "", spent: spent };
+  }
+
+  // ---------- Вкладки ----------
+  var currentTab = "orders";
+  document.querySelectorAll("nav.tabs button").forEach(function (b) {
+    b.addEventListener("click", function () { showTab(b.getAttribute("data-tab")); });
+  });
+  function showTab(t) {
+    currentTab = t;
+    document.querySelectorAll("nav.tabs button").forEach(function (b) { b.setAttribute("aria-selected", String(b.getAttribute("data-tab") === t)); });
+    ["orders", "kanban", "clients", "events"].forEach(function (n) { $("tab-" + n).classList.toggle("hidden", n !== t); });
+    render();
+  }
+
+  function fillSelect(sel, items, allLabel) {
+    sel.innerHTML = (allLabel ? '<option value="">' + esc(allLabel) + "</option>" : "") +
+      items.map(function (x) { return "<option>" + esc(x) + "</option>"; }).join("");
+  }
+  fillSelect($("o-status"), STATUSES, "Все статусы");
+  fillSelect($("o-type"), TYPES, "Все типы");
+  fillSelect($("k-type"), TYPES, "Все типы");
+  fillSelect($("of-type"), TYPES);
+  fillSelect($("of-status"), STATUSES);
+
+  // ---------- Рендер ----------
+  function render() {
+    $("demo-banner").classList.toggle("hidden", !hasDemo());
+    renderStats();
+    if (currentTab === "orders") renderOrders();
+    if (currentTab === "kanban") renderKanban();
+    if (currentTab === "clients") renderClients();
+    if (currentTab === "events") renderEvents();
+  }
+  function hasDemo() {
+    return db.clients.some(function (x) { return x.demo; }) || db.orders.some(function (x) { return x.demo; }) || db.events.some(function (x) { return x.demo; });
+  }
+
+  function renderStats() {
+    var t = today();
+    var todayOrders = db.orders.filter(function (o) { return o.date === t && o.status !== "Отменена"; });
+    var newCount = db.orders.filter(function (o) { return o.status === "Новая"; }).length;
+    var month = t.slice(0, 7);
+    var revenue = db.orders.filter(function (o) { return o.status === "Выполнена" && (o.date || "").slice(0, 7) === month; })
+      .reduce(function (s, o) { return s + (Number(o.sum) || 0); }, 0);
+    var sleep = db.clients.filter(function (c) { var s = clientStats(c.id); return s.last && daysSince(s.last) >= SLEEP_DAYS; }).length;
+    var nextEv = db.events.filter(function (e) { return e.date >= t; }).sort(function (a, b) { return a.date.localeCompare(b.date); })[0];
+    $("stats").innerHTML =
+      '<div class="stat"><b>' + todayOrders.length + '</b><span>Заказов и броней сегодня</span></div>' +
+      '<div class="stat"><b>' + newCount + '</b><span>Новых заявок</span></div>' +
+      '<div class="stat"><b>' + money(revenue) + ' ₽</b><span>Выполнено за месяц</span></div>' +
+      '<div class="stat"><b>' + sleep + '</b><span>Давно не были (' + SLEEP_DAYS + '+ дн.)</span></div>' +
+      '<div class="stat"><b>' + (nextEv ? fmtDate(nextEv.date) : "—") + '</b><span>' + (nextEv ? "Ближайшее: " + esc(nextEv.title) : "Нет событий") + '</span></div>';
+  }
+
+  function filteredOrders(q, status, type, from, to) {
+    q = (q || "").toLowerCase().trim();
+    return db.orders.filter(function (o) {
+      if (status && o.status !== status) return false;
+      if (type && o.type !== type) return false;
+      if (from && o.date < from) return false;
+      if (to && o.date > to) return false;
+      if (q) {
+        var c = client(o.clientId) || {};
+        var hay = [c.name, c.phone, c.tg, o.note, o.type].join(" ").toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function (a, b) { return (b.date + b.time).localeCompare(a.date + a.time); });
+  }
+
+  function renderOrders() {
+    var list = filteredOrders($("o-search").value, $("o-status").value, $("o-type").value, $("o-from").value, $("o-to").value);
+    $("o-body").innerHTML = list.length ? list.map(function (o) {
+      return '<tr class="click" tabindex="0" data-id="' + o.id + '"><td>' + fmtDate(o.date) + "</td><td>" + esc(o.time || "—") + "</td><td>" + esc(clientName(o.clientId)) + demoTag(o) +
+        "</td><td>" + esc(o.type) + "</td><td>" + (o.persons || "—") + "</td><td>" + money(o.sum) + '</td><td><span class="tag ' + STATUS_CLS[o.status] + '">' + esc(o.status) + "</span></td><td>" + esc(o.note) + "</td></tr>";
+    }).join("") : '<tr><td colspan="8" class="muted">Ничего не найдено</td></tr>';
+    bindRows($("o-body"), openOrder);
+  }
+
+  function renderKanban() {
+    var list = filteredOrders($("k-search").value, "", $("k-type").value);
+    var board = $("kanban");
+    board.innerHTML = STATUSES.map(function (s) {
+      var items = list.filter(function (o) { return o.status === s; });
+      return '<div class="col" data-status="' + esc(s) + '"><h3><span>' + esc(s) + '</span><span class="muted">' + items.length + "</span></h3>" +
+        items.map(function (o) {
+          return '<div class="kcard" draggable="true" data-id="' + o.id + '"><div class="t">' + esc(clientName(o.clientId)) + demoTag(o) + "</div>" +
+            '<div class="m">' + esc(o.type) + " · " + fmtDate(o.date) + (o.time ? " " + esc(o.time) : "") + (o.sum ? " · " + money(o.sum) + " ₽" : "") + "</div>" +
+            '<select aria-label="Статус">' + STATUSES.map(function (x) { return "<option" + (x === s ? " selected" : "") + ">" + esc(x) + "</option>"; }).join("") + "</select>" +
+            '<div style="margin-top:6px"><button type="button" class="b sm" data-open>Открыть</button></div></div>';
+        }).join("") + "</div>";
+    }).join("");
+
+    board.querySelectorAll(".kcard").forEach(function (card) {
+      var id = card.getAttribute("data-id");
+      card.addEventListener("dragstart", function (e) { e.dataTransfer.setData("text/plain", id); });
+      card.querySelector("select").addEventListener("change", function (e) { setStatus(id, e.target.value); });
+      card.querySelector("[data-open]").addEventListener("click", function () { openOrder(id); });
+    });
+    board.querySelectorAll(".col").forEach(function (col) {
+      col.addEventListener("dragover", function (e) { e.preventDefault(); col.classList.add("over"); });
+      col.addEventListener("dragleave", function () { col.classList.remove("over"); });
+      col.addEventListener("drop", function (e) {
+        e.preventDefault(); col.classList.remove("over");
+        var id = e.dataTransfer.getData("text/plain");
+        if (id) setStatus(id, col.getAttribute("data-status"));
+      });
+    });
+  }
+  function setStatus(id, status) {
+    var o = db.orders.find(function (x) { return x.id === id; });
+    if (o) { o.status = status; save(); render(); }
+  }
+
+  function renderClients() {
+    var q = $("c-search").value.toLowerCase().trim();
+    var f = $("c-filter").value;
+    var rows = db.clients.map(function (c) { return { c: c, s: clientStats(c.id) }; }).filter(function (r) {
+      if (q && [r.c.name, r.c.phone, r.c.tg, r.c.note].join(" ").toLowerCase().indexOf(q) < 0) return false;
+      if (f === "sleep") return r.s.last && daysSince(r.s.last) >= SLEEP_DAYS;
+      if (f === "active") return r.s.last && daysSince(r.s.last) < SLEEP_DAYS;
+      if (f === "never") return !r.s.last;
+      return true;
+    }).sort(function (a, b) { return a.c.name.localeCompare(b.c.name, "ru"); });
+    $("c-body").innerHTML = rows.length ? rows.map(function (r) {
+      var sleep = r.s.last && daysSince(r.s.last) >= SLEEP_DAYS ? ' <span class="tag sleep">давно не был(а)</span>' : "";
+      return '<tr class="click" tabindex="0" data-id="' + r.c.id + '"><td>' + esc(r.c.name) + demoTag(r.c) + "</td><td>" + esc(r.c.phone) + "</td><td>" + esc(r.c.tg) +
+        "</td><td>" + r.s.count + "</td><td>" + fmtDate(r.s.last) + sleep + "</td><td>" + money(r.s.spent) + "</td><td>" + esc(r.c.note) + "</td></tr>";
+    }).join("") : '<tr><td colspan="7" class="muted">Ничего не найдено</td></tr>';
+    bindRows($("c-body"), openClient);
+  }
+
+  function renderEvents() {
+    var q = $("e-search").value.toLowerCase().trim();
+    var w = $("e-when").value, t = today();
+    var list = db.events.filter(function (e) {
+      if (q && e.title.toLowerCase().indexOf(q) < 0) return false;
+      if (w === "upcoming") return e.date >= t;
+      if (w === "past") return e.date < t;
+      return true;
+    }).sort(function (a, b) { return w === "past" ? b.date.localeCompare(a.date) : a.date.localeCompare(b.date); });
+    $("e-body").innerHTML = list.length ? list.map(function (e) {
+      var g = e.guests || [];
+      var came = g.filter(function (x) { return x.came; }).length;
+      return '<tr class="click" tabindex="0" data-id="' + e.id + '"><td>' + fmtDate(e.date) + "</td><td>" + esc(e.time || "—") + "</td><td>" + esc(e.title) + demoTag(e) +
+        "</td><td>" + (Number(e.price) ? money(e.price) : "свободный") + "</td><td>" + g.length + " / " + (e.capacity || "—") + "</td><td>" + came + "</td></tr>";
+    }).join("") : '<tr><td colspan="6" class="muted">Событий нет</td></tr>';
+    bindRows($("e-body"), openEvent);
+  }
+
+  function bindRows(tbody, fn) {
+    tbody.querySelectorAll("tr[data-id]").forEach(function (tr) {
+      tr.addEventListener("click", function () { fn(tr.getAttribute("data-id")); });
+      tr.addEventListener("keydown", function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); fn(tr.getAttribute("data-id")); } });
+    });
+  }
+
+  ["o-search", "o-status", "o-type", "o-from", "o-to", "k-search", "k-type", "c-search", "c-filter", "e-search", "e-when"].forEach(function (id) {
+    $(id).addEventListener("input", render);
+  });
+
+  // ---------- Диалоги ----------
+  document.querySelectorAll("[data-close]").forEach(function (b) {
+    b.addEventListener("click", function () { b.closest("dialog").close(); });
+  });
+
+  function clientOptions(sel, selected, placeholder) {
+    var list = db.clients.slice().sort(function (a, b) { return a.name.localeCompare(b.name, "ru"); });
+    sel.innerHTML = (placeholder ? '<option value="">' + esc(placeholder) + "</option>" : "") +
+      list.map(function (c) { return '<option value="' + c.id + '"' + (c.id === selected ? " selected" : "") + ">" + esc(c.name) + (c.phone ? " · " + esc(c.phone) : "") + "</option>"; }).join("");
+  }
+
+  // Заказ
+  var editOrderId = null;
+  function openOrder(id, presetClient) {
+    if (!db.clients.length) { alert("Сначала добавьте гостя."); showTab("clients"); return; }
+    editOrderId = id || null;
+    var o = id ? db.orders.find(function (x) { return x.id === id; }) : null;
+    clientOptions($("of-client"), o ? o.clientId : presetClient);
+    $("of-type").value = o ? o.type : TYPES[0];
+    $("of-status").value = o ? o.status : STATUSES[0];
+    $("of-date").value = o ? o.date : today();
+    $("of-time").value = o ? o.time : "";
+    $("of-persons").value = o ? (o.persons || "") : "";
+    $("of-sum").value = o ? (o.sum || "") : "";
+    $("of-note").value = o ? o.note : "";
+    $("of-del").classList.toggle("hidden", !o);
+    $("dlg-order").showModal();
+  }
+  $("order-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    if (!$("of-client").value || !$("of-date").value) { alert("Укажите гостя и дату."); return; }
+    var data = {
+      clientId: $("of-client").value, type: $("of-type").value, status: $("of-status").value, date: $("of-date").value,
+      time: $("of-time").value, persons: Number($("of-persons").value) || 0, sum: Number($("of-sum").value) || 0, note: $("of-note").value.trim()
+    };
+    if (editOrderId) { Object.assign(db.orders.find(function (x) { return x.id === editOrderId; }), data); }
+    else { data.id = uid(); db.orders.push(data); }
+    save(); $("dlg-order").close(); render();
+  });
+  $("of-del").addEventListener("click", function () {
+    if (!confirm("Удалить заказ?")) return;
+    db.orders = db.orders.filter(function (x) { return x.id !== editOrderId; });
+    save(); $("dlg-order").close(); render();
+  });
+  $("o-add").addEventListener("click", function () { openOrder(); });
+  $("k-add").addEventListener("click", function () { openOrder(); });
+
+  // Гость
+  var editClientId = null;
+  function openClient(id) {
+    editClientId = id || null;
+    var c = id ? client(id) : null;
+    $("cf-name").value = c ? c.name : "";
+    $("cf-phone").value = c ? c.phone : "";
+    $("cf-tg").value = c ? c.tg : "";
+    $("cf-bday").value = c ? (c.bday || "") : "";
+    $("cf-note").value = c ? c.note : "";
+    $("cf-del").classList.toggle("hidden", !c);
+    $("cf-history").classList.toggle("hidden", !c);
+    if (c) {
+      var s = clientStats(c.id);
+      $("cf-summary").textContent = "Визитов: " + s.count + " · последний: " + fmtDate(s.last) + " · потрачено: " + money(s.spent) + " ₽" +
+        (s.last && daysSince(s.last) >= SLEEP_DAYS ? " · давно не был(а) — пригласите на событие" : "");
+      var items = [];
+      db.orders.forEach(function (o) {
+        if (o.clientId === c.id) items.push({ d: o.date, html: "<span>" + fmtDate(o.date) + " · " + esc(o.type) + (o.sum ? " · " + money(o.sum) + " ₽" : "") + '</span><span class="tag ' + STATUS_CLS[o.status] + '">' + esc(o.status) + "</span>" });
+      });
+      db.events.forEach(function (ev) {
+        (ev.guests || []).forEach(function (g) {
+          if (g.clientId === c.id) items.push({ d: ev.date, html: "<span>" + fmtDate(ev.date) + " · Событие: " + esc(ev.title) + '</span><span class="tag ' + (g.came ? "s-done" : "s-new") + '">' + (g.came ? "пришёл(а)" : "в списке") + "</span>" });
+        });
+      });
+      items.sort(function (a, b) { return b.d.localeCompare(a.d); });
+      $("cf-list").innerHTML = items.length ? items.map(function (i) { return "<li>" + i.html + "</li>"; }).join("") : '<li class="muted">Пока нет истории</li>';
+    }
+    $("dlg-client").showModal();
+  }
+  $("client-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = $("cf-name").value.trim();
+    if (!name) { alert("Укажите имя."); return; }
+    var data = { name: name, phone: $("cf-phone").value.trim(), tg: $("cf-tg").value.trim(), bday: $("cf-bday").value, note: $("cf-note").value.trim() };
+    if (editClientId) Object.assign(client(editClientId), data);
+    else { data.id = uid(); db.clients.push(data); }
+    save(); $("dlg-client").close(); render();
+  });
+  $("cf-del").addEventListener("click", function () {
+    if (!confirm("Удалить гостя вместе с его заказами?")) return;
+    var id = editClientId;
+    db.clients = db.clients.filter(function (x) { return x.id !== id; });
+    db.orders = db.orders.filter(function (x) { return x.clientId !== id; });
+    db.events.forEach(function (ev) { ev.guests = (ev.guests || []).filter(function (g) { return g.clientId !== id; }); });
+    save(); $("dlg-client").close(); render();
+  });
+  $("cf-new-order").addEventListener("click", function () {
+    var id = editClientId; $("dlg-client").close(); openOrder(null, id);
+  });
+  $("c-add").addEventListener("click", function () { openClient(); });
+
+  // Событие
+  var editEventId = null, draftGuests = [];
+  function openEvent(id) {
+    editEventId = id || null;
+    var ev = id ? db.events.find(function (x) { return x.id === id; }) : null;
+    $("ef-title").value = ev ? ev.title : "";
+    $("ef-date").value = ev ? ev.date : today();
+    $("ef-time").value = ev ? ev.time : "";
+    $("ef-cap").value = ev ? (ev.capacity || "") : "";
+    $("ef-price").value = ev ? (ev.price || "") : "";
+    $("ef-note").value = ev ? ev.note : "";
+    draftGuests = ev ? JSON.parse(JSON.stringify(ev.guests || [])) : [];
+    $("ef-del").classList.toggle("hidden", !ev);
+    $("ef-guests-wrap").classList.remove("hidden");
+    renderGuests();
+    $("dlg-event").showModal();
+  }
+  function renderGuests() {
+    var inList = draftGuests.map(function (g) { return g.clientId; });
+    var sel = $("ef-add-client");
+    clientOptions(sel, "", "— выберите гостя —");
+    Array.prototype.slice.call(sel.options).forEach(function (op) { if (inList.indexOf(op.value) >= 0) op.remove(); });
+    var came = draftGuests.filter(function (g) { return g.came; }).length;
+    $("ef-count").textContent = "(записано: " + draftGuests.length + ", пришли: " + came + ")";
+    $("ef-guests").innerHTML = draftGuests.length ? draftGuests.map(function (g, i) {
+      var c = client(g.clientId) || {};
+      return "<tr><td>" + esc(c.name || "— удалён —") + "</td><td>" + esc(c.phone || "") + "</td>" +
+        '<td><input type="checkbox" class="chk" data-i="' + i + '" data-k="reminded"' + (g.reminded ? " checked" : "") + ' aria-label="Напомнили: ' + esc(c.name) + '"></td>' +
+        '<td><input type="checkbox" class="chk" data-i="' + i + '" data-k="came"' + (g.came ? " checked" : "") + ' aria-label="Пришёл: ' + esc(c.name) + '"></td>' +
+        '<td><button type="button" class="b sm danger" data-rm="' + i + '">Убрать</button></td></tr>';
+    }).join("") : '<tr><td colspan="5" class="muted">Список пуст</td></tr>';
+    $("ef-guests").querySelectorAll("input.chk").forEach(function (ch) {
+      ch.addEventListener("change", function () { draftGuests[+ch.dataset.i][ch.dataset.k] = ch.checked; renderGuests(); });
+    });
+    $("ef-guests").querySelectorAll("[data-rm]").forEach(function (b) {
+      b.addEventListener("click", function () { draftGuests.splice(+b.dataset.rm, 1); renderGuests(); });
+    });
+  }
+  $("ef-add-btn").addEventListener("click", function () {
+    var id = $("ef-add-client").value;
+    if (!id) return;
+    var cap = Number($("ef-cap").value) || 0;
+    if (cap && draftGuests.length >= cap && !confirm("Мест больше нет. Всё равно добавить?")) return;
+    draftGuests.push({ clientId: id, reminded: false, came: false });
+    renderGuests();
+  });
+  $("event-form").addEventListener("submit", function (e) {
+    e.preventDefault();
+    var title = $("ef-title").value.trim();
+    if (!title || !$("ef-date").value) { alert("Укажите название и дату."); return; }
+    var data = { title: title, date: $("ef-date").value, time: $("ef-time").value, capacity: Number($("ef-cap").value) || 0,
+      price: Number($("ef-price").value) || 0, note: $("ef-note").value.trim(), guests: draftGuests };
+    if (editEventId) Object.assign(db.events.find(function (x) { return x.id === editEventId; }), data);
+    else { data.id = uid(); db.events.push(data); }
+    save(); $("dlg-event").close(); render();
+  });
+  $("ef-del").addEventListener("click", function () {
+    if (!confirm("Удалить событие?")) return;
+    db.events = db.events.filter(function (x) { return x.id !== editEventId; });
+    save(); $("dlg-event").close(); render();
+  });
+  $("e-add").addEventListener("click", function () { openEvent(); });
+
+  // ---------- CSV ----------
+  function csvCell(v) { v = String(v == null ? "" : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function downloadCsv(name, rows) {
+    var text = "﻿" + rows.map(function (r) { return r.map(csvCell).join(";"); }).join("\r\n");
+    var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a");
+    a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(a.href); }, 1000);
+  }
+  $("o-csv").addEventListener("click", function () {
+    var list = filteredOrders($("o-search").value, $("o-status").value, $("o-type").value, $("o-from").value, $("o-to").value);
+    var rows = [["Дата", "Время", "Гость", "Телефон", "Тип", "Персон", "Сумма", "Статус", "Комментарий", "Демо"]];
+    list.forEach(function (o) { var c = client(o.clientId) || {}; rows.push([fmtDate(o.date), o.time, c.name, c.phone, o.type, o.persons, o.sum, o.status, o.note, o.demo ? "да" : ""]); });
+    downloadCsv("zakazy-" + today() + ".csv", rows);
+  });
+  $("c-csv").addEventListener("click", function () {
+    var rows = [["Имя", "Телефон", "Telegram", "День рождения", "Визитов", "Последний визит", "Потрачено", "Заметка", "Демо"]];
+    db.clients.forEach(function (c) { var s = clientStats(c.id); rows.push([c.name, c.phone, c.tg, fmtDate(c.bday), s.count, fmtDate(s.last), s.spent, c.note, c.demo ? "да" : ""]); });
+    downloadCsv("gosti-" + today() + ".csv", rows);
+  });
+  $("ef-csv").addEventListener("click", function () {
+    var rows = [["Событие", "Дата", "Гость", "Телефон", "Telegram", "Напомнили", "Пришёл"]];
+    var title = $("ef-title").value, date = fmtDate($("ef-date").value);
+    draftGuests.forEach(function (g) { var c = client(g.clientId) || {}; rows.push([title, date, c.name, c.phone, c.tg, g.reminded ? "да" : "нет", g.came ? "да" : "нет"]); });
+    downloadCsv("spisok-gostey-" + ($("ef-date").value || today()) + ".csv", rows);
+  });
+
+  // ---------- Очистка демо ----------
+  $("clear-demo").addEventListener("click", function () {
+    if (!confirm("Удалить все демо-записи? Ваши собственные записи останутся.")) return;
+    var demoIds = db.clients.filter(function (c) { return c.demo; }).map(function (c) { return c.id; });
+    db.clients = db.clients.filter(function (c) { return !c.demo; });
+    db.orders = db.orders.filter(function (o) { return !o.demo && demoIds.indexOf(o.clientId) < 0; });
+    db.events = db.events.filter(function (e) { return !e.demo; });
+    db.events.forEach(function (e) { e.guests = (e.guests || []).filter(function (g) { return demoIds.indexOf(g.clientId) < 0; }); });
+    save(); render();
+  });
+
+  load();
+  render();
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

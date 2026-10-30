@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Кулинарная лавка — бизнес-ланчи, домашняя кухня и банкетный зал в Тамбове</title>
+<meta name="description" content="Кулинарная лавка на Студенецкой, 14 в Тамбове: бизнес-ланчи, домашняя кухня, банкетный зал, доставка и самовывоз. Заявка на сайте или по телефону +74752700170.">
+<style>
+  :root {
+    --color-primary: #8A3B12;      /* тёплая терракота, белый текст 7:1 */
+    --color-on-primary: #FFFFFF;
+    --color-primary-hover: #6E2F0D;
+    --color-secondary: #C2410C;
+    --color-accent: #A04712;       /* кнопка-действие, белый текст 6.2:1 */
+    --color-accent-hover: #7C370E;
+    --color-on-accent: #FFFFFF;
+    --color-background: #FBF3E4;   /* тёплый крем, как скатерть */
+    --color-foreground: #33200F;
+    --color-card: #FFFDF8;
+    --color-muted: #F3E7D3;
+    --color-muted-foreground: #6B5744;
+    --color-border: #E7D3B3;
+    --color-destructive: #B91C1C;
+    --color-ring: #8A3B12;
+    --step-1: #9A3412;
+    --step-2: #B45309;
+    --step-3: #4D7C0F;
+    --radius: 20px;
+    --shadow: 0 1px 2px rgba(74, 44, 18, .08), 0 10px 28px rgba(74, 44, 18, .10);
+    --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    --font-heading: Georgia, "Times New Roman", "PT Serif", serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; font-family: var(--font); font-size: 17px; line-height: 1.6;
+    color: var(--color-foreground); background: var(--color-background);
+    -webkit-font-smoothing: antialiased; overflow-x: clip;
+  }
+  h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; margin: 0 0 .5em; letter-spacing: 0; }
+  h1 { font-size: clamp(2.1rem, 5.6vw, 3.7rem); font-weight: 700; }
+  h2 { font-size: clamp(1.65rem, 3.8vw, 2.4rem); font-weight: 700; }
+  h3 { font-size: 1.22rem; font-weight: 700; }
+  p { margin: 0 0 1em; }
+  a { color: var(--color-primary); }
+  .container { width: min(1120px, 100% - 40px); margin-inline: auto; }
+  section { padding: 88px 0; }
+  .eyebrow { display: inline-block; font-size: .85rem; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); margin-bottom: 12px; }
+  .lead { font-size: 1.15rem; color: var(--color-muted-foreground); max-width: 640px; }
+  .skip { position: absolute; left: -9999px; top: 8px; background: #fff; padding: 8px 14px; z-index: 100; border-radius: 8px; }
+  .skip:focus { left: 8px; }
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 6px; }
+
+  /* Кнопки */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 26px; border-radius: 14px; border: 2px solid transparent;
+    font: 600 1rem/1 var(--font); text-decoration: none; cursor: pointer;
+    transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-accent { background: var(--color-accent); color: var(--color-on-accent); box-shadow: 0 6px 18px rgba(124, 55, 14, .26); }
+  .btn-accent:hover { background: var(--color-accent-hover); }
+  .btn-primary { background: var(--color-primary); color: var(--color-on-primary); }
+  .btn-primary:hover { background: var(--color-primary-hover); }
+  .btn-ghost { background: rgba(255, 253, 248, .9); color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn-ghost:hover { background: #fff; }
+  .btn-link { font-weight: 600; color: var(--color-primary); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; }
+  .btn-link:hover { text-decoration: underline; }
+
+  /* Шапка */
+  header.top { position: sticky; top: 0; z-index: 50; background: rgba(251, 243, 228, .94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--color-border); }
+  header.top .container { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+  .logo { display: flex; align-items: center; gap: 10px; min-width: 0; font-weight: 700; font-size: 1.15rem; color: var(--color-foreground); text-decoration: none; }
+  .logo-mark { width: 36px; height: 36px; border-radius: 12px; background: var(--color-primary); display: grid; place-items: center; }
+  .logo-mark svg { width: 20px; height: 20px; }
+  nav.menu { display: flex; gap: 22px; }
+  nav.menu a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: .95rem; }
+  nav.menu a:hover { color: var(--color-primary); text-decoration: underline; }
+  .top-phone { font-weight: 600; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 900px) { nav.menu { display: none; } }
+  @media (max-width: 600px) { .top-phone { display: none; } }
+  .logo span:last-child { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+  /* Первый экран */
+  .hero { position: relative; isolation: isolate; overflow: hidden; padding: 96px 0 104px; }
+  .hero-bg { position: absolute; inset: -80px 0 -80px 0; z-index: -1;
+    background:
+      radial-gradient(600px 400px at 85% 15%, rgba(194, 65, 12, .16), transparent 70%),
+      radial-gradient(520px 380px at 5% 95%, rgba(180, 83, 9, .14), transparent 70%),
+      repeating-linear-gradient(0deg, rgba(138, 59, 18, .05) 0 2px, transparent 2px 28px),
+      repeating-linear-gradient(90deg, rgba(138, 59, 18, .05) 0 2px, transparent 2px 28px),
+      linear-gradient(180deg, #F8E9CE 0%, var(--color-background) 100%);
+  }
+  .hero-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: 48px; align-items: center; }
+  .hero-grid > * { min-width: 0; }
+  .hero h1 { overflow-wrap: break-word; hyphens: auto; }
+  .hero h1 span { color: var(--color-primary); }
+  .hero .lead { margin-bottom: 28px; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 14px; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 28px; padding: 0; list-style: none; }
+  .hero-badges li { background: var(--color-card); border: 1px solid var(--color-border); border-radius: 10px; padding: 6px 14px; font-size: .9rem; font-weight: 500; }
+  .hero-art { position: relative; aspect-ratio: 1; max-width: 420px; justify-self: center; width: 100%; }
+  .hero-art .plate { position: absolute; inset: 8%; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #FFFDF8 0 40%, #F6E3C8 41% 58%, #E7D3B3 59% 62%, #FFFDF8 63%); box-shadow: var(--shadow); }
+  .hero-art .cup { position: absolute; right: 2%; bottom: 6%; width: 38%; aspect-ratio: 1; border-radius: 50%; background: radial-gradient(circle at 50% 50%, #6E2F0D 0 46%, #FFFDF8 47% 60%, #E7D3B3 61% 63%, #FFFDF8 64%); box-shadow: var(--shadow); }
+  .hero-art .leaf { position: absolute; width: 22%; aspect-ratio: 1; background: var(--color-secondary); border-radius: 50% 50% 44% 44%; box-shadow: inset 0 -6px 0 rgba(0,0,0,.08); }
+  .hero-art .leaf.l1 { left: 4%; top: 6%; transform: rotate(-18deg); background: #B45309; }
+  .hero-art .leaf.l2 { left: 30%; top: 30%; width: 14%; background: var(--color-primary); transform: rotate(24deg); }
+  .hero-art .tag { position: absolute; left: 0; bottom: 14%; background: var(--color-card); border-radius: 12px; padding: 10px 14px; box-shadow: var(--shadow); font-weight: 600; font-size: .95rem; display: flex; gap: 8px; align-items: center; }
+  .hero-art .tag svg { width: 20px; height: 20px; color: var(--color-accent); }
+  @media (max-width: 860px) {
+    .hero { padding: 40px 0 64px; }
+    .hero-grid { grid-template-columns: 1fr; gap: 32px; }
+    .hero-art { max-width: 240px; }
+  }
+  @media (max-width: 480px) {
+    h1 { font-size: 2rem; }
+    .hero .lead { font-size: 1.05rem; }
+    .hero-actions .btn { flex: 1 1 100%; }
+    .hero-art { max-width: 200px; }
+    .final-cta { padding: 26px 20px; }
+    .final-cta .actions, .final-cta .actions .btn { width: 100%; }
+  }
+
+  /* Карточки */
+  .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; margin-top: 36px; }
+  .card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 26px; box-shadow: var(--shadow); transition: box-shadow .2s, border-color .2s; }
+  .card:hover { border-color: var(--color-secondary); box-shadow: 0 2px 4px rgba(74,44,18,.08), 0 16px 34px rgba(74,44,18,.16); }
+  .icon { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: #F6E3C8; color: var(--color-primary); margin-bottom: 16px; }
+  .icon svg { width: 24px; height: 24px; }
+  .card p { color: var(--color-muted-foreground); font-size: .98rem; }
+  .price { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-top: 12px; padding-top: 14px; border-top: 1px dashed var(--color-border); }
+  .price strong { font-size: 1.02rem; }
+  .price .btn-link { font-size: .95rem; }
+  .note { font-size: .88rem; color: var(--color-muted-foreground); margin-top: 18px; }
+
+  /* Форматы */
+  .promo { background: var(--color-card); }
+  .promo-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 36px; }
+  .promo-card { border-radius: var(--radius); padding: 30px; color: #fff; position: relative; overflow: hidden; }
+  .promo-card h3 { font-size: 1.35rem; }
+  .promo-card p { color: rgba(255,255,255,.95); }
+  .promo-card.p1 { background: linear-gradient(135deg, #7C2D12, #9A3412); }
+  .promo-card.p2 { background: linear-gradient(135deg, #92400E, #A04712); }
+  .promo-card.p3 { background: linear-gradient(135deg, #3F3A2E, #5A4A32); }
+  .promo-card .btn { margin-top: 8px; background: #fff; color: var(--color-foreground); min-height: 46px; }
+  .promo-card .btn:hover { background: #FBF3E4; }
+  .promo-card::after { content: ""; position: absolute; right: -40px; top: -40px; width: 140px; height: 140px; border-radius: 50%; background: rgba(255,255,255,.1); }
+
+  /* Почему мы */
+  .why-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 28px; margin-top: 36px; }
+  .why-item h3 { margin-top: 4px; }
+  .why-item p { color: var(--color-muted-foreground); }
+
+  /* Шаги (воронка) */
+  .steps { background: var(--color-card); }
+  .steps-progress { display: flex; gap: 8px; margin: 28px 0 32px; }
+  .steps-progress span { height: 6px; flex: 1; border-radius: 3px; }
+  .steps-progress span:nth-child(1) { background: var(--step-1); }
+  .steps-progress span:nth-child(2) { background: var(--step-2); }
+  .steps-progress span:nth-child(3) { background: var(--step-3); }
+  .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; counter-reset: step; }
+  .step { border: 1px solid var(--color-border); border-radius: var(--radius); padding: 28px; background: var(--color-background); }
+  .step-num { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; color: #fff; font-weight: 700; margin-bottom: 14px; }
+  .step:nth-child(1) .step-num { background: var(--step-1); }
+  .step:nth-child(2) .step-num { background: var(--step-2); }
+  .step:nth-child(3) .step-num { background: var(--step-3); }
+  .step p { color: var(--color-muted-foreground); }
+  @media (max-width: 860px) { .steps-grid { grid-template-columns: 1fr; } }
+
+  /* Форма */
+  .booking-wrap { display: grid; grid-template-columns: .9fr 1.1fr; gap: 40px; align-items: start; }
+  @media (max-width: 860px) { .booking-wrap { grid-template-columns: 1fr; } }
+  .booking-aside ul { padding: 0; list-style: none; margin: 20px 0 0; }
+  .booking-aside li { display: flex; gap: 12px; margin-bottom: 14px; }
+  .booking-aside li svg { width: 22px; height: 22px; color: var(--color-primary); flex: none; margin-top: 3px; }
+  form.booking { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-weight: 600; margin-bottom: 6px; font-size: .95rem; }
+  .field .hint { font-weight: 400; color: var(--color-muted-foreground); }
+  .field input, .field select, .field textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px; font: 400 1rem var(--font); color: var(--color-foreground);
+    background: #fff; border: 1.5px solid #A08A6F; border-radius: 10px; transition: border-color .2s, box-shadow .2s;
+  }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(138, 59, 18, .25); }
+  .field input[aria-invalid="true"] { border-color: var(--color-destructive); }
+  .error { color: #B91C1C; font-size: .88rem; margin-top: 4px; min-height: 1em; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 520px) { .row2 { grid-template-columns: 1fr; } }
+  form.booking .btn { width: 100%; }
+  .form-note { font-size: .85rem; color: var(--color-muted-foreground); margin-top: 12px; text-align: center; }
+  .success { display: none; text-align: center; padding: 30px 10px; }
+  .success.show { display: block; }
+  .success svg { width: 56px; height: 56px; color: var(--color-primary); }
+
+  /* Контакты */
+  .contacts { background: var(--color-card); }
+  .contacts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; margin-top: 32px; }
+  .contact-card { display: flex; gap: 14px; align-items: flex-start; }
+  .contact-card .icon { margin: 0; flex: none; }
+  .contact-card p { margin: 0; }
+  .contact-card .label { font-size: .85rem; color: var(--color-muted-foreground); font-weight: 500; }
+  .contact-card a { font-weight: 600; }
+  .final-cta { margin-top: 40px; border-radius: var(--radius); background: var(--color-foreground); color: #fff; padding: 36px; display: flex; flex-wrap: wrap; gap: 20px; align-items: center; justify-content: space-between; }
+  .final-cta h3 { font-size: 1.5rem; margin: 0; }
+  .final-cta p { margin: 4px 0 0; color: #F3E0C0; }
+  .final-cta .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+
+  footer { padding: 36px 0; font-size: .92rem; color: var(--color-muted-foreground); }
+  footer .container { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  footer .demo { font-size: .78rem; opacity: .9; }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Иконки (SVG-спрайт в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.8 19.8 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.12 4.18 2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h1a4 4 0 1 1 0 8h-1"/><path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4Z"/><path d="M6 2v2M10 2v2M14 2v2"/></symbol>
+    <symbol id="i-utensils" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></symbol>
+    <symbol id="i-cake" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16s.5-1 2-1 2.5 2 4 2 2.5-2 4-2 2.5 2 4 2 2-1 2-1"/><path d="M2 21h20M7 8v3M12 8v3M17 8v3M7 4h.01M12 4h.01M17 4h.01"/></symbol>
+    <symbol id="i-truck" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+    <symbol id="i-bag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18M16 10a4 4 0 0 1-8 0"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></symbol>
+    <symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></symbol>
+    <symbol id="i-bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-sparkle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2Z"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="container">
+    <a class="logo" href="#top" aria-label="Кулинарная лавка — наверх">
+      <span class="logo-mark" aria-hidden="true"><svg style="color:#fff"><use href="#i-utensils"/></svg></span>
+      <span>Кулинарная лавка</span>
+    </a>
+    <nav class="menu" aria-label="Разделы сайта">
+      <a href="#menu">Меню</a>
+      <a href="#promo">Форматы</a>
+      <a href="#how">Как заказать</a>
+      <a href="#booking">Заявка</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:+74752700170">+74752700170</a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <div class="container hero-grid">
+      <div>
+        <span class="eyebrow hero-anim">Домашняя кухня · Тамбов</span>
+        <h1 id="hero-title" class="hero-anim">Обед по-домашнему — <span>быстро, недорого, без звонка</span></h1>
+        <p class="lead hero-anim">Кулинарная лавка на Студенецкой, 14: бизнес-ланчи, горячее и банкетный зал. Оставьте заявку на сайте — перезвоним, всё подтвердим и подскажем, что сегодня на обед.</p>
+        <div class="hero-actions">
+          <a class="btn btn-accent hero-anim" href="#booking"><svg aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+          <a class="btn btn-ghost hero-anim" href="tel:+74752700170"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+        </div>
+        <ul class="hero-badges" aria-label="Что у нас есть">
+          <li class="hero-anim">Бизнес-ланчи</li>
+          <li class="hero-anim">Банкетный зал</li>
+          <li class="hero-anim">Доставка</li>
+          <li class="hero-anim">Средний чек до 500 ₽</li>
+          <li class="hero-anim">4.0 на Zoon, 3 оценки</li>
+        </ul>
+      </div>
+      <div class="hero-art hero-anim" aria-hidden="true">
+        <div class="plate"></div>
+        <div class="cup"></div>
+        <div class="leaf l1"></div>
+        <div class="leaf l2"></div>
+        <div class="tag"><svg><use href="#i-clock"/></svg>Обед готов</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Меню / услуги -->
+  <section id="menu" aria-labelledby="menu-title">
+    <div class="container">
+      <span class="eyebrow reveal">Меню и услуги</span>
+      <h2 id="menu-title" class="reveal">Что можно заказать</h2>
+      <p class="lead reveal">Готовим по-домашнему и без лишнего пафоса. Полное меню и состав обеда подскажем по телефону — у нас всё просто.</p>
+      <!-- ЦЕНЫ: в разборе цен нет, поэтому вместо «от … ₽» — уточнение по телефону -->
+      <div class="cards" id="services">
+        <article class="card service">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-utensils"/></svg></div>
+          <h3>Бизнес-ланчи</h3>
+          <p>Обед в будний день: сытно, быстро и недорого — успеете вернуться к делам.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a class="btn-link" href="#booking" data-service="Бизнес-ланч">Заказать обед <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </article>
+        <article class="card service">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-heart"/></svg></div>
+          <h3>Домашняя кухня</h3>
+          <p>Обычная домашняя еда, к которой хочется вернуться: сытно и без ресторанных наценок.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a class="btn-link" href="#booking" data-service="Обед по-домашнему">Заказать обед <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </article>
+        <article class="card service">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-cake"/></svg></div>
+          <h3>Банкетный зал</h3>
+          <p>День рождения, юбилей или встреча с коллегами — обсудим зал, меню и время.</p>
+          <div class="price"><strong>Условия по телефону</strong><a class="btn-link" href="#booking" data-service="Банкет / праздник">Обсудить банкет <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </article>
+        <article class="card service">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-truck"/></svg></div>
+          <h3>Доставка</h3>
+          <p>Привезём обед домой или в офис. Зону доставки и условия уточнит администратор.</p>
+          <div class="price"><strong>Условия по телефону</strong><a class="btn-link" href="#booking" data-service="Доставка">Заказать доставку <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </article>
+        <article class="card service">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-bag"/></svg></div>
+          <h3>Самовывоз</h3>
+          <p>Закажите заранее — заберёте готовое на Студенецкой, 14 без ожидания в очереди.</p>
+          <div class="price"><strong>Цену уточняйте</strong><a class="btn-link" href="#booking" data-service="Самовывоз">Заказать самовывоз <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+        </article>
+      </div>
+      <p class="note reveal">Актуальное меню, состав бизнес-ланча и цены — по телефону +74752700170. Средний чек — до 500 ₽.</p>
+    </div>
+  </section>
+
+  <!-- Форматы -->
+  <section class="promo" id="promo" aria-labelledby="promo-title">
+    <div class="container">
+      <span class="eyebrow reveal">Форматы</span>
+      <h2 id="promo-title" class="reveal">Обед, перекус или праздник</h2>
+      <p class="lead reveal">Три повода зайти: пообедать в будни, быстро перекусить или собрать гостей в банкетном зале.</p>
+      <div class="promo-grid">
+        <article class="promo-card p1 promo-item">
+          <h3>Бизнес-ланч по будням</h3>
+          <p>Обеденный перерыв — не повод стоять в очереди. Закажите ланч заранее: к вашему приходу всё будет готово.</p>
+          <a class="btn" href="#booking" data-service="Бизнес-ланч">Заказать ланч</a>
+        </article>
+        <article class="promo-card p2 promo-item">
+          <h3>Банкетный зал</h3>
+          <p>День рождения, юбилей или встреча с коллегами — обсудим зал, меню и время по телефону.</p>
+          <a class="btn" href="#booking" data-service="Банкет / праздник">Заявка на банкет</a>
+        </article>
+        <article class="promo-card p3 promo-item">
+          <h3>Доставка и самовывоз</h3>
+          <p>Заберите сами на Студенецкой, 14 или попросите привезти обед домой и в офис.</p>
+          <a class="btn" href="#booking" data-service="Доставка">Оформить заказ</a>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- Почему мы -->
+  <section id="why" aria-labelledby="why-title">
+    <div class="container">
+      <span class="eyebrow reveal">Почему к нам заходят</span>
+      <h2 id="why-title" class="reveal">Просто, сытно и рядом с домом</h2>
+      <div class="why-grid">
+        <div class="why-item">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-heart"/></svg></div>
+          <h3>Готовим по-домашнему</h3>
+          <p>Без ресторанного пафоса: еда, которую хочется есть каждый день.</p>
+        </div>
+        <div class="why-item">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></div>
+          <h3>Быстрый обед</h3>
+          <p>Бизнес-ланч в обеденный перерыв: зашли, поели, вернулись к делам.</p>
+        </div>
+        <div class="why-item">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-cake"/></svg></div>
+          <h3>Свой банкетный зал</h3>
+          <p>Есть где собрать гостей — рассадку и меню обсудим заранее.</p>
+        </div>
+        <div class="why-item">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-truck"/></svg></div>
+          <h3>Привезём обед</h3>
+          <p>Не хочется выходить — доставим домой или в офис по договорённости.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Как проходит (3 шага) -->
+  <section class="steps" id="how" aria-labelledby="how-title">
+    <div class="container">
+      <span class="eyebrow reveal">Как это работает</span>
+      <h2 id="how-title" class="reveal">Три шага до обеда</h2>
+      <div class="steps-progress reveal" aria-hidden="true"><span></span><span></span><span></span></div>
+      <ol class="steps-grid" style="list-style:none;padding:0;margin:0">
+        <li class="step">
+          <span class="step-num" aria-hidden="true">1</span>
+          <h3>Не хочется звонить и ждать?</h3>
+          <p>Оставьте заявку на сайте: что заказываете, когда и на сколько человек.</p>
+          <a class="btn-link" href="#booking">Оставить заявку <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">2</span>
+          <h3>Мы перезвоним</h3>
+          <p>Подтвердим заказ, подскажем состав ланча и договоримся о времени.</p>
+          <a class="btn-link" href="tel:+74752700170">Или позвоните сами <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </li>
+        <li class="step">
+          <span class="step-num" aria-hidden="true">3</span>
+          <h3>Забирайте или ждите доставку</h3>
+          <p>Обед будет готов к нужному времени — на Студенецкой, 14 или у вас дома.</p>
+          <a class="btn-link" href="#contacts">Как нас найти <svg width="16" height="16" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- Форма -->
+  <section id="booking" aria-labelledby="booking-title">
+    <div class="container booking-wrap">
+      <div class="booking-aside">
+        <span class="eyebrow reveal">Заявка</span>
+        <h2 id="booking-title" class="reveal">Заказать обед или обсудить банкет</h2>
+        <p class="lead reveal">Заполните форму — перезвоним и всё подтвердим. Для банкета уточним дату, число гостей и меню.</p>
+        <ul>
+          <li class="reveal"><svg aria-hidden="true"><use href="#i-check"/></svg><span>Бизнес-ланч и обеды на вынос</span></li>
+          <li class="reveal"><svg aria-hidden="true"><use href="#i-check"/></svg><span>Доставка по городу и самовывоз</span></li>
+          <li class="reveal"><svg aria-hidden="true"><use href="#i-check"/></svg><span>Банкетный зал на праздник</span></li>
+        </ul>
+      </div>
+      <form class="booking reveal" id="booking-form" novalidate>
+        <div id="form-fields">
+          <div class="field">
+            <label for="f-name">Имя</label>
+            <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+            <div class="error" id="e-name" aria-live="polite"></div>
+          </div>
+          <div class="field">
+            <label for="f-phone">Телефон</label>
+            <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 ___ ___-__-__" required aria-describedby="e-phone">
+            <div class="error" id="e-phone" aria-live="polite"></div>
+          </div>
+          <div class="field">
+            <label for="f-service">Что вас интересует</label>
+            <select id="f-service" name="service">
+              <option>Бизнес-ланч</option>
+              <option>Обед по-домашнему</option>
+              <option>Банкет / праздник</option>
+              <option>Доставка</option>
+              <option>Самовывоз</option>
+            </select>
+          </div>
+          <div class="row2">
+            <div class="field">
+              <label for="f-date">Дата</label>
+              <input id="f-date" name="date" type="date">
+            </div>
+            <div class="field">
+              <label for="f-time">Удобное время</label>
+              <input id="f-time" name="time" type="time">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-comment">Комментарий <span class="hint">(необязательно: гостей, адрес доставки)</span></label>
+            <textarea id="f-comment" name="comment"></textarea>
+          </div>
+          <button class="btn btn-accent" type="submit"><svg aria-hidden="true"><use href="#i-send"/></svg>Отправить заявку</button>
+          <p class="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для связи с вами.</p>
+        </div>
+        <div class="success" id="form-success" role="status" aria-live="polite" tabindex="-1">
+          <svg aria-hidden="true"><use href="#i-check"/></svg>
+          <h3>Заявка принята, перезвоним</h3>
+          <p>Спасибо! Администратор свяжется с вами в ближайшее время.</p>
+          <button class="btn btn-ghost" type="button" id="form-again">Отправить ещё одну</button>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section class="contacts" id="contacts" aria-labelledby="contacts-title">
+    <div class="container">
+      <span class="eyebrow reveal">Контакты</span>
+      <h2 id="contacts-title" class="reveal">Ждём вас на Студенецкой, 14</h2>
+      <div class="contacts-grid">
+        <div class="contact-card reveal">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-pin"/></svg></div>
+          <div><p class="label">Адрес</p><p>Тамбов, ул. Студенецкая, 14</p><p>цокольный этаж</p><p><a href="https://yandex.ru/maps/?pt=41.448442,52.727104&amp;z=17&amp;l=map" target="_blank" rel="noopener">Открыть на карте</a></p></div>
+        </div>
+        <div class="contact-card reveal">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-phone"/></svg></div>
+          <div><p class="label">Телефон</p><p><a href="tel:+74752700170">+74752700170</a></p><p>Заказы обедов и банкеты</p></div>
+        </div>
+        <div class="contact-card reveal" id="hours-card">
+          <div class="icon" aria-hidden="true"><svg><use href="#i-clock"/></svg></div>
+          <div><p class="label">Часы работы</p><p id="hours-text">Уточняйте по телефону</p></div>
+        </div>
+      </div>
+      <div class="final-cta reveal">
+        <div>
+          <h3>Заказать обед или обсудить банкет?</h3>
+          <p>Позвоните или оставьте заявку — перезвоним и всё подтвердим.</p>
+        </div>
+        <div class="actions">
+          <a class="btn btn-accent" href="tel:+74752700170"><svg aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+          <a class="btn btn-ghost" href="#booking"><svg aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <span>© 2026 Кулинарная лавка · Студенецкая, 14 · Тамбов</span>
+    <span class="demo">Демо-макет</span>
+  </div>
+</footer>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  // Часы работы могут быть пустыми — тогда показываем «уточняйте по телефону»
+  var hours = document.getElementById("hours-text");
+  if (hours) {
+    var h = hours.textContent.trim();
+    if (!h || h === "{{" + "HOURS}}") hours.textContent = "Уточняйте по телефону";
+  }
+
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // --- Форма ---
+  var form = document.getElementById("booking-form");
+  var fields = document.getElementById("form-fields");
+  var success = document.getElementById("form-success");
+  var dateInput = document.getElementById("f-date");
+  var serviceSelect = document.getElementById("f-service");
+
+  if (dateInput) {
+    var t = new Date();
+    var iso = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+    dateInput.min = iso;
+  }
+
+  // Ссылки «Заказать» подставляют услугу в форму
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < serviceSelect.options.length; i++) {
+        if (serviceSelect.options[i].text === v) { serviceSelect.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  function setError(input, errEl, msg) {
+    errEl.textContent = msg;
+    input.setAttribute("aria-invalid", msg ? "true" : "false");
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = document.getElementById("f-name");
+    var phone = document.getElementById("f-phone");
+    var ok = true;
+    if (name.value.trim().length < 2) { setError(name, document.getElementById("e-name"), "Пожалуйста, укажите имя"); ok = false; }
+    else setError(name, document.getElementById("e-name"), "");
+    var digits = phone.value.replace(/\D/g, "");
+    if (digits.length < 10) { setError(phone, document.getElementById("e-phone"), "Укажите телефон, минимум 10 цифр"); ok = false; }
+    else setError(phone, document.getElementById("e-phone"), "");
+    if (!ok) { (name.getAttribute("aria-invalid") === "true" ? name : phone).focus(); return; }
+
+    // Демо: заявка никуда не отправляется
+    fields.style.display = "none";
+    success.classList.add("show");
+    success.focus();
+    if (window.Motion && !reduce) {
+      Motion.animate(success, { opacity: [0, 1], transform: ["translateY(12px)", "translateY(0)"] }, { duration: 0.4 });
+    }
+  });
+
+  document.getElementById("form-again").addEventListener("click", function () {
+    form.reset();
+    success.classList.remove("show");
+    fields.style.display = "";
+    document.getElementById("f-name").focus();
+  });
+
+  // --- Анимации (Motion) ---
+  if (!window.Motion || reduce) return;
+
+  // Страховка: первый экран не должен остаться прозрачным, если анимация не доиграла
+  setTimeout(function () {
+    document.querySelectorAll(".hero-anim").forEach(function (el) {
+      if (getComputedStyle(el).opacity < 1) { el.style.opacity = "1"; el.style.transform = ""; }
+    });
+  }, 2000);
+
+  var M = window.Motion;
+  var animate = M.animate, inView = M.inView, stagger = M.stagger;
+  var ease = [0.22, 1, 0.36, 1];
+
+  try {
+    // Первый экран — по очереди
+    var heroEls = document.querySelectorAll(".hero-anim");
+    heroEls.forEach(function (el) { el.style.opacity = "0"; });
+    animate(heroEls,
+      { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0)"] },
+      { duration: 0.55, delay: stagger(0.08), ease: ease });
+
+    // Появление блоков при прокрутке
+    var reveal = document.querySelectorAll(".reveal");
+    reveal.forEach(function (el) { el.style.opacity = "0"; });
+    inView(".reveal", function (el) {
+      animate(el, { opacity: [0, 1], transform: ["translateY(20px)", "translateY(0)"] }, { duration: 0.5, ease: ease });
+    }, { amount: 0.2 });
+
+    // Группы карточек — со stagger
+    var groups = [
+      [".cards", ".service"], [".promo-grid", ".promo-item"], [".why-grid", ".why-item"], [".steps-grid", ".step"]
+    ];
+    groups.forEach(function (g) {
+      var box = document.querySelector(g[0]);
+      if (!box) return;
+      var items = box.querySelectorAll(g[1]);
+      items.forEach(function (el) { el.style.opacity = "0"; });
+      inView(box, function () {
+        animate(items, { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0)"] },
+          { duration: 0.5, delay: stagger(0.08), ease: ease });
+      }, { amount: 0.15 });
+    });
+
+    // Параллакс фона первого экрана
+    var bg = document.querySelector(".hero-bg");
+    if (bg && M.scroll) {
+      M.scroll(function (progress) {
+        bg.style.transform = "translateY(" + (progress * 120).toFixed(1) + "px)";
+      });
+    }
+
+    // Реакция на наведение и нажатие
+    if (M.hover) {
+      M.hover(".btn, .card, .promo-card", function (el) {
+        animate(el, { transform: "translateY(-3px)" }, { duration: 0.22 });
+        return function () { animate(el, { transform: "translateY(0)" }, { duration: 0.22 }); };
+      });
+    }
+    document.querySelectorAll(".btn").forEach(function (el) {
+      el.addEventListener("pointerdown", function () { animate(el, { transform: "scale(0.97)" }, { duration: 0.2 }); });
+      el.addEventListener("pointerup", function () { animate(el, { transform: "scale(1)" }, { duration: 0.2 }); });
+      el.addEventListener("pointerleave", function () { animate(el, { transform: "translateY(0) scale(1)" }, { duration: 0.2 }); });
+    });
+  } catch (err) {
+    // Если что-то пошло не так — показываем всё без анимаций
+    document.querySelectorAll(".hero-anim, .reveal, .service, .promo-item, .why-item, .step").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>
