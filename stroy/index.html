@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>СтройДемо — строительная компания в Тамбове (пример)</title>
+<meta name="description" content="Демо-сайт строительной компании в Тамбове с калькулятором сметы. Все данные — пример.">
+<script>
+/* =====================================================================
+   ЦЕНЫ ДЛЯ КАЛЬКУЛЯТОРА — ПРИМЕРНЫЕ (ДЕМО).
+   Компания заменяет их на свои: меняйте только числа в этом объекте.
+   work      — стоимость работ за единицу (м² или м³) по уровням
+   materials — стоимость материалов за единицу по уровням
+   options   — доп. опции: цена за единицу для каждого вида работ
+               (нет ключа вида работ — опция для него недоступна),
+               min — минимальная стоимость опции
+   spread    — ширина вилки цены: 0.12 = ±12%
+   ===================================================================== */
+const PRICES = {
+  currency: '₽',
+  spread: 0.12,
+  levels: {
+    econ: { name: 'Эконом',   desc: 'Бюджетные материалы российских производителей' },
+    std:  { name: 'Стандарт', desc: 'Оптимум цены и качества, популярные бренды' },
+    prem: { name: 'Премиум',  desc: 'Материалы премиум-класса, сложная отделка' }
+  },
+  works: {
+    turnkey: {
+      name: 'Ремонт квартиры под ключ', unit: 'м²', qtyLabel: 'Площадь квартиры',
+      min: 10, max: 500, step: 1, def: 50,
+      work:      { econ: 7000, std: 9500,  prem: 13500 },
+      materials: { econ: 6000, std: 10000, prem: 18000 }
+    },
+    cosmetic: {
+      name: 'Косметический ремонт', unit: 'м²', qtyLabel: 'Площадь помещений (по полу)',
+      min: 5, max: 500, step: 1, def: 40,
+      work:      { econ: 2500, std: 3500, prem: 5000 },
+      materials: { econ: 1200, std: 2200, prem: 4000 }
+    },
+    foundation: {
+      name: 'Фундамент', unit: 'м³', qtyLabel: 'Объём бетона',
+      min: 1, max: 300, step: 0.5, def: 20,
+      work:      { econ: 3500, std: 4500, prem: 6000 },
+      materials: { econ: 7000, std: 8500, prem: 11000 }
+    },
+    roof: {
+      name: 'Кровля', unit: 'м²', qtyLabel: 'Площадь кровли',
+      min: 10, max: 1000, step: 1, def: 120,
+      work:      { econ: 900, std: 1300, prem: 1900 },
+      materials: { econ: 800, std: 1600, prem: 3200 }
+    },
+    facade: {
+      name: 'Фасад', unit: 'м²', qtyLabel: 'Площадь фасада',
+      min: 10, max: 2000, step: 1, def: 150,
+      work:      { econ: 1200, std: 1700, prem: 2500 },
+      materials: { econ: 900,  std: 1800, prem: 3500 }
+    }
+  },
+  options: {
+    demolition: {
+      name: 'Демонтаж', desc: 'Снятие старых покрытий и конструкций',
+      prices: { turnkey: 500, cosmetic: 250, roof: 300, facade: 250 }
+    },
+    garbage: {
+      name: 'Вывоз мусора', desc: 'Погрузка и вывоз строительного мусора',
+      prices: { turnkey: 150, cosmetic: 80, foundation: 250, roof: 120, facade: 100 },
+      min: 3500
+    },
+    design: {
+      name: 'Дизайн-проект', desc: 'Планировка, визуализация, рабочие чертежи',
+      prices: { turnkey: 1200, cosmetic: 600, facade: 300 },
+      min: 20000
+    }
+  }
+};
+</script>
+<style>
+:root{
+  --bg:#f6f5f2; --card:#fff; --ink:#1c2430; --muted:#5d6878; --line:#e3e0d8;
+  --acc:#f28c18; --acc-d:#d9730a; --dark:#1c2430; --ok:#1f9d55; --err:#d93025;
+  --r:16px; --sh:0 6px 24px rgba(28,36,48,.08);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+body.no-scroll{overflow:hidden}
+h1,h2,h3{line-height:1.2;margin:0 0 .5em}
+p{margin:0 0 1em}
+a{color:var(--acc-d)}
+section{scroll-margin-top:70px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 18px}
+.sec{padding:64px 0}
+.sec-head{max-width:720px;margin-bottom:32px}
+.sec-head h2{font-size:clamp(26px,4vw,36px)}
+.sec-head p{color:var(--muted);margin:0}
+.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#fff1de;color:#a35300;border:1px solid #f7cf9a;border-radius:6px;padding:2px 6px;vertical-align:middle;line-height:1.4}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:12px;border:2px solid transparent;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;text-align:center;line-height:1.2}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid #8ab4ff;outline-offset:2px}
+.btn-acc{background:var(--acc);color:#fff}
+.btn-acc:hover{background:var(--acc-d)}
+.btn-ghost{background:transparent;color:inherit;border-color:currentColor}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-light{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn-light:hover{border-color:var(--acc)}
+.btn-sm{min-height:40px;padding:8px 16px;font-size:15px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.6;cursor:wait}
+
+/* demo bar + header */
+.demo-bar{background:#2b3442;color:#ffd9a8;font-size:13px;text-align:center;padding:6px 12px}
+.top{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px;position:relative}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--ink);text-decoration:none}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--acc);display:grid;place-items:center;flex:none}
+.menu{display:flex;gap:22px}
+.menu a{color:var(--ink);text-decoration:none;font-weight:500}
+.menu a:hover{color:var(--acc-d)}
+.top-right{display:flex;align-items:center;gap:10px}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;place-items:center;padding:0}
+.burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);position:relative;content:""}
+.burger span::before{position:absolute;top:-6px}
+.burger span::after{position:absolute;top:6px}
+@media(max-width:880px){
+  .burger{display:grid}
+  .menu{position:absolute;top:62px;left:0;right:0;background:#fff;flex-direction:column;gap:0;border-bottom:1px solid var(--line);box-shadow:var(--sh);display:none}
+  .menu.open{display:flex}
+  .menu a{padding:14px 18px;border-top:1px solid var(--line)}
+}
+@media(max-width:420px){ .top-right .btn{display:none} }
+
+/* hero */
+.hero{background:linear-gradient(120deg,rgba(28,36,48,.96),rgba(28,36,48,.82)),repeating-linear-gradient(45deg,#2c3644 0 2px,transparent 2px 22px);color:#fff;padding:72px 0 64px}
+.hero h1{font-size:clamp(30px,6vw,52px);max-width:760px}
+.hero h1 em{font-style:normal;color:#ffb35c}
+.hero .lead{font-size:clamp(17px,2.4vw,20px);color:#d5dbe3;max-width:640px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 36px}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px}
+.fact{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px}
+.fact b{display:block;font-size:24px;color:#ffb35c}
+.fact span{font-size:13px;color:#c9d0da}
+.hero small{display:block;margin-top:12px;color:#97a2b0;font-size:12px}
+@media(max-width:520px){ .hero-btns .btn{width:100%} .facts{grid-template-columns:1fr} }
+
+/* services */
+.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:18px}
+.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;display:flex;flex-direction:column}
+.card .ico{width:48px;height:48px;border-radius:12px;background:#fff1de;display:grid;place-items:center;margin-bottom:14px}
+.card h3{font-size:19px}
+.card p{color:var(--muted);font-size:15px;flex:1}
+.price-from{font-weight:800;margin-bottom:12px}
+.price-from small{font-weight:400;color:var(--muted)}
+
+/* calculator */
+.calc-sec{background:#ebe8e1}
+.calc{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start}
+.step{background:#fff;border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
+.step-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:14px}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+.choices{display:grid;gap:10px}
+.choices.works{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.choices.levels{grid-template-columns:repeat(3,minmax(0,1fr))}
+@media(max-width:560px){ .choices.levels{grid-template-columns:1fr} }
+.choice{display:block;position:relative;cursor:pointer}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice-body{display:block;height:100%;border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;transition:border-color .15s,background .15s}
+.choice-body b{display:block;font-size:15px;line-height:1.3}
+.choice-body small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+.choice:hover .choice-body{border-color:#f5bd78}
+.choice input:checked + .choice-body{border-color:var(--acc);background:#fff8ef;box-shadow:0 0 0 3px rgba(242,140,24,.15)}
+.choice input:focus-visible + .choice-body{outline:3px solid #8ab4ff;outline-offset:2px}
+.qty-row{display:flex;align-items:center;gap:16px}
+.qty-row input[type=range]{flex:1;accent-color:var(--acc);height:32px;min-width:0}
+.qty-box{display:flex;align-items:center;border:2px solid var(--line);border-radius:12px;background:#fff;padding:0 12px 0 0;flex:none}
+.qty-box:focus-within{border-color:var(--acc)}
+.qty-box input{width:96px;border:0;background:transparent;font:inherit;font-size:18px;font-weight:700;padding:10px 6px 10px 12px;outline:none;min-height:46px}
+.qty-box span{color:var(--muted);font-weight:600}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.hint.warn{color:var(--err)}
+@media(max-width:480px){ .qty-row{flex-direction:column;align-items:stretch;gap:8px} .qty-box input{flex:1;width:auto} }
+.checks{display:grid;gap:10px}
+.check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;background:#fff;transition:border-color .15s}
+.check:hover{border-color:#f5bd78}
+.check:has(input:checked){border-color:var(--acc);background:#fff8ef}
+.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--acc);flex:none;cursor:pointer}
+.check b{display:block;line-height:1.3}
+.check small{display:block;color:var(--muted);font-size:13px}
+.check em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--acc-d);margin-top:2px}
+.na{font-size:13px;color:var(--muted);margin:10px 0 0}
+
+.result{position:sticky;top:80px;background:var(--dark);color:#fff;border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
+.result .lbl{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#97a2b0}
+.res-price{font-size:clamp(26px,4.4vw,34px);font-weight:800;color:#ffb35c;line-height:1.15;margin:6px 0 4px}
+.res-meta{font-size:14px;color:#c9d0da}
+.res-per{font-size:13px;color:#97a2b0;margin-top:2px}
+.res-table{width:100%;border-collapse:collapse;margin:16px 0 12px;font-size:14px}
+.res-table td{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);vertical-align:top}
+.res-table td:last-child{text-align:right;white-space:nowrap;padding-left:10px;font-weight:600}
+.res-table tr.total td{border-bottom:0;font-weight:800;font-size:15px;color:#ffb35c;padding-top:10px}
+.res-note{font-size:12px;color:#97a2b0;background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.res-btns{display:grid;gap:10px}
+.res-btns .btn-ghost{color:#fff}
+@media(max-width:900px){ .calc{grid-template-columns:1fr} .result{position:static} }
+@media(max-width:400px){ .res-table td:last-child{white-space:normal} .result{padding:18px} }
+
+/* portfolio */
+.pf-card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.ba{display:grid;grid-template-columns:1fr 1fr}
+.ph{aspect-ratio:4/3;position:relative;display:grid;place-items:center;text-align:center;font-size:13px;font-weight:600;padding:28px 8px 8px}
+.ph.before{background:repeating-linear-gradient(45deg,#d3cec4 0 12px,#c6c0b4 12px 24px);color:#4b4b4b}
+.ph.after{background:linear-gradient(135deg,#ffd29a,#f28c18 60%,#c2620a);color:#fff}
+.ph .badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
+.pf-body{padding:16px 18px}
+.pf-body h3{font-size:17px;margin-bottom:4px}
+.pf-body p{font-size:14px;color:var(--muted);margin:0}
+
+/* steps */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px;counter-reset:st}
+.steps li{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);counter-increment:st;position:relative}
+.steps li::before{content:counter(st);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--dark);color:#ffb35c;font-weight:800;margin-bottom:12px}
+.steps b{display:block;margin-bottom:4px}
+.steps span{font-size:14px;color:var(--muted)}
+
+/* contacts */
+.contacts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){ .contacts{grid-template-columns:1fr} }
+.c-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
+.c-list li{display:flex;gap:12px;align-items:flex-start}
+.c-list .ico{width:40px;height:40px;border-radius:10px;background:#fff1de;display:grid;place-items:center;flex:none}
+.c-list small{display:block;color:var(--muted);font-size:13px}
+.c-list a{color:var(--ink);font-weight:700;text-decoration:none}
+.cta{background:var(--dark);color:#fff}
+.cta p{color:#c9d0da}
+.cta .btn{margin-top:8px}
+.cta .btn-ghost{color:#fff}
+
+footer{background:#151b24;color:#97a2b0;font-size:14px;padding:26px 0}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-bg{position:absolute;inset:0;background:rgba(15,20,28,.6)}
+.modal-box{position:relative;background:#fff;border-radius:18px;width:100%;max-width:450px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:26px 22px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:10px;background:#f1efea;font-size:24px;line-height:1;cursor:pointer;color:var(--ink)}
+.modal-x:hover{background:#e5e1d8}
+.modal h3{font-size:22px;padding-right:40px}
+.sum{background:#fff8ef;border:1px solid #f7cf9a;border-radius:12px;padding:10px 12px;font-size:14px;margin-bottom:16px}
+.sum b{color:var(--acc-d)}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+.field input{width:100%;min-height:48px;font:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;outline:none;background:#fff}
+.field input:focus{border-color:var(--acc)}
+.field.err input{border-color:var(--err)}
+.err-msg{display:block;color:var(--err);font-size:13px;margin-top:4px}
+.err-msg:empty{display:none}
+.demo-note{font-size:12px;color:var(--muted);margin:12px 0 0;text-align:center}
+.ok{text-align:center;padding:10px 0 0}
+.ok-ico{width:72px;height:72px;border-radius:50%;background:#e6f6ec;display:grid;place-items:center;margin:0 auto 14px}
+.ok h3{padding:0}
+.ok p{color:var(--muted)}
+.ok .btns{display:grid;gap:10px;margin-top:16px}
+
+/* print sheet: hidden on screen */
+#printSheet{display:none}
+@media print{
+  @page{size:A4;margin:14mm}
+  html,body{background:#fff!important;overflow:visible!important}
+  body > *:not(#printSheet){display:none!important}
+  #printSheet{display:block!important;color:#000;font:11pt/1.45 Arial,"Segoe UI",sans-serif}
+  .ps-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #f28c18;padding-bottom:10px;margin-bottom:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ps-logo{font-size:20pt;font-weight:800}
+  .ps-logo span{font-size:9pt;font-weight:700;border:1px solid #a35300;color:#a35300;border-radius:4px;padding:1px 5px;vertical-align:middle;text-transform:uppercase}
+  .ps-sub{color:#555;font-size:10pt}
+  .ps-meta{text-align:right;font-size:10pt;color:#333}
+  #printSheet h1{font-size:16pt;margin:0 0 12px}
+  .ps-params,.ps-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+  .ps-params td{padding:4px 0;vertical-align:top}
+  .ps-params td:first-child{color:#555;width:38%}
+  .ps-table th,.ps-table td{border:1px solid #bbb;padding:7px 9px;text-align:left}
+  .ps-table th{background:#f3f1ec;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ps-table td:last-child,.ps-table th:last-child{text-align:right;white-space:nowrap}
+  .ps-table tfoot td{font-weight:800;font-size:12pt;background:#fff1de;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ps-table tr{page-break-inside:avoid}
+  .ps-note{border:1px dashed #999;padding:9px 11px;font-size:9.5pt;color:#333;margin:12px 0}
+  .ps-foot{margin-top:24px;padding-top:8px;border-top:1px solid #ccc;font-size:9pt;color:#666}
+}
+</style>
+</head>
+<body>
+
+<div class="demo-bar">Демо-сайт: компания «СтройДемо», цены, работы и контакты — <b>пример</b></div>
+
+<header class="top">
+  <div class="wrap">
+    <a href="#top" class="logo" aria-label="СтройДемо — наверх">
+      <span class="logo-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M6 10v10h12V10"/></svg></span>
+      СтройДемо <span class="tag">пример</span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Меню">
+      <a href="#services">Услуги</a>
+      <a href="#calc">Калькулятор</a>
+      <a href="#portfolio">Портфолио</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <div class="top-right">
+      <a href="#calc" class="btn btn-acc btn-sm">Рассчитать</a>
+      <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap">
+      <span class="tag">пример</span>
+      <h1 style="margin-top:12px">Ремонт и строительство в&nbsp;Тамбове — <em>с&nbsp;понятной сметой</em></h1>
+      <p class="lead">Квартиры под ключ, косметический ремонт, фундаменты, кровля и фасады. Узнайте примерную стоимость за 1 минуту в онлайн-калькуляторе.</p>
+      <div class="hero-btns">
+        <a href="#calc" class="btn btn-acc">Рассчитать стоимость</a>
+        <button type="button" class="btn btn-ghost" data-open-lead>Заказать замер</button>
+      </div>
+      <div class="facts">
+        <div class="fact"><b>12 лет</b><span>на рынке Тамбова</span></div>
+        <div class="fact"><b>340+</b><span>сданных объектов</span></div>
+        <div class="fact"><b>3 года</b><span>гарантии на работы</span></div>
+      </div>
+      <small>* Цифры условные — демонстрационный пример.</small>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="sec" id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Услуги</h2>
+        <p>Цены «от» — примерные и рассчитаны по уровню «Эконом» (работы + материалы). Нажмите «Рассчитать», чтобы получить вилку под ваш объект.</p>
+      </div>
+      <div class="grid-cards">
+        <article class="card">
+          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg></div>
+          <h3>Ремонт квартир под ключ</h3>
+          <p>Черновые и чистовые работы, электрика, сантехника, отделка. Один договор, одна ответственность.</p>
+          <div class="price-from"><span data-from="turnkey"></span> <small>(пример)</small></div>
+          <button type="button" class="btn btn-light" data-work="turnkey">Рассчитать</button>
+        </article>
+        <article class="card">
+          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M4 4h12v5H4z"/><path d="M16 6h3v5h-8v3"/><path d="M10 14h2v7h-2z"/></svg></div>
+          <h3>Косметический ремонт</h3>
+          <p>Обои, покраска, напольные покрытия, замена дверей — быстро освежим интерьер без капитальных работ.</p>
+          <div class="price-from"><span data-from="cosmetic"></span> <small>(пример)</small></div>
+          <button type="button" class="btn btn-light" data-work="cosmetic">Рассчитать</button>
+        </article>
+        <article class="card">
+          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M2 14h20v6H2z"/><path d="M6 14V9M12 14V7M18 14V9"/></svg></div>
+          <h3>Фундамент</h3>
+          <p>Ленточные, плитные и свайные фундаменты для домов, бань и пристроек. Армирование и бетон с паспортом.</p>
+          <div class="price-from"><span data-from="foundation"></span> <small>(пример)</small></div>
+          <button type="button" class="btn btn-light" data-work="foundation">Рассчитать</button>
+        </article>
+        <article class="card">
+          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2" stroke-linejoin="round"><path d="M2 12 12 4l10 8"/><path d="M5 10v10h14V10"/></svg></div>
+          <h3>Кровля</h3>
+          <p>Металлочерепица, профнастил, мягкая и фальцевая кровля. Монтаж, ремонт, утепление.</p>
+          <div class="price-from"><span data-from="roof"></span> <small>(пример)</small></div>
+          <button type="button" class="btn btn-light" data-work="roof">Рассчитать</button>
+        </article>
+        <article class="card">
+          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v6M15 9v6M9 15v6"/></svg></div>
+          <h3>Фасад</h3>
+          <p>Утепление, штукатурка, сайдинг, вентфасады и облицовка камнем — тепло и внешний вид дома.</p>
+          <div class="price-from"><span data-from="facade"></span> <small>(пример)</small></div>
+          <button type="button" class="btn btn-light" data-work="facade">Рассчитать</button>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section class="sec calc-sec" id="calc">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Калькулятор сметы</h2>
+        <p>Четыре шага — и вы видите вилку цены с разбивкой по работам и материалам. <b>Цены примерные: компания заменит их на актуальные.</b></p>
+      </div>
+      <div class="calc">
+        <div>
+          <div class="step">
+            <div class="step-title"><span class="step-num">1</span>Вид работ</div>
+            <div class="choices works" id="workGrid" role="radiogroup" aria-label="Вид работ"></div>
+          </div>
+          <div class="step">
+            <div class="step-title"><span class="step-num">2</span><span id="qtyLabel">Площадь</span></div>
+            <div class="qty-row">
+              <input type="range" id="qtyRange" aria-label="Площадь или объём">
+              <div class="qty-box">
+                <input type="text" id="qtyInput" inputmode="decimal" autocomplete="off" aria-label="Значение площади или объёма">
+                <span id="qtyUnit">м²</span>
+              </div>
+            </div>
+            <p class="hint" id="qtyHint"></p>
+          </div>
+          <div class="step">
+            <div class="step-title"><span class="step-num">3</span>Уровень материалов</div>
+            <div class="choices levels" id="levelGrid" role="radiogroup" aria-label="Уровень материалов"></div>
+          </div>
+          <div class="step">
+            <div class="step-title"><span class="step-num">4</span>Дополнительные опции</div>
+            <div class="checks" id="optList"></div>
+            <p class="na" id="optNa" hidden></p>
+          </div>
+        </div>
+
+        <aside class="result" id="result" aria-live="polite">
+          <div class="lbl">Примерная стоимость</div>
+          <div class="res-price" id="resPrice">—</div>
+          <div class="res-meta" id="resMeta"></div>
+          <div class="res-per" id="resPer"></div>
+          <table class="res-table"><tbody id="resBody"></tbody></table>
+          <div class="res-note">Цены примерные (демо) — компания заменит их на свои. Точная смета составляется после бесплатного выезда замерщика.</div>
+          <div class="res-btns">
+            <button type="button" class="btn btn-acc" data-open-lead>Получить точную смету</button>
+            <button type="button" class="btn btn-ghost" data-print>Скачать расчёт PDF</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="sec" id="portfolio">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Портфолио: до и после <span class="tag">пример</span></h2>
+        <p>Здесь будут реальные фотографии объектов компании. Сейчас — заглушки.</p>
+      </div>
+      <div class="grid-cards">
+        <article class="pf-card">
+          <div class="ba">
+            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
+            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+          </div>
+          <div class="pf-body"><h3>Квартира 54 м², под ключ</h3><p>Тамбов · 2 месяца · уровень «Стандарт» (пример)</p></div>
+        </article>
+        <article class="pf-card">
+          <div class="ba">
+            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
+            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+          </div>
+          <div class="pf-body"><h3>Кровля частного дома 140 м²</h3><p>Тамбовский район · 12 дней · металлочерепица (пример)</p></div>
+        </article>
+        <article class="pf-card">
+          <div class="ba">
+            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
+            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+          </div>
+          <div class="pf-body"><h3>Фасад коттеджа 210 м²</h3><p>Тамбов · 3 недели · утепление + штукатурка (пример)</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- STEPS -->
+  <section class="sec" id="steps" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Этапы работы</h2>
+        <p>Прозрачный процесс: вы знаете, что происходит на объекте и за что платите.</p>
+      </div>
+      <ol class="steps">
+        <li><b>Заявка и расчёт</b><span>Онлайн-калькулятор или звонок — сразу называем примерную вилку.</span></li>
+        <li><b>Выезд замерщика</b><span>Бесплатно по Тамбову: замеры, осмотр, консультация.</span></li>
+        <li><b>Смета и договор</b><span>Точная смета с фиксированной ценой и сроками в договоре.</span></li>
+        <li><b>Работы и контроль</b><span>Поэтапная приёмка, фото- и видеоотчёты в Telegram.</span></li>
+        <li><b>Сдача и гарантия</b><span>Подписываем акт, даём гарантию на выполненные работы.</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- CONTACTS -->
+  <section class="sec" id="contacts" style="padding-top:0">
+    <div class="wrap">
+      <div class="sec-head">
+        <h2>Контакты <span class="tag">пример</span></h2>
+        <p>Все контакты условные — компания подставит свои.</p>
+      </div>
+      <div class="contacts">
+        <div class="card">
+          <ul class="c-list">
+            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+              <div><small>Телефон (пример)</small><a href="tel:+70000000000">+7 (000) 000-00-00</a></div></li>
+            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+              <div><small>Офис (пример)</small><b>г. Тамбов, ул. Примерная, д. 1</b></div></li>
+            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+              <div><small>Режим работы (пример)</small><b>Пн–Сб, 9:00–19:00</b></div></li>
+            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2" stroke-linejoin="round"><path d="M21 4 3 11l6 2 2 6 3-4 5 4z"/></svg></span>
+              <div><small>Telegram (пример)</small><b>@stroydemo_example</b></div></li>
+          </ul>
+        </div>
+        <div class="card cta">
+          <h3>Бесплатный выезд замерщика</h3>
+          <p>Оставьте имя, телефон и адрес объекта — менеджер перезвонит, уточнит детали и пришлёт точную смету.</p>
+          <button type="button" class="btn btn-acc" data-open-lead>Оставить заявку</button>
+          <a href="#calc" class="btn btn-ghost">Сначала рассчитать</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> СтройДемо — демонстрационный сайт, все данные примерные.</span>
+    <a href="#top" style="color:#ffb35c">Наверх ↑</a>
+  </div>
+</footer>
+
+<!-- MODAL -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="modal-x" data-close aria-label="Закрыть">×</button>
+    <div id="formView">
+      <h3 id="modalTitle">Получить точную смету</h3>
+      <div class="sum" id="modalSum"></div>
+      <form id="leadForm" novalidate>
+        <div class="field">
+          <label for="fName">Имя</label>
+          <input id="fName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться">
+          <span class="err-msg"></span>
+        </div>
+        <div class="field">
+          <label for="fPhone">Телефон</label>
+          <input id="fPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 (___) ___-__-__">
+          <span class="err-msg"></span>
+        </div>
+        <div class="field">
+          <label for="fAddr">Адрес объекта</label>
+          <input id="fAddr" name="address" type="text" autocomplete="street-address" placeholder="Тамбов, ул. …, д. …">
+          <span class="err-msg"></span>
+        </div>
+        <button type="submit" class="btn btn-acc btn-block" id="submitBtn">Отправить заявку</button>
+        <p class="demo-note">Демо-режим: данные никуда не передаются.</p>
+      </form>
+    </div>
+    <div id="okView" class="ok" hidden>
+      <div class="ok-ico"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1f9d55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg></div>
+      <h3>Расчёт отправлен в Telegram</h3>
+      <p id="okText"></p>
+      <p class="demo-note">Это демонстрация: на рабочем сайте заявка придёт менеджеру в Telegram-бот. Сейчас данные никуда не отправлены.</p>
+      <div class="btns">
+        <button type="button" class="btn btn-light" data-print>Скачать расчёт PDF</button>
+        <button type="button" class="btn btn-acc" data-close>Готово</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Print-only estimate -->
+<div id="printSheet"></div>
+
+<script>
+(function () {
+  'use strict';
+  var W = PRICES.works, O = PRICES.options, LV = PRICES.levels;
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var nf0 = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 0 });
+  var nf1 = new Intl.NumberFormat('ru-RU', { maximumFractionDigits: 1 });
+  var CUR = ' ' + PRICES.currency;
+  var money = function (n) { return nf0.format(n) + CUR; };
+  var range = function (lo, hi) { return nf0.format(lo) + ' – ' + nf0.format(hi) + CUR; };
+  var r100 = function (n) { return Math.round(n / 100) * 100; };
+  var clamp = function (v, a, b) { return Math.min(Math.max(v, a), b); };
+  var esc = function (s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+    });
+  };
+  var fromPrice = function (k) { return W[k].work.econ + W[k].materials.econ; };
+
+  var state = { work: Object.keys(W)[0], qty: null, level: 'std', opts: {} };
+
+  /* ---------- prices "from" in services ---------- */
+  $$('[data-from]').forEach(function (el) {
+    var k = el.getAttribute('data-from');
+    if (W[k]) el.textContent = 'от ' + nf0.format(fromPrice(k)) + ' ₽/' + W[k].unit;
+  });
+
+  /* ---------- step 1: work type ---------- */
+  var workGrid = $('#workGrid');
+  workGrid.innerHTML = Object.keys(W).map(function (k) {
+    return '<label class="choice"><input type="radio" name="work" value="' + k + '">' +
+      '<span class="choice-body"><b>' + esc(W[k].name) + '</b><small>от ' + nf0.format(fromPrice(k)) +
+      ' ₽/' + W[k].unit + '</small></span></label>';
+  }).join('');
+  workGrid.addEventListener('change', function (e) {
+    if (e.target.name === 'work') setWork(e.target.value);
+  });
+
+  /* ---------- step 2: quantity ---------- */
+  var qtyRange = $('#qtyRange'), qtyInput = $('#qtyInput'), qtyHint = $('#qtyHint');
+  function qtyStr(v) { return String(v).replace('.', ','); }
+  function baseHint() {
+    var w = W[state.work];
+    qtyHint.textContent = 'От ' + nf1.format(w.min) + ' до ' + nf1.format(w.max) + ' ' + w.unit + '. Двигайте ползунок или введите число.';
+    qtyHint.classList.remove('warn');
+  }
+  function syncQty() {
+    var w = W[state.work];
+    $('#qtyLabel').textContent = w.qtyLabel;
+    $('#qtyUnit').textContent = w.unit;
+    qtyRange.max = w.max; qtyRange.min = w.min; qtyRange.step = w.step;
+    qtyRange.value = state.qty;
+    qtyInput.value = qtyStr(state.qty);
+    baseHint();
+  }
+  qtyRange.addEventListener('input', function () {
+    state.qty = parseFloat(qtyRange.value);
+    qtyInput.value = qtyStr(state.qty);
+    baseHint();
+    render();
+  });
+  qtyInput.addEventListener('input', function () {
+    var w = W[state.work];
+    var raw = qtyInput.value.replace(',', '.').replace(/\s/g, '');
+    var v = parseFloat(raw);
+    if (!isFinite(v) || v <= 0) {
+      qtyHint.textContent = 'Введите число больше нуля';
+      qtyHint.classList.add('warn');
+      return;
+    }
+    var c = clamp(v, w.min, w.max);
+    state.qty = c;
+    qtyRange.value = c;
+    if (c !== v) {
+      qtyHint.textContent = 'Допустимо от ' + nf1.format(w.min) + ' до ' + nf1.format(w.max) + ' ' + w.unit + ' — считаем по ' + nf1.format(c) + ' ' + w.unit;
+      qtyHint.classList.add('warn');
+    } else baseHint();
+    render();
+  });
+  qtyInput.addEventListener('change', function () { qtyInput.value = qtyStr(state.qty); baseHint(); });
+  qtyInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') qtyInput.blur(); });
+
+  /* ---------- step 3: level ---------- */
+  var levelGrid = $('#levelGrid');
+  levelGrid.innerHTML = Object.keys(LV).map(function (k) {
+    return '<label class="choice"><input type="radio" name="level" value="' + k + '"' + (k === state.level ? ' checked' : '') + '>' +
+      '<span class="choice-body"><b>' + esc(LV[k].name) + '</b><small>' + esc(LV[k].desc) + '</small></span></label>';
+  }).join('');
+  levelGrid.addEventListener('change', function (e) {
+    if (e.target.name === 'level') { state.level = e.target.value; render(); }
+  });
+
+  /* ---------- step 4: options ---------- */
+  var optList = $('#optList'), optNa = $('#optNa');
+  function renderOptions() {
+    var w = W[state.work], keys = Object.keys(O);
+    var avail = keys.filter(function (k) { return O[k].prices[state.work] != null; });
+    var na = keys.filter(function (k) { return O[k].prices[state.work] == null; });
+    optList.innerHTML = avail.map(function (k) {
+      var o = O[k];
+      return '<label class="check"><input type="checkbox" value="' + k + '"' + (state.opts[k] ? ' checked' : '') + '>' +
+        '<span><b>' + esc(o.name) + '</b><small>' + esc(o.desc) + '</small><em>' +
+        nf0.format(o.prices[state.work]) + ' ₽/' + w.unit + (o.min ? ', мин. ' + nf0.format(o.min) + ' ₽' : '') +
+        '</em></span></label>';
+    }).join('');
+    optNa.hidden = !na.length;
+    optNa.textContent = na.length ? 'Для вида «' + w.name + '» не применяется: ' + na.map(function (k) { return O[k].name.toLowerCase(); }).join(', ') + '.' : '';
+  }
+  optList.addEventListener('change', function (e) {
+    if (e.target.type === 'checkbox') {
+      if (e.target.checked) state.opts[e.target.value] = true; else delete state.opts[e.target.value];
+      render();
+    }
+  });
+
+  function setWork(k) {
+    if (!W[k]) return;
+    var prevUnit = W[state.work].unit;
+    state.work = k;
+    var w = W[k];
+    if (state.qty == null || prevUnit !== w.unit) state.qty = w.def;
+    state.qty = clamp(state.qty, w.min, w.max);
+    Object.keys(state.opts).forEach(function (o) { if (O[o].prices[k] == null) delete state.opts[o]; });
+    var radio = workGrid.querySelector('input[value="' + k + '"]');
+    if (radio) radio.checked = true;
+    syncQty();
+    renderOptions();
+    render();
+  }
+
+  /* ---------- calculation ---------- */
+  function calc() {
+    var w = W[state.work], q = state.qty, L = state.level, s = PRICES.spread;
+    var rows = [];
+    function add(label, base) { rows.push({ label: label, lo: r100(base * (1 - s)), hi: r100(base * (1 + s)) }); }
+    add('Работы: ' + w.name.toLowerCase(), w.work[L] * q);
+    add('Материалы: уровень «' + LV[L].name + '»', w.materials[L] * q);
+    var optNames = [];
+    Object.keys(O).forEach(function (k) {
+      var p = O[k].prices[state.work];
+      if (!state.opts[k] || p == null) return;
+      optNames.push(O[k].name);
+      add(O[k].name, Math.max(p * q, O[k].min || 0));
+    });
+    var lo = 0, hi = 0;
+    rows.forEach(function (r) { lo += r.lo; hi += r.hi; });
+    return { rows: rows, lo: lo, hi: hi, mid: (lo + hi) / 2, optNames: optNames, w: w };
+  }
+  function paramsText(r) {
+    return r.w.name + ' · ' + nf1.format(state.qty) + ' ' + r.w.unit + ' · ' + LV[state.level].name;
+  }
+
+  function render() {
+    var r = calc();
+    $('#resPrice').textContent = range(r.lo, r.hi);
+    $('#resMeta').textContent = paramsText(r) + (r.optNames.length ? ' · ' + r.optNames.join(', ').toLowerCase() : '');
+    $('#resPer').textContent = '≈ ' + money(r100(r.mid / state.qty)) + ' за ' + r.w.unit + ' в среднем';
+    $('#resBody').innerHTML = r.rows.map(function (x) {
+      return '<tr><td>' + esc(x.label) + '</td><td>' + range(x.lo, x.hi) + '</td></tr>';
+    }).join('') + '<tr class="total"><td>Итого</td><td>' + range(r.lo, r.hi) + '</td></tr>';
+  }
+
+  /* ---------- print / PDF ---------- */
+  var printSheet = $('#printSheet');
+  function buildPrint() {
+    var r = calc();
+    var d = new Date();
+    var num = 'Д-' + String(d.getTime()).slice(-6);
+    printSheet.innerHTML =
+      '<div class="ps-head"><div><div class="ps-logo">СтройДемо <span>пример</span></div>' +
+      '<div class="ps-sub">Строительная компания · г. Тамбов</div></div>' +
+      '<div class="ps-meta">Предварительный расчёт № ' + num + '<br>от ' + d.toLocaleDateString('ru-RU') + '</div></div>' +
+      '<h1>Предварительный расчёт стоимости</h1>' +
+      '<table class="ps-params">' +
+      '<tr><td>Вид работ</td><td><b>' + esc(r.w.name) + '</b></td></tr>' +
+      '<tr><td>' + esc(r.w.qtyLabel) + '</td><td><b>' + nf1.format(state.qty) + ' ' + r.w.unit + '</b></td></tr>' +
+      '<tr><td>Уровень материалов</td><td><b>' + esc(LV[state.level].name) + '</b> — ' + esc(LV[state.level].desc.toLowerCase()) + '</td></tr>' +
+      '<tr><td>Дополнительные опции</td><td><b>' + (r.optNames.length ? esc(r.optNames.join(', ')) : 'не выбраны') + '</b></td></tr>' +
+      '</table>' +
+      '<table class="ps-table"><thead><tr><th>Статья</th><th>Стоимость (вилка)</th></tr></thead><tbody>' +
+      r.rows.map(function (x) { return '<tr><td>' + esc(x.label) + '</td><td>' + range(x.lo, x.hi) + '</td></tr>'; }).join('') +
+      '</tbody><tfoot><tr><td>Итого</td><td>' + range(r.lo, r.hi) + '</td></tr></tfoot></table>' +
+      '<p>В среднем ≈ <b>' + money(r100(r.mid / state.qty)) + '</b> за ' + r.w.unit + '. Вилка цены ±' + Math.round(PRICES.spread * 100) + '% от базовой оценки.</p>' +
+      '<div class="ps-note">Расчёт предварительный и не является публичной офертой. Цены примерные (демо) — компания заменит их на актуальные. ' +
+      'Точная смета с фиксированной ценой составляется после бесплатного выезда замерщика.</div>' +
+      '<div class="ps-foot">СтройДемо (демо-сайт, пример) · +7 (000) 000-00-00 · г. Тамбов, ул. Примерная, д. 1 · все данные условные</div>';
+  }
+  function doPrint() { buildPrint(); window.print(); }
+  window.addEventListener('beforeprint', buildPrint);
+  $$('[data-print]').forEach(function (b) { b.addEventListener('click', doPrint); });
+
+  /* ---------- service buttons ---------- */
+  $$('[data-work]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      setWork(b.getAttribute('data-work'));
+      $('#calc').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+
+  /* ---------- mobile menu ---------- */
+  var burger = $('#burger'), menu = $('#menu');
+  function closeMenu() { menu.classList.remove('open'); burger.setAttribute('aria-expanded', 'false'); }
+  burger.addEventListener('click', function () {
+    var open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+  menu.addEventListener('click', function (e) { if (e.target.closest('a')) closeMenu(); });
+  document.addEventListener('click', function (e) {
+    if (menu.classList.contains('open') && !e.target.closest('#menu') && !e.target.closest('#burger')) closeMenu();
+  });
+
+  /* ---------- modal + lead form ---------- */
+  var modal = $('#modal'), form = $('#leadForm'), submitBtn = $('#submitBtn');
+  var fName = $('#fName'), fPhone = $('#fPhone'), fAddr = $('#fAddr');
+  var lastFocus = null, sendTimer = null;
+
+  function setErr(input, msg) {
+    var f = input.closest('.field');
+    f.classList.toggle('err', !!msg);
+    f.querySelector('.err-msg').textContent = msg || '';
+  }
+  function openModal() {
+    lastFocus = document.activeElement;
+    var r = calc();
+    $('#modalSum').innerHTML = 'Ваш расчёт: ' + esc(paramsText(r)) +
+      (r.optNames.length ? ' · ' + esc(r.optNames.join(', ').toLowerCase()) : '') +
+      '<br><b>' + range(r.lo, r.hi) + '</b>';
+    $('#formView').hidden = false;
+    $('#okView').hidden = true;
+    submitBtn.disabled = false;
+    submitBtn.textContent = 'Отправить заявку';
+    [fName, fPhone, fAddr].forEach(function (i) { setErr(i, ''); });
+    modal.hidden = false;
+    document.body.classList.add('no-scroll');
+    closeMenu();
+    setTimeout(function () { fName.focus(); }, 60);
+  }
+  function closeModal() {
+    if (modal.hidden) return;
+    clearTimeout(sendTimer);
+    modal.hidden = true;
+    document.body.classList.remove('no-scroll');
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  $$('[data-open-lead]').forEach(function (b) { b.addEventListener('click', openModal); });
+  modal.addEventListener('click', function (e) { if (e.target.closest('[data-close]')) closeModal(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { closeModal(); closeMenu(); }
+  });
+
+  function phoneDigits(v) { return v.replace(/\D/g, ''); }
+  function fmtPhone(v) {
+    var d = phoneDigits(v);
+    if (!d) return '';
+    if (d[0] === '8') d = '7' + d.slice(1);
+    if (d[0] !== '7') d = '7' + d;
+    d = d.slice(0, 11);
+    var s = '+7';
+    if (d.length > 1) s += ' (' + d.slice(1, 4);
+    if (d.length >= 4) s += ')';
+    if (d.length > 4) s += ' ' + d.slice(4, 7);
+    if (d.length > 7) s += '-' + d.slice(7, 9);
+    if (d.length > 9) s += '-' + d.slice(9, 11);
+    return s;
+  }
+  fPhone.addEventListener('input', function (e) {
+    if (e.inputType && e.inputType.indexOf('delete') === 0) return; // let user erase freely
+    fPhone.value = fmtPhone(fPhone.value);
+  });
+  fPhone.addEventListener('focus', function () { if (!fPhone.value) fPhone.value = '+7 '; });
+  fPhone.addEventListener('blur', function () {
+    fPhone.value = phoneDigits(fPhone.value).length > 1 ? fmtPhone(fPhone.value) : '';
+  });
+  [fName, fPhone, fAddr].forEach(function (i) { i.addEventListener('input', function () { setErr(i, ''); }); });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    var name = fName.value.trim(), addr = fAddr.value.trim();
+    var phone = fmtPhone(fPhone.value), digits = phoneDigits(phone);
+    var bad = [];
+    if (name.length < 2) { setErr(fName, 'Укажите имя'); bad.push(fName); }
+    if (digits.length !== 11) { setErr(fPhone, 'Введите номер полностью: +7 (XXX) XXX-XX-XX'); bad.push(fPhone); }
+    else fPhone.value = phone;
+    if (addr.length < 5) { setErr(fAddr, 'Укажите адрес объекта'); bad.push(fAddr); }
+    if (bad.length) { bad[0].focus(); return; }
+
+    var r = calc();
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Отправляем…';
+    // Demo: here a real site would POST the lead to its backend / Telegram bot.
+    sendTimer = setTimeout(function () {
+      $('#okText').textContent = name + ', спасибо! Расчёт (' + paramsText(r) + ', ' + range(r.lo, r.hi) +
+        ') и адрес объекта «' + addr + '» отправлены менеджеру. Мы перезвоним на ' + phone + '.';
+      $('#formView').hidden = true;
+      $('#okView').hidden = false;
+      form.reset();
+      $('#okView .btn-acc').focus();
+    }, 900);
+  });
+
+  /* ---------- init ---------- */
+  $('#year').textContent = new Date().getFullYear();
+  setWork(state.work);
+})();
+</script>
+</body>
+</html>
