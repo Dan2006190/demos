@@ -5,75 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>СтройДемо — строительная компания в Тамбове (пример)</title>
 <meta name="description" content="Демо-сайт строительной компании в Тамбове с калькулятором сметы. Все данные — пример.">
-<script>
-/* =====================================================================
-   ЦЕНЫ ДЛЯ КАЛЬКУЛЯТОРА — ПРИМЕРНЫЕ (ДЕМО).
-   Компания заменяет их на свои: меняйте только числа в этом объекте.
-   work      — стоимость работ за единицу (м² или м³) по уровням
-   materials — стоимость материалов за единицу по уровням
-   options   — доп. опции: цена за единицу для каждого вида работ
-               (нет ключа вида работ — опция для него недоступна),
-               min — минимальная стоимость опции
-   spread    — ширина вилки цены: 0.12 = ±12%
-   ===================================================================== */
-const PRICES = {
-  currency: '₽',
-  spread: 0.12,
-  levels: {
-    econ: { name: 'Эконом',   desc: 'Бюджетные материалы российских производителей' },
-    std:  { name: 'Стандарт', desc: 'Оптимум цены и качества, популярные бренды' },
-    prem: { name: 'Премиум',  desc: 'Материалы премиум-класса, сложная отделка' }
-  },
-  works: {
-    turnkey: {
-      name: 'Ремонт квартиры под ключ', unit: 'м²', qtyLabel: 'Площадь квартиры',
-      min: 10, max: 500, step: 1, def: 50,
-      work:      { econ: 7000, std: 9500,  prem: 13500 },
-      materials: { econ: 6000, std: 10000, prem: 18000 }
-    },
-    cosmetic: {
-      name: 'Косметический ремонт', unit: 'м²', qtyLabel: 'Площадь помещений (по полу)',
-      min: 5, max: 500, step: 1, def: 40,
-      work:      { econ: 2500, std: 3500, prem: 5000 },
-      materials: { econ: 1200, std: 2200, prem: 4000 }
-    },
-    foundation: {
-      name: 'Фундамент', unit: 'м³', qtyLabel: 'Объём бетона',
-      min: 1, max: 300, step: 0.5, def: 20,
-      work:      { econ: 3500, std: 4500, prem: 6000 },
-      materials: { econ: 7000, std: 8500, prem: 11000 }
-    },
-    roof: {
-      name: 'Кровля', unit: 'м²', qtyLabel: 'Площадь кровли',
-      min: 10, max: 1000, step: 1, def: 120,
-      work:      { econ: 900, std: 1300, prem: 1900 },
-      materials: { econ: 800, std: 1600, prem: 3200 }
-    },
-    facade: {
-      name: 'Фасад', unit: 'м²', qtyLabel: 'Площадь фасада',
-      min: 10, max: 2000, step: 1, def: 150,
-      work:      { econ: 1200, std: 1700, prem: 2500 },
-      materials: { econ: 900,  std: 1800, prem: 3500 }
-    }
-  },
-  options: {
-    demolition: {
-      name: 'Демонтаж', desc: 'Снятие старых покрытий и конструкций',
-      prices: { turnkey: 500, cosmetic: 250, roof: 300, facade: 250 }
-    },
-    garbage: {
-      name: 'Вывоз мусора', desc: 'Погрузка и вывоз строительного мусора',
-      prices: { turnkey: 150, cosmetic: 80, foundation: 250, roof: 120, facade: 100 },
-      min: 3500
-    },
-    design: {
-      name: 'Дизайн-проект', desc: 'Планировка, визуализация, рабочие чертежи',
-      prices: { turnkey: 1200, cosmetic: 600, facade: 300 },
-      min: 20000
-    }
-  }
-};
-</script>
+<!-- Цены калькулятора и «Ремонта в 3D» — в общем файле prices.js (объект PRICES) -->
+<script src="prices.js"></script>
 <style>
 :root{
   --bg:#f6f5f2; --card:#fff; --ink:#1c2430; --muted:#5d6878; --line:#e3e0d8;
@@ -124,7 +57,7 @@ section{scroll-margin-top:70px}
 .burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);position:relative;content:""}
 .burger span::before{position:absolute;top:-6px}
 .burger span::after{position:absolute;top:6px}
-@media(max-width:880px){
+@media(max-width:980px){
   .burger{display:grid}
   .menu{position:absolute;top:62px;left:0;right:0;background:#fff;flex-direction:column;gap:0;border-bottom:1px solid var(--line);box-shadow:var(--sh);display:none}
   .menu.open{display:flex}
@@ -205,6 +138,13 @@ section{scroll-margin-top:70px}
 .res-btns .btn-ghost{color:#fff}
 @media(max-width:900px){ .calc{grid-template-columns:1fr} .result{position:static} }
 @media(max-width:400px){ .res-table td:last-child{white-space:normal} .result{padding:18px} }
+
+/* 3d teaser */
+.viz-teaser{flex-direction:row;align-items:center;justify-content:space-between;gap:20px;border-left:5px solid var(--acc)}
+.viz-teaser h2{font-size:clamp(22px,3.4vw,28px)}
+.viz-teaser p{margin:0;max-width:640px}
+.viz-teaser .btn{flex:none}
+@media(max-width:700px){ .viz-teaser{flex-direction:column;align-items:stretch} }
 
 /* portfolio */
 .pf-card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
@@ -302,6 +242,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
     <nav class="menu" id="menu" aria-label="Меню">
       <a href="#services">Услуги</a>
       <a href="#calc">Калькулятор</a>
+      <a href="viz.html">Ремонт в 3D</a>
       <a href="#portfolio">Портфолио</a>
       <a href="#steps">Этапы</a>
       <a href="#contacts">Контакты</a>
@@ -425,8 +366,22 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
           <div class="res-btns">
             <button type="button" class="btn btn-acc" data-open-lead>Получить точную смету</button>
             <button type="button" class="btn btn-ghost" data-print>Скачать расчёт PDF</button>
+            <a href="viz.html" class="btn btn-ghost">Посмотреть ремонт в 3D</a>
           </div>
         </aside>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3D TEASER -->
+  <section class="sec" id="viz3d" style="padding-bottom:0">
+    <div class="wrap">
+      <div class="card viz-teaser">
+        <div>
+          <h2>Ремонт в 3D <span class="tag">пример</span></h2>
+          <p>Задайте размеры комнаты, где окно и дверь, выберите пол, стены и потолок — и посмотрите комнату сверху или изнутри. Смета пересчитывается сразу, по тем же ценам, что и в калькуляторе.</p>
+        </div>
+        <a href="viz.html" class="btn btn-acc">Посмотреть ремонт в 3D</a>
       </div>
     </div>
   </section>

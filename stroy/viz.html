@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ремонт в 3D — СтройДемо, Тамбов (пример)</title>
+<meta name="description" content="Визуализатор ремонта комнаты в 3D со сметой. Демо-сайт, все данные — пример.">
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+    "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+  }
+}
+</script>
+<!-- Общие цены с калькулятором -->
+<script src="prices.js"></script>
+<style>
+:root{
+  --bg:#f6f5f2; --card:#fff; --ink:#1c2430; --muted:#5d6878; --line:#e3e0d8;
+  --acc:#f28c18; --acc-d:#d9730a; --dark:#1c2430; --ok:#1f9d55; --err:#d93025;
+  --r:16px; --sh:0 6px 24px rgba(28,36,48,.08);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+body.no-scroll{overflow:hidden}
+h1,h2,h3{line-height:1.2;margin:0 0 .5em}
+p{margin:0 0 1em}
+a{color:var(--acc-d)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 18px}
+.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#fff1de;color:#a35300;border:1px solid #f7cf9a;border-radius:6px;padding:2px 6px;vertical-align:middle;line-height:1.4}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:12px;border:2px solid transparent;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;text-align:center;line-height:1.2}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:3px solid #8ab4ff;outline-offset:2px}
+.btn-acc{background:var(--acc);color:#fff}
+.btn-acc:hover{background:var(--acc-d)}
+.btn-ghost{background:transparent;color:inherit;border-color:currentColor}
+.btn-ghost:hover{background:rgba(255,255,255,.08)}
+.btn-light{background:#fff;color:var(--ink);border-color:var(--line)}
+.btn-light:hover{border-color:var(--acc)}
+.btn-sm{min-height:40px;padding:8px 16px;font-size:15px}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.6;cursor:wait}
+
+/* demo bar + header (как на главной) */
+.demo-bar{background:#2b3442;color:#ffd9a8;font-size:13px;text-align:center;padding:6px 12px}
+.top{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px;position:relative}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--ink);text-decoration:none}
+.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--acc);display:grid;place-items:center;flex:none}
+.menu{display:flex;gap:22px}
+.menu a{color:var(--ink);text-decoration:none;font-weight:500}
+.menu a:hover,.menu a.active{color:var(--acc-d)}
+.top-right{display:flex;align-items:center;gap:10px}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;place-items:center;padding:0}
+.burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);position:relative;content:""}
+.burger span::before{position:absolute;top:-6px}
+.burger span::after{position:absolute;top:6px}
+@media(max-width:980px){
+  .burger{display:grid}
+  .menu{position:absolute;top:62px;left:0;right:0;background:#fff;flex-direction:column;gap:0;border-bottom:1px solid var(--line);box-shadow:var(--sh);display:none}
+  .menu.open{display:flex}
+  .menu a{padding:14px 18px;border-top:1px solid var(--line)}
+}
+@media(max-width:420px){ .top-right .btn{display:none} }
+
+/* page head */
+.page-head{padding:26px 0 18px}
+.page-head h1{font-size:clamp(26px,4vw,36px);margin-bottom:6px}
+.page-head p{color:var(--muted);margin:0;max-width:760px}
+
+/* layout */
+.viz{display:grid;grid-template-columns:minmax(0,1fr) 410px;gap:22px;align-items:start;padding-bottom:48px}
+.stage{position:sticky;top:78px;height:calc(100vh - 96px);height:calc(100dvh - 96px);min-height:420px;border-radius:var(--r);overflow:hidden;background:#e6e2da;box-shadow:var(--sh);user-select:none;-webkit-user-select:none}
+.stage-canvas,.stage-canvas canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.stage-msg{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--muted);font-weight:600}
+.stage-top{position:absolute;top:12px;left:12px;right:12px;display:flex;flex-wrap:wrap;align-items:center;gap:8px;pointer-events:none}
+.stage-top > *{pointer-events:auto}
+.stage-bottom{position:absolute;left:12px;right:12px;bottom:12px;display:flex;align-items:flex-end;justify-content:space-between;gap:10px;pointer-events:none}
+.stage-bottom > *{pointer-events:auto}
+.chip{display:inline-block;background:rgba(28,36,48,.82);color:#fff;font-size:13px;font-weight:600;border-radius:9px;padding:6px 10px;line-height:1.3}
+.chip b{color:#ffb35c}
+.stage-hint{max-width:380px;font-weight:500}
+.stage .btn-light{border-color:transparent;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.joy{position:absolute;left:22px;bottom:78px;width:124px;height:124px;border-radius:50%;background:rgba(28,36,48,.28);border:2px solid rgba(255,255,255,.55);touch-action:none}
+.joy span{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.88);box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.stage.is-fp{position:fixed;inset:0;top:0;height:auto;min-height:0;border-radius:0;margin:0;z-index:90}
+
+@media(max-width:900px){
+  .viz{grid-template-columns:1fr;gap:16px}
+  .stage{top:62px;height:46vh;height:46dvh;min-height:260px;margin:0 -18px;border-radius:0;z-index:20}
+  .stage-hint{display:none}
+  .stage.is-fp .stage-hint{display:inline-block}
+}
+
+/* panel steps (как в калькуляторе) */
+.step{background:#fff;border-radius:var(--r);padding:18px;margin-bottom:14px;box-shadow:var(--sh)}
+.step-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:12px}
+.step-num{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+.sub{font-weight:700;font-size:14px;margin:14px 0 8px}
+.sub:first-of-type{margin-top:0}
+.choices{display:grid;gap:10px;grid-template-columns:repeat(3,minmax(0,1fr))}
+.choice{display:block;position:relative;cursor:pointer}
+.choice input{position:absolute;opacity:0;pointer-events:none}
+.choice-body{display:block;height:100%;border:2px solid var(--line);border-radius:12px;padding:10px 12px;background:#fff;transition:border-color .15s,background .15s}
+.choice-body b{display:block;font-size:15px;line-height:1.3}
+.choice-body small{display:block;color:var(--muted);font-size:13px;margin-top:2px}
+.choice:hover .choice-body{border-color:#f5bd78}
+.choice input:checked + .choice-body{border-color:var(--acc);background:#fff8ef;box-shadow:0 0 0 3px rgba(242,140,24,.15)}
+.choice input:focus-visible + .choice-body{outline:3px solid #8ab4ff;outline-offset:2px}
+.dim{margin-bottom:10px}
+.dim:last-of-type{margin-bottom:0}
+.dim > label{display:block;font-weight:600;font-size:14px;margin-bottom:2px}
+.qty-row{display:flex;align-items:center;gap:14px}
+.qty-row input[type=range]{flex:1;accent-color:var(--acc);height:32px;min-width:0}
+.qty-row input[type=range][disabled]{opacity:.4}
+.qty-box{display:flex;align-items:center;border:2px solid var(--line);border-radius:12px;background:#fff;padding:0 12px 0 0;flex:none}
+.qty-box:focus-within{border-color:var(--acc)}
+.qty-box input{width:70px;border:0;background:transparent;font:inherit;font-size:17px;font-weight:700;padding:8px 4px 8px 12px;outline:none;min-height:42px}
+.qty-box span{color:var(--muted);font-weight:600}
+.hint{font-size:13px;color:var(--muted);margin:8px 0 0}
+.hint.warn{color:var(--err)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{min-height:40px;padding:6px 12px;border:2px solid var(--line);border-radius:10px;background:#fff;font:inherit;font-size:14px;font-weight:600;color:var(--ink);cursor:pointer}
+.seg button:hover{border-color:#f5bd78}
+.seg button[aria-pressed="true"]{border-color:var(--acc);background:#fff8ef}
+.seg button:focus-visible,.sw:focus-visible{outline:3px solid #8ab4ff;outline-offset:2px}
+.sws{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(88px,1fr))}
+.sw{display:flex;flex-direction:column;align-items:stretch;gap:4px;padding:6px;border:2px solid var(--line);border-radius:12px;background:#fff;font:inherit;color:var(--ink);cursor:pointer;text-align:left}
+.sw:hover{border-color:#f5bd78}
+.sw[aria-pressed="true"]{border-color:var(--acc);background:#fff8ef;box-shadow:0 0 0 3px rgba(242,140,24,.15)}
+.sw-img{display:block;aspect-ratio:1;border-radius:8px;overflow:hidden;background:#eee;border:1px solid rgba(0,0,0,.06)}
+.sw-img canvas{display:block;width:100%;height:100%}
+.sw-name{font-size:13px;font-weight:700;line-height:1.25}
+.sw-price{font-size:12px;color:var(--muted);line-height:1.2}
+.sws.colors{grid-template-columns:repeat(4,minmax(0,1fr))}
+.sws.colors .sw-img{aspect-ratio:1.6}
+
+/* estimate (как результат калькулятора) */
+.result{background:var(--dark);color:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh)}
+.result .lbl{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#97a2b0}
+.res-price{font-size:clamp(24px,4vw,30px);font-weight:800;color:#ffb35c;line-height:1.15;margin:6px 0 4px}
+.res-meta{font-size:14px;color:#c9d0da}
+.res-meta b{color:#fff}
+.res-table{width:100%;border-collapse:collapse;margin:14px 0 12px;font-size:14px}
+.res-table td{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);vertical-align:top}
+.res-table td small{display:block;color:#97a2b0;font-size:12px}
+.res-table td:last-child{text-align:right;white-space:nowrap;padding-left:10px;font-weight:600}
+.res-table tr.total td{border-bottom:0;font-weight:800;font-size:15px;color:#ffb35c;padding-top:10px}
+.res-note{font-size:12px;color:#97a2b0;background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.res-btns{display:grid;gap:10px}
+.res-btns .btn-ghost{color:#fff}
+
+footer{background:#151b24;color:#97a2b0;font-size:14px;padding:26px 0}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+/* modal */
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
+.modal-bg{position:absolute;inset:0;background:rgba(15,20,28,.6)}
+.modal-box{position:relative;background:#fff;border-radius:18px;width:100%;max-width:480px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:26px 22px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:10px;background:#f1efea;font-size:24px;line-height:1;cursor:pointer;color:var(--ink)}
+.modal-x:hover{background:#e5e1d8}
+.modal h3{font-size:22px;padding-right:40px}
+.snap{display:block;width:100%;border-radius:12px;margin-bottom:12px;background:#e6e2da;aspect-ratio:16/10;object-fit:cover}
+.sum{background:#fff8ef;border:1px solid #f7cf9a;border-radius:12px;padding:10px 12px;font-size:14px;margin-bottom:16px}
+.sum ul{margin:0 0 6px;padding-left:18px}
+.sum b{color:var(--acc-d)}
+.field{margin-bottom:14px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
+.field input{width:100%;min-height:48px;font:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;outline:none;background:#fff}
+.field input:focus{border-color:var(--acc)}
+.field.err input{border-color:var(--err)}
+.err-msg{display:block;color:var(--err);font-size:13px;margin-top:4px}
+.err-msg:empty{display:none}
+.demo-note{font-size:12px;color:var(--muted);margin:12px 0 0;text-align:center}
+.ok{text-align:center;padding:10px 0 0}
+.ok-ico{width:72px;height:72px;border-radius:50%;background:#e6f6ec;display:grid;place-items:center;margin:0 auto 14px}
+.ok h3{padding:0}
+.ok p{color:var(--muted)}
+.ok .btns{display:grid;gap:10px;margin-top:16px}
+</style>
+</head>
+<body>
+
+<div class="demo-bar">Демо-сайт: компания «СтройДемо», цены, работы и контакты — <b>пример</b></div>
+
+<header class="top">
+  <div class="wrap">
+    <a href="index.html" class="logo" aria-label="СтройДемо — на главную">
+      <span class="logo-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M6 10v10h12V10"/></svg></span>
+      СтройДемо <span class="tag">пример</span>
+    </a>
+    <nav class="menu" id="menu" aria-label="Меню">
+      <a href="index.html#services">Услуги</a>
+      <a href="index.html#calc">Калькулятор</a>
+      <a href="viz.html" class="active" aria-current="page">Ремонт в 3D</a>
+      <a href="index.html#portfolio">Портфолио</a>
+      <a href="index.html#steps">Этапы</a>
+      <a href="index.html#contacts">Контакты</a>
+    </nav>
+    <div class="top-right">
+      <a href="index.html#calc" class="btn btn-acc btn-sm">Рассчитать</a>
+      <button class="burger" id="burger" type="button" aria-label="Открыть меню" aria-expanded="false" aria-controls="menu"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="page-head">
+    <h1>Ремонт в 3D <span class="tag">пример</span></h1>
+    <p>Задайте размеры комнаты, окно и дверь, выберите отделку. Комнату можно покрутить сверху или зайти внутрь. Смета ниже считается по тем же ценам, что и калькулятор.</p>
+  </div>
+
+  <div class="viz">
+    <!-- 3D STAGE -->
+    <div class="stage" id="stage">
+      <div class="stage-canvas" id="canvasHolder"></div>
+      <div class="stage-msg" id="stageMsg">Загружаем 3D…</div>
+      <div class="stage-top">
+        <button type="button" class="btn btn-acc btn-sm" id="btnFP" disabled>Войти внутрь</button>
+        <span class="chip" id="stageDims"></span>
+      </div>
+      <div class="stage-bottom">
+        <span class="chip stage-hint" id="stageHint"></span>
+        <span style="display:flex;gap:8px;align-items:center;margin-left:auto">
+          <span class="chip" id="stageTotal"></span>
+          <button type="button" class="btn btn-light btn-sm" data-want>Хочу так</button>
+        </span>
+      </div>
+      <div class="joy" id="joy" hidden aria-hidden="true"><span id="joyKnob"></span></div>
+    </div>
+
+    <!-- PANEL -->
+    <div class="panel">
+      <div class="step">
+        <div class="step-title"><span class="step-num">1</span>Шаблон</div>
+        <div class="choices" id="tplGrid" role="radiogroup" aria-label="Шаблон комнаты"></div>
+      </div>
+
+      <div class="step">
+        <div class="step-title"><span class="step-num">2</span>Размеры</div>
+        <div class="dim">
+          <label for="inpL">Длина</label>
+          <div class="qty-row">
+            <input type="range" id="rngL" aria-label="Длина комнаты">
+            <div class="qty-box"><input type="text" id="inpL" inputmode="decimal" autocomplete="off"><span>м</span></div>
+          </div>
+        </div>
+        <div class="dim">
+          <label for="inpW">Ширина</label>
+          <div class="qty-row">
+            <input type="range" id="rngW" aria-label="Ширина комнаты">
+            <div class="qty-box"><input type="text" id="inpW" inputmode="decimal" autocomplete="off"><span>м</span></div>
+          </div>
+        </div>
+        <div class="dim">
+          <label for="inpH">Высота потолка</label>
+          <div class="qty-row">
+            <input type="range" id="rngH" aria-label="Высота потолка">
+            <div class="qty-box"><input type="text" id="inpH" inputmode="decimal" autocomplete="off"><span>м</span></div>
+          </div>
+        </div>
+        <p class="hint" id="dimHint"></p>
+      </div>
+
+      <div class="step">
+        <div class="step-title"><span class="step-num">3</span>Окно и дверь</div>
+        <div class="sub">Окно — стена</div>
+        <div class="seg" id="winWall" role="group" aria-label="Стена с окном"></div>
+        <div class="qty-row"><input type="range" id="winPos" min="0" max="100" step="1" aria-label="Положение окна на стене"></div>
+        <div class="sub">Дверь — стена</div>
+        <div class="seg" id="doorWall" role="group" aria-label="Стена с дверью"></div>
+        <div class="qty-row"><input type="range" id="doorPos" min="0" max="100" step="1" aria-label="Положение двери на стене"></div>
+        <p class="hint" id="openHint"></p>
+      </div>
+
+      <div class="step">
+        <div class="step-title"><span class="step-num">4</span>Отделка</div>
+        <div class="sub">Пол</div>
+        <div class="sws" id="floorSw"></div>
+        <div class="sub">Стены</div>
+        <div class="seg" id="wallType" role="group" aria-label="Отделка стен" style="margin-bottom:8px"></div>
+        <div class="sws" id="wallSw"></div>
+        <div class="sub">Потолок</div>
+        <div class="sws" id="ceilSw"></div>
+      </div>
+
+      <aside class="result" aria-live="polite">
+        <div class="lbl">Смета на отделку</div>
+        <div class="res-price" id="estPrice">—</div>
+        <div class="res-meta" id="estAreas"></div>
+        <table class="res-table"><tbody id="estBody"></tbody></table>
+        <div class="res-note">Цены примерные (демо) — компания заменит их на свои. Площадь стен — за вычетом окна и двери. Точная смета — после бесплатного замера.</div>
+        <div class="res-btns">
+          <button type="button" class="btn btn-acc" data-want>Хочу так</button>
+          <a href="index.html#calc" class="btn btn-ghost">Вернуться к калькулятору</a>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© <span id="year">2026</span> СтройДемо — демонстрационный сайт, все данные примерные.</span>
+    <a href="index.html" style="color:#ffb35c">На главную</a>
+  </div>
+</footer>
+
+<!-- MODAL «Хочу так» -->
+<div class="modal" id="modal" hidden>
+  <div class="modal-bg" data-close></div>
+  <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+    <button type="button" class="modal-x" data-close aria-label="Закрыть">×</button>
+    <div id="formView">
+      <h3 id="modalTitle">Хочу такой ремонт</h3>
+      <img class="snap" id="snapImg" alt="Снимок комнаты из 3D" hidden>
+      <div class="sum" id="wantSum"></div>
+      <form id="wantForm" novalidate>
+        <div class="field">
+          <label for="fName">Имя</label>
+          <input id="fName" name="name" type="text" autocomplete="name" placeholder="Как к вам обращаться">
+          <span class="err-msg"></span>
+        </div>
+        <div class="field">
+          <label for="fPhone">Телефон</label>
+          <input id="fPhone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 (___) ___-__-__">
+          <span class="err-msg"></span>
+        </div>
+        <button type="submit" class="btn btn-acc btn-block" id="submitBtn">Отправить заявку</button>
+        <p class="demo-note">Демо-режим: данные никуда не передаются.</p>
+      </form>
+    </div>
+    <div id="okView" class="ok" hidden>
+      <div class="ok-ico"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1f9d55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg></div>
+      <h3>Отправлено в Telegram компании</h3>
+      <p id="okText"></p>
+      <p class="demo-note">Это демонстрация: на рабочем сайте снимок, материалы и смета придут менеджеру в Telegram-бот. Сейчас данные никуда не отправлены.</p>
+      <div class="btns">
+        <button type="button" class="btn btn-acc" data-close>Готово</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="viz.js"></script>
+</body>
+</html>
