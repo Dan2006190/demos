@@ -13,6 +13,8 @@ const plural=(n,a,b,c)=>n%10===1&&n%100!==11?a:n%10>=2&&n%10<=4&&(n%100<12||n%10
 const ico=(n,c='')=>`<svg class="i ${c}"><use href="#i-${n}"/></svg>`;
 function load(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}}
 function save(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+/* демо-панель персонала (admin.html) забирает брони, заказы и заявки с сайта из localStorage этого браузера */
+function toStaff(kind,o){try{const k='kk_staff_inbox',a=JSON.parse(localStorage.getItem(k)||'[]');a.push(Object.assign({kind,id:kind+'-'+Date.now()+'-'+Math.random().toString(36).slice(2,7),ts:Date.now()},o));localStorage.setItem(k,JSON.stringify(a.slice(-200)))}catch(e){}}
 let toastT;
 function toast(t){let el=$('.toast');if(!el){el=document.createElement('div');el.className='toast';el.setAttribute('role','status');document.body.appendChild(el)}el.textContent=t;el.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>el.hidden=true,2200)}
 
@@ -263,6 +265,7 @@ $('#orderForm').addEventListener('submit',e=>{
     T.mode==='delivery'&&d.addr.trim().length<5?'Укажите адрес доставки':T.mode==='delivery'&&T.sum<DELIV.min?`Доставка от ${rub(DELIV.min)}: добавьте блюда или выберите самовывоз`:'')) return;
   const o={no:++ORDER_NO,src:'site',name:d.name.trim(),phone:d.phone.trim(),mode:T.mode,addr:d.addr.trim(),time:d.time,comment:d.comment.trim(),items:{...cart},sum:T.total,fee:T.fee,st:'new'};
   adminOrder(o);
+  toStaff('order',{name:o.name,phone:o.phone,mode:o.mode,addr:o.addr,time:o.time,comment:o.comment,sum:o.sum,items:Object.keys(o.items).map(id=>[ITEMS[id].n,o.items[id],ITEMS[id].p])});
   cart={};save('colibri_cart',cart);refreshCart();f.reset();$('#addrWrap').hidden=true;
   $('#cartEmpty').hidden=true;$('#cartFull').hidden=true;
   const done=$('#cartDone');done.hidden=false;
@@ -464,6 +467,7 @@ function initKlondike(){
     const d=f._check();if(!d)return;
     const b={no:++BOOK_NO,src:'site',name:d.name.trim(),phone:d.phone.trim(),date:fmtIso(d.date),time:d.time,guests:d.guests,wish:d.wish==='Без пожеланий'?'':d.wish};
     adminBooking(b);
+    toStaff('book',{date:d.date,time:d.time,guests:d.guests,name:b.name,phone:b.phone,comment:b.wish});
     const ok=$('.okbox',f);ok.hidden=false;ok.innerHTML=`Заявка на бронь №Б-${b.no} отправлена: ${b.date}, ${b.time}, гостей ${esc(b.guests)}. Администратор подтвердит звонком.<br><button type="button" class="btn amber sm" data-go="bot">Посмотреть в чате админов</button>`;
     anim(ok,{opacity:[0,1],y:[12,0]},{duration:.5});
     $('[name=name]',f).value='';$('[name=phone]',f).value='';f._go(0);
@@ -474,6 +478,7 @@ function initKlondike(){
     const d=f._check();if(!d)return;const n=parseInt(d.guests,10);
     const q={no:++BANQ_NO,src:'site',name:d.name.trim(),phone:d.phone.trim(),date:fmtIso(d.date),guests:String(n),reason:d.reason,hall:d.hall,comment:d.comment.trim()};
     adminBanquet(q);
+    toStaff('banq',{date:d.date,guests:q.guests,reason:q.reason,hall:q.hall,name:q.name,phone:q.phone,comment:q.comment});
     const ok=$('.okbox',f);ok.hidden=false;ok.innerHTML=`Заявка на банкет №${q.no} отправлена. Менеджер перезвонит в течение часа. Если не перезвонит, бот напомнит администраторам.<br><button type="button" class="btn amber sm" data-go="bot">Посмотреть в чате админов</button>`;
     anim(ok,{opacity:[0,1],y:[12,0]},{duration:.5});
     f.reset();f._go(0);
