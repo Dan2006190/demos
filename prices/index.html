@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Цены — сайты и автоматизация для бизнеса</title>
+<meta name="description" content="Сайты с онлайн-записью и бронью, панели администратора, калькуляторы для строителей, «Сметчик» по подписке и продвижение. Фиксированные цены и сроки.">
+<style>
+:root{
+  --paper:#f6f4ef; --card:#ffffff; --ink:#16181b; --muted:#5d6168; --line:#e3dfd6;
+  --accent:#1f6b58; --accent-ink:#ffffff; --accent-soft:#e3efe9; --warm:#b5651d;
+  --radius:14px; --shadow:0 1px 2px rgba(0,0,0,.04),0 8px 24px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme:dark){
+  :root{--paper:#121416;--card:#1a1d20;--ink:#eceae4;--muted:#a3a7ad;--line:#2b2f33;
+        --accent:#5fbf9f;--accent-ink:#0f1412;--accent-soft:#1d2c27;--warm:#e0995a;
+        --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.25)}
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto;padding:0 18px}
+header.top{position:sticky;top:0;z-index:10;background:color-mix(in srgb,var(--paper) 92%,transparent);
+  backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:56px}
+.brand{font-weight:700;letter-spacing:-.01em;white-space:nowrap}
+nav.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+nav.tabs::-webkit-scrollbar{display:none}
+nav.tabs a{flex:none;text-decoration:none;color:var(--muted);font-size:14px;padding:7px 11px;border-radius:999px}
+nav.tabs a:hover,nav.tabs a.on{background:var(--accent-soft);color:var(--ink)}
+.hero{padding:44px 0 26px}
+.hero h1{font-size:clamp(28px,5vw,44px);line-height:1.12;letter-spacing:-.02em;margin:0 0 14px;max-width:760px}
+.hero p{color:var(--muted);font-size:18px;max-width:640px;margin:0}
+.terms{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:10px;margin:26px 0 8px}
+.term{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px}
+.term b{display:block;font-size:15px}
+.term span{color:var(--muted);font-size:14px}
+section.block{padding:34px 0;border-top:1px solid var(--line)}
+section.block:first-of-type{border-top:0}
+.head{display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 16px;margin-bottom:6px}
+.head h2{font-size:clamp(22px,3.4vw,28px);letter-spacing:-.01em;margin:0}
+.kicker{font-size:13px;font-weight:600;color:var(--warm);text-transform:uppercase;letter-spacing:.06em}
+.lead{color:var(--muted);margin:4px 0 18px;max-width:720px}
+.plans{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:14px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column}
+.plan.main{border-color:var(--accent);outline:1px solid var(--accent)}
+.plan .tag{align-self:flex-start;font-size:12px;font-weight:600;background:var(--accent);color:var(--accent-ink);
+  padding:3px 9px;border-radius:999px;margin-bottom:8px}
+.plan h3{margin:0 0 2px;font-size:19px}
+.price{font-size:30px;font-weight:750;letter-spacing:-.02em;margin:6px 0 0}
+.price small{font-size:15px;font-weight:500;color:var(--muted)}
+.when{color:var(--muted);font-size:14px;margin:2px 0 12px}
+.plan ul{margin:0;padding:0;list-style:none;display:grid;gap:7px}
+.plan li{position:relative;padding-left:22px;font-size:15px}
+.plan li::before{content:"";position:absolute;left:2px;top:.55em;width:10px;height:6px;border-left:2px solid var(--accent);
+  border-bottom:2px solid var(--accent);transform:rotate(-45deg)}
+.plan li.plus{color:var(--muted)}
+.plan li.plus::before{border:0;width:auto;height:auto;transform:none;content:"+";top:0;left:4px;color:var(--accent);font-weight:700}
+.extras{margin-top:16px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:4px 18px}
+.extras .row{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px dashed var(--line);font-size:15px}
+.extras .row:last-child{border-bottom:0}
+.extras .row span:last-child{white-space:nowrap;font-weight:600}
+.need{margin-top:12px;font-size:14px;color:var(--muted)}
+.need b{color:var(--ink)}
+.demo{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:600;text-decoration:none;
+  padding:10px 14px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}
+.demo:hover{outline:1px solid var(--accent)}
+.demo svg{width:16px;height:16px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px}
+.faq summary{cursor:pointer;font-weight:600;list-style:none}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";float:right;color:var(--accent);font-weight:700}
+.faq details[open] summary::after{content:"–"}
+.faq p{margin:10px 0 0;color:var(--muted)}
+.cta{background:var(--ink);color:var(--paper);border-radius:20px;padding:28px;margin:10px 0 44px;
+  display:grid;gap:16px;grid-template-columns:1.3fr 1fr;align-items:center}
+.cta h2{margin:0 0 6px;font-size:clamp(22px,3.4vw,28px)}
+.cta p{margin:0;opacity:.8}
+.cta .btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+.btn{display:inline-block;text-decoration:none;font-weight:650;padding:12px 18px;border-radius:12px;
+  background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--paper);outline:1px solid color-mix(in srgb,var(--paper) 40%,transparent)}
+footer{color:var(--muted);font-size:13px;padding:0 0 30px}
+@media (max-width:720px){
+  .top .wrap{height:auto;flex-wrap:wrap;padding-top:10px;padding-bottom:8px;gap:6px}
+  nav.tabs{margin-left:0;width:100%}
+  .cta{grid-template-columns:1fr}
+  .cta .btns{justify-content:flex-start}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand" id="brand">Сайты и автоматизация для бизнеса</div>
+    <nav class="tabs" aria-label="Разделы">
+      <a href="#sites">Запись</a><a href="#food">Кафе и бары</a><a href="#build">Строители</a>
+      <a href="#smeta">Сметчик</a><a href="#care">Обслуживание</a><a href="#promo">Продвижение</a>
+      <a href="#wb">Карточки WB</a><a href="#faq">Вопросы</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>Фиксированные цены и сроки. Работаю удалённо с любым городом.</h1>
+    <p>Сайты с онлайн-записью и бронью, панели для администратора, калькуляторы для строителей и инструменты по подписке. Перед оплатой показываю демо — вы видите результат заранее.</p>
+    <div class="terms">
+      <div class="term"><b>50 / 50</b><span>Половина до начала, половина после запуска</span></div>
+      <div class="term"><b>Срок — от 5 дней</b><span>Отсчёт с предоплаты и получения материалов</span></div>
+      <div class="term"><b>Удалённо</b><span>Созвон с показом экрана, оплата по ссылке</span></div>
+      <div class="term"><b>Сайт — ваш</b><span>Домен оформляется на вас, файлы передаю</span></div>
+    </div>
+  </div>
+
+  <!-- 1. Онлайн-запись -->
+  <section class="block" id="sites">
+    <div class="head"><span class="kicker">Салоны · автосервисы · мастера</span></div>
+    <div class="head"><h2>Сайт с онлайн-записью</h2></div>
+    <p class="lead">Клиент видит услуги и цены и записывается сам — без звонков и переписки в мессенджерах.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Старт</h3><div class="price">15 000 ₽</div><div class="when">5 дней</div>
+        <ul><li>Одна страница: услуги и цены</li><li>Контакты, часы, карта</li><li>Кнопка записи в WhatsApp или Telegram</li><li>Отлично выглядит с телефона</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Чаще выбирают</span>
+        <h3>Бизнес</h3><div class="price">25 000 ₽</div><div class="when">7 дней</div>
+        <ul><li class="plus">Всё из «Старта»</li><li>Портфолио работ и мастера</li><li>Отзывы</li><li>Онлайн-запись через форму</li><li>Аккуратные анимации</li></ul>
+      </div>
+      <div class="plan">
+        <h3>Максимум</h3><div class="price">40 000 ₽</div><div class="when">10 дней</div>
+        <ul><li class="plus">Всё из «Бизнеса»</li><li>Панель записей в браузере</li><li>Напоминания клиентам о визите</li><li>Автоприглашение тех, кто давно не был</li></ul>
+      </div>
+    </div>
+    <p class="need"><b>Что прислать:</b> логотип, прайс, фото работ, адрес, часы работы, контакты.</p>
+  </section>
+
+  <!-- 2. Кафе и бары -->
+  <section class="block" id="food">
+    <div class="head"><span class="kicker">Кафе · бары · рестораны</span></div>
+    <div class="head"><h2>Онлайн-заказ, бронь столов и панель администратора</h2></div>
+    <p class="lead">Гости заказывают и бронируют сами, а администратор видит всё в одном окне на планшете или телефоне — без бумажных листов и без комиссии агрегаторов.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Онлайн-заказ</h3><div class="price">30 000 ₽</div><div class="when">7 дней</div>
+        <ul><li>Сайт с меню по категориям</li><li>Корзина и оформление заказа</li><li>Самовывоз и доставка</li><li>Заказы приходят вам сразу</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Под ключ</span>
+        <h3>Комплекс</h3><div class="price">70 000 ₽</div><div class="when">10 дней</div>
+        <ul><li class="plus">Всё из «Онлайн-заказа»</li><li>Онлайн-бронь столов: дата, время, стол</li><li>Банкеты и афиша событий</li><li>Панель администратора: схема зала, брони, заказы со звуком, заявки на банкеты</li></ul>
+      </div>
+    </div>
+    <div class="extras" aria-label="Дополнительно">
+      <div class="row"><span>3D-зал: гость выбирает стол в цифровой копии заведения</span><span>25 000 ₽</span></div>
+      <div class="row"><span>Онлайн-оплата через ЮKassa с чеками</span><span>15 000 ₽</span></div>
+      <div class="row"><span>Передача заказов в кассу (r_keeper, iiko, Poster)</span><span>от 25 000 ₽</span></div>
+      <div class="row"><span>Фотосъёмка блюд и зала для сайта</span><span>5 000 ₽</span></div>
+    </div>
+    <p class="need"><b>Что прислать:</b> меню с ценами, фото, логотип, схему зала, кто будет работать в панели.</p>
+  </section>
+
+  <!-- 3. Строители -->
+  <section class="block" id="build">
+    <div class="head"><span class="kicker">Строительные компании · бригады</span></div>
+    <div class="head"><h2>Система привлечения клиентов для строителей</h2></div>
+    <p class="lead">Человек сам считает цену своего ремонта, видит его на своей комнате и оставляет заявку с площадью и пожеланиями — у вас, а не у конкурента.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Калькулятор</h3><div class="price">35 000 ₽</div><div class="when">7 дней</div>
+        <ul><li>Сайт компании с портфолио</li><li>Калькулятор стоимости по вашим ценам</li><li>Заявки с площадью и выбором работ</li><li>Расчёт в PDF для клиента</li></ul>
+      </div>
+      <div class="plan">
+        <h3>3D</h3><div class="price">55 000 ₽</div><div class="when">10 дней</div>
+        <ul><li class="plus">Всё из «Калькулятора»</li><li>3D-примерка отделки: пол, стены, потолок</li><li>Цена пересчитывается при каждом выборе</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Максимум заявок</span>
+        <h3>Система</h3><div class="price">80 000 ₽</div><div class="when">14 дней</div>
+        <ul><li class="plus">Всё из «3D»</li><li>«Ремонт по фото»: клиент видит свою комнату после ремонта</li><li>Свой бот «смета из голоса» для прораба</li></ul>
+      </div>
+    </div>
+    <a class="demo" href="https://dan2006190.github.io/demos/stroy/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      Посмотреть демо калькулятора и 3D
+    </a>
+    <p class="need"><b>Что прислать:</b> цены за м² по видам работ, фото объектов «до/после», логотип, контакты.</p>
+  </section>
+
+  <!-- 4. Сметчик -->
+  <section class="block" id="smeta">
+    <div class="head"><span class="kicker">Подписка · вся Россия</span></div>
+    <div class="head"><h2>«Сметчик» — смета из голосового за минуту</h2></div>
+    <p class="lead">Надиктовали объём работ — бот присылает смету в PDF по вашим ценам. Вместо вечера в Excel.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Мастер</h3><div class="price">990 ₽ <small>/ мес</small></div><div class="when">до 30 смет в месяц</div>
+        <ul><li>Ваш прайс из Excel</li><li>Смета в PDF</li><li>История смет</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Для бригад</span>
+        <h3>Бригада</h3><div class="price">1 990 ₽ <small>/ мес</small></div><div class="when">без ограничений</div>
+        <ul><li class="plus">Всё из «Мастера»</li><li>Логотип и реквизиты в смете</li><li>Сотрудники в одном аккаунте</li></ul>
+      </div>
+      <div class="plan">
+        <h3>Свой бот</h3><div class="price">30 000 ₽</div><div class="when">+ обслуживание</div>
+        <ul><li>Бот с названием вашей компании</li><li>Ваш шаблон сметы</li><li>Связка с сайтом и заявками</li></ul>
+      </div>
+    </div>
+    <p class="need"><b>7 дней бесплатно</b> на тарифах «Мастер» и «Бригада».</p>
+  </section>
+
+  <!-- 5. Обслуживание -->
+  <section class="block" id="care">
+    <div class="head"><span class="kicker">После запуска</span></div>
+    <div class="head"><h2>Обслуживание</h2></div>
+    <p class="lead">Сайт и панель работают, данные сохраняются, меню и цены всегда актуальны. Для проектов с панелью и бронью — первые 3 месяца обязательно.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Базовый</h3><div class="price">5 000 ₽ <small>/ мес</small></div><div class="when">до 1 часа правок</div>
+        <ul><li>Сервер и резервные копии</li><li>Работа сайта и панели</li><li>Мелкие правки</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Рекомендую</span>
+        <h3>Стандарт</h3><div class="price">12 000 ₽ <small>/ мес</small></div><div class="when">до 3 часов правок</div>
+        <ul><li class="plus">Всё из «Базового»</li><li>Обновление меню, цен, афиши и акций</li><li>Отчёт за месяц: брони, заказы, заявки</li></ul>
+      </div>
+      <div class="plan">
+        <h3>Рост</h3><div class="price">25 000 ₽ <small>/ мес</small></div><div class="when">до 5 часов правок</div>
+        <ul><li class="plus">Всё из «Стандарта»</li><li>Продвижение: карты, ВК, возврат гостей</li><li>Одна новая небольшая функция в месяц</li></ul>
+      </div>
+    </div>
+    <p class="need">Работа сверх лимита — 1 500 ₽/час. Оплата за 3 месяца вперёд — скидка 10%.</p>
+  </section>
+
+  <!-- 6. Продвижение -->
+  <section class="block" id="promo">
+    <div class="head"><span class="kicker">Абонемент</span></div>
+    <div class="head"><h2>Продвижение</h2></div>
+    <p class="lead">Чтобы вас находили те, кто ищет вашу услугу, — и чтобы было видно, сколько заявок это приносит.</p>
+    <div class="plans">
+      <div class="plan">
+        <h3>Старт</h3><div class="price">10 000 ₽ <small>/ мес</small></div>
+        <ul><li>Карточки на Яндекс Картах (в том числе «на выезде»)</li><li>3–5 объявлений на Авито</li><li>Сбор отзывов от ваших клиентов</li><li>Отчёт по заявкам</li></ul>
+      </div>
+      <div class="plan">
+        <h3>Рост</h3><div class="price">15 000 ₽ <small>/ мес</small></div>
+        <ul><li class="plus">Всё из «Старта»</li><li>Группа ВК: 8–12 постов в месяц</li><li>Контент-план на месяц</li></ul>
+      </div>
+    </div>
+    <p class="need">Рекламный бюджет — отдельно и по желанию. Отзывы только настоящие, без накруток.</p>
+  </section>
+
+  <!-- 7. WB -->
+  <section class="block" id="wb">
+    <div class="head"><span class="kicker">Маркетплейсы</span></div>
+    <div class="head"><h2>Карточки для Wildberries и Ozon</h2></div>
+    <p class="lead">Инфографика 900×1200 и SEO-описание по реальным поисковым запросам площадки.</p>
+    <div class="plans">
+      <div class="plan"><h3>Одна карточка</h3><div class="price">1 500 ₽</div><div class="when">1–2 дня</div>
+        <ul><li>5–7 слайдов</li><li>Название и описание</li><li>Характеристики</li></ul></div>
+      <div class="plan main"><span class="tag">Выгоднее</span><h3>Пакет из 5</h3><div class="price">6 000 ₽</div><div class="when">3–5 дней</div>
+        <ul><li>5 карточек в одном стиле</li><li>1 200 ₽ за карточку</li></ul></div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="block faq" id="faq">
+    <div class="head"><h2>Частые вопросы</h2></div>
+    <details><summary>Можно посмотреть результат до оплаты?</summary><p>Да. Перед стартом показываю демо или первый экран вашего сайта — основную работу начинаю после вашего «да».</p></details>
+    <details><summary>Вы работаете не из моего города — как это будет?</summary><p>Созвон с показом экрана, материалы присылаете в мессенджер, оплата по ссылке. Встречаться лично не нужно.</p></details>
+    <details><summary>Сайт будет моим?</summary><p>Да. Домен оформляется на вас, файлы передаю. Обслуживание — по желанию (кроме проектов с панелью и бронью: первые 3 месяца оно нужно, чтобы система работала).</p></details>
+    <details><summary>Есть гарантия, что будут клиенты?</summary><p>Честно гарантировать количество заявок не может никто. Зато каждый месяц вы получаете отчёт: сколько заявок пришло и откуда — видно, что работает.</p></details>
+    <details><summary>Как платить?</summary><p>Работаю как ИП: счёт или оплата по ссылке, чек для вас. Проекты — 50% до начала, 50% после запуска; подписки — помесячно.</p></details>
+  </section>
+
+  <div class="cta" id="contact">
+    <div>
+      <h2>Обсудим ваш проект?</h2>
+      <p>Напишите, чем занимаетесь, — предложу подходящий пакет и покажу пример под ваш бизнес.</p>
+    </div>
+    <div class="btns">
+      <a class="btn" id="tg" href="#">Написать в Telegram</a>
+      <a class="btn ghost" id="wa" href="#">WhatsApp</a>
+    </div>
+  </div>
+</main>
+
+<footer class="wrap" id="foot">Цены действительны на момент публикации. Не является публичной офертой.</footer>
+
+<script>
+/* === ЗАПОЛНИТЕ СВОИ ДАННЫЕ ======================================= */
+const CONTACTS = {
+  name: "Даниил",                 // как подписываться
+  brand: "Сайты и автоматизация для бизнеса",
+  telegram: "TONIKURA1",                   // username без @, например "daniil_dev"
+  whatsapp: "79029367192",                   // номер цифрами: 79001234567
+                          // ИНН ИП — по желанию, для доверия
+};
+/* =================================================================== */
+document.getElementById("brand").textContent = CONTACTS.brand;
+const tg = document.getElementById("tg"), wa = document.getElementById("wa");
+const hello = encodeURIComponent("Здравствуйте! Посмотрел цены — хочу обсудить проект.");
+if (CONTACTS.telegram) tg.href = "https://t.me/" + CONTACTS.telegram; else tg.remove();
+if (CONTACTS.whatsapp) wa.href = "https://wa.me/" + CONTACTS.whatsapp + "?text=" + hello; else wa.remove();
+if (CONTACTS.inn) document.getElementById("foot").textContent += " ИП " + CONTACTS.name + ", ИНН " + CONTACTS.inn + ".";
+/* подсветка текущего раздела в меню */
+const links = [...document.querySelectorAll("nav.tabs a")];
+const spy = new IntersectionObserver(es => es.forEach(e => {
+  if (!e.isIntersecting) return;
+  links.forEach(a => a.classList.toggle("on", a.getAttribute("href") === "#" + e.target.id));
+}), { rootMargin: "-45% 0px -50% 0px" });
+document.querySelectorAll("section.block").forEach(s => spy.observe(s));
+</script>
+</body>
+</html>
