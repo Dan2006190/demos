@@ -69,6 +69,8 @@ section.block:first-of-type{border-top:0}
 .demo{display:inline-flex;align-items:center;gap:8px;margin-top:14px;font-weight:600;text-decoration:none;
   padding:10px 14px;border-radius:10px;background:var(--accent-soft);color:var(--ink)}
 .demo:hover{outline:1px solid var(--accent)}
+.demo + .demo{margin-left:8px}
+@media (max-width:520px){.demo + .demo{margin-left:0}}
 .demo svg{width:16px;height:16px}
 .faq details{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:8px}
 .faq summary{cursor:pointer;font-weight:600;list-style:none}
@@ -102,7 +104,7 @@ footer{color:var(--muted);font-size:13px;padding:0 0 30px}
     <nav class="tabs" aria-label="Разделы">
       <a href="#sites">Запись</a><a href="#food">Кафе и бары</a><a href="#build">Строители</a>
       <a href="#smeta">Сметчик</a><a href="#care">Обслуживание</a><a href="#promo">Продвижение</a>
-      <a href="#wb">Карточки WB</a><a href="#faq">Вопросы</a>
+      <a href="#clubs">Боты для клубов</a><a href="#faq">Вопросы</a>
     </nav>
   </div>
 </header>
@@ -164,6 +166,14 @@ footer{color:var(--muted);font-size:13px;padding:0 0 30px}
       <div class="row"><span>Передача заказов в кассу (r_keeper, iiko, Poster)</span><span>от 25 000 ₽</span></div>
       <div class="row"><span>Фотосъёмка блюд и зала для сайта</span><span>5 000 ₽</span></div>
     </div>
+    <a class="demo" href="https://dan2006190.github.io/demos/restoran/">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      Посмотреть демо ресторана с бронью
+    </a>
+    <a class="demo" href="https://dan2006190.github.io/demos/restoran/admin.html">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M7 17L17 7M9 7h8v8"/></svg>
+      Панель администратора
+    </a>
     <p class="need"><b>Что прислать:</b> меню с ценами, фото, логотип, схему зала, кто будет работать в панели.</p>
   </section>
 
@@ -258,17 +268,28 @@ footer{color:var(--muted);font-size:13px;padding:0 0 30px}
     <p class="need">Рекламный бюджет — отдельно и по желанию. Отзывы только настоящие, без накруток.</p>
   </section>
 
-  <!-- 7. WB -->
-  <section class="block" id="wb">
-    <div class="head"><span class="kicker">Маркетплейсы</span></div>
-    <div class="head"><h2>Карточки для Wildberries и Ozon</h2></div>
-    <p class="lead">Инфографика 900×1200 и SEO-описание по реальным поисковым запросам площадки.</p>
+  <!-- 7. Клубы -->
+  <section class="block" id="clubs">
+    <div class="head"><span class="kicker">Клубы · бары · организаторы событий</span></div>
+    <div class="head"><h2>Telegram-бот афиши и списка гостей</h2></div>
+    <p class="lead">Администратор публикует событие одной командой — пост с кнопкой появляется в канале. Гость записывается в два нажатия, а бот сам напоминает о вечеринке и зовёт тех, кто давно не был.</p>
     <div class="plans">
-      <div class="plan"><h3>Одна карточка</h3><div class="price">1 500 ₽</div><div class="when">1–2 дня</div>
-        <ul><li>5–7 слайдов</li><li>Название и описание</li><li>Характеристики</li></ul></div>
-      <div class="plan main"><span class="tag">Выгоднее</span><h3>Пакет из 5</h3><div class="price">6 000 ₽</div><div class="when">3–5 дней</div>
-        <ul><li>5 карточек в одном стиле</li><li>1 200 ₽ за карточку</li></ul></div>
+      <div class="plan">
+        <h3>Афиша</h3><div class="price">20 000 ₽</div><div class="when">5 дней</div>
+        <ul><li>Пост события в канал одной командой</li><li>Кнопка «Записаться» / «Забронировать»</li><li>Брони и записи — в закрытую группу администраторов</li><li>Напоминание гостю перед событием</li></ul>
+      </div>
+      <div class="plan main">
+        <span class="tag">Для клубов</span>
+        <h3>Клуб</h3><div class="price">35 000 ₽</div><div class="when">7 дней</div>
+        <ul><li class="plus">Всё из «Афиши»</li><li>Список гостей на вход с отметкой «пришёл»</li><li>Вход по списку со скидкой или бесплатно до N часов</li><li>Автоприглашение тех, кого не было 3 недели</li><li>Статистика: записались, пришли, вернулись</li><li>Доступ админов по участию в группе — без списков ID</li></ul>
+      </div>
     </div>
+    <div class="extras" aria-label="Дополнительно">
+      <div class="row"><span>Продажа билетов в боте через ЮKassa заведения</span><span>15 000 ₽</span></div>
+      <div class="row"><span>Бронь столов на концерты со схемой зала</span><span>10 000 ₽</span></div>
+      <div class="row"><span>Перенос бота на сервер — работает круглосуточно</span><span>в обслуживании</span></div>
+    </div>
+    <p class="need"><b>Что прислать:</b> название и логотип, ссылку на канал (или создам), кто будет администраторами. Покажу демо-бота перед заказом.</p>
   </section>
 
   <!-- FAQ -->
@@ -300,9 +321,9 @@ footer{color:var(--muted);font-size:13px;padding:0 0 30px}
 const CONTACTS = {
   name: "Даниил",                 // как подписываться
   brand: "Сайты и автоматизация для бизнеса",
-  telegram: "TONIKURA1",                   // username без @, например "daniil_dev"
-  whatsapp: "79029367192",                   // номер цифрами: 79001234567
-                          // ИНН ИП — по желанию, для доверия
+  telegram: "",                   // username без @, например "daniil_dev"
+  whatsapp: "",                   // номер цифрами: 79001234567
+  inn: ""                         // ИНН ИП — по желанию, для доверия
 };
 /* =================================================================== */
 document.getElementById("brand").textContent = CONTACTS.brand;

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" font-family="Georgia,'Times New Roman',serif" fill="#1b2220">
+  <rect width="900" height="1200" fill="#fbf7ef"/>
+  <text x="70" y="110" font-size="58" font-weight="600">Бар</text>
+  <text x="70" y="150" font-size="24" fill="#5d6762">Бар «Пример» · меню-пример · стр. 4 · алкоголь 18+</text>
+  <path d="M70 180H830" stroke="#1b2220" stroke-width="2"/>
+  <g font-size="30">
+    <text x="70" y="250">Светлое разливное, 0,5 л</text><text x="830" y="250" text-anchor="end">290 ₽</text>
+    <text x="70" y="325">Тёмное разливное, 0,5 л</text><text x="830" y="325" text-anchor="end">310 ₽</text>
+    <text x="70" y="400">Пшеничное, 0,5 л</text><text x="830" y="400" text-anchor="end">320 ₽</text>
+    <text x="70" y="475">Сидр яблочный, 0,33 л</text><text x="830" y="475" text-anchor="end">280 ₽</text>
+    <text x="70" y="550">Виски-кола, 250 мл</text><text x="830" y="550" text-anchor="end">460 ₽</text>
+    <text x="70" y="625">Апероль шприц, 200 мл</text><text x="830" y="625" text-anchor="end">480 ₽</text>
+    <text x="70" y="700">Мохито, 300 мл</text><text x="830" y="700" text-anchor="end">450 ₽</text>
+    <text x="70" y="775">Негрони, 120 мл</text><text x="830" y="775" text-anchor="end">520 ₽</text>
+    <text x="70" y="850">Лимонад домашний, 400 мл</text><text x="830" y="850" text-anchor="end">250 ₽</text>
+    <text x="70" y="925">Морс клюквенный, 300 мл</text><text x="830" y="925" text-anchor="end">150 ₽</text>
+    <text x="70" y="1000">Кофе американо, 200 мл</text><text x="830" y="1000" text-anchor="end">170 ₽</text>
+    <text x="70" y="1075">Чай чёрный, чайник 500 мл</text><text x="830" y="1075" text-anchor="end">220 ₽</text>
+  </g>
+</svg>

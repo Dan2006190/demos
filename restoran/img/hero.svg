@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1065" viewBox="0 0 1600 1065" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <pattern id="b" width="120" height="60" patternUnits="userSpaceOnUse">
+      <rect width="120" height="60" fill="#120d09"/>
+      <rect x="2" y="2" width="116" height="26" rx="2" fill="#2a1c13"/>
+      <rect x="-58" y="32" width="116" height="26" rx="2" fill="#241810"/>
+      <rect x="62" y="32" width="116" height="26" rx="2" fill="#2e1f15"/>
+    </pattern>
+    <radialGradient id="l1" cx=".28" cy=".24" r=".6">
+      <stop offset="0" stop-color="#e3a43c" stop-opacity=".34"/>
+      <stop offset=".55" stop-color="#e3a43c" stop-opacity=".07"/>
+      <stop offset="1" stop-color="#e3a43c" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="l2" cx=".78" cy=".3" r=".45">
+      <stop offset="0" stop-color="#e3a43c" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#e3a43c" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="n" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".75" numOctaves="3" seed="4"/>
+      <feColorMatrix values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .55 0"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="1065" fill="url(#b)"/>
+  <rect width="1600" height="1065" fill="url(#l1)"/>
+  <rect width="1600" height="1065" fill="url(#l2)"/>
+  <rect width="1600" height="1065" filter="url(#n)"/>
+</svg>

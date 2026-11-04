@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200" font-family="Georgia,'Times New Roman',serif" fill="#1b2220">
+  <rect width="900" height="1200" fill="#fbf7ef"/>
+  <text x="70" y="110" font-size="58" font-weight="600">Закуски и салаты</text>
+  <text x="70" y="150" font-size="24" fill="#5d6762">Пиццерия «Пример» · меню-пример · стр. 3</text>
+  <path d="M70 180H830" stroke="#1b2220" stroke-width="2"/>
+  <g font-size="36">
+    <text x="70" y="270">Крылья BBQ</text><text x="830" y="270" text-anchor="end">470 ₽</text>
+    <text x="70" y="420">Цезарь с курицей</text><text x="830" y="420" text-anchor="end">450 ₽</text>
+    <text x="70" y="570">Греческий</text><text x="830" y="570" text-anchor="end">390 ₽</text>
+    <text x="70" y="720">Сырные палочки</text><text x="830" y="720" text-anchor="end">350 ₽</text>
+    <text x="70" y="870">Брускетта с томатами</text><text x="830" y="870" text-anchor="end">320 ₽</text>
+    <text x="70" y="1020">Картофель фри</text><text x="830" y="1020" text-anchor="end">220 ₽</text>
+  </g>
+  <g font-size="23" fill="#5d6762">
+    <text x="70" y="310">куриные крылья, соус BBQ · 300 г</text>
+    <text x="70" y="460">салат, курица, томаты, пармезан, сухарики · 270 г</text>
+    <text x="70" y="610">овощи, брынза, маслины, оливковое масло · 250 г</text>
+    <text x="70" y="760">моцарелла в панировке, соус · 180 г</text>
+    <text x="70" y="910">хлеб, томаты, базилик, оливковое масло · 180 г</text>
+    <text x="70" y="1060">с соусом на выбор · 150 г</text>
+  </g>
+</svg>

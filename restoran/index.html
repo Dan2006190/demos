@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Пиццерия «Пример» и Бар «Пример» — демо: ресторан, бронь, панель</title>
+<meta name="description" content="Обезличенное демо сайта: меню и заказ пиццерии, бронь стола, афиша и банкеты бара, панель персонала. Все данные условные.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#100e0b">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Playfair+Display:wght@600;700&family=Manrope:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="style.css">
+<script>
+/* до загрузки страницы: метка «JS включён» и заглушка, если файла картинки нет */
+document.documentElement.classList.add('js');
+if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm');
+document.addEventListener('error',function(e){
+  var t=e.target;if(!t||t.tagName!=='IMG')return;var k=t.getAttribute('data-photo');if(!k)return;
+  var d=document.createElement('div');d.className='ph '+(t.className||'');d.setAttribute('data-ph',k);d.textContent=t.alt||'Фото';t.replaceWith(d);
+},true);
+</script>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5.5 8h13l-1.2 12H6.7L5.5 8Z"/><path d="M9 8V7a3 3 0 0 1 6 0v1"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.8 4.6-2.3 1.4a11 11 0 0 0 6 6l1.4-2.3L20 15.5V19a1 1 0 0 1-1 1A15 15 0 0 1 4 5a1 1 0 0 1 1-1Z"/></symbol>
+  <symbol id="i-right" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-left" viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4.5h6V7M6.5 7l1 13h9l1-13"/></symbol>
+  <symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 9h16M4 15h16"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-6-6.5-11.5a6.5 6.5 0 0 1 13 0C18.5 15 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.3"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M21 4 3 11.2l6.2 2.2L11.5 20l3.2-4.3 4.6 3.3L21 4Z"/><path d="m9.2 13.4 7.3-5.6"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7"/><path d="M4 4v4h4"/></symbol>
+</svg>
+
+<!-- прелоадер: виден только при включённом JS, CSS сам убирает его через 1,2 с -->
+<div class="pre" id="pre" aria-hidden="true">
+  <div class="pre-in">
+    <span class="pre-t">Пиццерия</span>
+    <span class="pre-amp">&amp;</span>
+    <span class="pre-t">Бар</span>
+  </div>
+</div>
+
+<div class="world" aria-hidden="true"><div class="world-d" id="worldD"></div></div>
+
+<header class="hdr" id="hdr">
+  <div class="hdr-bg l"></div><div class="hdr-bg d"></div>
+  <div class="hdr-in wrap">
+    <a class="brand" href="#top" data-scroll="top" aria-label="Наверх">
+      <span class="bl c" aria-hidden="true">П</span>
+      <span class="bl k" aria-hidden="true">Б</span>
+      <span class="bn">Пиццерия <i>&amp;</i> Бар «Пример»</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#menu" data-scroll="menu">Меню</a>
+      <a href="#k-info" data-scroll="k-info">Доставка</a>
+      <a href="#bar" data-scroll="bar">Бар</a>
+      <a href="#kd-afisha" data-scroll="kd-afisha">Афиша</a>
+      <a href="#kd-banq" data-scroll="kd-banq">Банкеты</a>
+      <a href="#bot" data-scroll="bot">Telegram-бот<span class="bdg" id="navBdg" hidden>0</span></a>
+    </nav>
+    <a class="hbtn book" href="#kd-book" data-scroll="kd-book">Бронь</a>
+    <button class="hbtn cartb" data-open-cart aria-label="Корзина"><svg class="i"><use href="#i-bag"/></svg><span class="cnt" id="hdrCnt">0</span></button>
+    <button class="hbtn burger" id="burger" aria-label="Открыть меню" aria-expanded="false"><svg class="i"><use href="#i-menu"/></svg></button>
+  </div>
+</header>
+
+<div class="mnav" id="mnav" aria-hidden="true">
+  <button class="x mnav-x" data-mclose aria-label="Закрыть"><svg class="i"><use href="#i-x"/></svg></button>
+  <a href="#menu" data-scroll="menu">Меню пиццерии и бара</a>
+  <a href="#k-info" data-scroll="k-info">Доставка и адрес</a>
+  <a href="#bar" data-scroll="bar">Бар</a>
+  <a href="#kd-afisha" data-scroll="kd-afisha">Афиша</a>
+  <a href="#kd-book" data-scroll="kd-book">Бронь стола</a>
+  <a href="#kd-banq" data-scroll="kd-banq">Банкеты</a>
+  <a href="#bot" data-scroll="bot">Telegram-бот</a>
+  <p><a class="tel" href="tel:+70000000000">+7 (000) 000-00-00 (пример)</a></p>
+</div>
+
+<main>
+<!-- ===================== ПЕРВЫЙ ЭКРАН ===================== -->
+<section class="hero" id="top">
+  <div class="hero-ph">
+    <img id="heroImg" src="img/hero.svg" width="1600" height="1065" data-photo="hero" fetchpriority="high" decoding="async" alt="Тёмный фон с фактурой кирпича: заглушка вместо фото зала">
+  </div>
+  <div class="hero-shade"></div>
+  <div class="hero-in wrap" id="heroIn">
+    <p class="eyebrow" data-hero>Демо-сайт · пиццерия «Пример» и бар «Пример»</p>
+    <h1 class="hero-h" id="heroH">Днём — пицца из печи. Вечером — бар и живая музыка.</h1>
+    <p class="hero-p" data-hero>Закажите пиццу на самовывоз или с доставкой, а вечером забронируйте стол в баре. Названия, адрес, цены и меню здесь условные — это пример.</p>
+    <div class="hero-btns" data-hero>
+      <a class="btn rasp lg" href="#menu" data-scroll="menu">Заказать пиццу <svg class="i"><use href="#i-right"/></svg></a>
+      <a class="btn amber-o lg" href="#kd-book" data-scroll="kd-book">Забронировать стол</a>
+    </div>
+  </div>
+  <a class="hero-down" href="#pizzeria" data-scroll="pizzeria" aria-label="Листать вниз"><span></span></a>
+</section>
+
+<!-- ===================== ПИЦЦЕРИЯ ===================== -->
+<div class="w-piz" id="pizzeria">
+  <section class="wrap k-intro">
+    <div class="k-intro-txt" data-reveal>
+      <span class="tlogo">Пиццерия<b>«Пример»</b></span>
+      <p class="kicker">пицца и бар · условный адрес</p>
+      <h2 class="dsp">Пиццерия</h2>
+      <p class="lead">Десять пицц, закуски, салаты и напитки бара. В зале, навынос или с доставкой — так будет выглядеть рассказ о заведении на рабочем сайте.</p>
+      <dl class="facts">
+        <div><dt>Часы</dt><dd>ежедневно 11:00–22:00 <span class="tag">пример</span></dd></div>
+        <div><dt>Адрес</dt><dd>г. Примерск, ул. Образцовая, 1 <span class="tag">пример</span></dd></div>
+        <div><dt>Телефон</dt><dd><a href="tel:+70000000000">+7 (000) 000-00-00</a> <span class="tag">пример</span></dd></div>
+      </dl>
+      <div class="btns">
+        <a class="btn rasp" href="#menu" data-scroll="menu">Открыть меню</a>
+        <a class="btn ghost" href="tel:+70000000000"><svg class="i"><use href="#i-phone"/></svg> Позвонить (пример)</a>
+      </div>
+    </div>
+    <div class="k-intro-menu" data-reveal>
+      <p class="kicker">Из меню · <span class="tag">пример</span></p>
+      <ul class="mlist">
+        <li><span>Маргарита <small>450 г</small></span><i></i><b>490 ₽</b></li>
+        <li><span>Пепперони <small>500 г</small></span><i></i><b>590 ₽</b></li>
+        <li><span>Фирменная <small>550 г</small></span><i></i><b>640 ₽</b></li>
+        <li><span>Крылья BBQ <small>300 г</small></span><i></i><b>470 ₽</b></li>
+        <li><span>Цезарь с курицей <small>270 г</small></span><i></i><b>450 ₽</b></li>
+        <li><span>Светлое разливное <small>0,5 л</small></span><i></i><b>290 ₽</b></li>
+        <li class="big"><span>Мясная <small>550 г</small></span><i></i><b>690 ₽</b></li>
+      </ul>
+      <a class="mlink" href="#menu" data-scroll="menu">Всё меню — 28 позиций <svg class="i"><use href="#i-right"/></svg></a>
+    </div>
+  </section>
+
+  <section class="wrap k-nums" data-stagger>
+    <div class="num"><b>28</b><span>позиций в меню-примере: пицца, закуски и салаты, пиво, коктейли, безалкогольное</span></div>
+    <div class="num"><b>490 ₽</b><span>условная цена самой доступной пиццы, самая дорогая в меню-примере — 760 ₽</span></div>
+    <div class="num"><b>3 шага</b><span>в форме брони стола: когда, сколько гостей, контакты</span></div>
+  </section>
+
+  <!-- карусель пицц: вырезанные PNG без фона (img/pizza-N.png) -->
+  <section class="pz" id="pizzas" aria-roledescription="карусель" aria-label="Пиццы из меню-примера">
+    <div class="wrap pz-head">
+      <p class="kicker">Из печи</p>
+      <h2 class="h2">Пицца крупным планом</h2>
+    </div>
+    <div class="pz-stage" id="pzStage" tabindex="0" aria-label="Листайте стрелками, свайпом или кнопками ниже">
+      <div class="pz-glow" aria-hidden="true"></div>
+      <div class="pz-shadow" id="pzShadow" aria-hidden="true"></div>
+    </div>
+    <div class="wrap pz-foot">
+      <div class="pz-info" id="pzInfo" aria-live="off"></div>
+      <div class="pz-nav">
+        <button class="arr" data-pz="-1" aria-label="Предыдущая пицца"><svg class="i"><use href="#i-left"/></svg></button>
+        <div class="pz-dots" id="pzDots" role="tablist" aria-label="Выбор пиццы"></div>
+        <button class="arr" data-pz="1" aria-label="Следующая пицца"><svg class="i"><use href="#i-right"/></svg></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- меню -->
+  <div class="cats-bar" id="catsBar"><div class="wrap cats-in"><div class="cats" id="chips"></div><span class="cats-line" id="catsLine"></span></div></div>
+  <section class="wrap menu" id="menu" aria-label="Меню пиццерии и бара, пример"></section>
+
+  <section class="wrap k-pages">
+    <div class="sec-h" data-reveal>
+      <h2 class="h2">Меню на бумаге <span class="tag">пример</span></h2>
+      <p class="mut">Образец печатного меню, свёрстанный из тех же 28 позиций. На рабочем сайте здесь будут сканы настоящих страниц — нажмите, чтобы увеличить.</p>
+    </div>
+    <div class="pages" data-stagger>
+      <button class="page" data-lb="menu1"><img src="img/menu1.svg" data-photo="menu1" alt="Меню-пример: пицца, стр. 1" loading="lazy"></button>
+      <button class="page" data-lb="menu2"><img src="img/menu2.svg" data-photo="menu2" alt="Меню-пример: пицца, стр. 2" loading="lazy"></button>
+      <button class="page" data-lb="menu3"><img src="img/menu3.svg" data-photo="menu3" alt="Меню-пример: закуски и салаты" loading="lazy"></button>
+      <button class="page" data-lb="menu4"><img src="img/menu4.svg" data-photo="menu4" alt="Меню-пример: бар" loading="lazy"></button>
+    </div>
+  </section>
+
+  <section class="wrap k-info" id="k-info">
+    <div class="k-info-addr" data-reveal>
+      <p class="kicker">Как нас найти · <span class="tag">пример</span></p>
+      <p class="addr">ул. Образцовая, 1</p>
+      <p>г. Примерск, адрес условный. Тел. <a href="tel:+70000000000">+7 (000) 000-00-00</a> (пример).</p>
+      <div class="btns">
+        <button class="btn ghost sm" type="button" data-demo="карта"><svg class="i"><use href="#i-pin"/></svg> Карта (пример)</button>
+        <button class="btn ghost sm" type="button" data-demo="соцсеть">Соцсеть (пример)</button>
+      </div>
+    </div>
+    <dl class="terms" data-stagger>
+      <div><dt>Доставка <span class="tag">пример</span></dt><dd>Заказ на доставку от 600 ₽. Бесплатно от 1 200 ₽, иначе 150 ₽. Привозим за 60–90 минут. <span class="mut">В рабочей версии напитки с алкоголем не доставляются: их продают только в зале, гостям от 18 лет.</span></dd></div>
+      <div><dt>Самовывоз <span class="tag">пример</span></dt><dd>ул. Образцовая, 1. Заказ готов через 30–40 минут. Оплата картой или наличными.</dd></div>
+      <div><dt>Часы <span class="tag">пример</span></dt><dd>Пиццерия: ежедневно 11:00–22:00. Бар: 12:00–24:00.</dd></div>
+    </dl>
+  </section>
+
+  <section class="wrap k-revs" id="k-revs">
+    <div class="sec-h" data-reveal>
+      <h2 class="h2">Что пишут гости <span class="tag">пример</span></h2>
+      <p class="mut">Настоящих отзывов в демо нет: это заглушки, которые показывают вид блока. На рабочем сайте здесь будут цитаты гостей со ссылкой на источник.</p>
+    </div>
+    <div class="revs" id="revs" data-stagger></div>
+  </section>
+</div>
+
+<!-- ===================== БАР ===================== -->
+<div class="w-kd" id="bar">
+  <section class="wrap kd-intro">
+    <div class="kd-intro-txt" data-reveal>
+      <span class="tlogo k">Бар<b>«Пример»</b></span>
+      <p class="kicker">бар · живая музыка · банкеты</p>
+      <h2 class="dsp kd">Бар</h2>
+      <p class="lead">Разливное пиво, коктейли и закуски из пиццерии. По выходным — живая музыка, в будни — столы для компании и банкеты.</p>
+      <div class="btns">
+        <a class="btn amber" href="#kd-book" data-scroll="kd-book">Забронировать стол</a>
+        <a class="btn amber-o" href="#kd-afisha" data-scroll="kd-afisha">Афиша</a>
+        <a class="btn amber-o" href="#kd-banq" data-scroll="kd-banq">Банкеты</a>
+      </div>
+      <p class="note">Адрес бара: г. Примерск, ул. Образцовая, 1, вход со двора. Телефон: <a href="tel:+70000000001">+7 (000) 000-00-01</a>. Часы: 12:00–24:00. Всё это пример.</p>
+    </div>
+    <figure class="pframe kd-big" data-parallax><img src="img/int3.svg" data-photo="int3" alt="Заглушка: тёмная штукатурка вместо фото зала" loading="lazy"></figure>
+  </section>
+
+  <section class="wrap kd-gal" aria-label="Интерьер, заглушки">
+    <button class="g g1" data-lb="int4" data-reveal><img src="img/int4.svg" data-photo="int4" alt="Заглушка: тёмная плитка вместо фото барной стойки" loading="lazy"></button>
+    <div class="g-txt" data-reveal><p class="quote">Здесь будут настоящие фото зала: стойка, столы, сцена.</p></div>
+    <button class="g g2" data-lb="int2" data-reveal><img src="img/int2.svg" data-photo="int2" alt="Заглушка: тёмное дерево вместо фото стола" loading="lazy"></button>
+    <button class="g g3" data-lb="int1" data-reveal><img src="img/int1.svg" data-photo="int1" alt="Заглушка: тёмный кирпич вместо фото зала" loading="lazy"></button>
+  </section>
+
+  <section class="kd-afisha" id="kd-afisha">
+    <div class="wrap afisha-h" data-reveal>
+      <div>
+        <h2 class="h2 kd">Афиша живой музыки <span class="tag">пример</span></h2>
+        <p class="mut">Концерты условные: это пример того, как будет выглядеть афиша. На рабочем сайте их добавляет администратор через бота.</p>
+      </div>
+      <div class="arrows">
+        <button class="arr" data-afs="-1" aria-label="Назад"><svg class="i"><use href="#i-left"/></svg></button>
+        <button class="arr" data-afs="1" aria-label="Вперёд"><svg class="i"><use href="#i-right"/></svg></button>
+      </div>
+    </div>
+    <div class="afisha" id="afisha" data-stagger></div>
+  </section>
+
+  <section class="wrap kd-book" id="kd-book">
+    <div class="form-side" data-reveal>
+      <h2 class="h2 kd">Бронь стола</h2>
+      <p class="mut">Три коротких шага. Заявка появится в демо-чате админов и в панели персонала, если панель открыта в этом же браузере.</p>
+      <figure class="pframe kd-mini"><img src="img/int2.svg" data-photo="int2" alt="Заглушка: тёмное дерево вместо фото стола" loading="lazy"></figure>
+    </div>
+    <form class="kform" id="bookForm" novalidate data-reveal>
+      <ol class="steps-ind"><li class="on">Когда</li><li>Гости</li><li>Контакты</li></ol>
+      <fieldset class="step">
+        <div class="row2">
+          <label>Дата<input type="date" name="date" id="bookDate"></label>
+          <label>Время<select name="time" id="bookTime"></select></label>
+        </div>
+      </fieldset>
+      <fieldset class="step">
+        <div class="row2">
+          <label>Гостей<select name="guests" id="bookGuests"></select></label>
+          <label>Пожелание<select name="wish"><option>Без пожеланий</option><option>Диван</option><option>У окна</option><option>Ближе к музыкантам</option><option>Тихий стол</option></select></label>
+        </div>
+      </fieldset>
+      <fieldset class="step">
+        <div class="row2">
+          <label>Имя<input name="name" autocomplete="name" placeholder="Как к вам обращаться"></label>
+          <label>Телефон<input name="phone" type="tel" autocomplete="tel" placeholder="+7 000 000-00-00"></label>
+        </div>
+      </fieldset>
+      <p class="err" hidden></p>
+      <div class="step-nav">
+        <button type="button" class="btn amber-o" data-step="-1">Назад</button>
+        <button type="button" class="btn amber" data-step="1">Далее <svg class="i"><use href="#i-right"/></svg></button>
+        <button type="submit" class="btn amber">Забронировать</button>
+      </div>
+      <div class="okbox" hidden></div>
+    </form>
+  </section>
+
+  <section class="wrap kd-banq" id="kd-banq">
+    <div class="sec-h" data-reveal>
+      <h2 class="h2 kd">Банкеты</h2>
+      <p class="lead-s">Дни рождения, корпоративы, свадьбы и выпускные. Зал и меню подбираются под компанию.</p>
+    </div>
+
+    <h3 class="h3">Залы <span class="tag">пример</span></h3>
+    <p class="mut">Названия и вместимость условные, вместо фото — заглушки с фактурой.</p>
+    <div class="halls" id="halls" data-stagger></div>
+
+    <h3 class="h3">Банкетное меню на человека <span class="tag">пример</span></h3>
+    <p class="mut">Сеты собраны из блюд меню-примера по его условным ценам и посчитаны на компанию из 10 гостей. Напитки не входят.</p>
+    <div class="sets" id="sets" data-stagger></div>
+
+    <div class="banq-form">
+      <div class="form-side" data-reveal>
+        <h3 class="h3 big">Заявка на банкет</h3>
+        <p class="mut">Заявка появится в демо-чате админов и в панели персонала. Если её не взяли в работу, бот напомнит администраторам.</p>
+      </div>
+      <form class="kform" id="banqForm" novalidate data-reveal>
+        <ol class="steps-ind"><li class="on">Событие</li><li>Зал</li><li>Контакты</li></ol>
+        <fieldset class="step">
+          <div class="row2">
+            <label>Дата<input type="date" name="date" id="banqDate"></label>
+            <label>Гостей<input type="number" name="guests" min="5" max="150" placeholder="например, 20" inputmode="numeric"></label>
+          </div>
+          <label>Повод<select name="reason"><option>День рождения</option><option>Корпоратив</option><option>Свадьба</option><option>Выпускной</option><option>Юбилей</option><option>Другое</option></select></label>
+        </fieldset>
+        <fieldset class="step">
+          <label>Зал<select name="hall" id="banqHall"></select></label>
+          <label>Комментарий<textarea name="comment" rows="3" placeholder="Меню, бюджет, музыка, торт…"></textarea></label>
+        </fieldset>
+        <fieldset class="step">
+          <div class="row2">
+            <label>Имя<input name="name" autocomplete="name"></label>
+            <label>Телефон<input name="phone" type="tel" autocomplete="tel" placeholder="+7 000 000-00-00"></label>
+          </div>
+        </fieldset>
+        <p class="err" hidden></p>
+        <div class="step-nav">
+          <button type="button" class="btn amber-o" data-step="-1">Назад</button>
+          <button type="button" class="btn amber" data-step="1">Далее <svg class="i"><use href="#i-right"/></svg></button>
+          <button type="submit" class="btn amber">Отправить заявку</button>
+        </div>
+        <div class="okbox" hidden></div>
+      </form>
+    </div>
+  </section>
+</div>
+
+<!-- ===================== TELEGRAM-БОТ ===================== -->
+<section class="w-bot" id="bot">
+  <div class="wrap">
+    <div class="tg-intro" data-reveal>
+      <div>
+        <p class="kicker">Один бот на оба заведения</p>
+        <h2 class="h2">Telegram-бот: демо</h2>
+        <p>Слева чат гостя с ботом, справа чат администраторов. Нажимайте кнопки как в Telegram: закажите пиццу, забронируйте стол или отправьте заявку на банкет, а потом обработайте заказ в чате админов. Задержки сокращены: вместо 2 часов до вопроса «Как вам?» — 5 секунд, вместо часа до напоминания о банкете — 10 секунд.</p>
+      </div>
+      <button class="btn ghost" id="tgReset"><svg class="i"><use href="#i-reset"/></svg> Начать заново</button>
+    </div>
+    <div class="tg-switch">
+      <button data-panel="g" class="on">Гость</button>
+      <button data-panel="a">Чат админов<span class="bdg" id="admBdg" hidden>0</span></button>
+    </div>
+    <div class="tg-wrap">
+      <div class="tg-panel" id="tgG">
+        <div class="tg-head"><span class="tg-av c" aria-hidden="true">П</span><div><b>Пиццерия и Бар «Пример»</b><small>бот</small></div><button class="rs" data-cmd="/start">/start</button></div>
+        <div class="tg-msgs"></div>
+        <div class="tg-reply" hidden></div>
+        <form class="tg-in"><input placeholder="Сообщение" aria-label="Сообщение" autocomplete="off"><button aria-label="Отправить"><svg class="i"><use href="#i-send"/></svg></button></form>
+      </div>
+      <div class="tg-panel adm-p mhide" id="tgA">
+        <div class="tg-head adm"><span class="tg-av k" aria-hidden="true">Б</span><div><b>«Пример» — админы</b><small>3 участника, бот</small></div></div>
+        <div class="tg-msgs"></div>
+        <div class="tg-ro">Здесь нажимают кнопки участники группы ADMIN_CHAT_ID</div>
+      </div>
+    </div>
+    <div class="hint" id="tgHint">Начните с кнопки «Меню и заказ» в чате гостя.</div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap foot-in">
+    <div>
+      <p class="foot-b">Пиццерия <i>&amp;</i> Бар «Пример»</p>
+      <p>г. Примерск, ул. Образцовая, 1 · <a href="tel:+70000000000">+7 (000) 000-00-00</a> <span class="tag">пример</span></p>
+      <p><a href="admin.html">Вход для персонала</a></p>
+    </div>
+    <p class="foot-n">Демо «Ресторан + бронь + панель». Все названия, адреса, телефоны, цены, меню, афиша и залы условные. Заказы и заявки никуда не отправляются: их видно в демо-чате администраторов и в панели персонала. <a href="#top" data-scroll="top">Наверх</a></p>
+  </div>
+</footer>
+
+<button class="cartbar" id="cartbar" data-open-cart hidden><svg class="i"><use href="#i-bag"/></svg><span id="cbN"></span><b id="cbSum"></b><span class="go">Оформить</span></button>
+
+<div class="drawer-back" id="cartBack" data-close></div>
+<aside class="drawer" id="cartModal" role="dialog" aria-modal="true" aria-label="Корзина" aria-hidden="true">
+  <div class="dhead"><h2>Корзина</h2><button class="x" data-close aria-label="Закрыть"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="dbody">
+    <div id="cartEmpty"><p>Корзина пока пуста.</p><button class="btn rasp" data-close data-scroll="menu">Открыть меню</button></div>
+    <div id="cartFull">
+      <ul class="lines" id="cartLines"></ul>
+      <div class="sumbox" id="sumbox"></div>
+      <form id="orderForm" novalidate>
+        <div class="row2">
+          <label>Имя<input name="name" autocomplete="name" placeholder="Как к вам обращаться"></label>
+          <label>Телефон<input name="phone" type="tel" autocomplete="tel" placeholder="+7 000 000-00-00"></label>
+        </div>
+        <fieldset class="seg"><legend>Получение</legend>
+          <label><input type="radio" name="mode" value="pickup" checked> Самовывоз</label>
+          <label><input type="radio" name="mode" value="delivery"> Доставка</label>
+        </fieldset>
+        <label id="addrWrap" hidden>Адрес доставки<input name="addr" placeholder="Улица, дом, подъезд, квартира"></label>
+        <label>Время<select name="time" id="timeSel"></select></label>
+        <label>Комментарий<textarea name="comment" rows="2" placeholder="Например: без лука, позвонить за 10 минут"></textarea></label>
+        <p class="err" hidden></p>
+        <button class="btn rasp full" type="submit">Отправить заказ</button>
+      </form>
+    </div>
+    <div id="cartDone" hidden></div>
+  </div>
+</aside>
+
+<div class="lb" id="lb" data-close hidden><button class="x" data-close aria-label="Закрыть"><svg class="i"><use href="#i-x"/></svg></button><img id="lbImg" alt=""><p id="lbCap"></p></div>
+
+<script src="motion.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

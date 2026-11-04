@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="800" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <filter id="w" x="0" y="0" width="100%" height="100%">
+      <feTurbulence type="fractalNoise" baseFrequency=".006 .22" numOctaves="4" seed="11"/>
+      <feColorMatrix values="0 0 0 0 .1  0 0 0 0 .06  0 0 0 0 .03  0 0 0 1.5 -.35"/>
+    </filter>
+    <radialGradient id="l" cx=".35" cy=".3" r=".8">
+      <stop offset="0" stop-color="#e3a43c" stop-opacity=".2"/>
+      <stop offset="1" stop-color="#e3a43c" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1000" height="800" fill="#2c1c11"/>
+  <rect width="1000" height="800" filter="url(#w)"/>
+  <g stroke="#0d0805" stroke-width="3" stroke-opacity=".75">
+    <path d="M0 160H1000M0 320H1000M0 480H1000M0 640H1000"/>
+  </g>
+  <rect width="1000" height="800" fill="url(#l)"/>
+  <text x="40" y="755" font-family="Georgia,'Times New Roman',serif" font-size="30" fill="#efe4cc" fill-opacity=".72">Стол у окна — заглушка, фото заменить</text>
+</svg>
