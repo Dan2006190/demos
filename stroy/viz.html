@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Ремонт в 3D — СтройДемо, Тамбов (пример)</title>
-<meta name="description" content="Визуализатор ремонта комнаты в 3D со сметой. Демо-сайт, все данные — пример.">
+<title>Ремонт и дом в 3D — СтройДемо, Тамбов (пример)</title>
+<meta name="description" content="Визуализатор ремонта комнаты и отделки дома снаружи в 3D со сметой. Демо-сайт, все данные — пример.">
 <script type="importmap">
 {
   "imports": {
@@ -181,6 +181,18 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 .ok h3{padding:0}
 .ok p{color:var(--muted)}
 .ok .btns{display:grid;gap:10px;margin-top:16px}
+
+/* переключатель режимов и панель «Дом снаружи» */
+.mode-sw{flex-wrap:nowrap;gap:4px;padding:4px;background:rgba(255,255,255,.94);border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,.12)}
+.mode-sw button{min-height:38px;white-space:nowrap}
+.stage.is-fp .mode-sw{display:none}
+.seg button[disabled],.sw[disabled]{opacity:.45;cursor:not-allowed}
+.hs-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;font-size:14px;font-weight:600}
+.hs-top output{font-weight:800;white-space:nowrap}
+.hs .qty-row input[type=range]{width:100%}
+.fac-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:0 16px}
+.fac-row .dim{margin-bottom:4px}
+.step-title .tag{margin-left:auto}
 </style>
 </head>
 <body>
@@ -210,8 +222,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 
 <main class="wrap">
   <div class="page-head">
-    <h1>Ремонт в 3D <span class="tag">пример</span></h1>
-    <p>Задайте размеры комнаты, окно и дверь, выберите отделку. Комнату можно покрутить сверху или зайти внутрь. Смета ниже считается по тем же ценам, что и калькулятор.</p>
+    <h1><span id="pageTitle">Ремонт в 3D</span> <span class="tag">пример</span></h1>
+    <p id="pageLead">Задайте размеры комнаты, окно и дверь, выберите отделку. Комнату можно покрутить сверху или зайти внутрь. Смета ниже считается по тем же ценам, что и калькулятор.</p>
   </div>
 
   <div class="viz">
@@ -220,6 +232,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
       <div class="stage-canvas" id="canvasHolder"></div>
       <div class="stage-msg" id="stageMsg">Загружаем 3D…</div>
       <div class="stage-top">
+        <div class="seg mode-sw" id="modeSw" role="group" aria-label="Режим визуализатора">
+          <button type="button" data-v="room" aria-pressed="true">Комната</button>
+          <button type="button" data-v="house" aria-pressed="false">Дом снаружи</button>
+        </div>
         <button type="button" class="btn btn-acc btn-sm" id="btnFP" disabled>Войти внутрь</button>
         <span class="chip" id="stageDims"></span>
       </div>
@@ -235,6 +251,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 
     <!-- PANEL -->
     <div class="panel">
+      <div id="panelRoom">
       <div class="step">
         <div class="step-title"><span class="step-num">1</span>Шаблон</div>
         <div class="choices" id="tplGrid" role="radiogroup" aria-label="Шаблон комнаты"></div>
@@ -287,13 +304,54 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
         <div class="sub">Потолок</div>
         <div class="sws" id="ceilSw"></div>
       </div>
+      </div>
+
+      <div id="panelHouse" hidden>
+        <div class="step">
+          <div class="step-title"><span class="step-num">1</span>Размеры и этажность</div>
+          <div id="hDims"></div>
+          <div class="sub">Этажность</div>
+          <div class="seg" id="hStoreys" role="group" aria-label="Этажность"></div>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="step-num">2</span>Крыша</div>
+          <div class="seg" id="hRoof" role="group" aria-label="Тип крыши" style="margin-bottom:10px"></div>
+          <div id="hRoofSl"></div>
+          <p class="hint" id="hRoofHint"></p>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="step-num">3</span>Окна, двери, крыльцо</div>
+          <div id="hOpen"></div>
+          <div class="sub">Крыльцо у каждой двери</div>
+          <div class="seg" id="hPorch" role="group" aria-label="Крыльцо"></div>
+          <p class="hint" id="hOpenHint"></p>
+        </div>
+
+        <div class="step">
+          <div class="step-title"><span class="step-num">4</span>Отделка <span class="tag">цены — пример</span></div>
+          <div class="sub">Кровля</div>
+          <div class="sws" id="hRoofSw"></div>
+          <div class="sub">Фасад</div>
+          <div class="sws" id="hFacSw"></div>
+          <div class="sub">Водостоки</div>
+          <div class="seg" id="hGut" role="group" aria-label="Водостоки" style="margin-bottom:8px"></div>
+          <div class="sws colors" id="hGutSw"></div>
+          <div class="sub">Цоколь</div>
+          <div class="sws" id="hPlSw"></div>
+          <div id="hPlH" style="margin-top:10px"></div>
+          <div class="sub">Старая кровля</div>
+          <div class="seg" id="hDemo" role="group" aria-label="Демонтаж старой кровли"></div>
+        </div>
+      </div>
 
       <aside class="result" aria-live="polite">
-        <div class="lbl">Смета на отделку</div>
+        <div class="lbl" id="estLbl">Смета на отделку</div>
         <div class="res-price" id="estPrice">—</div>
         <div class="res-meta" id="estAreas"></div>
         <table class="res-table"><tbody id="estBody"></tbody></table>
-        <div class="res-note">Цены примерные (демо) — компания заменит их на свои. Площадь стен — за вычетом окна и двери. Точная смета — после бесплатного замера.</div>
+        <div class="res-note" id="estNote">Цены примерные (демо) — компания заменит их на свои. Площадь стен — за вычетом окна и двери. Точная смета — после бесплатного замера.</div>
         <div class="res-btns">
           <button type="button" class="btn btn-acc" data-want>Хочу так</button>
           <a href="index.html#calc" class="btn btn-ghost">Вернуться к калькулятору</a>

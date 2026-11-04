@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Тейбл-тент с QR — Кофейня «Пример» (демо)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Golos+Text:wght@400;600&display=swap">
+<style>
+:root{--paper:#f7f0e4;--ink:#2b1d14;--mut:#6f5c4c;--line:#cfbda3;--car:#a8501f;--car-l:#f1dcc4;--bean:#2b1d14;--cream:#f3e6d2;
+  --f-d:Alegreya,Georgia,"Times New Roman",serif;--f-t:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;--r:10px}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font:15px/1.45 var(--f-t);color:var(--ink);background:#e6dbc9}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--car);outline-offset:2px}
+.ctl{max-width:210mm;margin:0 auto;padding:16px}
+.ctl h1{font:700 26px/1.1 var(--f-d);margin:0 0 6px}
+.ctl p{margin:0 0 10px;color:var(--mut)}
+.ctl label{display:block;font-weight:600;font-size:14px}
+.ctl input{display:block;width:100%;min-height:44px;margin-top:5px;padding:8px 10px;border:1.5px solid var(--line);border-radius:var(--r);background:#fff}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{min-height:44px;padding:8px 16px;border-radius:var(--r);border:1.5px solid var(--line);background:#fff;font-weight:600;cursor:pointer}
+.btn.main{background:var(--car);border-color:var(--car);color:#fff}
+.warn{background:var(--car-l);color:#5e3312;padding:9px 12px;border-radius:var(--r);margin-top:10px;font-size:14px}
+a{color:#83401a}
+
+/* лист А4: сгибается пополам, верхняя половина перевёрнута — тент читается с обеих сторон */
+.sheet{width:210mm;height:297mm;margin:0 auto 24px;background:var(--paper);display:flex;flex-direction:column;position:relative;overflow:hidden}
+.pitch{grid-column:1;grid-row:2}
+.how{grid-row:3}
+.brand{grid-row:1}
+.face{position:relative;flex:1;height:148.5mm;display:grid;grid-template-columns:1fr 68mm;grid-template-rows:auto 1fr auto;column-gap:10mm;padding:13mm 15mm 11mm}
+.face.flip{transform:rotate(180deg)}
+.fold{position:absolute;left:0;right:0;top:148.5mm;border-top:.3mm dashed var(--line)}
+.fold span{position:absolute;right:5mm;top:-5mm;font-size:8.500pt;color:var(--mut)}
+.brand{grid-column:1/-1;font:700 15pt/1 var(--f-d);display:flex;justify-content:space-between;align-items:baseline;border-bottom:.4mm solid var(--ink);padding-bottom:3mm;margin-bottom:7mm}
+.brand small{font:400 9pt/1 var(--f-t);color:var(--mut)}
+.pitch h2{font:700 36pt/1.02 var(--f-d);margin:0 0 5mm}
+.pitch .gift{font:700 21pt/1.1 var(--f-d);color:var(--car);margin:0}
+.code{grid-row:2/4;grid-column:2;align-self:start}
+.code svg{display:block;width:68mm;height:68mm}
+.code p{margin:2mm 0 0;font-size:9.500pt;line-height:1.3;color:var(--mut)}
+.how{grid-column:1;align-self:end;margin:0;padding:0;list-style:none;font-size:10.500pt;line-height:1.35}
+.how li{padding:1.200mm 0;border-top:.2mm solid var(--line)}
+.demo-mark{position:absolute;left:15mm;bottom:3.500mm;font-size:8pt;color:var(--mut)}
+
+@media print{
+  @page{size:A4 portrait;margin:0}
+  body{background:none}
+  .ctl{display:none}
+  .sheet{margin:0;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+@media screen and (max-width:800px){.sheetwrap{overflow-x:auto}}
+</style>
+</head>
+<body>
+<div class="ctl">
+  <h1>Тейбл-тент с QR</h1>
+  <p>Лист А4: печать без полей, сгиб по пунктиру, верхняя половина идёт обратной стороной тента.</p>
+  <label>Адрес, который откроет QR<input id="url" type="url" inputmode="url" spellcheck="false"></label>
+  <p id="warn" class="warn" hidden></p>
+  <p id="err" class="warn" hidden></p>
+  <div class="row"><button class="btn main" id="print">Печать</button><a class="btn" style="text-decoration:none;color:inherit" href="index.html">Экран гостя</a><a class="btn" style="text-decoration:none;color:inherit" href="admin.html">Панель бариста</a></div>
+</div>
+<div class="sheetwrap"><div class="sheet" id="sheet"></div></div>
+
+<script src="qr.js"></script>
+<script>
+'use strict';
+const qs=new URLSearchParams(location.search);
+const input=document.getElementById('url');
+input.value=qs.get('url')||new URL('index.html',location.href).href;
+const face=(flip,svg)=>`<section class="face${flip?' flip':''}">
+  <div class="brand"><span>Кофейня «Пример»</span><small>ул. Образцовая, 1 · пример</small></div>
+  <div class="pitch"><h2>Закажи заранее — без очереди.</h2><p class="gift">6-й кофе в подарок</p></div>
+  <div class="code">${svg}<p>Наведите камеру телефона на код. Приложение не нужно.</p></div>
+  <ol class="how"><li>Выберите напиток и время «Забрать к…»</li><li>Укажите телефон — это карта гостя</li><li>Заберите у стойки, когда заказ готов</li></ol>
+  <span class="demo-mark">Демо-материал: название, адрес и условия — пример</span>
+</section>`;
+function draw(){
+  const v=input.value.trim(),w=document.getElementById('warn'),e=document.getElementById('err');
+  e.hidden=true;
+  w.hidden=!/^file:|\/\/(localhost|127\.)/i.test(v);
+  w.textContent='С этим адресом телефон демо не откроет: он работает только на этом компьютере. Перед печатью выложите папку на хостинг и вставьте сюда её адрес. Код на листе ниже пока не для печати.';
+  try{
+    const svg=QR.toSvg(v,'QR-код: открыть заказ в Кофейне «Пример»');
+    document.getElementById('sheet').innerHTML=face(true,svg)+face(false,svg)+'<div class="fold"><span>сгиб</span></div>';
+  }catch(x){e.textContent=x.message;e.hidden=false}
+}
+input.addEventListener('input',draw);
+document.getElementById('print').addEventListener('click',()=>window.print());
+draw();
+</script>
+</body>
+</html>

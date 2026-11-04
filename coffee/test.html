@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Автотест демо — Кофейня «Пример»</title>
+<meta name="robots" content="noindex">
+<style>
+body{margin:0;padding:18px;font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#f7f0e4;color:#2b1d14;max-width:860px}
+h1{font:700 26px/1.1 Georgia,serif;margin:0 0 6px}
+h2{font-size:16px;margin:18px 0 4px}
+#sum{font-size:18px;font-weight:700;margin:12px 0;padding:10px 12px;border-radius:10px;background:#e4e8d2;color:#39471f}
+#sum.bad{background:#f6dfd6;color:#a32a1c}
+div.l{padding:2px 0}
+div.bad{color:#a32a1c;font-weight:700}
+</style>
+</head>
+<body>
+<h1>Автотест заказа и бонусов</h1>
+<p>Тест работает на своих данных в памяти: демо-заказы и карты в браузере он не меняет.</p>
+<div id="sum">Идёт проверка…</div>
+<div id="log"></div>
+<script src="core.js"></script>
+<script src="qr.js"></script>
+<script src="tests.js"></script>
+<script>
+const log=document.getElementById('log'),sum=document.getElementById('sum');
+let res;
+try{
+  res=runCoffeeTests((ok,t)=>{
+    const e=document.createElement(ok===null?'h2':'div');
+    if(ok!==null){e.className='l'+(ok?'':' bad');e.textContent=(ok?'OK — ':'ОШИБКА — ')+t}else e.textContent=t;
+    log.appendChild(e);
+  });
+  sum.textContent=res.fail?'Есть ошибки: '+res.fail+' (прошло '+res.pass+')':'Все проверки прошли: '+res.pass;
+  sum.className=res.fail?'bad':'';
+}catch(x){sum.textContent='Тест остановился: '+x.message;sum.className='bad'}
+</script>
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Панель бариста — Кофейня «Пример» (демо)</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2b1d14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700&family=Golos+Text:wght@400;600;700&display=swap">
+<style>
+/* Панель на основе панели персонала демо-ресторана: шапка с вкладками, колонки, карточки, звук.
+   Цвета и шрифты — как на экране гостя. */
+:root{
+  --paper:#f7f0e4;--card:#fffaf2;--ink:#2b1d14;--mut:#6f5c4c;--line:#e3d5c0;--line2:#cfbda3;
+  --bean:#2b1d14;--cream:#f3e6d2;--cream-mut:#c4ae94;--col:#eee3d1;
+  --car:#a8501f;--car-d:#83401a;--car-l:#f1dcc4;--olive:#55663a;--olive-l:#e4e8d2;--red:#a32a1c;--red-l:#f6dfd6;
+  --f-d:Alegreya,Georgia,"Times New Roman",serif;
+  --f-t:"Golos Text",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --r:10px
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0}
+body{font:15px/1.45 var(--f-t);color:var(--ink);background:var(--paper);-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+a{color:var(--car-d)}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:2px solid var(--car);outline-offset:2px}
+.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.mut{color:var(--mut)}
+.pad{padding:0 clamp(12px,2.6vw,28px)}
+.tag{display:inline-block;font-size:11px;font-weight:600;line-height:1.5;padding:0 7px;border:1px solid var(--line2);border-radius:4px;color:var(--mut);white-space:nowrap}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:44px;padding:8px 14px;border-radius:var(--r);border:1.5px solid transparent;font-weight:600;font-size:14px;line-height:1.2;white-space:nowrap;background:none}
+.btn:active{opacity:.82}
+.btn.main{background:var(--car);color:#fff}
+.btn.ok{background:var(--olive);color:#fff}
+.btn.line{border-color:var(--line2);background:var(--card)}
+.btn.sm{min-height:36px;padding:5px 11px;font-size:13px}
+
+.top{background:var(--bean);color:var(--cream);position:sticky;top:0;z-index:30}
+.top-in{display:flex;align-items:center;gap:12px;min-height:56px}
+.brand{margin-right:auto;min-width:0}
+.brand b{display:block;font:700 22px/1.05 var(--f-d)}
+.brand small{display:block;font-size:12px;color:var(--cream-mut)}
+.snd{background:none;border:1.5px solid rgba(243,230,210,.35);color:var(--cream);border-radius:var(--r);height:38px;padding:0 11px;display:inline-flex;align-items:center;gap:6px;font-size:13px;font-weight:600}
+.snd[aria-pressed="false"]{color:var(--cream-mut)}
+.top a.back{color:var(--cream-mut);font-size:13px;white-space:nowrap}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{position:relative;background:none;border:0;color:var(--cream-mut);padding:10px 14px 12px;font-weight:600;font-size:15px;white-space:nowrap}
+.tab.on{color:var(--cream)}
+.tab.on::after{content:"";position:absolute;left:12px;right:12px;bottom:0;height:3px;background:var(--car)}
+.bdg{display:inline-block;min-width:19px;padding:0 5px;border-radius:4px;background:var(--car);color:#fff;font-size:12px;line-height:19px;text-align:center;margin-left:6px}
+.demo{background:var(--car-l);color:#5e3312;font-size:13px;padding:7px 0}
+.demo .pad{display:flex;flex-wrap:wrap;gap:3px 14px;align-items:center}
+.demo button{background:none;border:0;padding:0;text-decoration:underline;font-size:13px;color:inherit}
+.sndhint{background:var(--bean);color:var(--cream);font-size:13px;padding:6px 0}
+@media(max-width:600px){.top a.back,.snd span{display:none}.brand small{display:none}}
+
+main{padding:16px 0 50px}
+.pane-h{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-bottom:12px}
+.pane-h h1{font:700 clamp(26px,3.2vw,34px)/1.05 var(--f-d);margin-right:auto}
+.summary{font-size:14px;color:var(--mut);margin-bottom:12px}
+.summary b{color:var(--ink)}
+
+/* заказы: колонка — время выдачи */
+.kb{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(272px,320px);gap:12px;align-items:start;overflow-x:auto;padding-bottom:8px;-webkit-overflow-scrolling:touch}
+.col{background:var(--col);border-radius:var(--r);padding:10px;min-height:280px}
+.col-h{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;margin:2px 3px 10px}
+.col-h h2{font:700 30px/1 var(--f-d);font-variant-numeric:tabular-nums}
+.col-h span{font-size:13px;font-weight:600;color:var(--mut)}
+.col.late .col-h span{color:var(--red)}
+.col.soon .col-h span{color:var(--car-d)}
+.col.arch{background:none;border:1px dashed var(--line2)}
+.col.arch h2{font-size:24px}
+.none{font-size:14px;color:var(--mut);padding:30px 4px}
+.oc{background:var(--card);border-radius:8px;border:1px solid var(--line);padding:10px 11px;margin-bottom:9px;font-size:14px}
+.oc:last-child{margin-bottom:0}
+.oc.fresh{border-color:var(--car);background:#fff3e4;outline:2px solid var(--car);outline-offset:-1px}
+.oc-h{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:5px}
+.oc-h b{font-size:16px}
+.st{font-size:12px;font-weight:700;padding:1px 7px;border-radius:4px}
+.st.acc{background:var(--car-l);color:#5e3312}
+.st.cook{background:var(--bean);color:var(--cream)}
+.st.ready{background:var(--olive);color:#fff}
+.st.done{background:var(--olive-l);color:#39471f}
+.st.cancel{background:var(--red-l);color:var(--red)}
+.oc-h .md{margin-left:auto;font-size:12px;color:var(--mut);font-weight:600}
+.oc ul{list-style:none;margin:0 0 6px;padding:0}
+.oc li{padding:3px 0;border-top:1px solid var(--line);line-height:1.3}
+.oc li:first-child{border-top:0}
+.oc li b{font-weight:600}
+.oc li small{display:block;font-size:12.500px;color:var(--mut)}
+.oc p{font-size:13px;color:var(--mut);margin-bottom:3px}
+.oc .cmt{color:var(--ink);background:var(--car-l);border-radius:5px;padding:3px 7px}
+.oc .bon{color:#39471f;background:var(--olive-l);border-radius:5px;padding:3px 7px}
+.oc-f{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px}
+.oc-f .sum{font-weight:700;font-size:15px;margin-right:auto}
+.x-cancel{background:none;border:0;padding:0;font-size:12px;color:var(--mut);text-decoration:underline;min-height:24px}
+
+/* гости */
+.filters{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-bottom:12px}
+.filter{min-height:40px;padding:6px 12px;border:1.5px solid var(--line2);background:var(--card);border-radius:var(--r);font-weight:600;font-size:14px}
+.filter[aria-pressed="true"]{background:var(--bean);border-color:var(--bean);color:var(--cream)}
+.search{min-height:40px;border:1.5px solid var(--line2);background:#fff;border-radius:var(--r);padding:6px 10px;min-width:210px;flex:0 1 280px}
+.tw{overflow-x:auto;background:var(--card);border:1px solid var(--line);border-radius:var(--r)}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th{text-align:left;font-size:12px;font-weight:600;color:var(--mut);padding:9px 12px;border-bottom:1px solid var(--line2);white-space:nowrap}
+td{padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th.n,td.n{text-align:right;font-variant-numeric:tabular-nums}
+.away{color:var(--red);font-weight:600}
+.mini{display:inline-flex;gap:3px;vertical-align:-1px;margin-right:6px}
+.mini i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--line2);display:block}
+.mini i.on{background:var(--car);border-color:var(--car)}
+
+/* меню */
+.mcats{columns:2 380px;column-gap:20px}
+.mcat{break-inside:avoid;margin-bottom:20px}
+.mcat h2{font:700 24px/1.1 var(--f-d);margin-bottom:6px}
+.mrow{display:flex;align-items:center;gap:10px;padding:8px 2px;border-bottom:1px solid var(--line)}
+.mrow .nm{margin-right:auto;line-height:1.25}
+.mrow.off .nm{color:var(--red)}
+.mrow .pr{color:var(--mut);font-size:14px;white-space:nowrap}
+.sw{position:relative;display:inline-flex;align-items:center;gap:7px;min-height:36px;font-size:13px;font-weight:600;cursor:pointer;min-width:112px;justify-content:flex-end;white-space:nowrap}
+.sw input{position:absolute;opacity:0;width:44px;height:26px;right:0;margin:0;cursor:pointer}
+.sw .tr{width:44px;height:26px;border-radius:13px;background:var(--line2);position:relative;flex:none}
+.sw .tr::after{content:"";position:absolute;left:3px;top:3px;width:20px;height:20px;border-radius:50%;background:#fff}
+.sw input:checked~.tr{background:var(--olive)}
+.sw input:checked~.tr::after{left:21px}
+.sw input:focus-visible~.tr{outline:2px solid var(--car);outline-offset:2px}
+
+/* жалобы */
+.cp{max-width:760px;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:13px 15px;margin-bottom:10px}
+.cp.new{border-left:4px solid var(--red)}
+.cp h3{font-size:16px;font-weight:600;margin-bottom:3px}
+.cp p{margin-bottom:7px}
+.cp .meta{font-size:13px;color:var(--mut)}
+
+.toast{position:fixed;left:50%;bottom:20px;z-index:70;transform:translateX(-50%);background:var(--bean);color:var(--cream);padding:9px 15px;border-radius:var(--r);font-size:14px;max-width:92vw;text-align:center;pointer-events:none}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.500 2h-15L6 16Z"/><path d="M10 20.500a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.500-6-6.500-11.500a6.500 6.500 0 0 1 13 0C18.500 15 12 21 12 21Z"/><circle cx="12" cy="9.500" r="2.300"/></symbol>
+</svg>
+
+<header class="top">
+  <div class="top-in pad">
+    <div class="brand"><b>Кофейня «Пример»</b><small>панель бариста</small></div>
+    <button class="snd" id="sndBtn" aria-pressed="true" title="Звук нового заказа"><svg class="i"><use href="#i-bell"/></svg><span id="sndTxt">Звук вкл.</span></button>
+    <a class="back" href="index.html">экран гостя</a>
+  </div>
+  <nav class="tabs pad" role="tablist" aria-label="Разделы панели">
+    <button class="tab on" role="tab" data-tab="orders" aria-selected="true">Заказы<span class="bdg" id="bdgOrd" hidden></span></button>
+    <button class="tab" role="tab" data-tab="guests" aria-selected="false">Гости</button>
+    <button class="tab" role="tab" data-tab="menu" aria-selected="false">Меню<span class="bdg" id="bdgOff" hidden></span></button>
+    <button class="tab" role="tab" data-tab="compl" aria-selected="false">Жалобы<span class="bdg" id="bdgComp" hidden></span></button>
+  </nav>
+</header>
+<div class="demo"><div class="pad"><b>Демо: данные хранятся только в этом браузере</b><span>Вход без пароля. Заказы, оформленные на экране гостя в этом же браузере, появляются здесь сами. Гости и телефоны условные.</span><button id="resetBtn">Сбросить демо-данные</button></div></div>
+<div class="sndhint" id="sndHint" hidden><div class="pad">Браузер включает звук только после первого нажатия: нажмите в любом месте страницы.</div></div>
+
+<main class="pad">
+  <section class="pane" id="pane-orders" role="tabpanel">
+    <div class="pane-h"><h1>Заказы по времени выдачи</h1><button class="btn line" id="testBtn"><svg class="i"><use href="#i-plus"/></svg>Тестовый заказ</button></div>
+    <p class="summary" id="ordSum"></p>
+    <div class="kb" id="kb"></div>
+  </section>
+
+  <section class="pane" id="pane-guests" role="tabpanel" hidden>
+    <div class="pane-h"><h1>Гости</h1></div>
+    <p class="summary" id="gSum"></p>
+    <div class="filters">
+      <button class="filter" data-gf="all" aria-pressed="true">Все</button>
+      <button class="filter" data-gf="away" aria-pressed="false" id="gfAway">Давно не были</button>
+      <input class="search" id="gSearch" type="search" placeholder="Имя или телефон" aria-label="Поиск гостя">
+    </div>
+    <div class="tw"><table><thead><tr><th>Гость</th><th>Телефон</th><th class="n">Визиты</th><th>Последний визит</th><th>Штампы</th><th class="n">Баллы</th><th class="n">Оплатил всего</th></tr></thead><tbody id="gBody"></tbody></table></div>
+  </section>
+
+  <section class="pane" id="pane-menu" role="tabpanel" hidden>
+    <div class="pane-h"><h1>Меню и стоп-лист</h1><button class="btn line" id="offClear" hidden>Вернуть всё в продажу</button></div>
+    <p class="summary" id="mSum"></p>
+    <div class="mcats" id="mList"></div>
+  </section>
+
+  <section class="pane" id="pane-compl" role="tabpanel" hidden>
+    <div class="pane-h"><h1>Жалобы гостей</h1></div>
+    <p class="summary">Сюда попадают оценки от 1 до 3 с формой «Что пошло не так». В рабочей версии жалоба уходит администратору в чат.</p>
+    <div id="cList"></div>
+  </section>
+</main>
+<div class="toast" id="toast" role="status" hidden></div>
+
+<script src="core.js"></script>
+<script>
+'use strict';
+const C=window.Coffee,R=C.RULES,esc=C.esc,rub=C.rub,hm=C.hm,plural=C.plural;
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+let toastT;
+function toast(t){const e=$('#toast');e.textContent=t;e.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{e.hidden=true},2600)}
+
+/* ===== вкладки ===== */
+let tab='orders';
+function showTab(t){
+  if(!['orders','guests','menu','compl'].includes(t))t='orders';tab=t;
+  $$('.tab').forEach(b=>{const on=b.dataset.tab===t;b.classList.toggle('on',on);b.setAttribute('aria-selected',on)});
+  $$('.pane').forEach(p=>{p.hidden=p.id!=='pane-'+t});
+  if(location.hash!=='#'+t)history.replaceState(null,'','#'+t);
+}
+$$('.tab').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+
+/* ===== заказы: колонки по времени выдачи, слева — ближайшее ===== */
+const fresh=new Map();   // id заказа → до какого времени подсвечен
+function untilText(slot){
+  const min=Math.round((slot-C.now())/60000);
+  if(min<0)return {t:'опоздание '+(-min)+' мин',c:'late'};
+  if(min===0)return {t:'сейчас',c:'soon'};
+  if(min<=10)return {t:'через '+min+' мин',c:'soon'};
+  if(min<60)return {t:'через '+min+' мин',c:''};
+  const d=C.dayWord(slot);
+  return {t:d==='сегодня'?'через '+Math.floor(min/60)+' ч '+(min%60)+' мин':d,c:''};
+}
+function actions(o){
+  const b=[];
+  if(o.st==='acc')b.push(`<button class="btn main sm" data-st="cook">Готовится</button><button class="btn ok sm" data-st="ready">Готов</button>`);
+  if(o.st==='cook')b.push(`<button class="btn line sm" data-st="acc" aria-label="Вернуть в «Принят»">Назад</button><button class="btn ok sm" data-st="ready">Готов</button>`);
+  if(o.st==='ready')b.push(`<button class="btn line sm" data-st="cook" aria-label="Вернуть в «Готовится»">Назад</button><button class="btn main sm" data-st="done">Выдан</button>`);
+  return b.join('');
+}
+function ocHtml(o){
+  const isF=fresh.has(o.id)&&fresh.get(o.id)>Date.now();
+  const bon=[];
+  if(o.gifts)bon.push('подарок на карте: −'+rub(o.giftSum));
+  if(o.used)bon.push('баллы: −'+rub(o.used));
+  const earned=o.st==='done'?`<p class="bon">Начислено: ${o.earn} ${plural(o.earn,'балл','балла','баллов')}, ${o.drinks} ${plural(o.drinks,'штамп','штампа','штампов')}${o.rating?` · оценка ${o.rating}`:''}</p>`:'';
+  return `<article class="oc${isF?' fresh':''}" data-oc="${o.id}">
+    <div class="oc-h"><b>№${o.no}</b><span class="st ${o.st}">${C.ST_NAME[o.st]}</span><span class="md">${o.mode==='delivery'?'доставка':'с собой'}${o.src==='test'?' · тест':''}</span></div>
+    <ul>${o.rows.map(r=>`<li><b>${esc(r.n)} × ${r.q}</b><small>${esc(r.opts)}</small></li>`).join('')}</ul>
+    ${o.mode==='delivery'?`<p>${esc(o.addr)}</p>`:''}
+    <p>${esc(o.name)} · <a href="tel:+7${esc(o.phone)}">${esc(C.fmtPhone(o.phone))}</a></p>
+    ${o.comment?`<p class="cmt">${esc(o.comment)}</p>`:''}
+    ${bon.length?`<p class="bon">${esc(bon.join(', '))}</p>`:''}${earned}
+    <div class="oc-f"><span class="sum">${rub(o.total)}</span>${actions(o)}</div>
+    ${C.isActive(o)?'<button class="x-cancel" data-cancel>Отменить заказ</button>':''}
+  </article>`;
+}
+function renderOrders(){
+  const S=C.state(),act=S.orders.filter(C.isActive).sort((a,b)=>a.slot-b.slot||a.no-b.no);
+  const groups=new Map();
+  act.forEach(o=>{if(!groups.has(o.slot))groups.set(o.slot,[]);groups.get(o.slot).push(o)});
+  let h='';
+  groups.forEach((list,slot)=>{
+    const u=untilText(slot);
+    h+=`<div class="col ${u.c}"><div class="col-h"><h2>${hm(slot)}</h2><span>${esc(u.t)}</span></div>${list.map(ocHtml).join('')}</div>`;
+  });
+  if(!act.length)h+=`<div class="col"><p class="none">Заказов в работе нет. Оформите заказ на экране гостя или нажмите «Тестовый заказ».</p></div>`;
+  const arch=S.orders.filter(o=>!C.isActive(o)).sort((a,b)=>b.stTs-a.stTs).slice(0,6);
+  if(arch.length)h+=`<div class="col arch"><div class="col-h"><h2>Завершённые</h2></div>${arch.map(ocHtml).join('')}</div>`;
+  const keep=$('#kb').scrollLeft;$('#kb').innerHTML=h;$('#kb').scrollLeft=keep;
+  const n=act.length,rd=act.filter(o=>o.st==='ready').length;
+  $('#ordSum').innerHTML=`В работе: <b>${n}</b>, ждут у стойки: <b>${rd}</b>. Нажмите «Готовится», затем «Готов». Баллы и штампы начисляются кнопкой «Выдан». Сейчас ${hm(C.now())}.`;
+  const nw=act.filter(o=>o.st==='acc').length,e=$('#bdgOrd');e.textContent=nw;e.hidden=!nw;
+}
+$('#kb').addEventListener('click',e=>{
+  const card=e.target.closest('[data-oc]');if(!card)return;const id=card.dataset.oc;
+  const b=e.target.closest('[data-st]');
+  if(b){
+    const r=C.setStatus(id,b.dataset.st);
+    if(!r.ok){toast(r.err);renderAll();return}
+    const o=r.order;
+    toast(`Заказ №${o.no}: ${C.ST_NAME[o.st].toLowerCase()}`+(o.st==='done'?`. Начислено ${o.earn} ${plural(o.earn,'балл','балла','баллов')} и ${o.drinks} ${plural(o.drinks,'штамп','штампа','штампов')}`:''));
+    renderAll();return;
+  }
+  if(e.target.closest('[data-cancel]')){
+    const o=C.getOrder(id);if(!o)return;
+    if(!confirm(`Отменить заказ №${o.no}, ${o.name}?`+(o.used?` Гостю вернётся ${o.used} ${plural(o.used,'балл','балла','баллов')}.`:'')))return;
+    C.setStatus(id,'cancel');toast('Заказ №'+o.no+' отменён');renderAll();
+  }
+});
+$('#testBtn').addEventListener('click',()=>{const r=C.testOrder();if(!r.ok)toast(r.err);tick()});
+
+/* ===== звук (Web Audio), браузер разрешает его только после нажатия ===== */
+let AC=null,soundOn=C.kvGet('coffee_sound',true);
+function unlock(){try{if(!AC)AC=new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume().then(sndUi);}catch(e){}sndUi()}
+document.addEventListener('pointerdown',unlock,{passive:true});document.addEventListener('keydown',unlock);
+function ding(){
+  if(!soundOn||!AC||AC.state!=='running')return;const t=AC.currentTime;
+  [[659,0],[988,.17]].forEach(([f,d])=>{const o=AC.createOscillator(),g=AC.createGain();o.type='sine';o.frequency.value=f;
+    g.gain.setValueAtTime(.0001,t+d);g.gain.exponentialRampToValueAtTime(.24,t+d+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d+.5);
+    o.connect(g);g.connect(AC.destination);o.start(t+d);o.stop(t+d+.55)});
+}
+function sndUi(){
+  $('#sndBtn').setAttribute('aria-pressed',soundOn);$('#sndTxt').textContent=soundOn?'Звук вкл.':'Звук выкл.';
+  $('#sndHint').hidden=!(soundOn&&(!AC||AC.state!=='running'));
+}
+$('#sndBtn').addEventListener('click',()=>{soundOn=!soundOn;C.kvSet('coffee_sound',soundOn);unlock();sndUi();if(soundOn)setTimeout(ding,80)});
+
+/* ===== гости ===== */
+let gf='all';
+function renderGuests(){
+  const all=C.guests(),q=$('#gSearch').value.trim().toLowerCase(),qd=q.replace(/\D/g,'');
+  const away=all.filter(g=>g.absent);
+  $('#gfAway').textContent='Давно не были ('+away.length+')';
+  $('#gSum').innerHTML=`На картах: <b>${all.length}</b>. «Давно не были» — ${R.absentDays} и больше дней без визита. Всего баллов на руках: <b>${all.reduce((a,g)=>a+g.points,0)}</b>.`;
+  const list=(gf==='away'?away:all).filter(g=>!q||g.name.toLowerCase().includes(q)||(qd&&g.phone.includes(qd)))
+    .sort((a,b)=>gf==='away'?b.days-a.days:(b.lastVisit||b.visits)-(a.lastVisit||a.visits));
+  $('#gBody').innerHTML=list.map(g=>{
+    const last=g.lastVisit?(g.days===0?'сегодня':g.days+' '+plural(g.days,'день','дня','дней')+' назад'):'заказ ещё не выдан';
+    const dots=Array.from({length:R.stampEvery-1},(_,i)=>`<i class="${i<g.stamps?'on':''}"></i>`).join('');
+    return `<tr><td><b>${esc(g.name)}</b></td><td><a href="tel:+7${esc(g.phone)}">${esc(C.fmtPhone(g.phone))}</a></td><td class="n">${g.visits}</td><td class="${g.absent?'away':''}">${esc(last)}</td><td><span class="mini">${dots}</span>${g.stamps} из ${R.stampEvery-1}</td><td class="n">${g.points}</td><td class="n">${rub(g.spent)}</td></tr>`;
+  }).join('')||'<tr><td colspan="7" class="mut">Никого не нашли.</td></tr>';
+}
+$$('[data-gf]').forEach(b=>b.addEventListener('click',()=>{gf=b.dataset.gf;$$('[data-gf]').forEach(x=>x.setAttribute('aria-pressed',x===b));renderGuests()}));
+$('#gSearch').addEventListener('input',renderGuests);
+
+/* ===== меню: стоп-лист ===== */
+function renderMenu(){
+  const S=C.state(),offN=Object.keys(S.off).length,total=Object.keys(C.ITEMS).length;
+  $('#mSum').innerHTML=`Позиций в меню-примере: <b>${total}</b>, в стоп-листе: <b>${offN}</b>. Выключенная позиция сразу становится недоступна на экране гостя.`;
+  $('#offClear').hidden=!offN;
+  const e=$('#bdgOff');e.textContent=offN;e.hidden=!offN;
+  $('#mList').innerHTML=C.MENU.map(c=>`<div class="mcat"><h2>${esc(c.t)}</h2>${c.items.map(it=>{const on=!S.off[it.id];
+    return `<div class="mrow${on?'':' off'}"><span class="nm">${esc(it.n)}</span><span class="pr">${rub(it.p)}</span>
+      <label class="sw">${on?'в продаже':'стоп'}<input type="checkbox" data-item="${it.id}" ${on?'checked':''} aria-label="${esc(it.n)}: в продаже"><span class="tr"></span></label></div>`}).join('')}</div>`).join('');
+}
+$('#mList').addEventListener('change',e=>{
+  const id=e.target.dataset.item;if(!id)return;
+  C.setOff(id,!e.target.checked);renderAll();
+  const again=$(`[data-item="${id}"]`);if(again)again.focus({preventScroll:true});
+  toast(C.ITEMS[id].n+(e.target.checked?': снова в продаже':': в стоп-листе'));
+});
+$('#offClear').addEventListener('click',()=>{C.clearOff();renderAll();toast('Всё меню снова в продаже')});
+
+/* ===== жалобы ===== */
+function renderCompl(){
+  const S=C.state(),l=S.complaints.slice().sort((a,b)=>(a.st==='new'?0:1)-(b.st==='new'?0:1)||b.ts-a.ts);
+  const n=l.filter(c=>c.st==='new').length,e=$('#bdgComp');e.textContent=n;e.hidden=!n;
+  $('#cList').innerHTML=l.map(c=>`<article class="cp ${c.st}"><h3>Оценка ${c.rating} из 5 · заказ №${c.no}</h3><p>${esc(c.text)}</p>
+    <p class="meta">${esc(c.name)} · <a href="tel:+7${esc(c.phone)}">${esc(C.fmtPhone(c.phone))}</a> · ${esc(C.dateTime(c.ts))}</p>
+    <button class="btn ${c.st==='new'?'main':'line'} sm" data-cp="${c.id}">${c.st==='new'?'Разобрано':'Вернуть в работу'}</button></article>`).join('')||'<p class="mut">Жалоб нет.</p>';
+}
+$('#cList').addEventListener('click',e=>{const b=e.target.closest('[data-cp]');if(!b)return;C.resolveComplaint(b.dataset.cp);renderAll()});
+
+/* ===== новые заказы и обновления из вкладки гостя ===== */
+function renderAll(){checkNew();renderOrders();renderGuests();renderMenu();renderCompl();sig=C.raw()}
+let sig='';
+const seen=new Set(),seenC=new Set();
+function markAll(){const S=C.state();S.orders.forEach(o=>seen.add(o.id));S.complaints.forEach(c=>seenC.add(c.id))}
+function checkNew(){
+  const S=C.state();let n=0,last=null;
+  S.orders.forEach(o=>{if(!seen.has(o.id)){seen.add(o.id);n++;last=o;fresh.set(o.id,Date.now()+9000)}});
+  let cn=0;S.complaints.forEach(c=>{if(!seenC.has(c.id)){seenC.add(c.id);cn++}});
+  if(n){
+    ding();
+    toast(n>1?'Новых заказов: '+n:`Новый заказ №${last.no}, к ${hm(last.slot)}`);
+    setTimeout(renderOrders,9100);
+  }
+  if(cn){ding();toast('Новая жалоба гостя, вкладка «Жалобы»')}
+}
+function tick(){if(C.raw()!==sig)renderAll()}
+window.addEventListener('storage',tick);
+setInterval(tick,2000);
+setInterval(()=>{renderOrders()},30000);   // обновить «через N мин»
+
+$('#resetBtn').addEventListener('click',()=>{
+  if(!confirm('Удалить все данные демо в этом браузере и создать их заново?'))return;
+  C.reset();seen.clear();seenC.clear();markAll();renderAll();toast('Демо-данные созданы заново');
+});
+
+C.state();markAll();sndUi();renderAll();
+showTab((location.hash||'').slice(1));
+</script>
+</body>
+</html>

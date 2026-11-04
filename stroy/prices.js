@@ -14,6 +14,12 @@
    Ремонт в 3D (finish):
    floor / walls / ceiling — покрытия, цена за м²: work — работы, mat — материалы
    skirting — плинтус, цена за погонный метр
+
+   Дом снаружи в 3D (exterior) — ВСЕ ЦЕНЫ ПРИМЕР:
+   roof / facade / plinth — кровля, фасад, цоколь, цена за м²: work — работы, mat — материалы
+   gutter   — водосточная система, цена за погонный метр (желоба и трубы)
+   demoRoof — демонтаж старой кровли за м²
+   porch    — крыльцо за штуку (у каждой двери)
    ===================================================================== */
 const PRICES = {
   currency: '₽',
@@ -88,5 +94,35 @@ const PRICES = {
       stretch: { name: 'Натяжной глянец', desc: 'ПВХ-полотно, монтаж',  work: 450, mat: 550 }
     },
     skirting: { name: 'Плинтус', unit: 'пог. м', work: 200, mat: 280 }
+  },
+  exterior: {
+    note: 'пример',
+    roof: {
+      tile_red:      { name: 'Металлочерепица красная', work: 1300, mat: 1100 },
+      tile_graphite: { name: 'Металлочерепица графит',  work: 1300, mat: 1100 },
+      tile_brown:    { name: 'Металлочерепица коричневая', work: 1300, mat: 1100 },
+      prof:          { name: 'Профнастил',     work: 1100, mat: 800 },
+      soft:          { name: 'Мягкая кровля',  work: 1300, mat: 1400 },
+      seam:          { name: 'Фальцевая',      work: 1900, mat: 2200 }
+    },
+    facade: {
+      siding_light:  { name: 'Сайдинг светлый',    work: 1200, mat: 900 },
+      siding_dark:   { name: 'Сайдинг тёмный',     work: 1200, mat: 1100 },
+      brick:         { name: 'Панели под кирпич',  work: 1500, mat: 1800 },
+      stone:         { name: 'Панели под камень',  work: 1700, mat: 2300 },
+      plaster_white: { name: 'Штукатурка белая',   work: 1400, mat: 700 },
+      plaster_grey:  { name: 'Штукатурка серая',   work: 1400, mat: 750 }
+    },
+    plinth: {
+      plaster: { name: 'Штукатурка серая', work: 1200, mat: 500 },
+      stone:   { name: 'Под камень',       work: 1700, mat: 2300 },
+      clinker: { name: 'Клинкер тёмный',   work: 1800, mat: 2400 }
+    },
+    gutter:   { name: 'Водостоки', unit: 'пог. м', work: 450, mat: 850 },
+    demoRoof: { name: 'Демонтаж старой кровли', unit: 'м²', work: 300, mat: 0 },
+    porch: {
+      plain:  { name: 'Со ступенями', unit: 'шт.', work: 25000, mat: 20000 },
+      canopy: { name: 'С навесом',    unit: 'шт.', work: 38000, mat: 37000 }
+    }
   }
 };
