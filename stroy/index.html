@@ -2,217 +2,287 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>СтройДемо — строительная компания в Тамбове (пример)</title>
-<meta name="description" content="Демо-сайт строительной компании в Тамбове с калькулятором сметы. Все данные — пример.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>СтройДемо — ремонт и строительство в Тамбове (пример)</title>
+<meta name="description" content="Демо-сайт строительной компании в Тамбове: услуги, калькулятор сметы, ремонт в 3D. Все данные — пример.">
+<meta name="theme-color" content="#121314">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=Manrope:wght@400;500;600;700&display=swap">
 <!-- Цены калькулятора и «Ремонта в 3D» — в общем файле prices.js (объект PRICES) -->
 <script src="prices.js"></script>
+<script>document.documentElement.classList.add('js');if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm');</script>
 <style>
+/* СтройДемо — графит, тёплый камень и латунь. Шрифты: Cormorant Garamond (заголовки) + Manrope (текст). */
 :root{
-  --bg:#f6f5f2; --card:#fff; --ink:#1c2430; --muted:#5d6878; --line:#e3e0d8;
-  --acc:#f28c18; --acc-d:#d9730a; --dark:#1c2430; --ok:#1f9d55; --err:#d93025;
-  --r:16px; --sh:0 6px 24px rgba(28,36,48,.08);
+  --night:#121314; --night2:#1a1b1d; --night3:#242527;
+  --stone:#efebe4; --paper:#f8f5ef; --card:#fffdf9;
+  --ink:#17181a; --muted:#6b665e; --line:#ddd5c8;
+  --brass:#b8925a; --brass-l:#d6b47e; --brass-d:#8f6d3c;
+  --kcream:#efe7d8; --kmut:#9c958a; --kline:rgba(239,231,216,.12);
+  --acc:#b8925a; --acc-d:#8f6d3c; --dark:#121314; --ok:#3f8f5f; --err:#c4402f;
+  --f-d:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --f-t:Manrope,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --r:16px; --ease:cubic-bezier(.22,1,.36,1);
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html{scroll-behavior:smooth}
-body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-text-size-adjust:100%}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 var(--f-t);color:var(--ink);background:var(--paper);overflow-x:hidden;-webkit-font-smoothing:antialiased}
 body.no-scroll{overflow:hidden}
-h1,h2,h3{line-height:1.2;margin:0 0 .5em}
+h1,h2,h3{margin:0 0 .5em;font-weight:600}
 p{margin:0 0 1em}
-a{color:var(--acc-d)}
-section{scroll-margin-top:70px}
-.wrap{max-width:1140px;margin:0 auto;padding:0 18px}
-.sec{padding:64px 0}
-.sec-head{max-width:720px;margin-bottom:32px}
-.sec-head h2{font-size:clamp(26px,4vw,36px)}
-.sec-head p{color:var(--muted);margin:0}
-.tag{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;background:#fff1de;color:#a35300;border:1px solid #f7cf9a;border-radius:6px;padding:2px 6px;vertical-align:middle;line-height:1.4}
+a{color:var(--brass-d);text-underline-offset:3px}
+section{scroll-margin-top:72px}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,4vw,40px)}
+.sec{padding:clamp(72px,10vw,128px) 0}
+.kicker{font:600 12px/1.4 var(--f-t);letter-spacing:.2em;text-transform:uppercase;color:var(--brass-d);margin:0 0 16px}
+.dark .kicker,.hero .kicker{color:var(--brass-l)}
+.h2{font:600 clamp(40px,5.6vw,68px)/1 var(--f-d);letter-spacing:-.01em;margin:0 0 18px}
+.sec-head{max-width:720px;margin-bottom:clamp(36px,5vw,56px)}
+.sec-head p{color:var(--muted);font-size:17px;margin:0;max-width:40em}
+.dark{background:var(--night);color:var(--kcream)}
+.dark .sec-head p{color:var(--kmut)}
+.tag{display:inline-block;font:600 10px/1.6 var(--f-t);letter-spacing:.14em;text-transform:uppercase;padding:2px 9px;border-radius:999px;border:1px solid currentColor;color:var(--brass-d);vertical-align:middle;white-space:nowrap}
+.dark .tag,.hero .tag{color:var(--brass-l)}
+.h2 .tag{font-size:10px;margin-left:10px;transform:translateY(-.6em)}
 
-/* buttons */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:12px 22px;border-radius:12px;border:2px solid transparent;font:inherit;font-weight:700;cursor:pointer;text-decoration:none;transition:background .15s,transform .1s;text-align:center;line-height:1.2}
-.btn:active{transform:translateY(1px)}
-.btn:focus-visible{outline:3px solid #8ab4ff;outline-offset:2px}
-.btn-acc{background:var(--acc);color:#fff}
-.btn-acc:hover{background:var(--acc-d)}
-.btn-ghost{background:transparent;color:inherit;border-color:currentColor}
-.btn-ghost:hover{background:rgba(255,255,255,.08)}
-.btn-light{background:#fff;color:var(--ink);border-color:var(--line)}
-.btn-light:hover{border-color:var(--acc)}
-.btn-sm{min-height:40px;padding:8px 16px;font-size:15px}
+/* ---------- кнопки ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:12px 26px;border-radius:999px;border:1.5px solid transparent;font:600 15px/1.2 var(--f-t);letter-spacing:.01em;text-decoration:none;text-align:center;cursor:pointer;transition:transform .25s var(--ease),background .25s,color .25s,border-color .25s}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.97);transition-duration:.08s}
+.btn:focus-visible{outline:2px solid var(--brass-l);outline-offset:3px}
+.btn svg{transition:transform .3s var(--ease)}
+.btn:hover svg{transform:translateX(3px)}
+.btn-acc{background:var(--brass);color:#16120b}
+.btn-acc:hover{background:var(--brass-l)}
+.btn-ghost{background:transparent;color:inherit;border-color:rgba(127,120,110,.45)}
+.btn-ghost:hover{border-color:var(--brass)}
+.btn-light{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn-light:hover{border-color:var(--brass);color:var(--brass-d)}
+.btn-sm{min-height:42px;padding:8px 18px;font-size:14px}
 .btn-block{width:100%}
 .btn[disabled]{opacity:.6;cursor:wait}
+.btns{display:flex;flex-wrap:wrap;gap:12px}
 
-/* demo bar + header */
-.demo-bar{background:#2b3442;color:#ffd9a8;font-size:13px;text-align:center;padding:6px 12px}
-.top{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.top .wrap{display:flex;align-items:center;justify-content:space-between;height:62px;gap:12px;position:relative}
-.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:20px;color:var(--ink);text-decoration:none}
-.logo-mark{width:34px;height:34px;border-radius:9px;background:var(--acc);display:grid;place-items:center;flex:none}
-.menu{display:flex;gap:22px}
-.menu a{color:var(--ink);text-decoration:none;font-weight:500}
-.menu a:hover{color:var(--acc-d)}
+/* ---------- демо-полоса и шапка ---------- */
+.demo-bar{background:#0b0b0c;color:var(--kmut);font-size:12px;letter-spacing:.04em;text-align:center;padding:7px 12px}
+.demo-bar b{color:var(--brass-l);font-weight:600}
+.top{position:sticky;top:0;z-index:50;background:rgba(18,19,20,.0);color:var(--kcream);transition:background .35s,box-shadow .35s;margin-bottom:-72px}
+.top.solid{background:rgba(18,19,20,.94);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);box-shadow:0 1px 0 var(--kline)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:72px;gap:16px;position:relative}
+.logo{display:flex;align-items:center;gap:12px;color:var(--kcream);text-decoration:none}
+.logo-mark{width:38px;height:38px;border:1px solid var(--brass);border-radius:50%;display:grid;place-items:center;flex:none;color:var(--brass-l)}
+.logo-t{font:600 24px/1 var(--f-d);letter-spacing:.01em}
+.logo .tag{margin-left:2px}
+.menu{display:flex;gap:28px}
+.menu a{color:var(--kcream);opacity:.82;text-decoration:none;font-size:14px;font-weight:500;letter-spacing:.02em;transition:opacity .2s,color .2s}
+.menu a:hover{opacity:1;color:var(--brass-l)}
 .top-right{display:flex;align-items:center;gap:10px}
-.burger{display:none;width:44px;height:44px;border:1px solid var(--line);border-radius:10px;background:#fff;cursor:pointer;place-items:center;padding:0}
-.burger span,.burger span::before,.burger span::after{display:block;width:20px;height:2px;background:var(--ink);position:relative;content:""}
+.burger{display:none;width:44px;height:44px;border:1px solid var(--kline);border-radius:50%;background:transparent;cursor:pointer;place-items:center;padding:0}
+.burger span,.burger span::before,.burger span::after{display:block;width:18px;height:1.5px;background:var(--kcream);position:relative;content:""}
 .burger span::before{position:absolute;top:-6px}
 .burger span::after{position:absolute;top:6px}
-@media(max-width:980px){
+@media(max-width:1000px){
   .burger{display:grid}
-  .menu{position:absolute;top:62px;left:0;right:0;background:#fff;flex-direction:column;gap:0;border-bottom:1px solid var(--line);box-shadow:var(--sh);display:none}
+  .menu{position:absolute;top:72px;left:0;right:0;background:var(--night);flex-direction:column;gap:0;border-top:1px solid var(--kline);display:none}
   .menu.open{display:flex}
-  .menu a{padding:14px 18px;border-top:1px solid var(--line)}
+  .menu a{padding:16px clamp(16px,4vw,40px);border-bottom:1px solid var(--kline);opacity:1}
 }
-@media(max-width:420px){ .top-right .btn{display:none} }
+@media(max-width:440px){ .top-right .btn{display:none} .logo .tag{display:none} }
 
-/* hero */
-.hero{background:linear-gradient(120deg,rgba(28,36,48,.96),rgba(28,36,48,.82)),repeating-linear-gradient(45deg,#2c3644 0 2px,transparent 2px 22px);color:#fff;padding:72px 0 64px}
-.hero h1{font-size:clamp(30px,6vw,52px);max-width:760px}
-.hero h1 em{font-style:normal;color:#ffb35c}
-.hero .lead{font-size:clamp(17px,2.4vw,20px);color:#d5dbe3;max-width:640px}
-.hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 36px}
-.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;max-width:640px}
-.fact{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:14px}
-.fact b{display:block;font-size:24px;color:#ffb35c}
-.fact span{font-size:13px;color:#c9d0da}
-.hero small{display:block;margin-top:12px;color:#97a2b0;font-size:12px}
-@media(max-width:520px){ .hero-btns .btn{width:100%} .facts{grid-template-columns:1fr} }
+/* ---------- первый экран ---------- */
+.hero{position:relative;min-height:min(100vh,940px);min-height:min(100svh,940px);display:flex;align-items:flex-end;background:radial-gradient(120% 90% at 78% 30%,#26272a 0%,var(--night) 58%);color:var(--kcream);overflow:hidden;padding:140px 0 0}
+.hero::before{content:"";position:absolute;inset:0;background-image:linear-gradient(var(--kline) 1px,transparent 1px),linear-gradient(90deg,var(--kline) 1px,transparent 1px);background-size:64px 64px;opacity:.35;-webkit-mask-image:radial-gradient(80% 70% at 70% 40%,#000 0%,transparent 75%);mask-image:radial-gradient(80% 70% at 70% 40%,#000 0%,transparent 75%)}
+.hero-art{position:absolute;right:-6%;top:12%;width:min(54vw,780px);height:auto;color:var(--brass);opacity:.62}
+.hero-art .d{stroke-dasharray:1;stroke-dashoffset:0}
+html.js:not(.rm) .hero-art .d{stroke-dashoffset:1;animation:draw 2.6s var(--ease) forwards}
+html.js:not(.rm) .hero-art .d2{animation-delay:.5s}
+html.js:not(.rm) .hero-art .d3{animation-delay:1s}
+html.js:not(.rm) .hero-art .fade{opacity:0;animation:fadeIn 1.2s ease 1.8s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+@keyframes fadeIn{to{opacity:1}}
+.hero-in{position:relative;width:100%}
+.hero h1{font:600 clamp(52px,8.6vw,124px)/.92 var(--f-d);letter-spacing:-.02em;max-width:9.5em;margin:0 0 28px}
+.hero h1 em{font-style:italic;font-weight:500;color:var(--brass-l)}
+.hero .lead{font-size:clamp(17px,1.6vw,20px);line-height:1.6;color:#cfc7b8;max-width:34em;margin-bottom:34px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:clamp(56px,8vw,96px)}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-top:1px solid var(--kline)}
+.fact{padding:26px 24px 30px 0;border-right:1px solid var(--kline)}
+.fact+.fact{padding-left:clamp(16px,3vw,40px)}
+.fact:last-child{border-right:0}
+.fact b{display:block;font:600 clamp(40px,5vw,64px)/1 var(--f-d);color:var(--kcream);margin-bottom:8px}
+.fact b i{font-style:normal;color:var(--brass-l)}
+.fact span{font-size:14px;color:var(--kmut)}
+.hero small{position:absolute;right:clamp(16px,4vw,40px);bottom:12px;color:#6f6a61;font-size:11px}
+@media(max-width:760px){
+  .hero{min-height:0;padding-top:120px}
+  .hero-art{position:relative;right:auto;top:auto;width:120%;margin:0 -10% -8%;opacity:.55;order:-1}
+  .hero{flex-direction:column;align-items:stretch}
+  .hero-btns .btn{width:100%}
+  .facts{grid-template-columns:1fr}
+  .fact,.fact+.fact{padding:18px 0;border-right:0;border-bottom:1px solid var(--kline)}
+  .fact:last-child{border-bottom:0}
+  .hero small{position:static;display:block;padding:0 0 14px}
+}
 
-/* services */
-.grid-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:18px}
-.card{background:var(--card);border-radius:var(--r);box-shadow:var(--sh);padding:22px;display:flex;flex-direction:column}
-.card .ico{width:48px;height:48px;border-radius:12px;background:#fff1de;display:grid;place-items:center;margin-bottom:14px}
-.card h3{font-size:19px}
-.card p{color:var(--muted);font-size:15px;flex:1}
-.price-from{font-weight:800;margin-bottom:12px}
-.price-from small{font-weight:400;color:var(--muted)}
+/* ---------- услуги ---------- */
+.svc{list-style:none;margin:0;padding:0;border-top:1px solid var(--line);counter-reset:svc}
+.svc li{counter-increment:svc;display:grid;grid-template-columns:80px minmax(0,1.1fr) minmax(0,1.3fr) 200px 150px;gap:24px;align-items:center;padding:30px 0;border-bottom:1px solid var(--line);transition:background .3s}
+.svc li::before{content:counter(svc,decimal-leading-zero);font:500 italic 22px/1 var(--f-d);color:var(--brass-d)}
+.svc h3{font:600 clamp(26px,2.6vw,34px)/1.05 var(--f-d);margin:0}
+.svc p{margin:0;color:var(--muted);font-size:15px}
+.price-from{font:600 22px/1.2 var(--f-d);color:var(--ink)}
+.price-from small{display:block;font:500 11px/1.4 var(--f-t);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.svc .btn{justify-self:end}
+.svc li:hover{background:linear-gradient(90deg,transparent,rgba(184,146,90,.07) 30%,transparent)}
+@media(max-width:1000px){
+  .svc li{grid-template-columns:52px 1fr auto;grid-template-areas:"n t t" "n d d" "n p b";row-gap:10px}
+  .svc li::before{grid-area:n;align-self:start;padding-top:6px}
+  .svc h3{grid-area:t}.svc p{grid-area:d}.price-from{grid-area:p}.svc .btn{grid-area:b}
+}
+@media(max-width:480px){ .svc li{grid-template-columns:34px 1fr;grid-template-areas:"n t" "n d" "n p" "n b"} .svc .btn{justify-self:start} }
 
-/* calculator */
-.calc-sec{background:#ebe8e1}
-.calc{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:22px;align-items:start}
-.step{background:#fff;border-radius:var(--r);padding:20px;margin-bottom:16px;box-shadow:var(--sh)}
-.step-title{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;margin-bottom:14px}
-.step-num{width:30px;height:30px;border-radius:50%;background:var(--acc);color:#fff;display:grid;place-items:center;font-size:15px;flex:none}
+/* ---------- калькулятор ---------- */
+.calc-sec{background:var(--stone)}
+.calc{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(0,1fr);gap:28px;align-items:start}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:24px;margin-bottom:16px}
+.step-title{display:flex;align-items:center;gap:14px;font:600 26px/1.1 var(--f-d);margin-bottom:18px}
+.step-num{font:500 italic 22px/1 var(--f-d);color:var(--brass-d);width:auto;height:auto;flex:none}
+.step-num::before{content:"0"}
 .choices{display:grid;gap:10px}
-.choices.works{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
+.choices.works{grid-template-columns:repeat(auto-fill,minmax(160px,1fr))}
 .choices.levels{grid-template-columns:repeat(3,minmax(0,1fr))}
 @media(max-width:560px){ .choices.levels{grid-template-columns:1fr} }
 .choice{display:block;position:relative;cursor:pointer}
 .choice input{position:absolute;opacity:0;pointer-events:none}
-.choice-body{display:block;height:100%;border:2px solid var(--line);border-radius:12px;padding:12px 14px;background:#fff;transition:border-color .15s,background .15s}
-.choice-body b{display:block;font-size:15px;line-height:1.3}
+.choice-body{display:block;height:100%;border:1px solid var(--line);border-radius:12px;padding:14px 16px;background:var(--paper);transition:border-color .2s,background .2s,box-shadow .2s}
+.choice-body b{display:block;font-size:15px;font-weight:600;line-height:1.3}
 .choice-body small{display:block;color:var(--muted);font-size:13px;margin-top:4px}
-.choice:hover .choice-body{border-color:#f5bd78}
-.choice input:checked + .choice-body{border-color:var(--acc);background:#fff8ef;box-shadow:0 0 0 3px rgba(242,140,24,.15)}
-.choice input:focus-visible + .choice-body{outline:3px solid #8ab4ff;outline-offset:2px}
+.choice:hover .choice-body{border-color:var(--brass-l)}
+.choice input:checked + .choice-body{border-color:var(--brass);background:#fbf3e6;box-shadow:inset 0 0 0 1px var(--brass)}
+.choice input:focus-visible + .choice-body{outline:2px solid var(--brass);outline-offset:2px}
 .qty-row{display:flex;align-items:center;gap:16px}
-.qty-row input[type=range]{flex:1;accent-color:var(--acc);height:32px;min-width:0}
-.qty-box{display:flex;align-items:center;border:2px solid var(--line);border-radius:12px;background:#fff;padding:0 12px 0 0;flex:none}
-.qty-box:focus-within{border-color:var(--acc)}
-.qty-box input{width:96px;border:0;background:transparent;font:inherit;font-size:18px;font-weight:700;padding:10px 6px 10px 12px;outline:none;min-height:46px}
+.qty-row input[type=range]{flex:1;accent-color:var(--brass);height:32px;min-width:0}
+.qty-box{display:flex;align-items:center;border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:0 14px 0 0;flex:none}
+.qty-box:focus-within{border-color:var(--brass)}
+.qty-box input{width:96px;border:0;background:transparent;font:600 22px/1 var(--f-d);padding:10px 6px 10px 14px;outline:none;min-height:48px}
 .qty-box span{color:var(--muted);font-weight:600}
 .hint{font-size:13px;color:var(--muted);margin:8px 0 0}
 .hint.warn{color:var(--err)}
 @media(max-width:480px){ .qty-row{flex-direction:column;align-items:stretch;gap:8px} .qty-box input{flex:1;width:auto} }
 .checks{display:grid;gap:10px}
-.check{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border:2px solid var(--line);border-radius:12px;cursor:pointer;background:#fff;transition:border-color .15s}
-.check:hover{border-color:#f5bd78}
-.check:has(input:checked){border-color:var(--acc);background:#fff8ef}
-.check input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--acc);flex:none;cursor:pointer}
-.check b{display:block;line-height:1.3}
+.check{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--paper);transition:border-color .2s,background .2s}
+.check:hover{border-color:var(--brass-l)}
+.check:has(input:checked){border-color:var(--brass);background:#fbf3e6}
+.check input{width:20px;height:20px;margin:2px 0 0;accent-color:var(--brass);flex:none;cursor:pointer}
+.check b{display:block;line-height:1.3;font-weight:600}
 .check small{display:block;color:var(--muted);font-size:13px}
-.check em{display:block;font-style:normal;font-size:13px;font-weight:700;color:var(--acc-d);margin-top:2px}
+.check em{display:block;font-style:normal;font-size:13px;font-weight:600;color:var(--brass-d);margin-top:2px}
 .na{font-size:13px;color:var(--muted);margin:10px 0 0}
-
-.result{position:sticky;top:80px;background:var(--dark);color:#fff;border-radius:var(--r);padding:22px;box-shadow:var(--sh)}
-.result .lbl{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:#97a2b0}
-.res-price{font-size:clamp(26px,4.4vw,34px);font-weight:800;color:#ffb35c;line-height:1.15;margin:6px 0 4px}
-.res-meta{font-size:14px;color:#c9d0da}
-.res-per{font-size:13px;color:#97a2b0;margin-top:2px}
-.res-table{width:100%;border-collapse:collapse;margin:16px 0 12px;font-size:14px}
-.res-table td{padding:8px 0;border-bottom:1px solid rgba(255,255,255,.12);vertical-align:top}
+.result{position:sticky;top:96px;background:var(--night);color:var(--kcream);border-radius:var(--r);padding:30px 28px;box-shadow:0 30px 60px -30px rgba(18,19,20,.55)}
+.result .lbl{font:600 11px/1.4 var(--f-t);text-transform:uppercase;letter-spacing:.18em;color:var(--brass-l)}
+.res-price{font:600 clamp(32px,4vw,46px)/1.05 var(--f-d);color:var(--kcream);margin:12px 0 8px}
+.res-meta{font-size:14px;color:#cfc7b8}
+.res-per{font-size:13px;color:var(--kmut);margin-top:2px}
+.res-table{width:100%;border-collapse:collapse;margin:20px 0 14px;font-size:14px}
+.res-table td{padding:10px 0;border-bottom:1px solid var(--kline);vertical-align:top;color:#d9d1c2}
 .res-table td:last-child{text-align:right;white-space:nowrap;padding-left:10px;font-weight:600}
-.res-table tr.total td{border-bottom:0;font-weight:800;font-size:15px;color:#ffb35c;padding-top:10px}
-.res-note{font-size:12px;color:#97a2b0;background:rgba(255,255,255,.06);border-radius:10px;padding:10px 12px;margin-bottom:16px}
+.res-table tr.total td{border-bottom:0;font:600 20px/1.2 var(--f-d);color:var(--brass-l);padding-top:14px}
+.res-note{font-size:12px;color:var(--kmut);border:1px solid var(--kline);border-radius:12px;padding:10px 12px;margin-bottom:18px}
 .res-btns{display:grid;gap:10px}
-.res-btns .btn-ghost{color:#fff}
+.res-btns .btn-ghost{color:var(--kcream);border-color:rgba(239,231,216,.25)}
+.res-btns .btn-ghost:hover{border-color:var(--brass-l)}
 @media(max-width:900px){ .calc{grid-template-columns:1fr} .result{position:static} }
-@media(max-width:400px){ .res-table td:last-child{white-space:normal} .result{padding:18px} }
+@media(max-width:400px){ .res-table td:last-child{white-space:normal} .result{padding:22px 18px} }
 
-/* 3d teaser */
-.viz-teaser{flex-direction:row;align-items:center;justify-content:space-between;gap:20px;border-left:5px solid var(--acc)}
-.viz-teaser h2{font-size:clamp(22px,3.4vw,28px)}
-.viz-teaser p{margin:0;max-width:640px}
-.viz-teaser .btn{flex:none}
-@media(max-width:700px){ .viz-teaser{flex-direction:column;align-items:stretch} }
+/* ---------- 3D ---------- */
+.viz{position:relative;overflow:hidden}
+.viz .wrap{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(32px,6vw,80px);align-items:center}
+.viz p{color:var(--kmut);font-size:17px;max-width:32em}
+.viz-art{width:100%;height:auto;color:var(--brass)}
+@media(max-width:860px){ .viz .wrap{grid-template-columns:1fr} .viz-art{max-width:520px;margin:0 auto} }
 
-/* portfolio */
-.pf-card{background:#fff;border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.ba{display:grid;grid-template-columns:1fr 1fr}
-.ph{aspect-ratio:4/3;position:relative;display:grid;place-items:center;text-align:center;font-size:13px;font-weight:600;padding:28px 8px 8px}
-.ph.before{background:repeating-linear-gradient(45deg,#d3cec4 0 12px,#c6c0b4 12px 24px);color:#4b4b4b}
-.ph.after{background:linear-gradient(135deg,#ffd29a,#f28c18 60%,#c2620a);color:#fff}
-.ph .badge{position:absolute;top:8px;left:8px;background:rgba(0,0,0,.65);color:#fff;font-size:11px;padding:2px 7px;border-radius:5px;text-transform:uppercase;letter-spacing:.04em}
-.pf-body{padding:16px 18px}
-.pf-body h3{font-size:17px;margin-bottom:4px}
+/* ---------- портфолио ---------- */
+.pf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px}
+@media(max-width:900px){ .pf{grid-template-columns:1fr} }
+.pf-card{background:transparent}
+.ba{display:grid;grid-template-columns:1fr 1fr;border-radius:var(--r);overflow:hidden}
+.ph{aspect-ratio:3/4;position:relative;display:flex;align-items:flex-end;padding:14px;font-size:12px;letter-spacing:.06em;text-transform:uppercase}
+.ph.before{background:linear-gradient(rgba(23,24,26,.06) 1px,transparent 1px) 0 0/18px 18px,linear-gradient(90deg,rgba(23,24,26,.06) 1px,transparent 1px) 0 0/18px 18px,#e2dccf;color:#7a7368}
+.ph.after{background:radial-gradient(120% 80% at 30% 20%,#2a2b2e,var(--night));color:var(--brass-l)}
+.ph.after svg{position:absolute;inset:18% 12% auto;width:76%;height:auto;color:var(--brass)}
+.ph.before svg{position:absolute;inset:18% 12% auto;width:76%;height:auto;color:#a39b8e}
+.ph .badge{position:absolute;top:12px;left:12px;font:600 10px/1 var(--f-t);letter-spacing:.16em;padding:6px 9px;border-radius:999px;border:1px solid currentColor}
+.pf-body{padding:18px 2px 0}
+.pf-body h3{font:600 26px/1.1 var(--f-d);margin-bottom:6px}
 .pf-body p{font-size:14px;color:var(--muted);margin:0}
 
-/* steps */
-.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,200px),1fr));gap:16px;counter-reset:st}
-.steps li{background:#fff;border-radius:var(--r);padding:20px;box-shadow:var(--sh);counter-increment:st;position:relative}
-.steps li::before{content:counter(st);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--dark);color:#ffb35c;font-weight:800;margin-bottom:12px}
-.steps b{display:block;margin-bottom:4px}
+/* ---------- этапы ---------- */
+.steps{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));counter-reset:st;border-top:1px solid var(--line)}
+.steps li{counter-increment:st;position:relative;padding:28px 24px 8px 0}
+.steps li+li{padding-left:24px;border-left:1px solid var(--line)}
+.steps li::before{content:counter(st,decimal-leading-zero);display:block;font:500 clamp(44px,5vw,64px)/1 var(--f-d);color:var(--brass);margin-bottom:18px}
+.steps b{display:block;font:600 22px/1.15 var(--f-d);margin-bottom:8px}
 .steps span{font-size:14px;color:var(--muted)}
+@media(max-width:1000px){ .steps{grid-template-columns:1fr 1fr} .steps li+li{border-left:0;padding-left:0} .steps li{border-bottom:1px solid var(--line);padding-bottom:24px} }
+@media(max-width:560px){ .steps{grid-template-columns:1fr} }
 
-/* contacts */
-.contacts{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-@media(max-width:760px){ .contacts{grid-template-columns:1fr} }
-.c-list{list-style:none;margin:0;padding:0;display:grid;gap:14px}
-.c-list li{display:flex;gap:12px;align-items:flex-start}
-.c-list .ico{width:40px;height:40px;border-radius:10px;background:#fff1de;display:grid;place-items:center;flex:none}
-.c-list small{display:block;color:var(--muted);font-size:13px}
-.c-list a{color:var(--ink);font-weight:700;text-decoration:none}
-.cta{background:var(--dark);color:#fff}
-.cta p{color:#c9d0da}
-.cta .btn{margin-top:8px}
-.cta .btn-ghost{color:#fff}
+/* ---------- контакты ---------- */
+.contacts{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,64px);align-items:start}
+@media(max-width:860px){ .contacts{grid-template-columns:1fr} }
+.c-list{list-style:none;margin:0;padding:0;border-top:1px solid var(--kline)}
+.c-list li{display:flex;gap:18px;align-items:flex-start;padding:20px 0;border-bottom:1px solid var(--kline)}
+.c-list .ico{width:42px;height:42px;border-radius:50%;border:1px solid var(--kline);display:grid;place-items:center;flex:none;color:var(--brass-l)}
+.c-list small{display:block;color:var(--kmut);font-size:12px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:2px}
+.c-list a,.c-list b{color:var(--kcream);font:600 22px/1.25 var(--f-d);text-decoration:none}
+.cta{background:var(--paper);color:var(--ink);border-radius:var(--r);padding:clamp(26px,4vw,40px)}
+.cta h3{font:600 clamp(30px,3.4vw,42px)/1.05 var(--f-d);margin-bottom:14px}
+.cta p{color:var(--muted)}
+.cta .btns{margin-top:22px}
+.cta .btn-ghost{color:var(--ink)}
 
-footer{background:#151b24;color:#97a2b0;font-size:14px;padding:26px 0}
+footer{background:#0b0b0c;color:var(--kmut);font-size:13px;padding:28px 0}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+footer a{color:var(--brass-l);text-decoration:none}
 
-/* modal */
+/* ---------- появление при прокрутке ---------- */
+html.js:not(.rm) .rv{opacity:0;transform:translateY(28px);transition:opacity .9s var(--ease),transform .9s var(--ease)}
+html.js:not(.rm) .rv.in{opacity:1;transform:none}
+
+/* ---------- модальное окно ---------- */
 .modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;padding:16px}
-.modal-bg{position:absolute;inset:0;background:rgba(15,20,28,.6)}
-.modal-box{position:relative;background:#fff;border-radius:18px;width:100%;max-width:450px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:26px 22px 22px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.modal-x{position:absolute;top:10px;right:10px;width:40px;height:40px;border:0;border-radius:10px;background:#f1efea;font-size:24px;line-height:1;cursor:pointer;color:var(--ink)}
-.modal-x:hover{background:#e5e1d8}
-.modal h3{font-size:22px;padding-right:40px}
-.sum{background:#fff8ef;border:1px solid #f7cf9a;border-radius:12px;padding:10px 12px;font-size:14px;margin-bottom:16px}
-.sum b{color:var(--acc-d)}
+.modal-bg{position:absolute;inset:0;background:rgba(10,10,11,.66);backdrop-filter:blur(3px)}
+.modal-box{position:relative;background:var(--paper);border-radius:20px;width:100%;max-width:460px;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);overflow:auto;padding:30px 26px 24px;box-shadow:0 30px 80px rgba(0,0,0,.4)}
+.modal-x{position:absolute;top:12px;right:12px;width:40px;height:40px;border:1px solid var(--line);border-radius:50%;background:transparent;font-size:22px;line-height:1;cursor:pointer;color:var(--ink)}
+.modal-x:hover{border-color:var(--brass)}
+.modal h3{font:600 32px/1.05 var(--f-d);padding-right:44px}
+.sum{background:#fbf3e6;border:1px solid #e6d3b3;border-radius:12px;padding:12px 14px;font-size:14px;margin-bottom:18px}
+.sum b{color:var(--brass-d)}
 .field{margin-bottom:14px}
-.field label{display:block;font-weight:600;font-size:14px;margin-bottom:5px}
-.field input{width:100%;min-height:48px;font:inherit;font-size:16px;padding:10px 12px;border:2px solid var(--line);border-radius:10px;outline:none;background:#fff}
-.field input:focus{border-color:var(--acc)}
+.field label{display:block;font-weight:600;font-size:13px;letter-spacing:.04em;margin-bottom:6px}
+.field input{width:100%;min-height:50px;font:inherit;font-size:16px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;outline:none;background:var(--card)}
+.field input:focus{border-color:var(--brass);box-shadow:0 0 0 3px rgba(184,146,90,.18)}
 .field.err input{border-color:var(--err)}
 .err-msg{display:block;color:var(--err);font-size:13px;margin-top:4px}
 .err-msg:empty{display:none}
 .demo-note{font-size:12px;color:var(--muted);margin:12px 0 0;text-align:center}
 .ok{text-align:center;padding:10px 0 0}
-.ok-ico{width:72px;height:72px;border-radius:50%;background:#e6f6ec;display:grid;place-items:center;margin:0 auto 14px}
+.ok-ico{width:72px;height:72px;border-radius:50%;border:1px solid var(--brass);display:grid;place-items:center;margin:0 auto 16px;color:var(--brass-d)}
 .ok h3{padding:0}
 .ok p{color:var(--muted)}
 .ok .btns{display:grid;gap:10px;margin-top:16px}
 
-/* print sheet: hidden on screen */
+/* ---------- лист сметы для печати ---------- */
 #printSheet{display:none}
 @media print{
   @page{size:A4;margin:14mm}
   html,body{background:#fff!important;overflow:visible!important}
   body > *:not(#printSheet){display:none!important}
   #printSheet{display:block!important;color:#000;font:11pt/1.45 Arial,"Segoe UI",sans-serif}
-  .ps-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #f28c18;padding-bottom:10px;margin-bottom:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ps-head{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:3px solid #b8925a;padding-bottom:10px;margin-bottom:18px;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .ps-logo{font-size:20pt;font-weight:800}
-  .ps-logo span{font-size:9pt;font-weight:700;border:1px solid #a35300;color:#a35300;border-radius:4px;padding:1px 5px;vertical-align:middle;text-transform:uppercase}
+  .ps-logo span{font-size:9pt;font-weight:700;border:1px solid #8f6d3c;color:#8f6d3c;border-radius:4px;padding:1px 5px;vertical-align:middle;text-transform:uppercase}
   .ps-sub{color:#555;font-size:10pt}
   .ps-meta{text-align:right;font-size:10pt;color:#333}
   #printSheet h1{font-size:16pt;margin:0 0 12px}
@@ -222,7 +292,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
   .ps-table th,.ps-table td{border:1px solid #bbb;padding:7px 9px;text-align:left}
   .ps-table th{background:#f3f1ec;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .ps-table td:last-child,.ps-table th:last-child{text-align:right;white-space:nowrap}
-  .ps-table tfoot td{font-weight:800;font-size:12pt;background:#fff1de;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .ps-table tfoot td{font-weight:800;font-size:12pt;background:#f6ecdb;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .ps-table tr{page-break-inside:avoid}
   .ps-note{border:1px dashed #999;padding:9px 11px;font-size:9.5pt;color:#333;margin:12px 0}
   .ps-foot{margin-top:24px;padding-top:8px;border-top:1px solid #ccc;font-size:9pt;color:#666}
@@ -231,19 +301,19 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 </head>
 <body>
 
-<div class="demo-bar">Демо-сайт: компания «СтройДемо», цены, работы и контакты — <b>пример</b></div>
+<div class="demo-bar">Демо-сайт: компания «СтройДемо» — цены, работы и контакты <b>пример</b></div>
 
-<header class="top">
+<header class="top" id="top-bar">
   <div class="wrap">
     <a href="#top" class="logo" aria-label="СтройДемо — наверх">
-      <span class="logo-mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M6 10v10h12V10"/></svg></span>
-      СтройДемо <span class="tag">пример</span>
+      <span class="logo-mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M3 11 12 4l9 7"/><path d="M6 10v10h12V10"/><path d="M10 20v-6h4v6"/></svg></span>
+      <span class="logo-t">СтройДемо</span> <span class="tag">пример</span>
     </a>
     <nav class="menu" id="menu" aria-label="Меню">
       <a href="#services">Услуги</a>
       <a href="#calc">Калькулятор</a>
       <a href="viz.html">Ремонт в 3D</a>
-      <a href="#portfolio">Портфолио</a>
+      <a href="#portfolio">Объекты</a>
       <a href="#steps">Этапы</a>
       <a href="#contacts">Контакты</a>
     </nav>
@@ -257,76 +327,100 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 <main id="top">
   <!-- HERO -->
   <section class="hero">
-    <div class="wrap">
-      <span class="tag">пример</span>
-      <h1 style="margin-top:12px">Ремонт и строительство в&nbsp;Тамбове — <em>с&nbsp;понятной сметой</em></h1>
-      <p class="lead">Квартиры под ключ, косметический ремонт, фундаменты, кровля и фасады. Узнайте примерную стоимость за 1 минуту в онлайн-калькуляторе.</p>
+    <svg class="hero-art" viewBox="0 0 860 620" fill="none" stroke="currentColor" aria-hidden="true">
+      <!-- земля и фундамент -->
+      <path class="d" pathLength="1" stroke-width="1.2" d="M20 520H840"/>
+      <path class="d" pathLength="1" stroke-width="1" d="M150 520v26h560v-26"/>
+      <!-- объём дома: двухэтажный с плоской кровлей и консолью -->
+      <path class="d" pathLength="1" stroke-width="1.6" d="M150 520V300h320v220"/>
+      <path class="d d2" pathLength="1" stroke-width="1.6" d="M410 300V150h340v170H600v200"/>
+      <path class="d d2" pathLength="1" stroke-width="1" d="M140 300h340M400 150h360"/>
+      <!-- окна -->
+      <path class="d d2" pathLength="1" stroke-width="1" d="M190 350h110v120H190zM245 350v120M330 350h100v170"/>
+      <path class="d d3" pathLength="1" stroke-width="1" d="M450 190h270v90H450zM540 190v90M630 190v90"/>
+      <path class="d d3" pathLength="1" stroke-width="1" d="M630 360h90v120h-90z"/>
+      <!-- лестница-штриховка фасада -->
+      <path class="d d3" pathLength="1" stroke-width=".7" opacity=".55" d="M470 320v200M490 320v200M510 320v200M530 320v200M550 320v200M570 320v200"/>
+      <!-- размерные линии -->
+      <g class="fade" stroke-width=".8" opacity=".75">
+        <path d="M150 572h600M150 566v12M750 566v12M410 566v12"/>
+        <path d="M800 150v370M794 150h12M794 520h12M794 300h12"/>
+        <path d="M100 300v220M94 300h12M94 520h12"/>
+      </g>
+      <g class="fade" fill="currentColor" stroke="none" font-family="Manrope,Arial,sans-serif" font-size="12" letter-spacing="1.5" opacity=".85">
+        <text x="270" y="594">12 000</text><text x="560" y="594">8 400</text>
+        <text x="812" y="420" transform="rotate(90 812 420)">6 900</text>
+        <text x="84" y="430" transform="rotate(-90 84 430)">3 300</text>
+        <text x="600" y="134">ФАСАД А–Б · М 1:100</text>
+      </g>
+    </svg>
+    <div class="wrap hero-in">
+      <p class="kicker">Тамбов · ремонт и строительство <span class="tag">пример</span></p>
+      <h1>Строим так, <em>как&nbsp;для&nbsp;себя</em></h1>
+      <p class="lead">Квартиры под ключ, фундаменты, кровля и фасады — с фиксированной сметой в договоре. Узнайте примерную стоимость за минуту в онлайн-калькуляторе.</p>
       <div class="hero-btns">
-        <a href="#calc" class="btn btn-acc">Рассчитать стоимость</a>
+        <a href="#calc" class="btn btn-acc">Рассчитать стоимость <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         <button type="button" class="btn btn-ghost" data-open-lead>Заказать замер</button>
       </div>
       <div class="facts">
-        <div class="fact"><b>12 лет</b><span>на рынке Тамбова</span></div>
-        <div class="fact"><b>340+</b><span>сданных объектов</span></div>
-        <div class="fact"><b>3 года</b><span>гарантии на работы</span></div>
+        <div class="fact"><b>12<i> лет</i></b><span>на рынке Тамбова</span></div>
+        <div class="fact"><b>340<i>+</i></b><span>сданных объектов</span></div>
+        <div class="fact"><b>3<i> года</i></b><span>гарантии на работы</span></div>
       </div>
-      <small>* Цифры условные — демонстрационный пример.</small>
     </div>
+    <small>* Цифры условные — демонстрационный пример.</small>
   </section>
 
   <!-- SERVICES -->
   <section class="sec" id="services">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>Услуги</h2>
-        <p>Цены «от» — примерные и рассчитаны по уровню «Эконом» (работы + материалы). Нажмите «Рассчитать», чтобы получить вилку под ваш объект.</p>
+      <div class="sec-head rv">
+        <p class="kicker">Что мы делаем</p>
+        <h2 class="h2">Услуги</h2>
+        <p>Цены «от» — примерные, по уровню «Эконом» (работы + материалы). Нажмите «Рассчитать», чтобы получить вилку под ваш объект.</p>
       </div>
-      <div class="grid-cards">
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 12h18M12 3v18"/></svg></div>
+      <ul class="svc">
+        <li class="rv">
           <h3>Ремонт квартир под ключ</h3>
           <p>Черновые и чистовые работы, электрика, сантехника, отделка. Один договор, одна ответственность.</p>
-          <div class="price-from"><span data-from="turnkey"></span> <small>(пример)</small></div>
-          <button type="button" class="btn btn-light" data-work="turnkey">Рассчитать</button>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M4 4h12v5H4z"/><path d="M16 6h3v5h-8v3"/><path d="M10 14h2v7h-2z"/></svg></div>
+          <div class="price-from"><span data-from="turnkey"></span><small>пример</small></div>
+          <button type="button" class="btn btn-light btn-sm" data-work="turnkey">Рассчитать</button>
+        </li>
+        <li class="rv">
           <h3>Косметический ремонт</h3>
-          <p>Обои, покраска, напольные покрытия, замена дверей — быстро освежим интерьер без капитальных работ.</p>
-          <div class="price-from"><span data-from="cosmetic"></span> <small>(пример)</small></div>
-          <button type="button" class="btn btn-light" data-work="cosmetic">Рассчитать</button>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M2 14h20v6H2z"/><path d="M6 14V9M12 14V7M18 14V9"/></svg></div>
+          <p>Обои, покраска, напольные покрытия, замена дверей — освежим интерьер без капитальных работ.</p>
+          <div class="price-from"><span data-from="cosmetic"></span><small>пример</small></div>
+          <button type="button" class="btn btn-light btn-sm" data-work="cosmetic">Рассчитать</button>
+        </li>
+        <li class="rv">
           <h3>Фундамент</h3>
           <p>Ленточные, плитные и свайные фундаменты для домов, бань и пристроек. Армирование и бетон с паспортом.</p>
-          <div class="price-from"><span data-from="foundation"></span> <small>(пример)</small></div>
-          <button type="button" class="btn btn-light" data-work="foundation">Рассчитать</button>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2" stroke-linejoin="round"><path d="M2 12 12 4l10 8"/><path d="M5 10v10h14V10"/></svg></div>
+          <div class="price-from"><span data-from="foundation"></span><small>пример</small></div>
+          <button type="button" class="btn btn-light btn-sm" data-work="foundation">Рассчитать</button>
+        </li>
+        <li class="rv">
           <h3>Кровля</h3>
           <p>Металлочерепица, профнастил, мягкая и фальцевая кровля. Монтаж, ремонт, утепление.</p>
-          <div class="price-from"><span data-from="roof"></span> <small>(пример)</small></div>
-          <button type="button" class="btn btn-light" data-work="roof">Рассчитать</button>
-        </article>
-        <article class="card">
-          <div class="ico"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><rect x="3" y="3" width="18" height="18"/><path d="M3 9h18M3 15h18M9 3v6M15 9v6M9 15v6"/></svg></div>
+          <div class="price-from"><span data-from="roof"></span><small>пример</small></div>
+          <button type="button" class="btn btn-light btn-sm" data-work="roof">Рассчитать</button>
+        </li>
+        <li class="rv">
           <h3>Фасад</h3>
           <p>Утепление, штукатурка, сайдинг, вентфасады и облицовка камнем — тепло и внешний вид дома.</p>
-          <div class="price-from"><span data-from="facade"></span> <small>(пример)</small></div>
-          <button type="button" class="btn btn-light" data-work="facade">Рассчитать</button>
-        </article>
-      </div>
+          <div class="price-from"><span data-from="facade"></span><small>пример</small></div>
+          <button type="button" class="btn btn-light btn-sm" data-work="facade">Рассчитать</button>
+        </li>
+      </ul>
     </div>
   </section>
 
   <!-- CALCULATOR -->
   <section class="sec calc-sec" id="calc">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>Калькулятор сметы</h2>
-        <p>Четыре шага — и вы видите вилку цены с разбивкой по работам и материалам. <b>Цены примерные: компания заменит их на актуальные.</b></p>
+      <div class="sec-head rv">
+        <p class="kicker">Смета за минуту</p>
+        <h2 class="h2">Калькулятор</h2>
+        <p>Четыре шага — и вы видите вилку цены с разбивкой по работам и материалам. Цены примерные: компания заменит их на актуальные.</p>
       </div>
       <div class="calc">
         <div>
@@ -362,7 +456,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
           <div class="res-meta" id="resMeta"></div>
           <div class="res-per" id="resPer"></div>
           <table class="res-table"><tbody id="resBody"></tbody></table>
-          <div class="res-note">Цены примерные (демо) — компания заменит их на свои. Точная смета составляется после бесплатного выезда замерщика.</div>
+          <div class="res-note">Цены примерные (демо) — компания заменит их на свои. Точная смета — после бесплатного выезда замерщика.</div>
           <div class="res-btns">
             <button type="button" class="btn btn-acc" data-open-lead>Получить точную смету</button>
             <button type="button" class="btn btn-ghost" data-print>Скачать расчёт PDF</button>
@@ -373,45 +467,68 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
     </div>
   </section>
 
-  <!-- 3D TEASER -->
-  <section class="sec" id="viz3d" style="padding-bottom:0">
+  <!-- 3D -->
+  <section class="sec dark viz" id="viz3d">
     <div class="wrap">
-      <div class="card viz-teaser">
-        <div>
-          <h2>Ремонт в 3D <span class="tag">пример</span></h2>
-          <p>Задайте размеры комнаты, где окно и дверь, выберите пол, стены и потолок — и посмотрите комнату сверху или изнутри. Смета пересчитывается сразу, по тем же ценам, что и в калькуляторе.</p>
+      <div class="rv">
+        <p class="kicker">Ремонт в 3D <span class="tag">пример</span></p>
+        <h2 class="h2">Посмотрите ремонт до&nbsp;того, как он начнётся</h2>
+        <p>Задайте размеры комнаты, где окно и дверь, выберите пол, стены и потолок — и посмотрите комнату сверху или изнутри. Смета пересчитывается сразу.</p>
+        <div class="btns" style="margin-top:28px">
+          <a href="viz.html" class="btn btn-acc">Открыть 3D-планировщик <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
         </div>
-        <a href="viz.html" class="btn btn-acc">Посмотреть ремонт в 3D</a>
       </div>
+      <svg class="viz-art rv" viewBox="0 0 520 420" fill="none" stroke="currentColor" aria-hidden="true">
+        <!-- изометрическая комната -->
+        <path stroke-width="1.4" d="M260 60 470 170v170L260 400 50 290V120z" opacity=".35"/>
+        <path stroke-width="1.6" d="M50 120 260 230 470 120M260 230v170"/>
+        <path stroke-width="1.6" d="M50 120 260 10l210 110"/>
+        <!-- окно на левой стене -->
+        <path stroke-width="1.1" d="M100 170l90 47v80l-90-47z M145 193v80"/>
+        <!-- дверь на правой стене -->
+        <path stroke-width="1.1" d="M360 230l50-26v130l-50 26z"/>
+        <!-- раскладка пола -->
+        <g stroke-width=".7" opacity=".5">
+          <path d="M260 400 470 290M225 382 435 272M190 364 400 254M155 346 365 236M120 328 330 218M85 310 295 200"/>
+        </g>
+        <!-- мебель: диван и стол -->
+        <path stroke-width="1.1" d="M150 300l70 36 60-31-70-36zM150 300v18l70 36v-18M220 336v18l60-31v-18"/>
+        <path stroke-width="1.1" d="M300 330l40 20 34-18-40-20zM300 330v26M374 312v26M340 350v26"/>
+        <g fill="currentColor" stroke="none" font-family="Manrope,Arial,sans-serif" font-size="11" letter-spacing="1.4" opacity=".8">
+          <text x="380" y="372">4,0 × 3,0 м</text>
+          <text x="60" y="345">ЛАМИНАТ · ДУБ</text>
+        </g>
+      </svg>
     </div>
   </section>
 
   <!-- PORTFOLIO -->
   <section class="sec" id="portfolio">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>Портфолио: до и после <span class="tag">пример</span></h2>
-        <p>Здесь будут реальные фотографии объектов компании. Сейчас — заглушки.</p>
+      <div class="sec-head rv">
+        <p class="kicker">Объекты</p>
+        <h2 class="h2">До и после <span class="tag">пример</span></h2>
+        <p>Здесь будут реальные фотографии объектов компании. Сейчас — эскизы-заглушки.</p>
       </div>
-      <div class="grid-cards">
-        <article class="pf-card">
+      <div class="pf">
+        <article class="pf-card rv">
           <div class="ba">
-            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
-            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+            <div class="ph before"><span class="badge">до</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1"><path d="M5 75h90M15 75V25h70v50M15 25l35-20 35 20" stroke-dasharray="3 3"/><path d="M30 40h18v20H30zM58 40h14v35"/></svg>черновая</div>
+            <div class="ph after"><span class="badge">после</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 75h90M15 75V25h70v50M15 25l35-20 35 20"/><path d="M30 40h18v20H30zM39 40v20M58 40h14v35"/><path d="M20 70h20M60 70h20" opacity=".6"/></svg>под ключ</div>
           </div>
           <div class="pf-body"><h3>Квартира 54 м², под ключ</h3><p>Тамбов · 2 месяца · уровень «Стандарт» (пример)</p></div>
         </article>
-        <article class="pf-card">
+        <article class="pf-card rv">
           <div class="ba">
-            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
-            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+            <div class="ph before"><span class="badge">до</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1"><path d="M5 75h90M15 75V40h70v35" /><path d="M10 42 50 12l40 30" stroke-dasharray="3 3"/></svg>старая кровля</div>
+            <div class="ph after"><span class="badge">после</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 75h90M15 75V40h70v35M8 43 50 10l42 33"/><path d="M18 36l32-25 32 25M28 29l22-17 22 17" opacity=".6"/></svg>металлочерепица</div>
           </div>
           <div class="pf-body"><h3>Кровля частного дома 140 м²</h3><p>Тамбовский район · 12 дней · металлочерепица (пример)</p></div>
         </article>
-        <article class="pf-card">
+        <article class="pf-card rv">
           <div class="ba">
-            <div class="ph before"><span class="badge">до</span>Фото «до»<br>пример</div>
-            <div class="ph after"><span class="badge">после</span>Фото «после»<br>пример</div>
+            <div class="ph before"><span class="badge">до</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1"><path d="M5 75h90M12 75V20h76v55" stroke-dasharray="3 3"/><path d="M24 32h16v16H24zM60 32h16v16H60z"/></svg>голый газоблок</div>
+            <div class="ph after"><span class="badge">после</span><svg viewBox="0 0 100 80" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M5 75h90M12 75V20h76v55M8 20h84"/><path d="M24 32h16v16H24zM60 32h16v16H60zM44 55h12v20H44z"/><path d="M12 60h76" opacity=".5"/></svg>утепление + штукатурка</div>
           </div>
           <div class="pf-body"><h3>Фасад коттеджа 210 м²</h3><p>Тамбов · 3 недели · утепление + штукатурка (пример)</p></div>
         </article>
@@ -422,11 +539,12 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
   <!-- STEPS -->
   <section class="sec" id="steps" style="padding-top:0">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>Этапы работы</h2>
+      <div class="sec-head rv">
+        <p class="kicker">Как мы работаем</p>
+        <h2 class="h2">Пять шагов до ключей</h2>
         <p>Прозрачный процесс: вы знаете, что происходит на объекте и за что платите.</p>
       </div>
-      <ol class="steps">
+      <ol class="steps rv">
         <li><b>Заявка и расчёт</b><span>Онлайн-калькулятор или звонок — сразу называем примерную вилку.</span></li>
         <li><b>Выезд замерщика</b><span>Бесплатно по Тамбову: замеры, осмотр, консультация.</span></li>
         <li><b>Смета и договор</b><span>Точная смета с фиксированной ценой и сроками в договоре.</span></li>
@@ -437,30 +555,32 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
   </section>
 
   <!-- CONTACTS -->
-  <section class="sec" id="contacts" style="padding-top:0">
+  <section class="sec dark" id="contacts">
     <div class="wrap">
-      <div class="sec-head">
-        <h2>Контакты <span class="tag">пример</span></h2>
+      <div class="sec-head rv">
+        <p class="kicker">Контакты <span class="tag">пример</span></p>
+        <h2 class="h2">Обсудим ваш объект</h2>
         <p>Все контакты условные — компания подставит свои.</p>
       </div>
       <div class="contacts">
-        <div class="card">
-          <ul class="c-list">
-            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
-              <div><small>Телефон (пример)</small><a href="tel:+70000000000">+7 (000) 000-00-00</a></div></li>
-            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
-              <div><small>Офис (пример)</small><b>г. Тамбов, ул. Примерная, д. 1</b></div></li>
-            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
-              <div><small>Режим работы (пример)</small><b>Пн–Сб, 9:00–19:00</b></div></li>
-            <li><span class="ico"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#d9730a" stroke-width="2" stroke-linejoin="round"><path d="M21 4 3 11l6 2 2 6 3-4 5 4z"/></svg></span>
-              <div><small>Telegram (пример)</small><b>@stroydemo_example</b></div></li>
-          </ul>
-        </div>
-        <div class="card cta">
-          <h3>Бесплатный выезд замерщика</h3>
+        <ul class="c-list rv">
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+            <div><small>Телефон (пример)</small><a href="tel:+70000000000">+7 (000) 000-00-00</a></div></li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></span>
+            <div><small>Офис (пример)</small><b>г. Тамбов, ул. Примерная, д. 1</b></div></li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+            <div><small>Режим работы (пример)</small><b>Пн–Сб, 9:00–19:00</b></div></li>
+          <li><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"><path d="M21 4 3 11l6 2 2 6 3-4 5 4z"/></svg></span>
+            <div><small>Telegram (пример)</small><b>@stroydemo_example</b></div></li>
+        </ul>
+        <div class="cta rv">
+          <p class="kicker">Бесплатно</p>
+          <h3>Выезд замерщика</h3>
           <p>Оставьте имя, телефон и адрес объекта — менеджер перезвонит, уточнит детали и пришлёт точную смету.</p>
-          <button type="button" class="btn btn-acc" data-open-lead>Оставить заявку</button>
-          <a href="#calc" class="btn btn-ghost">Сначала рассчитать</a>
+          <div class="btns">
+            <button type="button" class="btn btn-acc" data-open-lead>Оставить заявку</button>
+            <a href="#calc" class="btn btn-ghost">Сначала рассчитать</a>
+          </div>
         </div>
       </div>
     </div>
@@ -470,7 +590,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 <footer>
   <div class="wrap">
     <span>© <span id="year">2026</span> СтройДемо — демонстрационный сайт, все данные примерные.</span>
-    <a href="#top" style="color:#ffb35c">Наверх ↑</a>
+    <a href="#top">Наверх ↑</a>
   </div>
 </footer>
 
@@ -503,8 +623,8 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
       </form>
     </div>
     <div id="okView" class="ok" hidden>
-      <div class="ok-ico"><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1f9d55" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg></div>
-      <h3>Расчёт отправлен в Telegram</h3>
+      <div class="ok-ico"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5 10 17l9-10"/></svg></div>
+      <h3>Расчёт отправлен</h3>
       <p id="okText"></p>
       <p class="demo-note">Это демонстрация: на рабочем сайте заявка придёт менеджеру в Telegram-бот. Сейчас данные никуда не отправлены.</p>
       <div class="btns">
@@ -518,6 +638,18 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
 <!-- Print-only estimate -->
 <div id="printSheet"></div>
 
+<script>
+/* шапка: прозрачная над первым экраном, плотная при прокрутке; появление блоков */
+(function(){
+  var bar=document.getElementById('top-bar');
+  var onScroll=function(){bar.classList.toggle('solid',window.scrollY>40)};
+  onScroll();window.addEventListener('scroll',onScroll,{passive:true});
+  var els=[].slice.call(document.querySelectorAll('.rv'));
+  if(!('IntersectionObserver' in window)){els.forEach(function(e){e.classList.add('in')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{rootMargin:'0px 0px -8% 0px'});
+  els.forEach(function(e){io.observe(e)});
+})();
+</script>
 <script>
 (function () {
   'use strict';
