@@ -596,9 +596,37 @@ footer a { min-height: 44px; display: inline-flex; align-items: center; text-dec
     ba.setAttribute('aria-valuenow', Math.round(p));
   }
   function fromEvent(e) { var r = ba.getBoundingClientRect(); return (e.clientX - r.left) / r.width * 100; }
-  ba.addEventListener('pointerdown', function (e) { dragging = true; ba.setPointerCapture(e.pointerId); ba.style.transition = ''; setPos(fromEvent(e)); });
-  ba.addEventListener('pointermove', function (e) { if (dragging) setPos(fromEvent(e)); });
-  ['pointerup', 'pointercancel'].forEach(function (t) { ba.addEventListener(t, function () { dragging = false; }); });
+  /* мышь и стилус — pointer-события */
+  ba.addEventListener('pointerdown', function (e) {
+    if (e.pointerType === 'touch') return;
+    dragging = true; ba.setPointerCapture(e.pointerId); setPos(fromEvent(e));
+  });
+  ba.addEventListener('pointermove', function (e) { if (dragging && e.pointerType !== 'touch') setPos(fromEvent(e)); });
+  ['pointerup', 'pointercancel'].forEach(function (t) {
+    ba.addEventListener(t, function (e) { if (e.pointerType !== 'touch') dragging = false; });
+  });
+  /* палец — свои touch-события: слайдер стоит внутри листающейся карусели.
+     Жест вбок двигает только ползунок (карусель и страница стоят), жест вверх-вниз — обычная прокрутка. */
+  var touch0 = null, touchMode = null;
+  ba.addEventListener('touchstart', function (e) {
+    if (e.touches.length !== 1) return;
+    touch0 = { x: e.touches[0].clientX, y: e.touches[0].clientY }; touchMode = null; dragging = true;
+  }, { passive: true });
+  ba.addEventListener('touchmove', function (e) {
+    if (!touch0) return;
+    var t = e.touches[0], dx = t.clientX - touch0.x, dy = t.clientY - touch0.y;
+    if (!touchMode) {
+      if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+      touchMode = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+    }
+    if (touchMode === 'x') { e.preventDefault(); setPos(fromEvent(t)); }
+  }, { passive: false });
+  ['touchend', 'touchcancel'].forEach(function (type) {
+    ba.addEventListener(type, function (e) {
+      if (type === 'touchend' && touch0 && !touchMode && e.changedTouches[0]) setPos(fromEvent(e.changedTouches[0])); /* тап — прыжок */
+      touch0 = null; touchMode = null; dragging = false;
+    });
+  });
   ba.addEventListener('keydown', function (e) {
     var p = parseFloat(getComputedStyle(ba).getPropertyValue('--pos')) || 50;
     if (e.key === 'ArrowLeft') { setPos(p - 5); e.preventDefault(); }
