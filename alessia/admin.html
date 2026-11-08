@@ -1,0 +1,264 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e0d0d">
+<meta name="robots" content="noindex">
+<title>Админка · Алессия</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/style.css">
+<style>
+body { background: var(--paper); padding-bottom: 40px; }
+.bar { position: sticky; top: 0; z-index: 20; background: var(--ink); color: var(--white); padding: 14px var(--pad) 0; }
+.bar-row { display: flex; align-items: center; justify-content: space-between; min-height: 48px; }
+.bar h1 { font-family: var(--f-head); font-weight: 700; font-size: 26px; letter-spacing: .14em; text-transform: uppercase; margin: 0; }
+.bar a { font-size: 14px; opacity: .7; min-height: 44px; display: inline-flex; align-items: center; text-decoration: none; }
+.tabs { display: grid; grid-template-columns: 1fr 1fr; margin-top: 8px; }
+.tabs button {
+  min-height: 56px; border: 0; background: transparent; color: var(--white); opacity: .55;
+  font-family: var(--f-head); font-weight: 600; font-size: 17px; letter-spacing: .14em; text-transform: uppercase;
+  border-bottom: 3px solid transparent; transition: opacity .2s, border-color .2s;
+}
+.tabs button.on { opacity: 1; border-bottom-color: var(--wine); }
+.tabs b { display: inline-grid; place-items: center; min-width: 24px; height: 24px; padding: 0 6px; margin-left: 6px; border-radius: 12px; background: var(--wine); font-size: 13px; letter-spacing: 0; }
+
+.main { max-width: 640px; margin: 0 auto; padding: 22px var(--pad); }
+.pane { display: none; animation: fade .35s var(--ease); }
+.pane.on { display: block; }
+@keyframes fade { from { opacity: 0; transform: translateY(8px); } }
+
+.stats { display: grid; grid-template-columns: 1fr 1fr; border: 1px solid var(--line-l); border-radius: var(--r); margin-bottom: 22px; }
+.stats div { padding: 14px 16px; }
+.stats div + div { border-left: 1px solid var(--line-l); }
+.stats b { display: block; font-family: var(--f-head); font-weight: 700; font-size: 40px; line-height: 1; }
+.stats small { font-size: 13px; opacity: .6; }
+
+.cal-day.is-busy { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.cal-day.has-new::before { content: ""; position: absolute; top: 5px; right: 5px; width: 8px; height: 8px; border-radius: 50%; background: var(--wine); }
+.cal-day.is-busy.has-new::before { background: #e3a0a8; }
+.light .cal-day.is-selected { background: transparent; color: var(--ink); border-color: var(--ink); outline: 2px solid var(--wine); outline-offset: 2px; }
+.light .cal-day.is-selected.is-busy { background: var(--ink); color: var(--white); }
+.cal-legend i.k { background: var(--ink); opacity: 1; }
+.cal-legend i.n { border: 0; background: var(--wine); border-radius: 50%; }
+.help { font-size: 14px; opacity: .65; margin: 14px 0 0; }
+
+/* нижняя шторка дня */
+.sheet-bg { position: fixed; inset: 0; z-index: 50; background: rgba(14,13,13,.5); opacity: 0; visibility: hidden; transition: opacity .3s, visibility .3s; }
+.sheet {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 51; background: var(--white); border-radius: 14px 14px 0 0;
+  padding: 10px var(--pad) calc(22px + env(safe-area-inset-bottom)); max-width: 640px; margin: 0 auto;
+  transform: translateY(105%); transition: transform .4s var(--ease); max-height: 86vh; overflow-y: auto;
+}
+.sheet-open .sheet-bg { opacity: 1; visibility: visible; }
+.sheet-open .sheet { transform: none; }
+.grab { width: 44px; height: 4px; border-radius: 2px; background: var(--line-l); margin: 0 auto 16px; }
+.sheet h2 { font-family: var(--f-head); font-weight: 700; text-transform: uppercase; font-size: 30px; line-height: 1; margin: 0 0 6px; }
+.status { font-size: 15px; margin: 0 0 18px; }
+.status i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 8px; background: #6c9a6c; }
+.status.busy i { background: var(--ink); }
+.sheet .btn { width: 100%; margin-top: 10px; }
+.btn--dark { background: var(--ink); }
+.btn--dark:hover { background: #2a2727; }
+.btn--line { background: transparent; color: var(--ink); border: 1px solid var(--line-l); }
+.btn--line:hover { background: rgba(0,0,0,.04); }
+
+/* заявки */
+.filters { display: flex; gap: 8px; margin-bottom: 16px; }
+.filters button { min-height: 48px; padding: 0 18px; border-radius: 24px; border: 1px solid var(--line-l); background: transparent; font-size: 15px; }
+.filters button.on { background: var(--ink); color: var(--white); border-color: var(--ink); }
+.req { background: var(--white); border-radius: var(--r); padding: 18px; margin-bottom: 12px; border-left: 4px solid var(--wine); }
+.req.confirmed { border-left-color: var(--ink); }
+.req-top { display: flex; justify-content: space-between; align-items: start; gap: 10px; }
+.req-date { font-family: var(--f-head); font-weight: 600; font-size: 22px; text-transform: uppercase; line-height: 1.1; }
+.badge { flex: none; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; padding: 4px 8px; border-radius: 2px; background: var(--wine); color: var(--white); }
+.confirmed .badge { background: var(--ink); }
+.req dl { display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; margin: 12px 0 14px; font-size: 16px; }
+.req dt { opacity: .55; font-size: 14px; }
+.req dd { margin: 0; }
+.req-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.req-actions .btn { min-height: 52px; font-size: 14px; padding: 0 12px; }
+.req-actions .del { grid-column: 1 / -1; min-height: 44px; background: transparent; color: var(--grey); border: 0; text-decoration: underline; font-family: var(--f-text); text-transform: none; letter-spacing: 0; font-weight: 400; }
+.empty { padding: 40px 0; text-align: center; opacity: .55; }
+.reset { margin-top: 30px; font-size: 14px; background: none; border: 0; color: var(--grey); text-decoration: underline; min-height: 44px; }
+.toast { position: fixed; left: 50%; bottom: 24px; z-index: 60; transform: translate(-50%, 120px); background: var(--ink); color: var(--white); padding: 14px 20px; border-radius: var(--r); font-size: 15px; transition: transform .35s var(--ease); white-space: nowrap; }
+.toast.show { transform: translate(-50%, 0); }
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="bar-row"><h1>Записи</h1><a href="index.html">← на сайт</a></div>
+  <div class="tabs">
+    <button type="button" class="on" data-tab="cal">Календарь</button>
+    <button type="button" data-tab="list">Заявки <b id="newCount">0</b></button>
+  </div>
+</header>
+
+<main class="main">
+  <section class="pane on" id="pane-cal">
+    <div class="stats">
+      <div><b id="sFree">0</b><small>свободных дней в этом месяце</small></div>
+      <div><b id="sNew">0</b><small>новых заявок</small></div>
+    </div>
+    <div class="cal light" id="cal"></div>
+    <div class="cal-legend"><span><i></i>свободно</span><span><i class="k"></i>занято</span><span><i class="n"></i>новая заявка</span></div>
+    <p class="help">Нажмите на день, чтобы открыть его: занять, освободить или посмотреть заявку. Свайп по календарю — другой месяц.</p>
+  </section>
+
+  <section class="pane" id="pane-list">
+    <div class="filters">
+      <button type="button" class="on" data-f="new">Новые</button>
+      <button type="button" data-f="all">Все</button>
+    </div>
+    <div id="list"></div>
+  </section>
+
+  <button class="reset" id="reset" type="button">Сбросить демо-данные</button>
+</main>
+
+<div class="sheet-bg" id="sheetBg"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true">
+  <div class="grab"></div>
+  <div id="sheetBody"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="assets/store.js"></script>
+<script src="assets/calendar.js"></script>
+<script>
+(function () {
+  var filter = 'new';
+  var GEN = ['января','февраля','марта','апреля','мая','июня','июля','августа','сентября','октября','ноября','декабря'];
+
+  function reqsFor(id) { return Store.requests().filter(function (r) { return r.date === id; }); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  var cal = new Calendar({
+    el: document.getElementById('cal'),
+    monthsAhead: 3,
+    disabled: function (id, d) { return d < Store.today(); },
+    dayClass: function (id) {
+      var c = Store.isBusy(id) ? 'is-busy' : '';
+      if (reqsFor(id).some(function (r) { return r.status === 'new'; })) c += ' has-new';
+      return c;
+    },
+    onPick: openDay
+  });
+
+  function toast(t) {
+    var el = document.getElementById('toast'); el.textContent = t; el.classList.add('show');
+    clearTimeout(toast.t); toast.t = setTimeout(function () { el.classList.remove('show'); }, 1800);
+  }
+
+  function refresh() {
+    var reqs = Store.requests(), nNew = reqs.filter(function (r) { return r.status === 'new'; }).length;
+    document.getElementById('newCount').textContent = nNew;
+    document.getElementById('sNew').textContent = nNew;
+    var t = Store.today(), y = t.getFullYear(), m = t.getMonth(), last = new Date(y, m + 1, 0).getDate(), free = 0;
+    for (var d = t.getDate(); d <= last; d++) if (!Store.isBusy(Store.iso(new Date(y, m, d)))) free++;
+    document.getElementById('sFree').textContent = free;
+    cal.render();
+    renderList();
+  }
+
+  /* --- шторка дня --- */
+  function openDay(id) {
+    var busy = Store.isBusy(id), rs = reqsFor(id), h = '';
+    h += '<h2>' + Calendar.format(id) + '</h2>';
+    h += '<p class="status' + (busy ? ' busy' : '') + '"><i></i>' + (busy ? 'Занято' : 'Свободно') + ' · 11:00</p>';
+    rs.forEach(function (r) { h += card(r); });
+    if (!rs.length) h += '<p class="help" style="margin:0 0 6px">Заявок на этот день нет.</p>';
+    h += busy
+      ? '<button class="btn btn--line" data-act="free" data-date="' + id + '">Сделать свободной</button>'
+      : '<button class="btn btn--dark" data-act="busy" data-date="' + id + '">Отметить занятой</button>';
+    h += '<button class="btn btn--line" data-act="close">Закрыть</button>';
+    document.getElementById('sheetBody').innerHTML = h;
+    document.body.classList.add('sheet-open');
+  }
+  function closeSheet() { document.body.classList.remove('sheet-open'); cal.selected = null; cal.render(); }
+  document.getElementById('sheetBg').addEventListener('click', closeSheet);
+
+  /* свайп шторки вниз = закрыть */
+  var sheet = document.getElementById('sheet'), sy = null;
+  sheet.addEventListener('touchstart', function (e) { if (sheet.scrollTop <= 0) sy = e.touches[0].clientY; }, { passive: true });
+  sheet.addEventListener('touchmove', function (e) {
+    if (sy === null) return; var dy = e.touches[0].clientY - sy;
+    if (dy > 0) { sheet.style.transition = 'none'; sheet.style.transform = 'translateY(' + dy + 'px)'; }
+  }, { passive: true });
+  sheet.addEventListener('touchend', function (e) {
+    if (sy === null) return; var dy = e.changedTouches[0].clientY - sy; sy = null;
+    sheet.style.transition = ''; sheet.style.transform = '';
+    if (dy > 90) closeSheet();
+  });
+
+  /* --- карточка заявки --- */
+  function card(r) {
+    var p = r.date.split('-');
+    var tel = r.phone.replace(/[^\d+]/g, '');
+    return '<article class="req ' + r.status + '">' +
+      '<div class="req-top"><div class="req-date">' + (+p[2]) + ' ' + GEN[+p[1] - 1] + ' · 11:00</div>' +
+      '<span class="badge">' + (r.status === 'new' ? 'Новая' : 'Подтверждена') + '</span></div>' +
+      '<dl><dt>Имя</dt><dd>' + esc(r.name) + '</dd><dt>Телефон</dt><dd>' + esc(r.phone) + '</dd><dt>Процедура</dt><dd>' + esc(r.service) + '</dd></dl>' +
+      '<div class="req-actions">' +
+      '<a class="btn btn--line" href="tel:' + esc(tel) + '">Позвонить</a>' +
+      (r.status === 'new'
+        ? '<button class="btn" data-act="confirm" data-id="' + r.id + '">Подтвердить</button>'
+        : '<button class="btn btn--line" data-act="unconfirm" data-id="' + r.id + '">В новые</button>') +
+      '<button class="btn del" data-act="del" data-id="' + r.id + '">Удалить заявку и освободить день</button>' +
+      '</div></article>';
+  }
+
+  function renderList() {
+    var rs = Store.requests().filter(function (r) { return filter === 'all' || r.status === 'new'; })
+      .sort(function (a, b) { return a.date < b.date ? -1 : 1; });
+    document.getElementById('list').innerHTML = rs.length ? rs.map(card).join('') :
+      '<p class="empty">' + (filter === 'new' ? 'Новых заявок нет' : 'Заявок пока нет') + '</p>';
+  }
+
+  /* --- действия (делегирование) --- */
+  document.addEventListener('click', function (e) {
+    var b = e.target.closest('[data-act]'); if (!b) return;
+    var a = b.dataset.act, inSheet = !!b.closest('#sheet');
+    if (a === 'close') return closeSheet();
+    if (a === 'busy') { Store.setBusy(b.dataset.date, true); toast('День занят'); }
+    if (a === 'free') {
+      if (reqsFor(b.dataset.date).length && !confirm('На этот день есть заявка. Всё равно освободить?')) return;
+      Store.setBusy(b.dataset.date, false); toast('День свободен');
+    }
+    if (a === 'confirm') { Store.updateRequest(b.dataset.id, { status: 'confirmed' }); toast('Запись подтверждена'); }
+    if (a === 'unconfirm') { Store.updateRequest(b.dataset.id, { status: 'new' }); }
+    if (a === 'del') {
+      if (!confirm('Удалить заявку? День станет свободным.')) return;
+      Store.removeRequest(b.dataset.id); toast('Заявка удалена');
+    }
+    var sel = cal.selected;
+    refresh();
+    if (inSheet && sel) { cal.selected = sel; cal.render(); openDay(sel); }
+  });
+
+  /* --- вкладки и фильтры --- */
+  document.querySelectorAll('.tabs button').forEach(function (t) {
+    t.addEventListener('click', function () {
+      document.querySelectorAll('.tabs button').forEach(function (x) { x.classList.toggle('on', x === t); });
+      document.querySelectorAll('.pane').forEach(function (p) { p.classList.toggle('on', p.id === 'pane-' + t.dataset.tab); });
+    });
+  });
+  document.querySelectorAll('.filters button').forEach(function (f) {
+    f.addEventListener('click', function () {
+      filter = f.dataset.f;
+      document.querySelectorAll('.filters button').forEach(function (x) { x.classList.toggle('on', x === f); });
+      renderList();
+    });
+  });
+  document.getElementById('reset').addEventListener('click', function () {
+    if (confirm('Вернуть демо-данные к началу?')) { Store.reset(); refresh(); toast('Демо сброшено'); }
+  });
+
+  refresh();
+})();
+</script>
+</body>
+</html>
