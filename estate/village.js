@@ -630,7 +630,7 @@
     const fm = new THREE.MeshStandardMaterial({ roughness: .7 }), fi = new THREE.InstancedMesh(new THREE.IcosahedronGeometry(.08, 1), fm, flowers.length);
     const fc = [0xe8a0b8, 0xf4f0e8, 0xb48ad8, 0xf0c64a, 0xd8507a], dm = new THREE.Object3D(), cl = new THREE.Color();
     flowers.forEach((f, i) => { dm.position.set(f[0], .2 + r0() * .15, f[1]); dm.scale.setScalar(.7 + r0() * .8); dm.updateMatrix(); fi.setMatrixAt(i, dm.matrix); fi.setColorAt(i, cl.set(fc[i % fc.length])); });
-    world.add(fi);
+    fi.name = 'flowers'; world.add(fi);
   }
 
   /* ---------- трава: пучки травинок с ветром (только на участках) ---------- */
@@ -675,7 +675,7 @@
     }
     const gi = new THREE.InstancedMesh(bg, gm, spots.length), dm = new THREE.Object3D(), cl = new THREE.Color();
     spots.forEach((sp, i) => { dm.position.set(sp[0], .02, sp[1]); dm.rotation.set(0, r0() * 6.3, 0); dm.scale.setScalar(.8 + r0() * .6); dm.updateMatrix(); gi.setMatrixAt(i, dm.matrix); gi.setColorAt(i, cl.setHSL(.24 + r0() * .05, .5, .5 + r0() * .2)); });
-    gi.receiveShadow = true; world.add(gi);
+    gi.receiveShadow = true; gi.name = 'grass'; world.add(gi);
   }
 
   await step(.7);
@@ -742,9 +742,10 @@
   for (let i = trees.length; i--;) if (built(trees[i][0], trees[i][1])) trees.splice(i, 1);
   const trunks = new THREE.InstancedMesh(trunkG, bark, trees.length); trunks.castShadow = true;
   trees.forEach((t, i) => { dummy.position.set(t[0], 0, t[1]); dummy.rotation.set(0, i, 0); dummy.scale.setScalar(t[2]); dummy.updateMatrix(); trunks.setMatrixAt(i, dummy.matrix); });
-  world.add(trunks);
+  trunks.name = 'tree_trunk'; world.add(trunks);
   [[decid, leafM, coreD, t => !t[3], [.22, .27]], [conif, firM, coreC, t => t[3], [.3, .34]]].forEach(([geo, m, core, f, hue]) => {
     const list = trees.filter(f), im = new THREE.InstancedMesh(geo, m, list.length), ic = new THREE.InstancedMesh(core, coreM, list.length);
+    im.name = 'tree_leaf_' + (list[0] && list[0][3] ? 'conif' : 'decid'); ic.name = im.name.replace('leaf', 'core'); // имена — для выгрузки в Blender
     im.castShadow = ic.castShadow = true; im.receiveShadow = true;
     list.forEach((t, i) => {
       dummy.position.set(t[0], 0, t[1]); dummy.rotation.set(0, i * 1.7, 0); dummy.scale.set(t[2], t[2] * (.9 + (i % 5) * .05), t[2]); dummy.updateMatrix();
@@ -759,6 +760,7 @@
   const coreDL = new THREE.IcosahedronGeometry(2.1, 0); coreDL.translate(0, 5.5, 0); const coreCL = new THREE.ConeGeometry(1.8, 9, 6); coreCL.translate(0, 6.2, 0);
   [[decidL, leafM, coreDL, t => !t[3]], [conifL, firM, coreCL, t => t[3]]].forEach(([geo, m, core, f]) => {
     const list = farTrees.filter(f), im = new THREE.InstancedMesh(geo, m, list.length), ic = new THREE.InstancedMesh(core, coreM, list.length);
+    im.name = 'far_leaf_' + (list[0] && list[0][3] ? 'conif' : 'decid'); ic.name = im.name.replace('leaf', 'core');
     list.forEach((t, i) => { dummy.position.set(t[0], 0, t[1]); dummy.rotation.set(0, i * 2.3, 0); dummy.scale.set(t[2], t[2] * (.9 + (i % 5) * .06), t[2]); dummy.updateMatrix(); im.setMatrixAt(i, dummy.matrix); ic.setMatrixAt(i, dummy.matrix); });
     world.add(im, ic);
   });
@@ -767,7 +769,7 @@
   const bushes = [];
   for (const p of plots) for (let k = 0; k < 7; k++) { const far = p.side * (ROAD / 2 + 1.6 + PD - 1.4); bushes.push([p.x - PW / 2 + 2 + k * (PW - 4) / 6 + (r0() - .5), far, .8 + r0() * .6]); }
   for (let i = bushes.length; i--;) if (built(bushes[i][0], bushes[i][1])) bushes.splice(i, 1);
-  const bi = new THREE.InstancedMesh(bushG, leafM, bushes.length); bi.castShadow = true;
+  const bi = new THREE.InstancedMesh(bushG, leafM, bushes.length); bi.castShadow = true; bi.name = 'bush';
   bushes.forEach((b, i) => { dummy.position.set(b[0], 0, b[1]); dummy.rotation.set(0, i, 0); dummy.scale.setScalar(b[2]); dummy.updateMatrix(); bi.setMatrixAt(i, dummy.matrix); });
   world.add(bi);
   // фонари вдоль улицы
@@ -988,5 +990,7 @@
   }
   requestAnimationFrame(frame);
   window.__village = { flyTo, backToVillage, get mode() { return mode; }, count: houses.length };
+  // ?export=1 — выгрузка сцены для Blender (кнопка внизу слева), см. blender/README.md
+  if (/[?&]export=1/.test(location.search)) import('./blender/export.js').then(m => m.default({ THREE, world, houses, camera, renderer, scene, sun, dir }));
   emit('phase', { phase: 'api' });
 })();
