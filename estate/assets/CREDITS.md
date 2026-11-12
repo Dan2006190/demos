@@ -1,6 +1,26 @@
 # Источники
 
-Все материалы — Poly Haven (polyhaven.com), лицензия CC0: можно использовать в коммерческих проектах без указания автора.
+## 3D-модели домов — Sketchfab, лицензия CC BY 4.0
+
+Лицензия: https://creativecommons.org/licenses/by/4.0/ — можно использовать в коммерческих проектах с указанием автора и пометкой об изменениях.
+
+Изменения во всех моделях: удалены подложки (газоны, мощение участка), машины, деревья и вспомогательные линии; материалы переведены из specular-glossiness в metal-roughness; геометрия объединена и сжата (meshopt), текстуры уменьшены до 1–2K и пересжаты в WebP. Названия, площади и цены на сайте — пример и не относятся к проектам авторов.
+
+| Файл | Модель | Автор | Где на сайте |
+|---|---|---|---|
+| models/05.glb | [«Ольга 11»](https://sketchfab.com/3d-models/11-dba1047381634016bb03da8d8227bef2) | [labarch](https://sketchfab.com/labarch) | «Терраса 150» |
+| models/02.glb | [«Проект жилого дома 218 Вариант 1 (Реки)»](https://sketchfab.com/3d-models/218-1-b63d3ec1111e4e27b7fe219c957f9bed) | [labarch](https://sketchfab.com/labarch) | «Классика 218» |
+| models/00.glb | [«Жилой дом_»](https://sketchfab.com/3d-models/fab830d71e6f4bc491c82d55a13e2582) | [labarch](https://sketchfab.com/labarch) | «Модерн 190» |
+| models/14.glb | [«М ДОМ 1»](https://sketchfab.com/3d-models/1-22d30d75184b49559ed4b40b808d628d) | [Smart Wood](https://sketchfab.com/smwood) | «Сруб 110 с баней» |
+| models/22.glb | [«Банный комплекс_1»](https://sketchfab.com/3d-models/1-f3c343f4e1914f8595133b888a46ea53) | [Smart Wood](https://sketchfab.com/smwood) | баня у «Сруба 110» |
+| models/07.glb | [«Жилой дом_2»](https://sketchfab.com/3d-models/2-d4ffce6e98474ae4973db2d33f01bbc0) | [labarch](https://sketchfab.com/labarch) | «Усадьба 260» |
+| models/12.glb | [«Типовой дом 4»](https://sketchfab.com/3d-models/4-4a8cb055b2e84ae19056fe864360bb49) | [labarch](https://sketchfab.com/labarch) | «Шале 180» |
+
+Повторы этих же домов стоят на остальных участках посёлка.
+
+## Небо и фактуры — Poly Haven (polyhaven.com), лицензия CC0
+
+Можно использовать в коммерческих проектах без указания автора.
 
 - Небо: kloppenheim_06_puresky (HDRI, 2k)
 - Фактуры (уменьшены и пересжаты): plastered_wall_04, red_brick_03, wood_plank_wall, grey_roof_01, square_concrete_pavers, clean_asphalt, leafy_grass, oak_wood_planks, corrugated_iron_02

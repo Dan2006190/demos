@@ -236,6 +236,7 @@ input[type=range]{width:100%;accent-color:var(--ink)}
 .agree{font-size:12px;color:var(--muted);margin-top:20px}
 footer{border-top:1px solid var(--line);padding:34px 0 calc(34px + env(safe-area-inset-bottom));font-size:12.5px;color:var(--muted)}
 footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+footer .credits{flex-basis:100%;font-size:11.5px;line-height:1.6}footer .credits a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
 /* окно: как заявка придёт в Telegram */
 .modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(18,18,18,.5);opacity:0;pointer-events:none;transition:opacity .3s;padding:16px}
@@ -317,7 +318,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
   <p class="agree">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
 </div></section>
 
-<footer><div class="wrap"><span id="foot-brand"></span><a class="link" href="?intro=1">Показать вступление</a><span>Демо-сайт · WEST DIGITAL · цифры, цены и тексты — пример</span></div></footer>
+<footer><div class="wrap"><span id="foot-brand"></span><a class="link" href="?intro=1">Показать вступление</a><span>Демо-сайт · WEST DIGITAL · цифры, цены и тексты — пример</span><span class="credits" id="foot-credits"></span></div></footer>
 <div class="demo-tag" id="demoTag">Демо</div>
 <div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Заявка"><div class="sheet" id="sheet"></div></div>
 
@@ -331,6 +332,10 @@ const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
 document.title=S.brand.charAt(0)+S.brand.slice(1).toLowerCase()+' — '+S.brandSub+' (демо)';
 $('#b-name').textContent=S.brand; $('#b-sub').textContent=S.brandSub; $('#l-brand').textContent=S.brand;
 $('#t-brand').textContent=S.brand; $('#t-tag').textContent=S.tagline; $('#foot-brand').textContent=S.brand+' · '+S.address;
+/* авторы 3D-моделей (CC BY 4.0) — условие лицензии, не убирать */
+{const au={};S.houses.forEach(h=>[h.credit,h.annexCredit].forEach(c=>{if(c)(au[c.author]=au[c.author]||{p:c.profile,m:[]}).m.push(c);}));
+const list=Object.entries(au).map(([n,a])=>`<a href="${esc(a.p)}" target="_blank" rel="noopener">${esc(n)}</a> (${a.m.map(c=>`<a href="${esc(c.url)}" target="_blank" rel="noopener">«${esc(c.title)}»</a>`).join(', ')})`).join('; ');
+if(list)$('#foot-credits').innerHTML=`3D-модели домов: ${list} — Sketchfab, <a href="https://creativecommons.org/licenses/by/4.0/deed.ru" target="_blank" rel="noopener">CC BY 4.0</a>, модели упрощены и пересжаты. Небо и фактуры — Poly Haven (CC0). <a href="assets/CREDITS.md" target="_blank" rel="noopener">Источники</a>`;}
 $$('#introLines span').forEach((el,i)=>el.textContent=S.intro[i]||'');
 $('#stats').innerHTML=S.stats.map(s=>`<div><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('');
 $('#m-text').textContent=S.manifesto; $('#hint').textContent=S.hint||'Нажмите на дом';

@@ -1,9 +1,14 @@
 /* =====================================================================
    Всё, что меняется под клиента, — здесь. Остальные файлы не трогать.
-   Цены, тексты и дома — пример. Параметры дома для 3D:
-   w — ширина фасада (м), floors — 1 / 1.5 (мансарда) / 2,
-   roof — gable (двускатная) / hip (вальмовая) / flat (плоская),
-   mat — 0 штукатурка, 1 кирпич, 2 дерево; terrace, garage — да/нет.
+   Цены, тексты и названия — пример.
+   Дома в 3D — готовые модели (assets/models/*.glb, авторы — в credit):
+   model — файл, front — где у модели фасад (угол в радианах: 0 — +Z,
+   1.571 — +X, 3.142 — −Z, 4.712 — −X), scale — масштаб, dx — сдвиг
+   по участку (м), door — где вход по ширине фасада (м от центра),
+   annex — постройка рядом на том же участке (баня, гараж).
+   Остальные поля — для калькулятора и запасного дома, если модель
+   не загрузилась: w — ширина фасада (м), floors — 1 / 1.5 / 2,
+   roof — gable / hip / flat, mat — 0 штукатурка, 1 кирпич, 2 дерево.
    ===================================================================== */
 window.SITE = {
   brand: 'АРДЕН',
@@ -43,21 +48,38 @@ window.SITE = {
   ],
   // подход к дому для каждого из 6 домов по порядку:
   // 0 плиты-шаги, 1 гравий, 2 навес для машины, 3 изогнутая дорожка с фонариками, 4 настил, 5 цветники
-  approaches: [0, 3, 1, 5, 2, 4],
+  approaches: [0, 3, 1, 5, 4, 2],
+  // дома по участкам: первые три — ближняя сторона улицы (слева направо), затем дальняя
   houses: [
-    { name: 'Сканди 10×10', w: 10, floors: 1, roof: 'gable', area: 100, mat: 0, price: 6100000,
-      lead: 'Для семьи из четырёх', specs: ['100 м²', '3 спальни', 'газобетон'] },
-    { name: 'Простор 12×10', w: 12, floors: 1, roof: 'hip', area: 120, mat: 0, terrace: true, price: 7300000,
-      lead: 'Большая терраса на закат', specs: ['120 м²', '3 спальни + кабинет', 'терраса'] },
-    { name: 'Компакт 8×8', w: 8, floors: 1, roof: 'gable', area: 64, mat: 2, price: 3200000,
-      lead: 'Первый собственный дом', specs: ['64 м²', '2 спальни', 'каркас'] },
-    { name: 'Уют 8×10', w: 8, floors: 1.5, roof: 'gable', area: 128, mat: 0, price: 7100000,
-      lead: 'Мансарда со скатными окнами', specs: ['128 м²', '4 спальни', 'мансарда'] },
-    { name: 'Резиденция 9×9', w: 9, floors: 2, roof: 'hip', area: 162, mat: 1, price: 9700000,
-      lead: 'Два этажа и кирпич на века', specs: ['162 м²', '4 спальни', 'кирпич'] },
-    { name: 'Модерн 12×12', w: 12, floors: 1, roof: 'flat', area: 144, mat: 0, garage: true, price: 8700000,
-      lead: 'Плоская кровля и гараж в доме', specs: ['144 м²', 'плоская кровля', 'гараж'] }
+    { name: 'Терраса 150', w: 16, floors: 1, roof: 'hip', area: 150, mat: 0, terrace: true, price: 10400000,
+      lead: 'Одноэтажный, с крытой террасой во двор', specs: ['150 м²', '3 спальни', 'терраса'],
+      model: 'models/05.glb', front: 0, door: 0,
+      credit: { title: 'Ольга 11', author: 'labarch', url: 'https://sketchfab.com/3d-models/11-dba1047381634016bb03da8d8227bef2', profile: 'https://sketchfab.com/labarch' } },
+    { name: 'Классика 218', w: 15, floors: 2, roof: 'hip', area: 218, mat: 0, terrace: true, price: 15800000,
+      lead: 'Два этажа, балконы и вальмовая кровля', specs: ['218 м²', '4 спальни', '2 этажа'],
+      model: 'models/02.glb', front: 0, door: 2,
+      credit: { title: 'Проект жилого дома 218 Вариант 1 (Реки)', author: 'labarch', url: 'https://sketchfab.com/3d-models/218-1-b63d3ec1111e4e27b7fe219c957f9bed', profile: 'https://sketchfab.com/labarch' } },
+    { name: 'Модерн 190', w: 18, floors: 2, roof: 'flat', area: 190, mat: 0, garage: true, price: 14900000,
+      lead: 'Плоская кровля, камень и гараж в доме', specs: ['190 м²', 'плоская кровля', 'гараж'],
+      model: 'models/00.glb', front: 0, door: 3,
+      credit: { title: 'Жилой дом_', author: 'labarch', url: 'https://sketchfab.com/3d-models/fab830d71e6f4bc491c82d55a13e2582', profile: 'https://sketchfab.com/labarch' } },
+    { name: 'Сруб 110 с баней', w: 11, floors: 1.5, roof: 'gable', area: 110, mat: 2, price: 9200000,
+      lead: 'Дом из бревна и баня на одном участке', specs: ['110 м² + баня 60 м²', 'мансарда', 'бревно'],
+      model: 'models/14.glb', front: 3.142, door: 0, dx: -7,
+      annex: { model: 'models/22.glb', front: 4.712, scale: .9, dx: 6.4 },
+      credit: { title: 'М ДОМ 1', author: 'Smart Wood', url: 'https://sketchfab.com/3d-models/1-22d30d75184b49559ed4b40b808d628d', profile: 'https://sketchfab.com/smwood' },
+      annexCredit: { title: 'Банный комплекс_1', author: 'Smart Wood', url: 'https://sketchfab.com/3d-models/1-f3c343f4e1914f8595133b888a46ea53', profile: 'https://sketchfab.com/smwood' } },
+    { name: 'Усадьба 260', w: 26, floors: 2, roof: 'hip', area: 260, mat: 1, terrace: true, garage: true, price: 23500000,
+      lead: 'Кирпич и дерево, два навеса для машин', specs: ['260 м²', '5 спален', 'кирпич'],
+      model: 'models/07.glb', front: 3.142, scale: .88, door: 0,
+      credit: { title: 'Жилой дом_2', author: 'labarch', url: 'https://sketchfab.com/3d-models/2-d4ffce6e98474ae4973db2d33f01bbc0', profile: 'https://sketchfab.com/labarch' } },
+    { name: 'Шале 180', w: 15, floors: 1.5, roof: 'gable', area: 180, mat: 2, terrace: true, price: 13600000,
+      lead: 'Тёмный брус и остеклённая терраса', specs: ['180 м²', '4 спальни', 'брус'],
+      model: 'models/12.glb', front: 4.712, door: 0,
+      credit: { title: 'Типовой дом 4', author: 'labarch', url: 'https://sketchfab.com/3d-models/4-4a8cb055b2e84ae19056fe864360bb49', profile: 'https://sketchfab.com/labarch' } }
   ],
+  // остальные участки посёлка: какие дома из списка выше повторить (номера с нуля)
+  extraHouses: [0, 4, 3, 0, 4, 2],
   calc: {
     spread: 0.08,
     // виды работ: house — дом по этажности, материалу и готовности; остальные — цена за м² по уровню
