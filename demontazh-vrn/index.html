@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Демонтаж Воронеж — демонтаж, снос и вывоз мусора (демо)</title>
+<meta name="description" content="Демо-сайт: цены «от», калькулятор демонтажа и вывоза, заявка с фото на бесплатный выезд оценщика.">
+<meta name="theme-color" content="#141414">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Russo+One&display=swap">
+<style>
+:root{--bg:#f2f0eb;--card:#ffffff;--panel:#1a1a1a;--ink:#151515;--muted:#5f5d58;--line:#dedad2;--acc:#f5b301;--acc-d:#b98500;--on-acc:#151515;--dark:#141414;--dark2:#1e1e1e;--dark-line:rgba(255,255,255,.14);--on-dark:#f2f0eb;--on-dark-m:#a3a09a;--f-h:"Russo One",Manrope,sans-serif;--hw:400;--hls:0;
+  --r:18px; --ease:cubic-bezier(.22,1,.36,1);
+  --f-t:Manrope,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.6 var(--f-t);color:var(--ink);background:var(--bg);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body.lock{overflow:hidden}
+h1,h2,h3{margin:0 0 .5em;font-family:var(--f-h);font-weight:var(--hw);line-height:1.05;letter-spacing:var(--hls)}
+p{margin:0 0 1em}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+section{scroll-margin-top:68px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,36px)}
+.sec{padding:clamp(64px,9vw,112px) 0}
+.kicker{font:700 12px/1.4 var(--f-t);letter-spacing:.18em;text-transform:uppercase;color:var(--acc-d);margin:0 0 14px}
+.dark .kicker{color:var(--acc)}
+.h2{font-size:clamp(32px,4.6vw,54px);margin:0 0 16px}
+.head{max-width:720px;margin-bottom:clamp(28px,4vw,48px)}
+.head p{color:var(--muted);font-size:17px;margin:0}
+.dark{background:var(--dark);color:var(--on-dark)}
+.dark .head p{color:var(--on-dark-m)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:52px;padding:0 26px;border-radius:999px;border:0;font-weight:700;font-size:16px;text-decoration:none;cursor:pointer;transition:transform .2s var(--ease),background .2s,box-shadow .2s;-webkit-tap-highlight-color:transparent}
+.btn:active{transform:scale(.97)}
+.btn-acc{background:var(--acc);color:var(--on-acc);box-shadow:0 10px 30px -10px var(--acc)}
+.btn-acc:hover{background:var(--acc-d);color:#fff}
+.btn-ghost{background:transparent;color:inherit;box-shadow:inset 0 0 0 1.5px currentColor}
+.btn-ghost:hover{background:rgba(127,127,127,.12)}
+.btn svg{width:20px;height:20px;flex:none}
+
+/* демо-плашка */
+.demo-bar{background:var(--ink);color:var(--bg);font-size:13px;line-height:1.4;padding:8px 0;text-align:center}
+.demo-bar b{color:var(--acc)}
+
+/* шапка */
+.top{position:sticky;top:0;z-index:40;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:16px;height:64px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;font-family:var(--f-h);font-weight:var(--hw);font-size:20px;letter-spacing:var(--hls);white-space:nowrap}
+.logo i{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--acc);color:var(--on-acc);font-style:normal;font-size:15px}
+.nav{display:none;gap:26px;margin-left:auto;font-size:15px;font-weight:600}
+.nav a{text-decoration:none;color:var(--muted)}
+.nav a:hover{color:var(--ink)}
+.top .btn{min-height:42px;padding:0 18px;font-size:14px;margin-left:auto}
+@media(max-width:480px){.top .btn{font-size:13px;padding:0 14px}.logo{font-size:17px}}
+.top .btn{white-space:nowrap}
+@media(min-width:900px){.nav{display:flex}.top .btn{margin-left:8px}}
+
+/* первый экран */
+.hero{padding:clamp(36px,6vw,80px) 0 clamp(48px,7vw,96px);position:relative;overflow:hidden}
+.hero .wrap{display:grid;gap:clamp(28px,4vw,56px);align-items:center}
+@media(min-width:960px){.hero .wrap{grid-template-columns:1.05fr .95fr}}
+.hero h1{font-size:clamp(38px,6.4vw,76px);margin:0 0 20px}
+.hero h1 em{font-style:normal;color:var(--acc-d)}
+.hero .lead{font-size:clamp(17px,1.6vw,19px);color:var(--muted);max-width:34em;margin-bottom:28px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:34px;max-width:560px}
+.facts div{border-left:2px solid var(--acc);padding:2px 0 2px 12px}
+.facts b{display:block;font-family:var(--f-h);font-weight:var(--hw);font-size:clamp(22px,3vw,30px);line-height:1.1}
+.facts span{font-size:13px;color:var(--muted);line-height:1.3;display:block;margin-top:4px}
+.hero-art{position:relative;border-radius:28px;background:var(--panel);padding:clamp(16px,3vw,28px);box-shadow:0 30px 80px -40px rgba(0,0,0,.45)}
+.hero-art svg{display:block;width:100%;height:auto}
+.hero-badge{position:absolute;left:clamp(12px,3vw,24px);bottom:clamp(12px,3vw,24px);background:var(--card);border-radius:14px;padding:10px 14px;box-shadow:0 10px 30px -12px rgba(0,0,0,.35);font-size:13px;line-height:1.35;max-width:62%}
+.hero-badge b{display:block;font-size:15px}
+.stars{color:#f2b100;letter-spacing:1px}
+
+/* каталог */
+.cats{display:flex;gap:8px;margin:-8px 0 24px;flex-wrap:wrap}
+.chip{border:1.5px solid var(--line);background:var(--card);border-radius:999px;padding:8px 16px;font-weight:600;font-size:14px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr))}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;transition:transform .3s var(--ease),box-shadow .3s}
+.card:hover{transform:translateY(-4px);box-shadow:0 24px 50px -30px rgba(0,0,0,.4)}
+.card .pic{background:var(--panel);padding:14px 14px 0;position:relative}
+.card .pic svg{display:block;width:100%;height:auto}
+.card .tag{position:absolute;top:12px;left:12px;background:var(--acc);color:var(--on-acc);font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+.card .body{padding:18px 20px 20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card h3{font-size:22px;margin:0}
+.specs{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:14px;color:var(--muted)}
+.specs span::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc);margin-right:7px;vertical-align:middle}
+.price{display:flex;align-items:baseline;gap:8px;margin-top:auto;padding-top:8px}
+.price b{font-size:24px;font-family:var(--f-h);font-weight:var(--hw)}
+.price small{color:var(--muted);font-size:13px}
+.card .btn{min-height:46px;font-size:15px;width:100%}
+.note{font-size:13px;color:var(--muted);margin-top:18px}
+
+/* калькулятор */
+.calc{display:grid;gap:22px}
+@media(min-width:960px){.calc{grid-template-columns:1.25fr .75fr;align-items:start}}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(18px,3vw,30px)}
+.dark .panel{background:var(--dark2);border-color:var(--dark-line)}
+.field{margin-bottom:22px}
+.field>label,.field>.lbl{display:flex;justify-content:space-between;gap:12px;font-weight:700;font-size:15px;margin-bottom:10px}
+.field>label output{color:var(--acc)}
+.seg{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.seg button{border:1.5px solid var(--dark-line);background:transparent;border-radius:12px;padding:10px 12px;text-align:left;cursor:pointer;font-size:14px;line-height:1.3;font-weight:600;min-height:48px}
+.seg button small{display:block;font-weight:500;opacity:.65;font-size:12px;margin-top:2px}
+.seg button[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 16%,transparent)}
+input[type=range]{width:100%;accent-color:var(--acc);height:28px}
+.checks{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.check{display:flex;gap:10px;align-items:center;border:1.5px solid var(--dark-line);border-radius:12px;padding:10px 12px;cursor:pointer;font-size:14px;font-weight:600;min-height:48px}
+.check input{width:20px;height:20px;accent-color:var(--acc);flex:none}
+.check span small{display:block;font-weight:500;opacity:.65;font-size:12px}
+.result{position:sticky;top:84px}
+.result .sum{font-family:var(--f-h);font-weight:var(--hw);font-size:clamp(32px,4.4vw,46px);line-height:1.05;margin:6px 0 4px;color:var(--acc)}
+.result .per{color:var(--on-dark-m);font-size:14px;margin-bottom:18px}
+.lines{list-style:none;padding:0;margin:0 0 20px;font-size:14px}
+.lines li{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--dark-line)}
+.lines li span:last-child{white-space:nowrap;font-weight:700}
+.result .btn{width:100%}
+.result .small{font-size:12px;color:var(--on-dark-m);margin:12px 0 0}
+.rows{display:grid;gap:10px;margin-bottom:12px}
+.row{display:grid;grid-template-columns:1fr 78px 44px;gap:8px;align-items:center}
+.row select,.row input{width:100%;min-height:48px;border-radius:12px;border:1.5px solid var(--dark-line);background:transparent;padding:0 12px}
+.row select option{color:#111}
+.row .x{min-height:48px;border-radius:12px;border:1.5px solid var(--dark-line);background:transparent;cursor:pointer;font-size:20px}
+.add{background:transparent;border:1.5px dashed var(--acc);color:var(--acc);border-radius:12px;min-height:46px;width:100%;cursor:pointer;font-weight:700}
+
+/* шаги */
+.steps{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr));counter-reset:s}
+.step{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+.step::before{counter-increment:s;content:"0" counter(s);display:block;font-family:var(--f-h);font-weight:var(--hw);font-size:34px;color:var(--acc);line-height:1;margin-bottom:12px}
+.step h3{font-size:19px;font-family:var(--f-t);font-weight:800;letter-spacing:0;margin-bottom:6px}
+.step p{font-size:14px;color:var(--muted);margin:0}
+
+/* отзывы */
+.trust{display:grid;gap:18px}
+@media(min-width:900px){.trust{grid-template-columns:.8fr 1.2fr;align-items:center}}
+.rating{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:28px;text-align:center}
+.rating b{display:block;font-family:var(--f-h);font-weight:var(--hw);font-size:64px;line-height:1}
+.rating .stars{font-size:24px;margin:8px 0}
+.rating a{display:inline-block;margin-top:10px;font-weight:700;color:var(--acc-d)}
+.trust ul{margin:0;padding:0;list-style:none;display:grid;gap:12px}
+.trust li{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;font-size:15px}
+.trust li::before{content:"✓";display:grid;place-items:center;flex:none;width:28px;height:28px;border-radius:50%;background:var(--acc);color:var(--on-acc);font-weight:800}
+
+/* вопросы */
+.faq{display:grid;gap:10px;max-width:860px}
+.faq details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:0 20px}
+.faq summary{cursor:pointer;list-style:none;font-weight:700;padding:18px 28px 18px 0;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:0;top:12px;font-size:26px;color:var(--acc-d);transition:transform .2s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq p{color:var(--muted);margin:0 0 18px}
+
+/* финал */
+.final{text-align:center}
+.final .h2{max-width:16em;margin-left:auto;margin-right:auto}
+.final p{color:var(--on-dark-m);max-width:36em;margin:0 auto 28px}
+.final .cta{justify-content:center}
+footer{background:var(--dark);color:var(--on-dark-m);font-size:13px;padding:28px 0 calc(28px + env(safe-area-inset-bottom));border-top:1px solid var(--dark-line)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:8px 24px;justify-content:space-between}
+footer b{color:var(--on-dark)}
+
+/* нижняя панель на телефоне */
+.dock{position:fixed;left:0;right:0;bottom:0;z-index:45;display:flex;gap:8px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line);transform:translateY(110%);transition:transform .35s var(--ease)}
+.dock.on{transform:none}
+.dock .btn{flex:1;min-height:48px;padding:0 12px;font-size:15px}
+@media(min-width:900px){.dock{display:none}}
+@media(max-width:899px){footer{padding-bottom:calc(92px + env(safe-area-inset-bottom))}}
+
+/* окно квиза */
+.modal{position:fixed;inset:0;z-index:60;display:grid;place-items:end center;background:rgba(10,10,12,.55);opacity:0;pointer-events:none;transition:opacity .25s}
+.modal.on{opacity:1;pointer-events:auto}
+@media(min-width:700px){.modal{place-items:center}}
+.sheet{width:min(100%,560px);max-height:92vh;overflow:auto;background:var(--card);color:var(--ink);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));transform:translateY(30px);transition:transform .35s var(--ease)}
+@media(min-width:700px){.sheet{border-radius:24px;padding:30px}}
+.modal.on .sheet{transform:none}
+.sheet-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.bar{flex:1;height:6px;border-radius:6px;background:var(--line);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);width:0;transition:width .35s var(--ease)}
+.close{width:40px;height:40px;border-radius:50%;border:0;background:var(--line);cursor:pointer;font-size:22px;line-height:1;flex:none}
+.sheet h3{font-family:var(--f-t);font-weight:800;letter-spacing:0;font-size:22px;line-height:1.25;margin-bottom:6px}
+.sheet .sub{color:var(--muted);font-size:14px;margin-bottom:18px}
+.opts{display:grid;gap:8px}
+.opts button{text-align:left;border:1.5px solid var(--line);background:var(--bg);border-radius:14px;padding:14px 16px;cursor:pointer;font-weight:600;min-height:52px}
+.opts button:hover,.opts button:focus-visible{border-color:var(--acc)}
+.sheet input[type=text],.sheet input[type=tel],.sheet input[type=date],.sheet textarea{width:100%;min-height:52px;border-radius:14px;border:1.5px solid var(--line);background:var(--bg);padding:12px 16px;margin-bottom:10px;font-size:16px}
+.sheet textarea{min-height:96px;resize:vertical}
+.drop{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed var(--line);border-radius:16px;padding:24px;text-align:center;cursor:pointer;color:var(--muted);font-size:14px;margin-bottom:12px}
+.drop b{color:var(--ink);font-size:16px}
+.thumbs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.thumbs img{width:72px;height:72px;object-fit:cover;border-radius:10px}
+.ways{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.ways button{flex:1;min-width:90px;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;min-height:46px;font-weight:700;cursor:pointer}
+.ways button[aria-pressed="true"]{border-color:var(--acc);background:color-mix(in srgb,var(--acc) 14%,var(--bg))}
+.sheet .btn{width:100%}
+.agree{font-size:12px;color:var(--muted);margin:10px 0 0}
+.err{color:#c4402f;font-size:14px;margin:-4px 0 10px}
+
+/* так заявка придёт в Telegram */
+.tg{background:#0e1621;color:#e9eef3;border-radius:20px;padding:14px;margin:6px 0 16px;font-size:14px;line-height:1.45}
+.tg-head{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:12px}
+.tg-head i{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#5bb2f5,#2d7fd1);display:grid;place-items:center;font-style:normal;font-weight:800;color:#fff}
+.tg-head b{display:block}
+.tg-head small{color:#7d8b99}
+.tg-msg{background:#182533;border-radius:14px 14px 14px 4px;padding:10px 12px;white-space:pre-line;max-width:92%}
+.tg-msg time{display:block;text-align:right;color:#6d7f8f;font-size:11px;margin-top:4px}
+.tg-btns{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px;max-width:92%}
+.tg-btns span{background:#1f2f40;border-radius:10px;text-align:center;padding:8px;font-weight:600;color:#8cc7ff;font-size:13px}
+.done-note{font-size:14px;color:var(--muted)}
+
+/* появление */
+.js .rv{opacity:0;transform:translateY(22px);transition:opacity .7s var(--ease),transform .7s var(--ease)}
+.js .rv.in{opacity:1;transform:none}
+.rm .rv{opacity:1!important;transform:none!important}
+.toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:70;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+.hero-art.haz{background:#151515;padding:0;overflow:hidden;color:#f2f0eb}
+.haz-in{display:flex;flex-direction:column;min-height:100%}
+.stripes{height:26px;background:repeating-linear-gradient(-45deg,#f5b301 0 18px,#151515 18px 36px)}
+.haz-txt{padding:28px clamp(18px,4vw,36px) 8px;display:grid;gap:2px}
+.haz-txt b{font:400 clamp(40px,6.4vw,72px)/1 "Russo One",sans-serif;text-transform:uppercase}
+.haz-txt b:nth-child(2){color:#f5b301}
+.haz-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:20px clamp(18px,4vw,36px) 28px;font-size:13px;color:#a3a09a}
+.haz-row b{color:#f2f0eb;font-size:15px}
+.svc .ic{width:52px;height:52px;border-radius:14px;background:#151515;color:#f5b301;display:grid;place-items:center}
+.svc .ic svg{width:28px;height:28px}
+.svc .specs{color:var(--muted);font-size:14px;margin:0}
+
+</style>
+<script>document.documentElement.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm');</script>
+</head>
+<body>
+<div class="demo-bar"><div class="wrap"><b>Демо-версия</b> сайта для «Демонтаж Воронеж». Цены и тексты — пример, заменяются на ваши.</div></div>
+<header class="top"><div class="wrap">
+  <a class="logo" href="#"><i>ДВ</i><span>Демонтаж Воронеж</span></a>
+  <nav class="nav"><a href="#catalog">Услуги и цены</a><a href="#calc">Калькулятор</a><a href="#steps">Как работаем</a><a href="#faq">Вопросы</a></nav>
+  <button class="btn btn-acc" data-quiz>Вызвать оценщика</button>
+</div></header>
+<main id="app"></main>
+<footer><div class="wrap"><span><b>Демонтаж Воронеж</b> · Воронеж и область</span><span>Демо подготовлено WEST DIGITAL · сайт, калькулятор и заявки в Telegram</span></div></footer>
+<div class="dock" id="dock"><a class="btn btn-ghost" href="#calc">Рассчитать</a><button class="btn btn-acc" data-quiz>Оценщик бесплатно</button></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Заявка"><div class="sheet" id="sheet"></div></div>
+<div class="toast" id="toast"></div>
+<script>
+const C = {"brand": "Демонтаж Воронеж", "mono": "ДВ", "kind": "demolition", "hero": {"kicker": "Воронеж и область · без выходных", "h1": "Демонтаж и вывоз мусора <em>под ключ<\/em>", "lead": "Снесём, разберём и вывезем за 1–3 дня. Пришлите фото объекта — назовём цену сразу, а оценщик приедет бесплатно в день заявки.", "cta": "Отправить фото и узнать цену", "cta2": "Посчитать самому", "facts": [["0 ₽", "выезд оценщика"], ["1–3 дня", "обычный срок работ"], ["с документами", "утилизация мусора"]], "art": "<div class=\"haz-in\"><div class=\"stripes\"><\/div><div class=\"haz-txt\"><b>Демонтаж<\/b><b>Снос<\/b><b>Вывоз<\/b><\/div>\n<div class=\"haz-row\"><span>Оценщик<br><b>бесплатно<\/b><\/span><span>Выезд<br><b>в день заявки<\/b><\/span><span>Мусор<br><b>с документами<\/b><\/span><\/div><div class=\"stripes\"><\/div><\/div>"}, "catalog": {"kicker": "Услуги и цены", "title": "Цены без сюрпризов", "text": "Нажмите «Добавить в расчёт» — работа появится в калькуляторе ниже.", "note": "Цены «от» — пример. Финальная цена — после оценки на объекте или по фото.", "items": [{"name": "Демонтаж перегородок", "group": "Квартиры", "icon": "wall", "price": 650, "unit": "за м²", "min": 5000, "vol": 0.12, "text": "Кирпич, блоки, гипсокартон. Аккуратно, с защитой соседних помещений.", "def": 20}, {"name": "Демонтаж плитки", "group": "Квартиры", "icon": "tile", "price": 300, "unit": "за м²", "min": 3000, "vol": 0.03, "text": "Стены и пол в ванной и кухне, вместе с клеем до основания.", "def": 25}, {"name": "Демонтаж стяжки", "group": "Квартиры", "icon": "floor", "price": 450, "unit": "за м²", "min": 5000, "vol": 0.06, "text": "Отбойными молотками до плиты перекрытия, мешки и вынос.", "def": 40}, {"name": "Снос дома или дачи", "group": "Снос", "icon": "house", "price": 1200, "unit": "за м²", "min": 40000, "vol": 0.5, "text": "Деревянные и кирпичные строения, с вывозом и планировкой участка.", "def": 60}, {"name": "Демонтаж бетона и фундамента", "group": "Снос", "icon": "concrete", "price": 4500, "unit": "за м³", "min": 15000, "vol": 1.4, "text": "Ленты, плиты, отмостки. Своя техника и гидромолот.", "def": 5}, {"name": "Снос сарая или забора", "group": "Снос", "icon": "fence", "price": 400, "unit": "за пог. м", "min": 6000, "vol": 0.15, "text": "Заборы, хозпостройки, теплицы. Столбы выкорчёвываем.", "def": 30}, {"name": "Спил и корчевание деревьев", "group": "Участок", "icon": "tree", "price": 3500, "unit": "за шт.", "min": 3500, "vol": 1, "text": "Деревья и пни, по частям возле построек и проводов.", "def": 3}, {"name": "Вывоз строительного мусора", "group": "Участок", "icon": "truck", "price": 5500, "unit": "за рейс", "min": 5500, "vol": 0, "text": "Газель, ЗИЛ, КАМАЗ. Грузчики, утилизация на полигоне с документами.", "def": 1}]}, "calc": {"title": "Посчитайте демонтаж и вывоз", "spread": 0.1, "text": "Добавьте работы и объём — калькулятор посчитает стоимость и сколько машин нужно под мусор.", "start": [[0, 20], [1, 25]], "waste": [{"name": "Без вывоза", "price": 0, "cap": 1}, {"name": "Газель 6 м³", "price": 5500, "cap": 6}, {"name": "ЗИЛ 8 м³", "price": 8000, "cap": 8}, {"name": "КАМАЗ 20 м³", "price": 15000, "cap": 20}], "wasteDef": 1, "opts": [{"name": "Без лифта, выше 2 этажа", "hint": "вынос мусора вручную", "k": 0.1}, {"name": "Срочно, в течение 24 часов", "hint": "бригада сегодня-завтра", "k": 0.2}, {"name": "С сохранением материалов", "hint": "кирпич, доска на повторное использование", "k": 0.25}], "time": "обычно 1–3 дня работы", "small": "Расчёт предварительный. Точную цену назовём по фото или после бесплатного выезда оценщика."}, "steps": {"title": "Как работаем", "items": [["Фото или выезд", "Пришлите фото — назовём цену сразу, или оценщик приедет бесплатно."], ["Цена в договоре", "Фиксируем объём, сроки и стоимость. Без доплат «по факту»."], ["Работа", "Своя бригада и техника. Защищаем подъезд и соседние помещения."], ["Вывоз", "Грузим, вывозим и утилизируем на полигоне с документами."], ["Оплата", "После приёмки: наличные, перевод или безнал для юрлиц."]]}, "reviews": {"title": "Почему с нами спокойно", "rating": "", "count": "Работаем по договору", "url": "", "points": ["Выезд оценщика бесплатно, в день обращения", "Своя техника и грузчики — без посредников", "Утилизация мусора на полигоне, с документами", "Оплата после приёмки работ"]}, "faq": [["Можно узнать цену без выезда?", "Да: пришлите фото и размеры через форму — назовём вилку цены в течение 15 минут."], ["Вы вывозите мусор?", "Да, своими машинами: Газель, ЗИЛ, КАМАЗ. Грузчики и утилизация на полигоне — с документами."], ["Работаете в жилых домах?", "Да, соблюдаем тишину по закону и защищаем подъезд и лифт плёнкой."], ["Как быстро можете приехать?", "Оценщик — в день заявки. Срочный демонтаж — в течение 24 часов."], ["Работаете с юрлицами?", "Да, по договору и безналу, с закрывающими документами."]], "final": {"kicker": "Быстро", "title": "Пришлите фото — назовём цену за 15 минут", "text": "Или вызовите оценщика: приедет бесплатно в день заявки.", "cta": "Отправить фото"}, "quiz": [{"type": "choice", "q": "Что нужно сделать?", "short": "Работы", "skipIfCalc": true, "options": ["Демонтаж в квартире или доме", "Снос дома или постройки", "Бетон или фундамент", "Только вывоз мусора"]}, {"type": "photo", "q": "Покажите объект", "short": "Объект", "placeholder": "Например: снять плитку в ванной 12 м², 5 этаж без лифта"}, {"type": "choice", "q": "Когда нужно?", "short": "Срок", "options": ["Срочно — сегодня-завтра", "На этой неделе", "Не горит"]}, {"type": "contact", "q": "Когда удобно принять оценщика?", "date": true, "sub": "Выезд и оценка бесплатно. Перезвоним, чтобы согласовать время", "cta": "Вызвать оценщика"}], "tg": {"icon": "🔨", "note": "Заявка приходит в Telegram сразу, с расчётом и ответами клиента: менеджер звонит уже подготовленным, и ни одна заявка не теряется между несколькими телефонами."}, "art": {}};
+</script>
+<script>
+(function(){
+'use strict';
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const nf=new Intl.NumberFormat('ru-RU');
+const rub=n=>nf.format(Math.round(n))+' ₽';
+const mln=n=>n>=1e6?(Math.round(n/1e5)/10).toString().replace('.',',')+' млн ₽':nf.format(Math.round(n/1000))+' тыс. ₽';
+const rng=(a,b)=>a>=1e6&&b>=1e6?mln(a).replace(' млн ₽','')+'–'+mln(b):mln(a)+' – '+mln(b);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let last=null; // последний расчёт — уходит в заявку
+
+/* ---------- рисунок дома ---------- */
+function house(h){
+  const P=C.art, W=320, G=184;
+  const bath=h.kind==='bath';
+  const bw=Math.max(110,Math.min(206,h.w*(bath?17:14)));
+  const fl=h.floors||1, wall=fl>=2?92:(bath?44:52);
+  const garage=h.garage?60:0, terr=h.terrace?Math.min(64,bw*.32):0;
+  const x=Math.round((W-bw-garage)/2+terr/4), y=G-wall;
+  let s=`<svg viewBox="0 0 ${W} 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">`;
+  s+=`<rect x="0" y="${G}" width="${W}" height="16" fill="${P.ground}"/>`;
+  s+=`<circle cx="${W-26}" cy="${G-46}" r="22" fill="${P.tree}" opacity=".9"/><rect x="${W-28}" y="${G-26}" width="4" height="26" fill="${P.trunk}"/>`;
+  s+=`<circle cx="26" cy="${G-30}" r="15" fill="${P.tree}" opacity=".7"/><rect x="24" y="${G-16}" width="4" height="16" fill="${P.trunk}"/>`;
+  if(garage){s+=`<rect x="${x+bw}" y="${G-40}" width="${garage}" height="40" fill="${P.wall2}" stroke="${P.line}" stroke-width="1.5"/><polygon points="${x+bw-4},${G-40} ${x+bw+garage+6},${G-40} ${x+bw+garage+6},${G-48} ${x+bw-4},${G-48}" fill="${P.roof}"/><rect x="${x+bw+10}" y="${G-30}" width="${garage-20}" height="30" fill="${P.glass2}"/>`;for(let i=1;i<5;i++)s+=`<line x1="${x+bw+10}" x2="${x+bw+garage-10}" y1="${G-30+i*6}" y2="${G-30+i*6}" stroke="${P.line}" stroke-width=".8" opacity=".5"/>`;}
+  // стена
+  s+=`<rect x="${x}" y="${y}" width="${bw}" height="${wall}" fill="${P.wall}" stroke="${P.line}" stroke-width="1.5"/>`;
+  if(P.texture==='log'){for(let yy=y+6;yy<G;yy+=7)s+=`<line x1="${x}" x2="${x+bw}" y1="${yy}" y2="${yy}" stroke="${P.line}" stroke-width=".7" opacity=".35"/>`;}
+  if(P.texture==='brick'){for(let yy=y+8;yy<G;yy+=8)s+=`<line x1="${x}" x2="${x+bw}" y1="${yy}" y2="${yy}" stroke="${P.line}" stroke-width=".5" opacity=".18"/>`;}
+  s+=`<rect x="${x-4}" y="${G-8}" width="${bw+8}" height="8" fill="${P.plinth}"/>`;
+  // крыша
+  const rh=h.roof==='flat'?10:(fl===1.5?bw*.46:bw*.3);
+  if(h.roof==='flat'){s+=`<rect x="${x-6}" y="${y-rh}" width="${bw+12}" height="${rh}" fill="${P.roof}"/>`;}
+  else if(h.roof==='shed'){s+=`<polygon points="${x-10},${y+2} ${x+bw+10},${y-rh*.55} ${x+bw+10},${y-rh*.55+8} ${x-10},${y+10}" fill="${P.roof}"/>`;}
+  else if(h.roof==='hip'){s+=`<polygon points="${x-12},${y+2} ${x+bw*.3},${y-rh} ${x+bw*.7},${y-rh} ${x+bw+12},${y+2}" fill="${P.roof}"/>`;}
+  else{s+=`<polygon points="${x-12},${y+2} ${x+bw/2},${y-rh} ${x+bw+12},${y+2}" fill="${P.roof}"/><polygon points="${x+8},${y} ${x+bw/2},${y-rh+12} ${x+bw-8},${y}" fill="${P.gable}" stroke="${P.line}" stroke-width="1"/>`;
+    const gw=fl===1.5?24:14, gh=fl===1.5?28:16; s+=`<rect x="${x+bw/2-gw/2}" y="${y-rh*.42-gh/2+ (fl===1.5?6:0)}" width="${gw}" height="${gh}" rx="2" fill="${P.glass}" stroke="${P.frame}" stroke-width="2"/>`;}
+  if(bath){const cx=x+bw*.72; s+=`<rect x="${cx}" y="${y-rh*.62-14}" width="9" height="${rh*.4+10}" fill="${P.pipe}"/><path d="M${cx+4} ${y-rh*.62-18} q-8 -8 0 -14 q8 -6 0 -14" fill="none" stroke="${P.smoke}" stroke-width="3" stroke-linecap="round" opacity=".55"/>`;}
+  // окна
+  const rows=fl>=2?2:1, rowH=wall/rows;
+  for(let r=0;r<rows;r++){
+    const n=Math.max(2,Math.floor(bw/48)), wy=y+r*rowH+rowH*.24, ww=bath?18:20, wh=bath?16:rowH*.42;
+    for(let i=0;i<n;i++){
+      const wx=x+(bw/(n+1))*(i+1)-ww/2;
+      if(r===rows-1&&i===n-1){s+=`<rect x="${wx-1}" y="${G-8-rowH*.7}" width="${ww+2}" height="${rowH*.7}" fill="${P.door}" stroke="${P.frame}" stroke-width="2"/><circle cx="${wx+ww-4}" cy="${G-8-rowH*.35}" r="1.6" fill="${P.frame}"/>`;continue;}
+      s+=`<rect x="${wx}" y="${wy}" width="${ww}" height="${wh}" fill="${P.glass}" stroke="${P.frame}" stroke-width="2"/><line x1="${wx+ww/2}" x2="${wx+ww/2}" y1="${wy}" y2="${wy+wh}" stroke="${P.frame}" stroke-width="1.4"/>`;
+    }
+  }
+  if(terr){s+=`<rect x="${x-terr}" y="${G-10}" width="${terr+2}" height="4" fill="${P.deck}"/><rect x="${x-terr}" y="${G-wall*.78}" width="${terr+4}" height="5" fill="${P.roof}"/>`;for(let i=0;i<3;i++)s+=`<rect x="${x-terr+2+i*(terr-4)/2}" y="${G-wall*.78}" width="3" height="${wall*.78-8}" fill="${P.deck}"/>`;}
+  return s+'</svg>';
+}
+
+/* ---------- значки (демонтаж) ---------- */
+const ICONS={
+  wall:'<path d="M3 5h18v14H3z M3 9.5h18 M3 14h18 M8 5v4.5 M15 5v4.5 M11 9.5V14 M6 14v5 M17 14v5" />',
+  tile:'<path d="M4 4h7v7H4z M13 4h7v7h-7z M4 13h7v7H4z M14 15l5 5 M19 15l-5 5" />',
+  house:'<path d="M3 11l9-7 9 7v9H3z M9 20v-6h6v6 M4 4l16 16" />',
+  floor:'<path d="M3 17h18 M3 13h18 M6 13l-2 4 M12 13l-2 4 M18 13l-2 4 M8 9l3-5 3 5" />',
+  truck:'<path d="M2 6h12v10H2z M14 9h4l3 3v4h-7 M6 18.5a1.8 1.8 0 1 0 0 .1 M17 18.5a1.8 1.8 0 1 0 0 .1" />',
+  concrete:'<path d="M4 18l4-10 4 4 3-6 5 12z M9 18v-3 M14 18v-4" />',
+  tree:'<path d="M12 3l6 9h-4l4 6H6l4-6H6z M12 18v3" />',
+  fence:'<path d="M5 20V7l2-3 2 3v13 M15 20V7l2-3 2 3v13 M3 10h18 M3 16h18" />'
+};
+const icon=k=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[k]||ICONS.wall}</svg>`;
+const PHONE='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2z"/></svg>';
+
+/* ---------- разметка ---------- */
+const app=$('#app');
+function hero(){
+  const H=C.hero;
+  const art=C.kind==='demolition'
+    ? `<div class="hero-art haz">${H.art}</div>`
+    : `<div class="hero-art">${house(H.house)}${C.reviews&&C.reviews.rating?`<div class="hero-badge"><b><span class="stars">★★★★★</span> ${esc(C.reviews.rating)}</b>${esc(C.reviews.count)} на ${esc(C.reviews.source)}</div>`:''}</div>`;
+  return `<section class="hero"><div class="wrap"><div class="rv"><p class="kicker">${esc(H.kicker)}</p><h1>${H.h1}</h1><p class="lead">${esc(H.lead)}</p><div class="cta"><button class="btn btn-acc" data-quiz>${esc(H.cta)}</button><a class="btn btn-ghost" href="#calc">${esc(H.cta2)}</a></div><div class="facts">${H.facts.map(f=>`<div><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join('')}</div></div><div class="rv">${art}</div></div></section>`;
+}
+function catalog(){
+  const K=C.catalog; if(!K) return '';
+  const groups=[...new Set(K.items.map(i=>i.group))];
+  const chips=groups.length>1?`<div class="cats" role="group">${['Все',...groups].map((g,i)=>`<button class="chip" aria-pressed="${i===0}" data-g="${esc(g)}">${esc(g)}</button>`).join('')}</div>`:'';
+  const cards=K.items.map((it,i)=>C.kind==='demolition'
+    ? `<article class="card svc rv" data-g="${esc(it.group)}"><div class="body"><div class="ic">${icon(it.icon)}</div><h3>${esc(it.name)}</h3><p class="specs" style="display:block">${esc(it.text)}</p><div class="price"><small>от</small><b>${nf.format(it.price)} ₽</b><small>${esc(it.unit)}</small></div><button class="btn btn-ghost" data-pick="${i}">Добавить в расчёт</button></div></article>`
+    : `<article class="card rv" data-g="${esc(it.group)}"><div class="pic">${it.tag?`<span class="tag">${esc(it.tag)}</span>`:''}${house(it)}</div><div class="body"><h3>${esc(it.name)}</h3><div class="specs">${it.specs.map(s=>`<span>${esc(s)}</span>`).join('')}</div><div class="price"><small>от</small><b>${mln(it.price)}</b><small>${esc(it.stage||'')}</small></div><button class="btn btn-ghost" data-pick="${i}">Рассчитать этот проект</button></div></article>`).join('');
+  return `<section class="sec" id="catalog"><div class="wrap"><div class="head rv"><p class="kicker">${esc(K.kicker)}</p><h2 class="h2">${esc(K.title)}</h2><p>${esc(K.text)}</p></div>${chips}<div class="grid">${cards}</div><p class="note">${esc(K.note)}</p></div></section>`;
+}
+function calcHouses(){
+  const T=C.calc.types;
+  const tabs=T.length>1?`<div class="field"><div class="lbl">Что строим</div><div class="seg" data-k="type">${T.map((t,i)=>`<button type="button" aria-pressed="${i===0}" data-v="${t.id}">${esc(t.name)}</button>`).join('')}</div></div>`:'';
+  return `<section class="sec dark" id="calc"><div class="wrap"><div class="head rv"><p class="kicker">Калькулятор</p><h2 class="h2">${esc(C.calc.title)}</h2><p>${esc(C.calc.text)}</p></div><div class="calc"><div class="panel rv" id="cform">${tabs}<div id="cfields"></div></div><div class="panel result rv" id="cres"></div></div></div></section>`;
+}
+function calcDemo(){
+  return `<section class="sec dark" id="calc"><div class="wrap"><div class="head rv"><p class="kicker">Калькулятор</p><h2 class="h2">${esc(C.calc.title)}</h2><p>${esc(C.calc.text)}</p></div><div class="calc"><div class="panel rv"><div class="field"><div class="lbl">Работы <span style="opacity:.6;font-weight:500">объём</span></div><div class="rows" id="rows"></div><button class="add" id="addrow" type="button">+ Добавить работу</button></div><div class="field"><div class="lbl">Вывоз мусора</div><div class="seg" data-k="waste">${C.calc.waste.map((w,i)=>`<button type="button" aria-pressed="${i===C.calc.wasteDef}" data-v="${i}">${esc(w.name)}<small>${w.price?rub(w.price):'сами'}</small></button>`).join('')}</div></div><div class="field"><div class="lbl">Условия</div><div class="checks">${C.calc.opts.map((o,i)=>`<label class="check"><input type="checkbox" data-opt="${i}"><span>${esc(o.name)}<small>${esc(o.hint)}</small></span></label>`).join('')}</div></div></div><div class="panel result rv" id="cres"></div></div></div></section>`;
+}
+function steps(){return `<section class="sec" id="steps"><div class="wrap"><div class="head rv"><p class="kicker">Как работаем</p><h2 class="h2">${esc(C.steps.title)}</h2></div><div class="steps">${C.steps.items.map(s=>`<div class="step rv"><h3>${esc(s[0])}</h3><p>${esc(s[1])}</p></div>`).join('')}</div></div></section>`;}
+function trust(){const R=C.reviews;return `<section class="sec" id="reviews" style="padding-top:0"><div class="wrap"><div class="head rv"><p class="kicker">Почему нам доверяют</p><h2 class="h2">${esc(R.title)}</h2></div><div class="trust"><div class="rating rv">${R.rating?`<b>${esc(R.rating)}</b><div class="stars">★★★★★</div><div>${esc(R.count)} на ${esc(R.source)}</div>`:`<b style="font-size:40px">Отзывы</b><div style="margin-top:8px">${esc(R.count)}</div>`}${R.url?`<a href="${esc(R.url)}" target="_blank" rel="noopener">Читать отзывы →</a>`:''}</div><ul class="rv">${R.points.map(p=>`<li>${esc(p)}</li>`).join('')}</ul></div></div></section>`;}
+function faq(){return `<section class="sec" id="faq" style="padding-top:0"><div class="wrap"><div class="head rv"><p class="kicker">Вопросы</p><h2 class="h2">Частые вопросы</h2></div><div class="faq rv">${C.faq.map(q=>`<details><summary>${esc(q[0])}</summary><p>${esc(q[1])}</p></details>`).join('')}</div></div></section>`;}
+function final(){const F=C.final;return `<section class="sec dark final"><div class="wrap rv"><p class="kicker">${esc(F.kicker)}</p><h2 class="h2">${esc(F.title)}</h2><p>${esc(F.text)}</p><div class="cta"><button class="btn btn-acc" data-quiz>${esc(F.cta)}</button><button class="btn btn-ghost" data-call>${PHONE}Позвонить</button></div></div></section>`;}
+app.innerHTML=hero()+catalog()+(C.kind==='demolition'?calcDemo():calcHouses())+steps()+trust()+faq()+final();
+
+/* ---------- каталог: фильтр ---------- */
+$$('.chip').forEach(b=>b.onclick=()=>{$$('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));const g=b.dataset.g;$$('#catalog .card').forEach(c=>c.hidden=g!=='Все'&&c.dataset.g!==g);});
+
+/* ---------- калькулятор домов ---------- */
+const st={type:0,area:0,floors:0,mat:0,stage:0,found:0,extras:new Set()};
+function seg(k,list,cur,lab,f){return `<div class="field"><div class="lbl">${lab}</div><div class="seg" data-k="${k}">${list.map((o,i)=>`<button type="button" aria-pressed="${i===cur}" data-v="${i}">${esc(o.name)}${f?`<small>${esc(f(o))}</small>`:''}</button>`).join('')}</div></div>`;}
+function drawHouses(){
+  const t=C.calc.types[st.type];
+  $('#cfields').innerHTML=`<div class="field"><label for="area">Площадь <output id="areaOut">${st.area} м²</output></label><input type="range" id="area" min="${t.area[0]}" max="${t.area[1]}" step="5" value="${st.area}"></div>`
+   +seg('floors',t.floors,st.floors,'Этажность')
+   +seg('mat',t.materials,st.mat,'Материал стен',o=>o.hint)
+   +seg('stage',t.stages,st.stage,'Готовность',o=>o.hint)
+   +seg('found',t.found,st.found,'Фундамент')
+   +`<div class="field"><div class="lbl">Дополнительно</div><div class="checks">${t.extras.map((e,i)=>`<label class="check"><input type="checkbox" data-ex="${i}" ${st.extras.has(i)?'checked':''}><span>${esc(e.name)}<small>${e.per?'≈ '+rub(e.price)+' за м² дома':rub(e.price)}</small></span></label>`).join('')}</div></div>`;
+  $('#area').oninput=e=>{st.area=+e.target.value;$('#areaOut').textContent=st.area+' м²';calcH();};
+  $$('#cfields .check input').forEach(c=>c.onchange=()=>{c.checked?st.extras.add(+c.dataset.ex):st.extras.delete(+c.dataset.ex);calcH();});
+  calcH();
+}
+function calcH(){
+  const t=C.calc.types[st.type], m=t.materials[st.mat], sg=t.stages[st.stage], fl=t.floors[st.floors], fd=t.found[st.found];
+  const per=m.p[st.stage]*fl.k;
+  const base=st.area*per;
+  const foot=st.area/fl.div;
+  const found=foot*fd.p;
+  const lines=[[`${sg.name}, ${m.name.toLowerCase()} · ${st.area} м²`,base],[`Фундамент: ${fd.name.toLowerCase()}`,found]];
+  let sum=base+found;
+  t.extras.forEach((e,i)=>{if(st.extras.has(i)){const v=e.per?e.price*st.area:e.price;sum+=v;lines.push([e.name,v]);}});
+  const lo=sum*(1-C.calc.spread), hi=sum*(1+C.calc.spread);
+  const months=Math.max(t.minMonths,Math.round(t.minMonths+st.area/t.monthsPer+st.stage*1.5));
+  last={title:`${t.name}: ${st.area} м², ${fl.name.toLowerCase()}, ${m.name.toLowerCase()}, ${sg.name.toLowerCase()}`,range:rng(lo,hi)};
+  $('#cres').innerHTML=`<p class="kicker">Предварительно</p><div class="sum">${rng(lo,hi)}</div><div class="per">≈ ${rub(sum/st.area)} за м² · срок ${months}–${months+2} мес.</div><ul class="lines">${lines.map(l=>`<li><span>${esc(l[0])}</span><span>${mln(l[1])}</span></li>`).join('')}</ul><button class="btn btn-acc" data-quiz="calc">Получить точную смету</button><p class="small">${esc(C.calc.small)}</p>`;
+}
+function initHouses(){
+  const t=C.calc.types[st.type]; st.area=t.area[2]; st.floors=0; st.mat=0; st.stage=t.stageDef||0; st.found=0; st.extras=new Set();
+  drawHouses();
+}
+$('#cform')&&$('#cform').addEventListener('click',e=>{
+  const b=e.target.closest('.seg button'); if(!b) return;
+  const k=b.parentElement.dataset.k, v=+b.dataset.v;
+  if(k==='type'){st.type=v;$$('[data-k=type] button').forEach(x=>x.setAttribute('aria-pressed',x===b));initHouses();return;}
+  st[k]=v; $$('button',b.parentElement).forEach(x=>x.setAttribute('aria-pressed',x===b)); calcH();
+});
+
+/* ---------- калькулятор демонтажа ---------- */
+const dm={rows:[],waste:0,opts:new Set()};
+function drawRows(){
+  const W=C.catalog.items;
+  $('#rows').innerHTML=dm.rows.map((r,i)=>`<div class="row"><select data-i="${i}" aria-label="Работа">${W.map((w,j)=>`<option value="${j}" ${j===r.w?'selected':''}>${esc(w.name)} · ${esc(w.unit)}</option>`).join('')}</select><input type="number" inputmode="decimal" min="0" data-i="${i}" value="${r.q}" aria-label="Объём"><button class="x" data-i="${i}" type="button" aria-label="Убрать">×</button></div>`).join('');
+  $$('#rows select').forEach(s=>s.onchange=()=>{dm.rows[+s.dataset.i].w=+s.value;dm.rows[+s.dataset.i].q=C.catalog.items[+s.value].def;drawRows();});
+  $$('#rows input').forEach(s=>s.oninput=()=>{dm.rows[+s.dataset.i].q=Math.max(0,parseFloat(s.value.replace(',','.'))||0);calcD();});
+  $$('#rows .x').forEach(s=>s.onclick=()=>{dm.rows.splice(+s.dataset.i,1);drawRows();});
+  calcD();
+}
+function calcD(){
+  const W=C.catalog.items, k=C.calc; let sum=0, vol=0; const lines=[];
+  dm.rows.forEach(r=>{const w=W[r.w];const v=Math.max(w.price*r.q,w.min||0);sum+=v;vol+=r.q*(w.vol||0);lines.push([`${w.name}, ${nf.format(r.q)} ${w.unit.replace('за ','')}`,v]);});
+  let mult=1; k.opts.forEach((o,i)=>{if(dm.opts.has(i)){mult+=o.k;lines.push([o.name,null,'+'+Math.round(o.k*100)+'%']);}});
+  sum*=mult;
+  const ws=k.waste[dm.waste]; let trips=0;
+  if(ws.price){trips=Math.max(1,Math.ceil(vol/ws.cap));sum+=trips*ws.price;lines.push([`Вывоз: ${ws.name} × ${trips}`,trips*ws.price]);}
+  last={title:dm.rows.map(r=>`${W[r.w].name} — ${nf.format(r.q)} ${W[r.w].unit.replace('за ','')}`).join('; ')+(ws.price?`; вывоз ${ws.name} × ${trips}`:''),range:`${rub(sum*(1-k.spread))} – ${rub(sum*(1+k.spread))}`};
+  $('#cres').innerHTML=dm.rows.length?`<p class="kicker">Предварительно</p><div class="sum">${rub(sum*(1-k.spread))}<br><span style="font-size:.6em">до ${rub(sum*(1+k.spread))}</span></div><div class="per">Мусора ≈ ${nf.format(Math.round(vol*10)/10)} м³ · ${esc(k.time)}</div><ul class="lines">${lines.map(l=>`<li><span>${esc(l[0])}</span><span>${l[1]==null?l[2]:rub(l[1])}</span></li>`).join('')}</ul><button class="btn btn-acc" data-quiz="calc">Вызвать оценщика бесплатно</button><p class="small">${esc(k.small)}</p>`
+    :`<p class="kicker">Предварительно</p><p>Добавьте работы слева — посчитаем стоимость и сколько машин нужно под мусор.</p>`;
+}
+if(C.kind==='demolition'){
+  dm.rows=C.calc.start.map(([w,q])=>({w,q})); dm.waste=C.calc.wasteDef;
+  $('#addrow').onclick=()=>{dm.rows.push({w:0,q:C.catalog.items[0].def});drawRows();};
+  $('[data-k=waste]').onclick=e=>{const b=e.target.closest('button');if(!b)return;dm.waste=+b.dataset.v;$$('[data-k=waste] button').forEach(x=>x.setAttribute('aria-pressed',x===b));calcD();};
+  $$('[data-opt]').forEach(c=>c.onchange=()=>{c.checked?dm.opts.add(+c.dataset.opt):dm.opts.delete(+c.dataset.opt);calcD();});
+  drawRows();
+} else initHouses();
+
+/* «рассчитать этот проект» / «добавить в расчёт» */
+document.addEventListener('click',e=>{
+  const b=e.target.closest('[data-pick]'); if(!b) return;
+  const it=C.catalog.items[+b.dataset.pick];
+  if(C.kind==='demolition'){dm.rows.push({w:+b.dataset.pick,q:it.def});drawRows();toast('Добавили в расчёт');}
+  else{
+    const ti=Math.max(0,C.calc.types.findIndex(t=>t.id===it.calcType));
+    if(ti!==st.type){st.type=ti;$$('[data-k=type] button').forEach((x,i)=>x.setAttribute('aria-pressed',i===ti));}
+    const t=C.calc.types[ti];
+    st.area=it.area; st.floors=Math.max(0,t.floors.findIndex(f=>f.v===it.floors)); st.mat=it.mat||0; st.stage=t.stageDef||0; st.found=0; st.extras=new Set(it.extras||[]);
+    drawHouses();
+  }
+  $('#calc').scrollIntoView({behavior:'smooth'});
+});
+
+/* ---------- квиз → заявка → как она придёт в Telegram ---------- */
+const modal=$('#modal'), sheet=$('#sheet'); let q=null;
+function openQuiz(fromCalc){
+  q={i:0,a:[],fromCalc:!!fromCalc&&!!last,photos:0,way:'Звонок'};
+  modal.classList.add('on'); document.body.classList.add('lock'); drawQ();
+}
+function closeQuiz(){modal.classList.remove('on');document.body.classList.remove('lock');}
+function drawQ(){
+  const steps=C.quiz.filter(s=>!(q.fromCalc&&s.skipIfCalc)); q.steps=steps;
+  const s=steps[q.i], pct=Math.round(q.i/(steps.length)*100);
+  let body='';
+  if(s.type==='choice') body=`<div class="opts">${s.options.map(o=>`<button type="button" data-o="${esc(o)}">${esc(o)}</button>`).join('')}</div>`;
+  if(s.type==='photo') body=`<label class="drop"><input type="file" accept="image/*" multiple hidden id="ph"><b>📷 Прикрепить фото объекта</b>Можно несколько — оценим точнее и быстрее</label><div class="thumbs" id="th"></div><textarea id="tx" placeholder="${esc(s.placeholder||'Коротко, что нужно сделать')}"></textarea><button class="btn btn-acc" id="nx" type="button">Дальше</button>`;
+  if(s.type==='contact') body=`${q.fromCalc?`<p class="sub" style="margin-top:-6px">Расчёт: ${esc(last.title)} — <b>${esc(last.range)}</b></p>`:''}<input type="text" id="nm" placeholder="Как к вам обращаться" autocomplete="name"><input type="tel" id="tl" placeholder="+7 ___ ___-__-__" autocomplete="tel" inputmode="tel">${s.date?`<input type="date" id="dt" aria-label="Удобная дата выезда">`:''}<div class="lbl" style="font-weight:700;font-size:14px;margin:4px 0 8px">Как удобнее связаться</div><div class="ways">${['Звонок','WhatsApp','Telegram'].map(w=>`<button type="button" aria-pressed="${w===q.way}" data-w="${w}">${w}</button>`).join('')}</div><div class="err" id="er" hidden>Укажите телефон — перезвоним в течение 15 минут</div><button class="btn btn-acc" id="send" type="button">${esc(s.cta)}</button><p class="agree">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>`;
+  sheet.innerHTML=`<div class="sheet-top">${q.i>0?'<button class="close" id="bk" aria-label="Назад">‹</button>':''}<div class="bar"><i style="width:${pct}%"></i></div><button class="close" id="cl" aria-label="Закрыть">×</button></div><h3>${esc(s.q)}</h3><p class="sub">${esc(s.sub||`Шаг ${q.i+1} из ${steps.length}`)}</p>${body}`;
+  $('#cl').onclick=closeQuiz; $('#bk')&&($('#bk').onclick=()=>{q.i--;q.a.pop();drawQ();});
+  $$('.opts button',sheet).forEach(b=>b.onclick=()=>{q.a.push([s.short,b.dataset.o]);q.i++;drawQ();});
+  if(s.type==='photo'){
+    $('#ph').onchange=e=>{const fs=[...e.target.files].slice(0,6);q.photos=fs.length;$('#th').innerHTML='';fs.forEach(f=>{const im=new Image();im.src=URL.createObjectURL(f);$('#th').appendChild(im);});};
+    $('#nx').onclick=()=>{const t=$('#tx').value.trim();q.a.push([s.short,(t||'без описания')+(q.photos?` · фото: ${q.photos}`:'')]);q.i++;drawQ();};
+  }
+  if(s.type==='contact'){
+    $$('.ways button',sheet).forEach(b=>b.onclick=()=>{q.way=b.dataset.w;$$('.ways button',sheet).forEach(x=>x.setAttribute('aria-pressed',x===b));});
+    $('#send').onclick=()=>{const tel=$('#tl').value.replace(/\D/g,'');if(tel.length<10){$('#er').hidden=false;$('#tl').focus();return;}
+      done($('#nm').value.trim()||'Без имени',$('#tl').value.trim(),s.date&&$('#dt').value?new Date($('#dt').value).toLocaleDateString('ru-RU',{day:'numeric',month:'long'}):'');};
+  }
+}
+function done(name,tel,date){
+  const t=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const rows=[`${C.tg.icon} Новая заявка с сайта`,'',`👤 ${name}`,`📞 ${tel} · ${q.way}`];
+  if(q.fromCalc) rows.push(`🧮 ${last.title}`,`💰 ${last.range}`);
+  q.a.forEach(([k,v])=>rows.push(`• ${k}: ${v}`));
+  if(date) rows.push(`📅 Выезд: ${date}`);
+  sheet.innerHTML=`<div class="sheet-top"><div class="bar"><i style="width:100%"></i></div><button class="close" id="cl" aria-label="Закрыть">×</button></div><h3>Спасибо, ${esc(name)}!</h3><p class="sub">Перезвоним в течение 15 минут в рабочее время.</p><p class="kicker" style="margin:18px 0 8px">Демо: так заявка придёт владельцу в Telegram</p><div class="tg"><div class="tg-head"><i>${esc(C.mono)}</i><div><b>Заявки · ${esc(C.brand)}</b><small>бот</small></div></div><div class="tg-msg">${rows.map(esc).join('\n')}<time>${t}</time></div><div class="tg-btns"><span>📞 Позвонить</span><span>✅ Взял в работу</span></div></div><p class="done-note">${esc(C.tg.note)}</p><button class="btn btn-acc" id="ok" type="button">Понятно</button>`;
+  $('#cl').onclick=closeQuiz; $('#ok').onclick=closeQuiz;
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-quiz]');if(b){e.preventDefault();openQuiz(b.dataset.quiz==='calc');}});
+document.addEventListener('click',e=>{if(e.target.closest('[data-call]'))toast('В демо номер скрыт — на рабочем сайте здесь звонок в один тап');});
+modal.addEventListener('click',e=>{if(e.target===modal)closeQuiz();});
+addEventListener('keydown',e=>{if(e.key==='Escape')closeQuiz();});
+function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>el.classList.remove('on'),2600);}
+
+/* ---------- мелочи ---------- */
+const dock=$('#dock'); addEventListener('scroll',()=>dock.classList.toggle('on',scrollY>innerHeight*.7),{passive:true});
+if('IntersectionObserver' in window){const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{rootMargin:'0px 0px -8% 0px'});$$('.rv').forEach(el=>io.observe(el));}else $$('.rv').forEach(el=>el.classList.add('in'));
+})();
+</script>
+</body>
+</html>
