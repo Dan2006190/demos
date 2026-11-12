@@ -30,7 +30,8 @@
   }
   const HOUSES = SITE.houses || [];
   const MOBILE = matchMedia('(pointer:coarse)').matches || innerWidth < 760;
-  const SEEN = (() => { try { return localStorage.getItem('estate-intro') === '1'; } catch (e) { return false; } })();
+  // ?intro=1 — показать вступление всегда (ссылка для клиентов), иначе только при первом заходе
+  const SEEN = !/[?&]intro=1/.test(location.search) && (() => { try { return localStorage.getItem('estate-intro') === '1'; } catch (e) { return false; } })();
   const LOW = /[?&]q=low/.test(location.search); // слабые устройства: без AO, тени меньше
   const nf = new Intl.NumberFormat('ru-RU');
   const mln = n => (Math.round(n / 1e5) / 10).toString().replace('.', ',') + ' млн ₽';
