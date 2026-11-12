@@ -1,7 +1,8 @@
 /* =====================================================================
    Посёлок в 3D для шапки сайта: вступление сквозь облака, вид сверху,
-   нажатие на дом — пролёт камеры. Дома строятся кодом по параметрам из
-   window.SITE.houses (config.js); фактуры и небо — Poly Haven (CC0).
+   нажатие на дом — пролёт камеры. Дома — модели glTF из window.SITE.houses
+   (config.js, авторы в assets/CREDITS.md); если модель не загрузилась,
+   дом строится кодом по параметрам. Фактуры и небо — Poly Haven (CC0).
    События для страницы: village:phase {phase}, village:thumbs {images}.
    ===================================================================== */
 (async function () {
@@ -13,11 +14,13 @@
   const emit = (name, detail) => dispatchEvent(new CustomEvent('village:' + name, { detail }));
   const loader = $('#loader'), bar = $('#loader i');
   const step = p => { bar.style.width = Math.round(p * 100) + '%'; return new Promise(r => setTimeout(r, 0)); };
-  let THREE, OrbitControls, RGBELoader, mergeGeometries, mergeVertices, EffectComposer, RenderPass, GTAOPass, OutputPass;
+  let THREE, OrbitControls, RGBELoader, GLTFLoader, MeshoptDecoder, mergeGeometries, mergeVertices, EffectComposer, RenderPass, GTAOPass, OutputPass;
   try {
     THREE = await import('three');
     ({ OrbitControls } = await import('three/addons/controls/OrbitControls.js'));
     ({ RGBELoader } = await import('three/addons/loaders/RGBELoader.js'));
+    ({ GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js'));
+    ({ MeshoptDecoder } = await import('three/addons/libs/meshopt_decoder.module.js'));
     ({ mergeGeometries, mergeVertices } = await import('three/addons/utils/BufferGeometryUtils.js'));
     ({ EffectComposer } = await import('three/addons/postprocessing/EffectComposer.js'));
     ({ RenderPass } = await import('three/addons/postprocessing/RenderPass.js'));
@@ -163,6 +166,11 @@
   let assetsDone = false, onAssets = null;
   manager.onProgress = (u, done, total) => { step(.1 + .5 * done / total); };
   manager.onLoad = () => { assetsDone = true; onAssets && onAssets(); };
+  // модели домов грузятся параллельно с небом и фактурами
+  const gltf = new GLTFLoader(manager).setMeshoptDecoder(MeshoptDecoder);
+  const modelFiles = [...new Set(HOUSES.flatMap(h => [h.model, h.annex && h.annex.model]).filter(Boolean))];
+  const modelsP = Promise.all(modelFiles.map(f => gltf.loadAsync(A + f).then(r => [f, r.scene], e => { console.warn('Модель не загрузилась:', f, e); return [f, null]; })))
+    .then(list => Object.fromEntries(list));
   const pmrem = new THREE.PMREMGenerator(renderer);
   try {
     const hdr = await new RGBELoader().loadAsync(A + 'sky_2k.hdr');
@@ -410,6 +418,24 @@
     g.userData = { W: W + (h.garage ? 4.2 : 0), D: D + (h.terrace ? 3.2 : 0), H: top + 4, depth: D, door: V(doorX, 0, D / 2 + 1.45) };
     return g;
   }
+  // готовая модель: разворот фасадом к +Z, центр по участку, земля модели — на y = 0;
+  // userData — как у makeHouse, чтобы пролёт, метки и рендеры работали одинаково
+  function modelHouse(src, h, mirror) {
+    const g = new THREE.Group(), m = src.clone(true), k = h.scale || 1;
+    m.rotation.y = -(h.front || 0); m.scale.set(mirror ? -k : k, k, k);
+    m.traverse(o => {
+      if (!o.isMesh) return;
+      o.castShadow = o.receiveShadow = true;
+      for (const t of ['map', 'normalMap', 'roughnessMap', 'metalnessMap']) if (o.material[t]) o.material[t].anisotropy = maxAniso;
+    });
+    g.add(m); m.updateMatrixWorld(true);
+    const b = new THREE.Box3().setFromObject(m), c = b.getCenter(V());
+    m.position.set(-c.x, 0, -c.z);
+    const W = b.max.x - b.min.x, D = b.max.z - b.min.z;
+    g.userData = { W, D, H: b.max.y, depth: D, door: V((mirror ? -1 : 1) * (h.door || 0), 0, D / 2 + 1.45) };
+    return g;
+  }
+
   function opening(k, c, dirv, out, ww, wh, y0, isDoor) {
     const fr = .09, dep = .12, ry = Math.atan2(dirv.x, dirv.z) - Math.PI / 2;
     const at = (dx, dy, dz) => c.clone().add(dirv.clone().multiplyScalar(dx)).add(out.clone().multiplyScalar(dz)).setY(y0 + dy);
@@ -496,27 +522,50 @@
     { w: 10, floors: 1, roof: 'gable', area: 100, mat: 2 }, { w: 9, floors: 2, roof: 'hip', area: 160, mat: 0 },
     { w: 11, floors: 1, roof: 'hip', area: 120, mat: 1 }, { w: 8, floors: 1.5, roof: 'gable', area: 120, mat: 2 },
     { w: 12, floors: 1, roof: 'flat', area: 140, mat: 0 }, { w: 10, floors: 2, roof: 'gable', area: 180, mat: 1 }];
+  const MODELS = await modelsP;
+  const blocks = []; // где стоят постройки: туда не сажаем деревья и кусты
+  // постройка на участке: отступ от дороги 9 м, глубокие дома ближе к дороге, чтобы влезли в забор
+  function put(g, p, dx) {
+    const gap = Math.max(4, Math.min(9, PD - 1.5 - g.userData.depth));
+    // дальняя сторона улицы смотрит на +Z, ближняя развёрнута: сдвиг по участку отражаем, чтобы вид с дороги был одинаковым
+    g.position.set(p.x + (p.side > 0 ? -dx : dx), 0, p.side * (ROAD / 2 + 1.6 + gap + g.userData.depth / 2));
+    g.rotation.y = p.side > 0 ? Math.PI : 0;
+    world.add(g); blocks.push(new THREE.Box3().setFromObject(g).expandByScalar(1));
+  }
+  const hitbox = (g, i) => {
+    const hb = new THREE.Mesh(new THREE.BoxGeometry(g.userData.W + 2, g.userData.H + 2, g.userData.D + 2), new THREE.MeshBasicMaterial({ visible: false }));
+    hb.position.set(0, g.userData.H / 2, 0); g.add(hb); hb.userData.i = i; hits.push(hb);
+  };
+  const EXTRA = (SITE.extraHouses || []).map(i => HOUSES[i]).filter(h => h && MODELS[h.model]);
   let ei = 0;
   for (const p of plots) {
     const mi = mainSlots.findIndex(s => s[0] === p.x && s[1] === p.side);
     if (mi < 0 && r0() < .18) continue; // пара пустых участков — «ещё продаются»
-    const data = mi >= 0 ? HOUSES[mi] : extraTypes[ei++ % extraTypes.length];
-    if (!data) continue;
-    const g = makeHouse(data, 100 + plots.indexOf(p) * 7);
-    const setback = 9 + g.userData.depth / 2;
-    g.position.set(p.x - (data.garage ? 2 : 0), 0, p.side * (ROAD / 2 + 1.6 + setback));
-    g.rotation.y = p.side > 0 ? Math.PI : 0;
-    world.add(g);
+    let data, g;
     if (mi >= 0) {
-      const hb = new THREE.Mesh(new THREE.BoxGeometry(g.userData.W + 2, g.userData.H + 2, g.userData.D + 2), new THREE.MeshBasicMaterial({ visible: false }));
-      hb.position.set(0, g.userData.H / 2, 0); g.add(hb); hb.userData.i = mi; hits.push(hb);
-      houses[mi] = { g, data, side: p.side };
+      data = HOUSES[mi]; if (!data) continue;
+      g = MODELS[data.model] ? modelHouse(MODELS[data.model], data) : makeHouse(data, 100 + plots.indexOf(p) * 7);
+    } else if (EXTRA.length) { // повтор дома из каталога, через раз — зеркально
+      data = EXTRA[ei % EXTRA.length]; g = modelHouse(MODELS[data.model], data, ei++ % 2 === 1);
+    } else {
+      data = extraTypes[ei++ % extraTypes.length]; g = makeHouse(data, 100 + plots.indexOf(p) * 7);
+    }
+    const model = !!MODELS[data.model];
+    // запасной дом с гаражом сбоку — сдвигаем, чтобы пара встала по центру участка
+    put(g, p, model ? (mi >= 0 && data.dx) || 0 : data.garage ? (p.side > 0 ? 2 : -2) : 0);
+    if (mi < 0) continue;
+    hitbox(g, mi);
+    houses[mi] = { g, data, side: p.side };
+    const an = data.annex;
+    if (an && MODELS[an.model]) { // баня рядом с домом: нажатие по ней ведёт к тому же дому
+      const ag = modelHouse(MODELS[an.model], an); put(ag, p, an.dx || 0); hitbox(ag, mi);
+      houses[mi].annex = ag;
     }
   }
 
   /* ---------- подходы к домам: у каждого свой ---------- */
   const keep = []; // где траву не сажать: прямоугольники и полосы дорожек
-  houses.forEach(h => keep.push({ box: new THREE.Box3().setFromObject(h.g).expandByScalar(.6) }));
+  houses.forEach(h => [h.g, h.annex].forEach(g => g && keep.push({ box: new THREE.Box3().setFromObject(g).expandByScalar(.6) })));
   const ap = new Kit(), flowers = [], bollards = [];
   function strip(name, pts, w, y) {
     for (let i = 0; i < pts.length - 1; i++) {
@@ -529,7 +578,7 @@
     keep.push({ path: pts, w: w + .3 });
   }
   const bez = (a, c, b, n = 18) => Array.from({ length: n + 1 }, (_, i) => { const t = i / n; return a.clone().multiplyScalar((1 - t) ** 2).add(c.clone().multiplyScalar(2 * t * (1 - t))).add(b.clone().multiplyScalar(t * t)); });
-  const plotOf = h => plots.find(p => Math.abs(p.x - h.g.position.x) < 6 && Math.sign(p.side) === h.side);
+  const plotOf = h => plots.find(p => Math.abs(p.x - h.g.position.x) < PW / 2 && Math.sign(p.side) === h.side);
   function approach(h, style) {
     const p = plotOf(h); if (!p) return;
     const near = p.side * (ROAD / 2 + 1.9), door = h.g.localToWorld(h.g.userData.door.clone()).setY(0);
@@ -689,6 +738,8 @@
   const bark = new THREE.MeshStandardMaterial({ color: 0x4e3f33, roughness: 1 });
   const trunkG = new THREE.CylinderGeometry(.14, .28, 5, 7); trunkG.translate(0, 2.5, 0);
   const dummy = new THREE.Object3D(), cc = new THREE.Color();
+  const built = (x, z) => blocks.some(b => x > b.min.x && x < b.max.x && z > b.min.z && z < b.max.z);
+  for (let i = trees.length; i--;) if (built(trees[i][0], trees[i][1])) trees.splice(i, 1);
   const trunks = new THREE.InstancedMesh(trunkG, bark, trees.length); trunks.castShadow = true;
   trees.forEach((t, i) => { dummy.position.set(t[0], 0, t[1]); dummy.rotation.set(0, i, 0); dummy.scale.setScalar(t[2]); dummy.updateMatrix(); trunks.setMatrixAt(i, dummy.matrix); });
   world.add(trunks);
@@ -715,6 +766,7 @@
   const bushG = cards(26, 11, r => { const o = V(0, .7, 0), t = r() * 6.3, ph = Math.acos(r()), d = V(Math.sin(ph) * Math.cos(t), Math.cos(ph), Math.sin(ph) * Math.sin(t)); return { o, p: o.clone().add(d.multiply(V(1.1, .8, 1.1))), s: 1 + r() * .5, rx: r() * 6.3, ry: r() * 6.3, rz: r() * 6.3, l: .6 + .4 * d.y }; });
   const bushes = [];
   for (const p of plots) for (let k = 0; k < 7; k++) { const far = p.side * (ROAD / 2 + 1.6 + PD - 1.4); bushes.push([p.x - PW / 2 + 2 + k * (PW - 4) / 6 + (r0() - .5), far, .8 + r0() * .6]); }
+  for (let i = bushes.length; i--;) if (built(bushes[i][0], bushes[i][1])) bushes.splice(i, 1);
   const bi = new THREE.InstancedMesh(bushG, leafM, bushes.length); bi.castShadow = true;
   bushes.forEach((b, i) => { dummy.position.set(b[0], 0, b[1]); dummy.rotation.set(0, i, 0); dummy.scale.setScalar(b[2]); dummy.updateMatrix(); bi.setMatrixAt(i, dummy.matrix); });
   world.add(bi);
