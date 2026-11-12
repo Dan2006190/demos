@@ -801,13 +801,20 @@
       renderer.render(scene, camera);
       out[i] = canvas.toDataURL('image/jpeg', .86);
     });
+    // сцены для секций сайта: против солнца над посёлком и улица на уровне глаз
+    const sw = MOBILE ? 1280 : 1920, sh = Math.round(sw * 9 / 16), scenes = {};
+    renderer.setSize(sw, sh, false); camera.aspect = sw / sh; camera.updateProjectionMatrix();
+    const shot = (name, pos, look) => { camera.position.copy(pos); camera.lookAt(look); renderer.render(scene, camera); scenes[name] = canvas.toDataURL('image/jpeg', .84); };
+    shot('wide', V(-95, 26, -72), V(15, 2, 32));
+    shot('street', V(-62, 1.7, 1.2), V(40, 2.6, -1.5));
+    out.scenes = scenes;
     clouds.visible = true; lampG.visible = true; camera.position.copy(save); fit();
     return out;
   }
 
   /* ---------- цикл ---------- */
   await step(.95);
-  emit('thumbs', { images: thumbs() });
+  { const t = thumbs(); emit('thumbs', { images: t, scenes: t.scenes }); }
   await step(1);
   loader.classList.add('off');
   const ready = () => {
