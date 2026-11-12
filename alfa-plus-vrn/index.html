@@ -219,6 +219,10 @@ footer b{color:var(--on-dark)}
 .rm .rv{opacity:1!important;transform:none!important}
 .toast{position:fixed;left:50%;bottom:90px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:12px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:70;max-width:calc(100% - 32px);text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
+.v3d{display:flex;align-items:center;gap:14px;margin-top:22px;max-width:440px;padding:12px 16px 12px 12px;border-radius:16px;background:var(--card);border:1px solid var(--line);text-decoration:none;font-size:13px;color:var(--muted);line-height:1.35;transition:transform .25s var(--ease),box-shadow .25s}
+.v3d:hover{transform:translateY(-2px);box-shadow:0 16px 40px -24px rgba(0,0,0,.5)}
+.v3d b{display:block;color:var(--ink);font-size:15px}
+.v3d-i{display:grid;place-items:center;flex:none;width:48px;height:48px;border-radius:12px;background:var(--dark);color:var(--acc);font-weight:800;font-size:16px}
 
 </style>
 <script>document.documentElement.classList.add('js');if(matchMedia('(prefers-reduced-motion: reduce)').matches)document.documentElement.classList.add('rm');</script>
@@ -310,7 +314,7 @@ function hero(){
   const art=C.kind==='demolition'
     ? `<div class="hero-art haz">${H.art}</div>`
     : `<div class="hero-art">${house(H.house)}${C.reviews&&C.reviews.rating?`<div class="hero-badge"><b><span class="stars">★★★★★</span> ${esc(C.reviews.rating)}</b>${esc(C.reviews.count)} на ${esc(C.reviews.source)}</div>`:''}</div>`;
-  return `<section class="hero"><div class="wrap"><div class="rv"><p class="kicker">${esc(H.kicker)}</p><h1>${H.h1}</h1><p class="lead">${esc(H.lead)}</p><div class="cta"><button class="btn btn-acc" data-quiz>${esc(H.cta)}</button><a class="btn btn-ghost" href="#calc">${esc(H.cta2)}</a></div><div class="facts">${H.facts.map(f=>`<div><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join('')}</div></div><div class="rv">${art}</div></div></section>`;
+  return `<section class="hero"><div class="wrap"><div class="rv"><p class="kicker">${esc(H.kicker)}</p><h1>${H.h1}</h1><p class="lead">${esc(H.lead)}</p><div class="cta"><button class="btn btn-acc" data-quiz>${esc(H.cta)}</button><a class="btn btn-ghost" href="#calc">${esc(H.cta2)}</a></div>${C.village?`<a class="v3d" href="${C.village}"><span class="v3d-i">3D</span><span><b>Прогуляйтесь по посёлку</b>Нажмите на дом — камера подлетит к нему</span></a>`:''}<div class="facts">${H.facts.map(f=>`<div><b>${esc(f[0])}</b><span>${esc(f[1])}</span></div>`).join('')}</div></div><div class="rv">${art}</div></div></section>`;
 }
 function catalog(){
   const K=C.catalog; if(!K) return '';
@@ -319,7 +323,7 @@ function catalog(){
   const cards=K.items.map((it,i)=>C.kind==='demolition'
     ? `<article class="card svc rv" data-g="${esc(it.group)}"><div class="body"><div class="ic">${icon(it.icon)}</div><h3>${esc(it.name)}</h3><p class="specs" style="display:block">${esc(it.text)}</p><div class="price"><small>от</small><b>${nf.format(it.price)} ₽</b><small>${esc(it.unit)}</small></div><button class="btn btn-ghost" data-pick="${i}">Добавить в расчёт</button></div></article>`
     : `<article class="card rv" data-g="${esc(it.group)}"><div class="pic">${it.tag?`<span class="tag">${esc(it.tag)}</span>`:''}${house(it)}</div><div class="body"><h3>${esc(it.name)}</h3><div class="specs">${it.specs.map(s=>`<span>${esc(s)}</span>`).join('')}</div><div class="price"><small>от</small><b>${mln(it.price)}</b><small>${esc(it.stage||'')}</small></div><button class="btn btn-ghost" data-pick="${i}">Рассчитать этот проект</button></div></article>`).join('');
-  return `<section class="sec" id="catalog"><div class="wrap"><div class="head rv"><p class="kicker">${esc(K.kicker)}</p><h2 class="h2">${esc(K.title)}</h2><p>${esc(K.text)}</p></div>${chips}<div class="grid">${cards}</div><p class="note">${esc(K.note)}</p></div></section>`;
+  return `<section class="sec" id="catalog"><div class="wrap"><div class="head rv"><p class="kicker">${esc(K.kicker)}</p><h2 class="h2">${esc(K.title)}</h2><p>${esc(K.text)}</p>${C.village?`<a class="btn btn-acc" style="margin-top:20px" href="${C.village}">Смотреть посёлок в 3D →</a>`:''}</div>${chips}<div class="grid">${cards}</div><p class="note">${esc(K.note)}</p></div></section>`;
 }
 function calcHouses(){
   const T=C.calc.types;
@@ -421,6 +425,9 @@ document.addEventListener('click',e=>{
   }
   $('#calc').scrollIntoView({behavior:'smooth'});
 });
+
+const hp=/^#p(\d+)$/.exec(location.hash);
+if(hp&&C.catalog.items[+hp[1]]){history.replaceState(null,'',location.pathname);setTimeout(()=>{const b=document.querySelector(`[data-pick="${hp[1]}"]`);b&&b.click();},60);}
 
 /* ---------- квиз → заявка → как она придёт в Telegram ---------- */
 const modal=$('#modal'), sheet=$('#sheet'); let q=null;
