@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Загородные дома (демо)</title>
+<meta name="description" content="Демо-сайт застройщика: посёлок в 3D, каталог домов, калькулятор и заявка в Telegram.">
+<meta name="theme-color" content="#f7f4ee">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Montserrat:wght@300;400;500;600&display=swap">
+<script type="importmap">
+{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"}}
+</script>
+<script src="config.js"></script>
+<style>
+:root{
+  --bg:#f7f4ee; --paper:#fffdf9; --ink:#1b1a18; --muted:#8a847a; --soft:#b9b2a6; --line:#e6e0d5;
+  --acc:#9c7b4f; --acc-d:#7d6039; --night:#141413;
+  --serif:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --sans:Montserrat,system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:300 15px/1.75 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body.lock{overflow:hidden}
+a{color:inherit;text-decoration:none}
+button,input{font:inherit;color:inherit}
+h1,h2,h3{font-family:var(--serif);font-weight:300;margin:0;line-height:1.05}
+p{margin:0 0 1em}
+.wrap{max-width:1240px;margin:0 auto;padding:0 clamp(16px,5vw,56px)}
+.caps{font:400 11px/1.6 var(--sans);letter-spacing:.32em;text-transform:uppercase}
+.sec{padding:clamp(88px,13vw,180px) 0}
+.lbl{color:var(--acc);margin-bottom:22px;display:flex;align-items:center;gap:14px}
+.lbl::before{content:"";width:36px;height:1px;background:currentColor}
+.h2{font-size:clamp(38px,5.4vw,72px);letter-spacing:-.01em}
+.h2 em{font-style:italic;color:var(--acc)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:12px;min-height:54px;padding:0 34px;border:1px solid var(--ink);background:transparent;cursor:pointer;font:500 11px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;transition:background .35s var(--ease),color .35s var(--ease)}
+.btn:hover{background:var(--ink);color:var(--bg)}
+.btn.solid{background:var(--ink);color:var(--bg)}
+.btn.solid:hover{background:var(--acc);border-color:var(--acc)}
+.link{font:500 11px/1 var(--sans);letter-spacing:.24em;text-transform:uppercase;border-bottom:1px solid currentColor;padding-bottom:6px;cursor:pointer;background:none;border-top:0;border-left:0;border-right:0}
+.rv{opacity:0;transform:translateY(30px);transition:opacity 1.2s var(--ease),transform 1.2s var(--ease)}
+.rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+
+/* шапка сайта */
+.top{position:fixed;z-index:30;left:0;right:0;top:0;transition:background .5s,color .5s,border-color .5s;color:#fff;border-bottom:1px solid rgba(255,255,255,.18)}
+.top.solid{background:rgba(247,244,238,.92);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--ink);border-color:var(--line)}
+.top .wrap{display:flex;align-items:center;gap:28px;height:76px}
+.brand{display:flex;flex-direction:column;line-height:1}
+.brand b{font:500 15px/1 var(--sans);letter-spacing:.5em}
+.brand small{font:300 9px/1 var(--sans);letter-spacing:.42em;text-transform:uppercase;opacity:.75;margin-top:7px}
+.nav{display:none;gap:34px;margin-left:auto}
+.nav a{font:400 10.5px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;opacity:.85}
+.nav a:hover{opacity:1}
+.top .cta .long{display:none}@media(min-width:700px){.top .cta .long{display:inline}}
+.top .cta{margin-left:auto;font:500 10.5px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;padding:13px 18px;border:1px solid currentColor;background:none;cursor:pointer}
+@media(min-width:980px){.nav{display:flex}.top .cta{margin-left:10px}}
+.demo-tag{position:fixed;z-index:31;right:12px;bottom:12px;background:var(--ink);color:var(--bg);font:500 9.5px/1 var(--sans);letter-spacing:.2em;text-transform:uppercase;padding:8px 10px;opacity:.8;pointer-events:none}
+
+/* первый экран: посёлок */
+#hero{position:relative;height:100vh;height:100svh;min-height:560px;overflow:hidden;background:#cfd6dc}
+#scene{position:absolute;inset:0;width:100%;height:100%;display:block;cursor:grab}
+#scene:active{cursor:grabbing}
+.veil{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(20,20,19,.38),rgba(20,20,19,0) 22%,rgba(20,20,19,0) 62%,rgba(20,20,19,.45))}
+.title{position:absolute;left:0;right:0;top:50%;transform:translateY(-58%);text-align:center;color:#fff;pointer-events:none;padding:0 16px}
+.title h1{font:300 clamp(46px,11vw,150px)/1 var(--sans);letter-spacing:.42em;margin-right:-.42em;text-shadow:0 2px 30px rgba(0,0,0,.25)}
+.title p{font:300 italic clamp(20px,2.6vw,32px)/1.3 var(--serif);margin:22px 0 0;text-shadow:0 1px 18px rgba(0,0,0,.35)}
+.title .line{transition:opacity 1.6s var(--ease),transform 1.6s var(--ease),filter 1.6s}
+.title .off{opacity:0;transform:translateY(16px);filter:blur(6px)}
+.intro-lines{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%);text-align:center;color:#fff;pointer-events:none}
+.intro-lines span{display:block;font:300 italic clamp(26px,4vw,52px)/1.25 var(--serif);text-shadow:0 2px 28px rgba(0,0,0,.25);transition:opacity 1.8s var(--ease),filter 1.8s}
+.intro-lines span.off{opacity:0;filter:blur(8px)}
+.hero-foot{position:absolute;left:0;right:0;bottom:0;color:#fff;transition:opacity 1.2s var(--ease)}
+.hero-foot .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding-bottom:calc(30px + env(safe-area-inset-bottom))}
+.stats{display:flex;gap:clamp(18px,4vw,56px)}
+.stats div b{display:block;font:300 clamp(22px,2.6vw,34px)/1 var(--serif)}
+.stats div span{font:400 9.5px/1.4 var(--sans);letter-spacing:.24em;text-transform:uppercase;opacity:.8}
+.scroll{display:flex;flex-direction:column;align-items:center;gap:10px;font:400 9.5px/1 var(--sans);letter-spacing:.3em;text-transform:uppercase}
+.scroll i{width:1px;height:46px;background:linear-gradient(#fff,rgba(255,255,255,0));animation:drop 2.4s var(--ease) infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+.hide{opacity:0;pointer-events:none}
+@media(max-width:700px){.stats div:nth-child(3){display:none}.scroll{display:none}}
+
+#pins{position:absolute;inset:0;pointer-events:none;z-index:3}
+.pin{position:absolute;left:0;top:0;pointer-events:auto;border:0;cursor:pointer;background:rgba(255,253,249,.94);color:var(--ink);padding:9px 14px 10px;text-align:left;font:inherit;line-height:1.2;opacity:0;visibility:hidden;transition:opacity .4s,background .3s;will-change:transform;box-shadow:0 10px 30px -12px rgba(0,0,0,.4)}
+.pin::after{content:"";position:absolute;left:50%;bottom:-18px;width:1px;height:18px;background:rgba(255,253,249,.94)}
+.pin.on{opacity:1;visibility:visible}
+.pin b{display:block;font:400 17px/1.1 var(--serif);white-space:nowrap}
+.pin span{font:400 9.5px/1.4 var(--sans);letter-spacing:.18em;text-transform:uppercase;color:var(--acc-d);white-space:nowrap}
+.pin.hot,.pin:hover{background:var(--ink);color:#fff}.pin.hot span,.pin:hover span{color:#d9c3a0}
+#hint{position:absolute;z-index:3;left:50%;bottom:calc(110px + env(safe-area-inset-bottom));transform:translateX(-50%);color:#fff;font:400 10px/1 var(--sans);letter-spacing:.28em;text-transform:uppercase;white-space:nowrap;text-shadow:0 1px 10px rgba(0,0,0,.5);transition:opacity .6s}
+#hint.off{opacity:0}
+#back{position:absolute;z-index:4;top:96px;left:clamp(16px,5vw,56px);border:1px solid #fff;background:rgba(0,0,0,.12);color:#fff;font:500 10px/1 var(--sans);letter-spacing:.26em;text-transform:uppercase;padding:13px 16px;cursor:pointer;opacity:0;pointer-events:none;transition:.5s var(--ease);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#back.on{opacity:1;pointer-events:auto}
+#card{position:absolute;z-index:4;right:clamp(16px,5vw,56px);bottom:calc(28px + env(safe-area-inset-bottom));width:min(390px,calc(100% - 32px));background:rgba(255,253,249,.96);padding:28px 28px 22px;opacity:0;pointer-events:none;transform:translateY(20px);transition:.7s var(--ease)}
+#card.on{opacity:1;pointer-events:auto;transform:none}
+#card .caps{color:var(--acc)}
+#card h2{font-size:38px;margin:8px 0 4px}
+#c-lead{font:italic 400 19px/1.3 var(--serif);color:var(--muted);margin:0 0 14px}
+#c-specs{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:12.5px;color:var(--muted);margin-bottom:16px}
+#c-price{font:300 32px/1 var(--serif);margin:0 0 20px}
+#card .row{display:flex;gap:10px}
+#card .btn{flex:1;min-height:48px;padding:0 12px;font-size:10px}
+#card .nav2{display:flex;justify-content:space-between;margin-top:16px}
+#card .nav2 button{border:0;background:none;cursor:pointer;font:400 10px/1 var(--sans);letter-spacing:.22em;text-transform:uppercase;color:var(--muted);padding:6px 0}
+@media(max-width:700px){#card{left:12px;right:12px;width:auto;bottom:calc(12px + env(safe-area-inset-bottom));padding:20px 18px 16px}#card h2{font-size:30px}#c-price{font-size:26px;margin-bottom:14px}#c-lead{display:none}#back{top:88px}}
+
+#loader{position:absolute;inset:0;z-index:6;display:grid;place-items:center;background:var(--bg);transition:opacity 1.4s var(--ease)}
+#loader.off{opacity:0;pointer-events:none}
+#loader div{text-align:center;width:min(300px,70vw)}
+#loader b{display:block;font:300 22px/1 var(--sans);letter-spacing:.5em;margin-right:-.5em}
+#loader p{font:italic 300 18px/1.4 var(--serif);color:var(--muted);margin:16px 0 26px}
+#loader span{display:block;height:1px;background:var(--line);overflow:hidden}
+#loader i{display:block;height:100%;width:0;background:var(--ink);transition:width .4s}
+
+@media(max-width:700px){.brand small{display:none}.top .cta{padding:11px 12px;font-size:9.5px;letter-spacing:.2em}.top .wrap{height:64px}.pin{padding:6px 9px 7px}.pin b{font-size:14px}.pin span{display:none}}
+#hero.titled #pins{opacity:0;pointer-events:none}
+#pins{transition:opacity .8s}
+/* манифест */
+.manifesto{text-align:center}
+.manifesto p{font:300 clamp(28px,3.9vw,52px)/1.28 var(--serif);max-width:20em;margin:0 auto}
+.manifesto p em{font-style:italic;color:var(--acc)}
+.manifesto .sign{margin-top:44px;color:var(--muted)}
+
+/* коллекция */
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:clamp(44px,6vw,80px)}
+.head p{max-width:30em;color:var(--muted);margin:0}
+.coll{display:grid;gap:clamp(56px,7vw,100px) clamp(24px,4vw,56px);grid-template-columns:1fr}
+@media(min-width:860px){.coll{grid-template-columns:1fr 1fr}.coll .item:nth-child(even){margin-top:clamp(60px,9vw,140px)}}
+.item .ph{position:relative;aspect-ratio:1.45;background:#e9e4da;overflow:hidden}
+.item .ph img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.03);transition:transform 1.6s var(--ease),opacity 1s;opacity:0}
+.item .ph img.ok{opacity:1}
+.item:hover .ph img{transform:scale(1.07)}
+.item .ph::after{content:attr(data-n);position:absolute;left:18px;top:14px;font:300 15px/1 var(--sans);letter-spacing:.3em;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,.4)}
+.item .ph .wait{position:absolute;inset:0;display:grid;place-items:center;font:italic 300 18px/1 var(--serif);color:var(--muted)}
+.item .meta{display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-top:22px;border-bottom:1px solid var(--line);padding-bottom:16px}
+.item h3{font-size:clamp(30px,3vw,40px)}
+.item .price{font:300 clamp(20px,2vw,26px)/1 var(--serif);white-space:nowrap}
+.item .lead{font:italic 400 19px/1.4 var(--serif);color:var(--muted);margin:14px 0 6px}
+.item .specs{display:flex;flex-wrap:wrap;gap:4px 20px;font-size:12.5px;color:var(--muted);margin-bottom:18px}
+.item .acts{display:flex;gap:28px;flex-wrap:wrap}
+
+/* преимущества */
+.dark{background:var(--night);color:#efeae1}
+.dark .lbl{color:#c9ad83}
+.dark .head p{color:#9c968c}
+.feats{display:grid;gap:1px;background:rgba(255,255,255,.1);grid-template-columns:1fr}
+@media(min-width:700px){.feats{grid-template-columns:1fr 1fr}}
+@media(min-width:1100px){.feats{grid-template-columns:repeat(4,1fr)}}
+.feats div{background:var(--night);padding:36px 28px 40px}
+.feats b{display:block;font:300 15px/1 var(--sans);letter-spacing:.3em;color:#c9ad83;margin-bottom:28px}
+.feats h3{font-size:28px;margin-bottom:12px}
+.feats p{color:#9c968c;margin:0;font-size:14px}
+
+/* калькулятор */
+.calc{display:grid;gap:clamp(32px,5vw,72px);grid-template-columns:1fr}
+@media(min-width:960px){.calc{grid-template-columns:1.15fr .85fr;align-items:start}}
+.f{margin-bottom:34px}
+.f .caps{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:14px}
+.f .caps output{color:var(--ink)}
+.opts{display:flex;flex-wrap:wrap;gap:8px}
+.opts button{border:1px solid var(--line);background:var(--paper);padding:13px 18px;cursor:pointer;font:400 13px/1 var(--sans);transition:.3s}
+.opts button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--bg)}
+input[type=range]{width:100%;accent-color:var(--ink)}
+.checks{display:grid;gap:8px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.checks label{display:flex;gap:12px;align-items:center;border:1px solid var(--line);background:var(--paper);padding:14px 16px;cursor:pointer;font-size:13px}
+.checks input{accent-color:var(--ink);width:17px;height:17px}
+.res{background:var(--paper);border:1px solid var(--line);padding:clamp(28px,4vw,44px);position:sticky;top:100px}
+.res .sum{font:300 clamp(34px,3.6vw,52px)/1.05 var(--serif);margin:14px 0 8px;white-space:nowrap}
+.res .per{color:var(--muted);font-size:13px;margin-bottom:26px}
+.res ul{list-style:none;padding:0;margin:0 0 30px;font-size:13px}
+.res li{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.res .btn{width:100%}
+.res small{display:block;margin-top:14px;color:var(--muted);font-size:11.5px;line-height:1.6}
+
+/* этапы */
+.steps{display:grid;grid-template-columns:1fr;border-top:1px solid var(--line)}
+@media(min-width:860px){.steps{grid-template-columns:repeat(4,1fr)}}
+.steps div{padding:34px 26px 10px 0;border-bottom:1px solid var(--line)}
+@media(min-width:860px){.steps div{border-bottom:0;border-right:1px solid var(--line);padding-left:26px}.steps div:first-child{padding-left:0}.steps div:last-child{border-right:0}}
+.steps b{display:block;font:300 14px/1 var(--sans);letter-spacing:.3em;color:var(--acc);margin-bottom:22px}
+.steps h3{font-size:30px;margin-bottom:10px}
+.steps p{color:var(--muted);font-size:14px}
+
+/* заявка */
+.final{text-align:center}
+.final .h2{max-width:13em;margin:0 auto 20px}
+.final p.sub{color:var(--muted);max-width:32em;margin:0 auto 44px}
+.form{display:grid;gap:12px;max-width:760px;margin:0 auto;grid-template-columns:1fr}
+@media(min-width:760px){.form{grid-template-columns:1fr 1fr auto}}
+.form input{min-height:56px;border:0;border-bottom:1px solid var(--ink);background:transparent;padding:0 4px;font-size:15px;outline:none}
+.form input:focus{border-color:var(--acc)}
+.form .err{grid-column:1/-1;color:#b2452f;font-size:13px;text-align:left}
+.agree{font-size:11.5px;color:var(--muted);margin-top:18px}
+footer{border-top:1px solid var(--line);padding:34px 0 calc(34px + env(safe-area-inset-bottom));font-size:12px;color:var(--muted)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px}
+
+/* окно: как заявка придёт в Telegram */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;background:rgba(20,20,19,.5);opacity:0;pointer-events:none;transition:opacity .4s;padding:16px}
+.modal.on{opacity:1;pointer-events:auto}
+.sheet{width:min(100%,500px);max-height:92vh;overflow:auto;background:var(--paper);padding:34px 30px 28px;transform:translateY(20px);transition:transform .5s var(--ease)}
+.modal.on .sheet{transform:none}
+.sheet h3{font-size:36px;margin:8px 0 6px}
+.sheet .sub{color:var(--muted);font-size:13.5px;margin-bottom:18px}
+.tg{background:#0e1621;color:#e9eef3;border-radius:16px;padding:14px;font:400 13.5px/1.5 system-ui,-apple-system,sans-serif;margin-bottom:18px}
+.tg-h{display:flex;align-items:center;gap:10px;padding:0 4px 12px;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:12px}
+.tg-h i{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#5bb2f5,#2d7fd1);display:grid;place-items:center;font-style:normal;font-weight:700}
+.tg-h small{display:block;color:#7d8b99}
+.tg-m{background:#182533;border-radius:14px 14px 14px 4px;padding:10px 12px;white-space:pre-line}
+.tg-m time{display:block;text-align:right;color:#6d7f8f;font-size:11px}
+.tg-b{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.tg-b span{background:#1f2f40;border-radius:10px;text-align:center;padding:8px;color:#8cc7ff;font-size:12.5px}
+.sheet .btn{width:100%}
+</style>
+</head>
+<body>
+<header class="top" id="top"><div class="wrap">
+  <a class="brand" href="#hero"><b id="b-name"></b><small id="b-sub"></small></a>
+  <nav class="nav"><a href="#collection">Дома</a><a href="#village">Посёлок</a><a href="#calc">Стоимость</a><a href="#steps">Как строим</a></nav>
+  <button class="cta" data-req><span class="long">Записаться на </span>показ</button>
+</div></header>
+
+<section id="hero" aria-label="Посёлок в 3D">
+  <canvas id="scene" aria-label="Посёлок в 3D: нажмите на дом"></canvas>
+  <div class="veil"></div>
+  <div class="intro-lines" id="introLines"><span class="off"></span><span class="off"></span></div>
+  <div class="title" id="title"><h1 class="line off" id="t-brand"></h1><p class="line off" id="t-tag"></p></div>
+  <div id="pins"></div>
+  <div class="off" id="hint">Нажмите на дом</div>
+  <button id="back" type="button">← Посёлок</button>
+  <aside id="card" aria-live="polite">
+    <p class="caps">Проект</p><h2 id="c-name"></h2><p id="c-lead"></p><div id="c-specs"></div><div id="c-price"></div>
+    <div class="row"><button class="btn solid" id="c-want" type="button">Хочу такой</button><button class="btn" id="c-calc" type="button">Рассчитать</button></div>
+    <div class="nav2"><button id="c-prev" type="button">← Предыдущий</button><button id="c-next" type="button">Следующий →</button></div>
+  </aside>
+  <div class="hero-foot hide" id="heroFoot"><div class="wrap"><div class="stats" id="stats"></div><a class="scroll" href="#manifesto"><i></i>Листайте</a></div></div>
+  <div id="loader"><div><b id="l-brand"></b><p>Поднимаемся над облаками…</p><span><i></i></span></div></div>
+</section>
+
+<section class="sec manifesto" id="manifesto"><div class="wrap rv"><p class="lbl caps" style="justify-content:center">Философия</p><p id="m-text"></p><div class="sign caps" id="m-sign"></div></div></section>
+
+<section class="sec" id="collection" style="padding-top:0"><div class="wrap">
+  <div class="head rv"><div><p class="lbl caps">Коллекция</p><h2 class="h2">Дома, которые <em>уже стоят</em> в посёлке</h2></div><p>Каждый можно увидеть с воздуха и обойти вокруг — нажмите «Смотреть в посёлке». Любой проект меняем под ваш участок.</p></div>
+  <div class="coll" id="coll"></div>
+</div></section>
+
+<section class="sec dark" id="village"><div class="wrap">
+  <div class="head rv"><div><p class="lbl caps">Посёлок</p><h2 class="h2">Жизнь, ради которой <em>стоило</em></h2></div><p id="v-addr"></p></div>
+  <div class="feats rv" id="feats"></div>
+</div></section>
+
+<section class="sec" id="calc"><div class="wrap">
+  <div class="head rv"><div><p class="lbl caps">Стоимость</p><h2 class="h2">Сколько стоит <em>ваш</em> дом</h2></div><p>Площадь, материал и готовность — цена пересчитывается сразу. Точную смету фиксируем в договоре.</p></div>
+  <div class="calc">
+    <div class="rv" id="cform"></div>
+    <div class="res rv" id="cres"></div>
+  </div>
+</div></section>
+
+<section class="sec" id="steps" style="padding-top:0"><div class="wrap">
+  <div class="head rv"><div><p class="lbl caps">Как строим</p><h2 class="h2">От первой встречи <em>до ключей</em></h2></div></div>
+  <div class="steps rv" id="stepsBox"></div>
+</div></section>
+
+<section class="sec final" id="request" style="padding-top:0"><div class="wrap rv">
+  <p class="lbl caps" style="justify-content:center">Личный показ</p>
+  <h2 class="h2">Приезжайте <em>посмотреть</em> на закате</h2>
+  <p class="sub">Покажем дома и участки, расскажем про ипотеку и сроки. Оставьте телефон — перезвоним в течение 15 минут.</p>
+  <div class="form"><input id="f-name" placeholder="Имя" autocomplete="name"><input id="f-tel" type="tel" inputmode="tel" placeholder="Телефон" autocomplete="tel"><button class="btn solid" id="f-send" type="button">Записаться</button><div class="err" id="f-err" hidden>Укажите телефон — перезвоним в течение 15 минут</div></div>
+  <p class="agree">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
+</div></section>
+
+<footer><div class="wrap"><span id="foot-brand"></span><span>Демо-сайт · WEST DIGITAL · дома, цены и тексты — пример</span></div></footer>
+<div class="demo-tag" id="demoTag">Демо</div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="Заявка"><div class="sheet" id="sheet"></div></div>
+
+<script>
+(function(){
+'use strict';
+const S=window.SITE, $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const nf=new Intl.NumberFormat('ru-RU'), esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const mln=n=>(Math.round(n/1e5)/10).toString().replace('.',',')+' млн ₽';
+document.title=S.brand.charAt(0)+S.brand.slice(1).toLowerCase()+' — '+S.brandSub+' (демо)';
+$('#b-name').textContent=S.brand; $('#b-sub').textContent=S.brandSub; $('#l-brand').textContent=S.brand;
+$('#t-brand').textContent=S.brand; $('#t-tag').textContent=S.tagline; $('#foot-brand').textContent=S.brand+' · '+S.address;
+$$('#introLines span').forEach((el,i)=>el.textContent=S.intro[i]||'');
+$('#stats').innerHTML=S.stats.map(s=>`<div><b>${esc(s[0])}</b><span>${esc(s[1])}</span></div>`).join('');
+$('#m-text').innerHTML=esc(S.manifesto).replace(/здесь\./,'<em>здесь.</em>'); $('#m-sign').textContent=S.brand+' · '+S.city;
+$('#v-addr').textContent=S.address+'. Сосновый бор, тихие улицы, асфальт до каждого участка.';
+$('#feats').innerHTML=S.features.map((f,i)=>`<div><b>0${i+1}</b><h3>${esc(f[0])}</h3><p>${esc(f[1])}</p></div>`).join('');
+$('#stepsBox').innerHTML=S.steps.map((f,i)=>`<div><b>0${i+1}</b><h3>${esc(f[0])}</h3><p>${esc(f[1])}</p></div>`).join('');
+if(!S.demo) $('#demoTag').hidden=true;
+
+/* коллекция */
+$('#coll').innerHTML=S.houses.map((h,i)=>`<article class="item rv"><div class="ph" data-n="0${i+1}"><span class="wait">Строим рендер…</span><img alt="${esc(h.name)} — дом в посёлке" data-i="${i}"></div>
+<div class="meta"><h3>${esc(h.name)}</h3><span class="price">от ${mln(h.price)}</span></div><p class="lead">${esc(h.lead)}</p>
+<div class="specs">${h.specs.map(s=>`<span>${esc(s)}</span>`).join('')}</div><div class="acts"><button class="link" data-see="${i}">Смотреть в посёлке</button><button class="link" data-calc="${i}">Рассчитать</button></div></article>`).join('');
+addEventListener('village:thumbs',e=>e.detail.images.forEach((src,i)=>{const im=$(`img[data-i="${i}"]`);if(!im)return;im.onload=()=>{im.classList.add('ok');im.previousElementSibling&&im.previousElementSibling.remove();};im.src=src;}));
+
+/* первый экран: фазы вступления */
+const lines=$$('#introLines span'), tb=$('#t-brand'), tt=$('#t-tag'), foot=$('#heroFoot');
+const show=(el,on)=>{el.classList.toggle('off',!on);if(el===tb)$('#hero').classList.toggle('titled',on);};
+addEventListener('village:phase',e=>{
+  const ph=e.detail.phase;
+  if(ph==='intro'){setTimeout(()=>show(lines[0],1),500);setTimeout(()=>show(lines[0],0),3400);}
+  if(ph==='clouds'){show(lines[1],1);setTimeout(()=>show(lines[1],0),2400);}
+  if(ph==='short'){show(tb,1);}
+  if(ph==='ready'){show(tb,1);setTimeout(()=>show(tt,1),700);setTimeout(()=>{foot.classList.remove('hide');},1200);setTimeout(()=>{show(tb,0);show(tt,0);},7000);}
+  if(ph==='failed'){show(tb,1);show(tt,1);foot.classList.remove('hide');}
+});
+addEventListener('village:house',e=>{const on=e.detail.i>=0;foot.classList.toggle('hide',on);if(on){show(tb,0);show(tt,0);}});
+
+/* шапка сайта светлеет после посёлка */
+const top=$('#top'); const onScroll=()=>top.classList.toggle('solid',scrollY>innerHeight*.75); addEventListener('scroll',onScroll,{passive:true}); onScroll();
+
+/* смотреть в посёлке / рассчитать */
+function see(i){scrollTo({top:0,behavior:'smooth'});const go=()=>{const v=window.__village;if(!v)return setTimeout(go,300);if(v.mode==='aerial'||v.mode==='house')v.flyTo(i);else setTimeout(go,400);};setTimeout(go,650);}
+document.addEventListener('click',e=>{
+  const s=e.target.closest('[data-see]'); if(s){see(+s.dataset.see);return;}
+  const c=e.target.closest('[data-calc]'); if(c){preset(+c.dataset.calc);$('#calc').scrollIntoView({behavior:'smooth'});return;}
+  if(e.target.closest('[data-req]')){$('#request').scrollIntoView({behavior:'smooth'});setTimeout(()=>$('#f-name').focus({preventScroll:true}),900);}
+});
+$('#c-calc').onclick=()=>{preset(+$('#c-calc').dataset.i);$('#calc').scrollIntoView({behavior:'smooth'});};
+$('#c-want').onclick=()=>{want=S.houses[+$('#c-want').dataset.i].name;$('#request').scrollIntoView({behavior:'smooth'});setTimeout(()=>$('#f-name').focus({preventScroll:true}),900);};
+let want='';
+
+/* калькулятор */
+const K=S.calc, st={area:120,fl:0,mat:0,stage:2,ex:new Set()};
+const opt=(k,list,cur)=>`<div class="opts" data-k="${k}">${list.map((o,i)=>`<button type="button" aria-pressed="${i===cur}" data-v="${i}">${esc(o.name||o)}</button>`).join('')}</div>`;
+function drawForm(){
+  $('#cform').innerHTML=`<div class="f"><div class="caps">Площадь <output id="aOut">${st.area} м²</output></div><input type="range" id="area" min="60" max="260" step="5" value="${st.area}" aria-label="Площадь"></div>
+  <div class="f"><div class="caps">Этажность</div>${opt('fl',K.floors,st.fl)}</div>
+  <div class="f"><div class="caps">Материал</div>${opt('mat',K.materials,st.mat)}</div>
+  <div class="f"><div class="caps">Готовность</div>${opt('stage',K.stages,st.stage)}</div>
+  <div class="f"><div class="caps">Дополнительно</div><div class="checks">${K.extras.map((x,i)=>`<label><input type="checkbox" data-x="${i}" ${st.ex.has(i)?'checked':''}>${esc(x.name)}</label>`).join('')}</div></div>`;
+  $('#area').oninput=e=>{st.area=+e.target.value;$('#aOut').textContent=st.area+' м²';calc();};
+  $$('#cform [data-x]').forEach(c=>c.onchange=()=>{c.checked?st.ex.add(+c.dataset.x):st.ex.delete(+c.dataset.x);calc();});
+  calc();
+}
+$('#cform').addEventListener('click',e=>{const b=e.target.closest('.opts button');if(!b)return;st[b.parentElement.dataset.k]=+b.dataset.v;$$('button',b.parentElement);[...b.parentElement.children].forEach(x=>x.setAttribute('aria-pressed',x===b));calc();});
+let last=null;
+function calc(){
+  const f=K.floors[st.fl], m=K.materials[st.mat], base=st.area*m.p[st.stage]*f.k, found=st.area/f.div*K.foundation;
+  const lines=[[`${K.stages[st.stage]}, ${m.name.toLowerCase()}`,base],['Фундамент',found]]; let sum=base+found;
+  K.extras.forEach((x,i)=>{if(st.ex.has(i)){sum+=x.price;lines.push([x.name,x.price]);}});
+  const lo=sum*(1-K.spread), hi=sum*(1+K.spread), r=(a,b)=>mln(a).replace(' млн ₽','')+'–'+mln(b);
+  last=`${st.area} м², ${f.name.toLowerCase()}, ${m.name.toLowerCase()}, ${K.stages[st.stage].toLowerCase()} — ${r(lo,hi)}`;
+  $('#cres').innerHTML=`<p class="caps" style="color:var(--acc)">Предварительно</p><div class="sum">${r(lo,hi)}</div><div class="per">≈ ${nf.format(Math.round(sum/st.area/100)*100)} ₽ за м²</div>
+  <ul>${lines.map(l=>`<li><span>${esc(l[0])}</span><span>${mln(l[1]).replace(' млн ₽',' млн')}</span></li>`).join('')}</ul>
+  <button class="btn solid" data-req type="button">Получить точную смету</button><small>Расчёт предварительный. Точную цену фиксируем в договоре после выбора проекта и участка.</small>`;
+}
+function preset(i){const h=S.houses[i];st.area=h.area;st.fl=h.floors===2?2:h.floors===1.5?1:0;st.mat=h.mat===1?1:h.mat===2?2:0;st.stage=2;st.ex=new Set([...(h.terrace?[0]:[]),...(h.garage?[1]:[])]);want=h.name;drawForm();}
+drawForm();
+
+/* заявка → как она придёт в Telegram */
+const modal=$('#modal'), sheet=$('#sheet');
+$('#f-send').onclick=()=>{
+  const tel=$('#f-tel').value.replace(/\D/g,''); if(tel.length<10){$('#f-err').hidden=false;$('#f-tel').focus();return;}
+  $('#f-err').hidden=true; const name=$('#f-name').value.trim()||'Без имени', t=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
+  const rows=['🏡 Запись на показ',`👤 ${name}`,`📞 ${$('#f-tel').value.trim()}`]; if(want)rows.push(`🏠 Интересует: ${want}`); if(last)rows.push(`🧮 ${last}`);
+  sheet.innerHTML=`<p class="caps" style="color:var(--acc)">Спасибо, ${esc(name)}</p><h3>Ждём вас на показе</h3><p class="sub">Перезвоним в течение 15 минут. Демо: так заявка придёт владельцу в Telegram —</p>
+  <div class="tg"><div class="tg-h"><i>${esc(S.mono)}</i><div><b>Заявки · ${esc(S.brand)}</b><small>бот</small></div></div><div class="tg-m">${rows.map(esc).join('\n')}<time>${t}</time></div><div class="tg-b"><span>📞 Позвонить</span><span>✅ Взял в работу</span></div></div>
+  <button class="btn solid" id="ok" type="button">Закрыть</button>`;
+  modal.classList.add('on'); document.body.classList.add('lock'); $('#ok').onclick=close;
+};
+function close(){modal.classList.remove('on');document.body.classList.remove('lock');}
+modal.addEventListener('click',e=>{if(e.target===modal)close();}); addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+
+/* появление блоков */
+const io=new IntersectionObserver(es=>es.forEach(en=>{if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}}),{rootMargin:'0px 0px -10% 0px'});
+$$('.rv').forEach(el=>io.observe(el));
+})();
+</script>
+<script src="village.js"></script>
+</body>
+</html>
