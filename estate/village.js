@@ -32,6 +32,9 @@
     return;
   }
   const HOUSES = SITE.houses || [];
+  // window.VILLAGE_INTRO — страницу ведёт плеер «псевдо-3D» (player.js), здесь только вступление сквозь облака:
+  // без моделей домов (в облаках их не видно), без рендеров каталога и меток; по stop() движок выключается
+  const INTRO_ONLY = !!window.VILLAGE_INTRO;
   const MOBILE = matchMedia('(pointer:coarse)').matches || innerWidth < 760;
   // ?intro=1 — показать вступление всегда (ссылка для клиентов), иначе только при первом заходе
   const SEEN = !/[?&]intro=1/.test(location.search) && (() => { try { return localStorage.getItem('estate-intro') === '1'; } catch (e) { return false; } })();
@@ -150,7 +153,8 @@
   /* ---------- рендер, сцена, небо ---------- */
   const canvas = $('#scene');
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
-  renderer.setPixelRatio(LOW ? 1 : Math.min(devicePixelRatio, MOBILE ? 1.6 : 1.75));
+  const HIGH = /[?&]q=high/.test(location.search); // ?q=high — полное качество (затенение углов, тени 4096)
+  renderer.setPixelRatio(LOW ? 1 : Math.min(devicePixelRatio, HIGH ? 2 : MOBILE ? 1.25 : 1.5));
   renderer.setSize(vw(), vh(), false);
   renderer.shadowMap.enabled = true;
   renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -168,7 +172,7 @@
   manager.onLoad = () => { assetsDone = true; onAssets && onAssets(); };
   // модели домов грузятся параллельно с небом и фактурами
   const gltf = new GLTFLoader(manager).setMeshoptDecoder(MeshoptDecoder);
-  const modelFiles = [...new Set(HOUSES.flatMap(h => [h.model, h.annex && h.annex.model]).filter(Boolean))];
+  const modelFiles = INTRO_ONLY ? [] : [...new Set(HOUSES.flatMap(h => [h.model, h.annex && h.annex.model]).filter(Boolean))];
   const modelsP = Promise.all(modelFiles.map(f => gltf.loadAsync(A + f).then(r => [f, r.scene], e => { console.warn('Модель не загрузилась:', f, e); return [f, null]; })))
     .then(list => Object.fromEntries(list));
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -190,7 +194,7 @@
   const dir = new THREE.DirectionalLight(0xffe7c8, 3.4);
   dir.position.copy(sun).multiplyScalar(260);
   dir.castShadow = true;
-  const SM = LOW ? 1024 : MOBILE ? 2048 : 4096; dir.shadow.mapSize.set(SM, SM);
+  const SM = LOW || MOBILE ? 1024 : HIGH ? 4096 : 2048; dir.shadow.mapSize.set(SM, SM);
   const sc = dir.shadow.camera; sc.left = -140; sc.right = 140; sc.top = 140; sc.bottom = -140; sc.near = 50; sc.far = 600;
   dir.shadow.bias = -.0004; dir.shadow.normalBias = .04;
   scene.add(dir, dir.target);
@@ -663,7 +667,7 @@
       }
       return false;
     });
-    const spots = [], per = LOW ? .9 : MOBILE ? .45 : .2;
+    const spots = [], per = LOW ? 1.1 : MOBILE ? .6 : .3;
     for (const p of plots) {
       const near = p.side * (ROAD / 2 + 2.2), far = p.side * (ROAD / 2 + 1.6 + PD - .8), z0 = Math.min(near, far), z1 = Math.max(near, far);
       const main = Math.abs(p.x) <= 30, n = Math.round((PW - 1.5) * (z1 - z0) / (main ? per : per * 2.5));
@@ -720,7 +724,7 @@
   const coreC = new THREE.ConeGeometry(1.9, 9, 10); coreC.translate(0, 6.2, 0);
   const coreM = new THREE.MeshStandardMaterial({ color: 0x24361c, roughness: 1 });
   // густой лес вокруг посёлка: ближний пояс — полные деревья, дальний — облегчённые
-  const VX = 110, VZ = ROAD / 2 + 1.6 + PD + 4, farTrees = [];
+  const VX = 110, VZ = ROAD / 2 + 1.6 + PD + 4, farTrees = [], beltTrees = [];
   const clear = (x, z) => Math.abs(z) < 7 || Math.abs(Math.abs(x) - 105) < 6.5;
   const belt = (x0, z0, x1, z1, step, list, inner) => {
     for (let x = x0; x < x1; x += step) for (let z = z0; z < z1; z += step) {
@@ -729,8 +733,8 @@
       list.push([tx, tz, .85 + r0() * .75, r0() < .55]);
     }
   };
-  belt(-175, -105, 175, 105, MOBILE ? 6.2 : 4.4, trees, null);
-  belt(-430, -340, 430, 340, LOW ? 16 : MOBILE ? 12 : 8.5, farTrees, [175, 105]);
+  belt(-175, -105, 175, 105, LOW ? 8 : MOBILE ? 7 : 5.2, beltTrees, null);
+  belt(-430, -340, 430, 340, LOW ? 18 : MOBILE ? 14 : 11, farTrees, [175, 105]);
   // лесная подстилка: между стволами не просвечивает газон
   { const fk = new Kit(); M.forest = new THREE.MeshStandardMaterial({ color: 0x55703c, ...grassP, roughness: 1 }); M.forest.userData.size = [3, 3];
     const fr = (x1, z1, x2, z2) => fk.poly('forest', [V(x1, .012, z2), V(x2, .012, z2), V(x2, .012, z1), V(x1, .012, z1)]);
@@ -754,6 +758,8 @@
     });
     world.add(im, ic);
   });
+  // лес вокруг (ближний пояс и дальний): облегчённые деревья, без теней — тени только у деревьев на участках
+  farTrees.push(...beltTrees);
   // дальний лес: меньше карточек, без теней
   const decidL = cards(28, 13, (r) => { const o = V(0, 5.6, 0), t = r() * 6.3, ph = Math.acos(2 * r() - 1), d = V(Math.sin(ph) * Math.cos(t), Math.cos(ph) * .85, Math.sin(ph) * Math.sin(t)); return { o, p: o.clone().add(d.clone().multiply(V(2.4, 2.2, 2.4))), s: 2.8 + r(), rx: r() * 6.3, ry: r() * 6.3, rz: r() * 6.3, l: .5 + .5 * (d.y * .5 + .5) }; });
   const conifL = cards(22, 15, (r) => { const h = r(), y = 1.6 + h * 9, rad = (1 - h) * 2.4 + .3, t = r() * 6.3; return { o: V(0, y + .8, 0), p: V(Math.cos(t) * rad, y, Math.sin(t) * rad), s: 2 + (1 - h) * 1.4, rx: -1.2, ry: -t + 1.57, rz: 0, l: .5 + .5 * h }; });
@@ -812,7 +818,7 @@
   controls.autoRotate = true; controls.autoRotateSpeed = .25;
 
   let composer = null;
-  if (!MOBILE && !LOW) {
+  if (HIGH) {
     try {
       composer = new EffectComposer(renderer);
       composer.addPass(new RenderPass(scene, camera));
@@ -823,7 +829,7 @@
 
   /* ---------- метки домов ---------- */
   const pinsBox = $('#pins');
-  const pins = houses.map((h, i) => {
+  const pins = INTRO_ONLY ? [] : houses.map((h, i) => {
     const el = document.createElement('button'); el.className = 'pin'; el.type = 'button';
     el.innerHTML = `<b>${h.data.name}</b><span>от ${mln(h.data.price)}</span>`;
     el.setAttribute('aria-label', h.data.name + ', показать дом');
@@ -833,7 +839,7 @@
   const tmp = new THREE.Vector3();
   function updatePins() {
     houses.forEach((h, i) => {
-      const el = pins[i];
+      const el = pins[i]; if (!el) return;
       if (mode !== 'aerial') { el.classList.remove('on'); return; }
       tmp.set(0, h.g.userData.H + 1, 0); h.g.localToWorld(tmp); tmp.project(camera);
       const vis = tmp.z < 1 && Math.abs(tmp.x) < 1.1 && Math.abs(tmp.y) < 1.1;
@@ -891,7 +897,7 @@
   // нажатие по дому
   const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
   canvas.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
-  canvas.addEventListener('pointerup', e => {
+  if (!INTRO_ONLY) canvas.addEventListener('pointerup', e => {
     if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
     { const rc = canvas.getBoundingClientRect(); ptr.set((e.clientX - rc.left) / rc.width * 2 - 1, -(e.clientY - rc.top) / rc.height * 2 + 1); } ray.setFromCamera(ptr, camera);
     const hit = ray.intersectObjects(hits, false)[0];
@@ -939,7 +945,7 @@
 
   /* ---------- цикл ---------- */
   await step(.95);
-  { const t = thumbs(); emit('thumbs', { images: t, scenes: t.scenes }); }
+  if (!INTRO_ONLY) { const t = thumbs(); emit('thumbs', { images: t, scenes: t.scenes }); }
   await step(1);
   loader.classList.add('off');
   const ready = () => {
@@ -962,7 +968,9 @@
   }
 
   const camPos = new THREE.Vector3();
+  let stopped = false;
   function frame(now) {
+    if (stopped) return;
     requestAnimationFrame(frame);
     if (!visible) return;
     wind.value = now / 1000;
@@ -987,9 +995,22 @@
     applyShift();
     updatePins();
     composer ? composer.render() : renderer.render(scene, camera);
+    // автоподстройка: первые 3 секунды над посёлком меряем FPS и, если слабо, снижаем качество
+    if (mode === 'aerial' && !perf.done) {
+      if (!perf.t0) perf.t0 = now; perf.n++;
+      if (now - perf.t0 > 3000) {
+        const fps = perf.n * 1000 / (now - perf.t0); perf.done = true;
+        if (fps < 45) { composer = null; renderer.setPixelRatio(1); fit(); }
+        if (fps < 28) { dir.castShadow = false; renderer.shadowMap.enabled = false; scene.traverse(o => { if (o.material) o.material.needsUpdate = true; }); }
+      }
+    }
   }
+  const perf = { t0: 0, n: 0, done: LOW };
   requestAnimationFrame(frame);
-  window.__village = { flyTo, backToVillage, get mode() { return mode; }, count: houses.length };
+  if (INTRO_ONLY) window.__villageIntro = { // плеер забирает экран: останавливаем цикл и отдаём видеокарту
+    stop() { stopped = true; try { renderer.dispose(); renderer.forceContextLoss(); } catch (e) { } canvas.style.display = 'none'; }
+  };
+  else window.__village = { flyTo, backToVillage, get mode() { return mode; }, count: houses.length };
   // ?export=1 — выгрузка сцены для Blender (кнопка внизу слева), см. blender/README.md
   if (/[?&]export=1/.test(location.search)) import('./blender/export.js').then(m => m.default({ THREE, world, houses, camera, renderer, scene, sun, dir }));
   emit('phase', { phase: 'api' });
