@@ -285,6 +285,11 @@ footer a { min-height: 44px; display: inline-flex; align-items: center; text-dec
 .top nav.inline a { text-decoration: none; font-size: 11px; font-weight: 500; letter-spacing: .22em; text-transform: uppercase; opacity: .75; transition: opacity .3s; }
 .top nav.inline a:hover { opacity: 1; }
 .top nav.inline .btn { min-height: 42px; padding: 0 22px; font-size: 11px; opacity: 1; }
+/* стеклянные плашки вокруг имени (motion-kit.js) */
+.hero-chips { position: absolute; inset: 0; z-index: 1; pointer-events: none; --mk-dot: var(--gold); --mk-chip-bg: rgba(255,255,255,.05); --mk-chip-line: rgba(201,169,110,.35); --mk-chip-fg: #eadfca; --mk-chip-r: 2px; }
+.hero-chips .mk-chip { position: absolute; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+.hero-chips .mk-chip:nth-child(1) { left: 5%; top: 53%; } .hero-chips .mk-chip:nth-child(2) { right: 5%; top: 59%; } .hero-chips .mk-chip:nth-child(3) { left: 7%; top: 70%; }
+@media (max-width: 900px) { .hero-chips { display: none; } }
 </style>
 </head>
 <body>
@@ -311,6 +316,7 @@ footer a { min-height: 44px; display: inline-flex; align-items: center; text-dec
   <div class="hero-body">
     <div class="hero-top fade-in" style="animation-delay:.1s"><span>alessia_gloss</span><span>Тамбов</span></div>
 
+    <div class="hero-chips" data-mk-chips aria-hidden="true"><span class="mk-chip">Один клиент в день</span><span class="mk-chip">Запись на 11:00</span><span class="mk-chip">Тест на эластичность перед процедурой</span></div>
     <div class="hero-mid">
       <p class="hero-pre fade-in" style="animation-delay:.2s">Правила задаю я</p>
       <h1 aria-label="Алессия"><span>А</span><span>Л</span><span>Е</span><span>С</span><span>С</span><span>И</span><span>Я</span></h1>
@@ -378,10 +384,10 @@ footer a { min-height: 44px; display: inline-flex; align-items: center; text-dec
   <div class="wrap diag-grid">
     <div>
       <p class="kicker rv"><i>02</i><span>Почему диагностика</span></p>
-      <p class="big-num rv">100<em>%</em></p>
+      <p class="big-num rv"><span data-mk-count>100</span><em>%</em></p>
       <p class="big-cap rv">научная диагностика</p>
       <div class="zero rv"><b>0%</b><span>сказок для «убитого» блонда</span></div>
-      <p class="lead rv">Перед процедурой Алессия делает тест на эластичность волос. Он показывает, выдержит ли волос состав и температуру — или сначала ему нужно восстановление. <span class="tag">текст — пример</span></p>
+      <p class="lead rv" data-mk-words>Перед процедурой Алессия делает тест на эластичность волос. Он показывает, выдержит ли волос состав и температуру — или сначала ему нужно восстановление. <span class="tag">текст — пример</span></p>
     </div>
     <ol class="steps">
       <li class="rv"><span class="n">i.</span><h3>Прядь</h3><p>Берётся тонкая прядь в незаметной зоне — по длине, где волос самый уставший.</p></li>
@@ -751,5 +757,6 @@ footer a { min-height: 44px; display: inline-flex; align-items: center; text-dec
   });
 })();
 </script>
+<script src="motion-kit.js" defer></script>
 </body>
 </html>
