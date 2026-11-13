@@ -62,22 +62,36 @@
   }
   addEventListener('resize', layout);
   new ResizeObserver(layout).observe(hero);
-  // размер файла под экран: ширина кадра на экране в пикселях устройства
+  // размер файла под экран. ПК и планшет: сразу 1280, на больших экранах 1920 — без «мыльных» 640.
+  // Телефон: 1280 (крупнее не нужно по весу), 640 — только запасной, пока 1280 не пришёл.
+  const PHONE = COARSE && Math.min(screen.width, screen.height) < 600;
   function want() {
-    const px = R.w * DPR;
-    let s = px > 1500 ? 'hd' : px > 700 ? 'md' : 'sm';
-    if (SLOW && s !== 'sm') s = 'md';
-    return s;
+    if (PHONE || SLOW) return 'md';
+    return R.w * DPR > 1500 ? 'hd' : 'md';
   }
-  const SIZES = ['sm', 'md', 'hd'];
+
+  /* ---------- наборы кадров ---------- */
+  // посёлок: круг из N кадров (288 через 1,25°), каждый 4-й — настоящий рендер, между ними — досчитанные;
+  // дом: цепочка кадров чистого сектора, 0 — ракурс после подлёта (orbit.zero), смещение off ∈ [min, max]
+  const N = () => M.village.orbit.frames;
+  const ORB = set => set === 'v' ? M.village.orbit : H_(set - 1).orbit;
+  const EVERY = () => (mode === 'house' || (fly && fly.house) ? H_(current).orbit : M.village.orbit).originalEvery || 1;
+  // у досчитанных кадров есть не все размеры (дом: 640 и 1280, посёлок: 1280 и 1920)
+  const has = (set, k, size) => { const o = ORB(set); return k % (o.originalEvery || 1) === 0 || !o.midSizes || o.midSizes.includes(size); };
+  const fit = (set, k, size) => has(set, k, size) ? size : 'md';
+  const wrapK = k => ((k % N()) + N()) % N();
+  const H_ = i => M.houses[i];
+  const hIdx = (i, off) => H_(i).orbit.zero + clamp(Math.round(off), H_(i).orbit.min, H_(i).orbit.max);
+  const setLen = set => set === 'v' ? N() : H_(set - 1).orbit.frames;
+  const dist = (set, a, b) => { const d = Math.abs(a - b); return set === 'v' ? Math.min(d, N() - d) : d; };
+  const degPerFrame = () => mode === 'house' || (fly && fly.house) ? H_(current).orbit.stepDeg : M.village.orbit.stepDeg;
 
   /* ---------- загрузка кадров: очередь с приоритетом ---------- */
   const cache = new Map();            // url → { img, ok }
   const queue = []; let active = 0;
   const LIMIT = COARSE ? 4 : 6;
   function url(set, size, k) { // set: 'v' — посёлок, номер дома 1..6 — облёт дома
-    if (set === 'v') return BASE + M.village.orbit.pattern.replace('{size}', size).replace('{000}', pad(k));
-    const h = M.houses[set - 1]; return BASE + h.orbit.pattern.replace('{size}', size).replace('{000}', pad(k));
+    return BASE + ORB(set).pattern.replace('{size}', fit(set, k, size)).replace('{000}', pad(k));
   }
   function want_(u, prio) {
     const c = cache.get(u);
@@ -94,57 +108,49 @@
     }
   }
   const got = u => { const c = cache.get(u); return c && c.ok ? c.img : null; };
-  // память: крупные кадры держим только рядом с текущим (раскодированный 1920×1080 — ~8 МБ)
-  const KEEP = COARSE ? 16 : 28;
+  // память: крупные кадры держим только рядом с текущим (раскодированный 1280×720 — ~3,7 МБ, 1920×1080 — ~8 МБ)
+  const KEEP = () => PHONE ? 24 : want() === 'hd' ? 32 : 56;
   function evict() {
     const big = [...cache.values()].filter(e => e.ok && !/\/sm\//.test(e.u));
-    if (big.length <= KEEP) return;
-    const cur = mode === 'house' || (fly && fly.house) ? url(current + 1, 'sm', hk(current, hf)) : url('v', 'sm', wrapK(Math.round(vf)));
-    const num = u => +u.match(/(\d{3})\.webp$/)[1], same = (a, b) => a.replace(/\/(sm|md|hd)\/\d{3}\.webp$/, '') === b.replace(/\/sm\/\d{3}\.webp$/, '');
-    const dist = e => same(e.u, cur) ? Math.min(Math.abs(num(e.u) - num(cur)), 72 - Math.abs(num(e.u) - num(cur))) : 999;
-    big.sort((a, b) => dist(a) - dist(b)).slice(KEEP).forEach(e => cache.delete(e.u));
+    if (big.length <= KEEP()) return;
+    const set = mode === 'house' || (fly && fly.house) ? current + 1 : 'v', cur = curIdx();
+    const base = url(set, 'X', 0).replace(/X\/000\.webp$/, '');
+    const d = e => e.u.startsWith(base) ? dist(set, +e.u.match(/(\d{3})\.webp$/)[1], cur) : 9999;
+    big.sort((a, b) => d(a) - d(b)).slice(KEEP()).forEach(e => cache.delete(e.u));
   }
-  // лучший уже загруженный файл кадра: нужного размера, иначе меньше/больше
-  function best(set, k) {
-    const s = want(), order = [s, ...SIZES.filter(x => x !== s).reverse()];
-    for (const z of order) { const im = got(url(set, z, k)); if (im) return im; }
-    return null;
-  }
-
-  /* ---------- облёт дома: сектор без ёлок ---------- */
-  const H_ = i => M.houses[i];
-  const hk = (i, off) => { const s = H_(i).orbit.sector, z = s.indexOf(0); return s[clamp(Math.round(off), -z, s.length - 1 - z) + z]; };
-  const hkf = (i, off) => { const s = H_(i).orbit.sector, z = s.indexOf(0), j = clamp(off, -z, s.length - 1 - z) + z; return [s[Math.floor(j)], s[Math.min(s.length - 1, Math.floor(j) + 1)], j - Math.floor(j)]; };
-
-  /* ---------- рисование ---------- */
-  const N = () => M.village.orbit.frames;
-  const wrapK = k => ((k % N()) + N()) % N();
-  function frameImgs() { // [img0, img1, доля второго] для текущего состояния
-    if (mode === 'house' || (mode === 'flying' && fly && fly.house)) {
-      const [a, b, t] = hkf(current, hf); return [best(current + 1, a) || nearest(current + 1, a), best(current + 1, b), t];
+  // кадр k: нужного размера; если ещё не пришёл — ближайший готовый того же размера (не «мыло»);
+  // на телефоне в крайнем случае 640
+  function pick(set, k) {
+    const s = want(), n = setLen(set);
+    let im = got(url(set, s, k)) || (s === 'hd' && got(url(set, 'md', k)));
+    if (im) return im;
+    for (let d = 1; d <= 12; d++) for (const j of [k - d, k + d]) {
+      const jj = set === 'v' ? wrapK(j) : j; if (jj < 0 || jj >= n) continue;
+      im = got(url(set, s, jj)) || (s === 'hd' && got(url(set, 'md', jj))); if (im) return im;
     }
-    const a = wrapK(Math.floor(vf)), b = wrapK(a + 1), t = vf - Math.floor(vf);
-    return [best('v', a) || nearest('v', a), best('v', b), t];
+    return (has(set, k, 'sm') && got(url(set, 'sm', k))) || got(url(set, 'md', k)) || got(url(set, 'hd', k));
   }
-  function nearest(set, k) { // кадр ещё не пришёл — показываем ближайший готовый
-    const list = set === 'v' ? [...Array(N()).keys()] : H_(set - 1).orbit.sector;
-    let bestIm = null, d = 1e9;
-    for (const j of list) { const im = best(set, j); if (im) { const dd = Math.min(Math.abs(j - k), N() - Math.abs(j - k)); if (dd < d) { d = dd; bestIm = im; } } }
-    return bestIm;
-  }
-  let lastBg = null;
-  function draw() {
-    const [a, b, t] = frameImgs();
-    if (!a) return;
+
+  /* ---------- рисование: один кадр, смена — подстройка ≤ 80 мс ---------- */
+  const curIdx = () => mode === 'house' || (mode === 'flying' && fly && fly.house) ? hIdx(current, hf) : wrapK(Math.round(vf));
+  const curSet = () => mode === 'house' || (mode === 'flying' && fly && fly.house) ? current + 1 : 'v';
+  let shownImg = null, prevImg = null, swapAt = 0, lastBg = null;
+  const SWAP = 80;
+  function draw(now = performance.now()) {
+    const im = pick(curSet(), curIdx());
+    if (!im) return;
+    if (im !== shownImg) { prevImg = shownImg; shownImg = im; swapAt = now; }
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     if (R.w < W - 1 || R.h < H - 1 || R.x > 0 || R.y > 0) { // подложка: тот же кадр, растянутый из 48×27 — мягкое размытие
-      if (lastBg !== a) { tctx.drawImage(a, 0, 0, tiny.width, tiny.height); lastBg = a; }
-      ctx.imageSmoothingEnabled = true; ctx.filter = 'none';
+      if (lastBg !== im) { tctx.drawImage(im, 0, 0, tiny.width, tiny.height); lastBg = im; }
+      ctx.imageSmoothingEnabled = true;
       ctx.drawImage(tiny, 0, 0, W, H);
       ctx.fillStyle = 'rgba(18,18,18,.18)'; ctx.fillRect(0, 0, W, H);
     }
-    ctx.globalAlpha = 1; ctx.drawImage(a, R.x, R.y, R.w, R.h);
-    if (b && t > .01 && b !== a) { ctx.globalAlpha = t; ctx.drawImage(b, R.x, R.y, R.w, R.h); ctx.globalAlpha = 1; }
+    const t = prevImg && !RM ? clamp((now - swapAt) / SWAP, 0, 1) : 1;
+    if (t < 1) { ctx.drawImage(prevImg, R.x, R.y, R.w, R.h); ctx.globalAlpha = t; need = true; }
+    ctx.drawImage(im, R.x, R.y, R.w, R.h); ctx.globalAlpha = 1;
+    if (t >= 1) prevImg = null;
   }
 
   /* ---------- метки домов ---------- */
@@ -159,12 +165,10 @@
       pinsBox.appendChild(el); return el;
     });
   }
-  function labelAt(i) { // координаты метки дома i на текущем (дробном) кадре облёта, в CSS-пикселях
-    const L = M.village.orbit.labels, a = wrapK(Math.floor(vf)), b = wrapK(a + 1), t = vf - Math.floor(vf);
-    const p = L[a][i], q = L[b][i];
-    if (!p[2] && !q[2]) return null;
-    const fx = p[0] + (q[0] - p[0]) * t, fy = p[1] + (q[1] - p[1]) * t;
-    const x = R.x + fx * R.w, y = R.y + fy * R.h;
+  function labelAt(i) { // метка дома i на показанном кадре облёта, в CSS-пикселях
+    const p = M.village.orbit.labels[wrapK(Math.round(vf))][i];
+    if (!p[2]) return null;
+    const x = R.x + p[0] * R.w, y = R.y + p[1] * R.h;
     return x < 8 || x > W - 8 || y < 60 || y > H - 20 ? null : { x, y };
   }
   function updatePins() {
@@ -179,12 +183,13 @@
   }
 
   /* ---------- свайп / перетаскивание ---------- */
-  let drag = null, vel = 0, lastMove = 0, idleSince = performance.now();
-  const perPx = () => (mode === 'house' ? 48 : N()) / (Math.max(W, 360) * (COARSE ? 1.6 : 2.2)); // кадров на пиксель
+  // чувствительность: протяжка на всю ширину экрана — 90° (сенсорный экран — 120°)
+  let drag = null, vel = 0, lastMove = 0, idleSince = performance.now(), settled = true;
+  const perPx = () => (COARSE ? 120 : 90) / Math.max(W, 320) / degPerFrame(); // кадров на пиксель
   cv.addEventListener('pointerdown', e => {
     if (mode !== 'aerial' && mode !== 'house') return;
     drag = { x: e.clientX, y: e.clientY, x0: e.clientX, t: performance.now(), moved: false, id: e.pointerId };
-    vel = 0; idleSince = performance.now();
+    vel = 0; anim = null; idleSince = performance.now();
   });
   addEventListener('pointermove', e => {
     if (!drag || e.pointerId !== drag.id) return;
@@ -193,23 +198,25 @@
     if (!drag.moved) return;
     const df = -dx * perPx(); // вправо — передний план идёт за пальцем
     move(df);
-    vel = .8 * vel + .2 * (df / Math.max(1, now - drag.t) * 16);
-    drag.x = e.clientX; drag.t = now; lastMove = now; idleSince = now;
+    const v = df / Math.max(8, now - drag.t) * 16;   // кадров за 16 мс
+    vel = .7 * vel + .3 * v;
+    drag.x = e.clientX; drag.t = now; lastMove = now; idleSince = now; settled = false;
   });
   const up = e => {
     if (!drag || (e && e.pointerId !== drag.id)) return;
     const tap = !drag.moved; drag = null; idleSince = performance.now();
     if (tap && e && e.type === 'pointerup') onTap(e);
-    if (performance.now() - lastMove > 80) vel = 0;
+    if (performance.now() - lastMove > 90) vel = 0;
+    vel = clamp(vel, -1.6, 1.6); // мягкая инерция: без рывка после отпускания
   };
   addEventListener('pointerup', up); addEventListener('pointercancel', up);
   function move(df) {
     if (mode === 'aerial') vf = vf + df;
     else if (mode === 'house') { // мягкий упор у края чистого сектора
-      const h = H_(current).orbit, lo = h.min, hi = h.max;
+      const h = H_(current).orbit, lo = h.min, hi = h.max, room = 4;
       const over = hf < lo ? lo - hf : hf > hi ? hf - hi : 0;
-      hf += df * (over > 0 && Math.sign(df) === Math.sign(hf - (lo + hi) / 2) ? Math.max(.08, 1 - over / .9) : 1);
-      hf = clamp(hf, lo - 1, hi + 1);
+      hf += df * (over > 0 && Math.sign(df) === Math.sign(hf - (lo + hi) / 2) ? Math.max(.06, 1 - over / room) : 1);
+      hf = clamp(hf, lo - room, hi + room);
     }
     need = true; prefetchAround();
   }
@@ -219,7 +226,10 @@
     if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { const d = e.key === 'ArrowLeft' ? -1 : 1; if (mode === 'aerial' || mode === 'house') { glide(d); e.preventDefault(); } }
     if (e.key === 'Escape' && mode === 'house') backToVillage();
   });
-  function glide(d) { vel = 0; anim = { from: mode === 'house' ? hf : vf, to: Math.round(mode === 'house' ? hf : vf) + d, t0: performance.now(), dur: 260 }; }
+  function glide(d) { // стрелки: к соседнему настоящему кадру рендера
+    vel = 0; const E = EVERY(), cur = mode === 'house' ? hf : vf, to = (Math.round(cur / E) + d) * E;
+    anim = { from: cur, to: mode === 'house' ? clamp(to, H_(current).orbit.min, H_(current).orbit.max) : to, t0: performance.now(), dur: 380 };
+  }
   let anim = null;
   function onTap(e) { // нажали на картинку: ближайшая метка в радиусе — к этому дому
     if (mode !== 'aerial') return;
@@ -236,21 +246,19 @@
   });
 
   /* ---------- предзагрузка ---------- */
-  function prefetchAround() {
-    const s = want();
-    if (mode === 'house' || (mode === 'flying' && fly && fly.house)) {
-      const sec = H_(current).orbit.sector, z = sec.indexOf(0), j = clamp(Math.round(hf), -z, sec.length - 1 - z) + z;
-      sec.forEach((k, n) => { want_(url(current + 1, 'sm', k), 20 + Math.abs(n - j)); if (Math.abs(n - j) <= 3) want_(url(current + 1, s, k), 10 + Math.abs(n - j)); });
-      return;
+  // вокруг текущего кадра: сначала настоящие кадры рендера (через 5° / 7,5°), потом досчитанные между ними
+  function prefetchAround(wide) {
+    const s = want(), set = curSet(), c = curIdx(), n = setLen(set), E = EVERY();
+    const R1 = wide ? 32 : 8, R2 = wide ? 8 : 4; // на старте узко (вес), после — шире; дальше — по ходу свайпа
+    for (let d = -R1; d <= R1; d++) {
+      let k = c + d; if (set === 'v') k = wrapK(k); else if (k < 0 || k >= n) continue;
+      const orig = k % E === 0;
+      if (orig) want_(url(set, s, k), 10 + Math.abs(d) / E);
+      else if (Math.abs(d) <= R2) want_(url(set, s, k), 12 + Math.abs(d));
+      if (PHONE && has(set, k, 'sm') && (orig || Math.abs(d) <= R2)) want_(url(set, 'sm', k), 40 + Math.abs(d)); // телефон: запасные 640
     }
-    const c = wrapK(Math.round(vf));
-    for (let d = -4; d <= 4; d++) want_(url('v', s, wrapK(c + d)), 10 + Math.abs(d));
   }
-  function prefetchVillage() { // все маленькие кадры облёта — по удалённости от текущего
-    const c = wrapK(Math.round(vf));
-    for (let d = 0; d <= N() / 2; d++) { want_(url('v', 'sm', wrapK(c + d)), 30 + d); want_(url('v', 'sm', wrapK(c - d)), 30 + d); }
-  }
-  const vsize = () => (R.w * DPR > 1500 && !SLOW ? 'hd' : 'md');
+  const vsize = () => (R.w * DPR > 1500 && !SLOW && !PHONE ? 'hd' : 'md');
   const vurl = (i, rev) => BASE + (rev ? H_(i).approach.reverse : H_(i).approach.file).replace('{size}', vsize());
 
   /* ---------- подлёт к дому и обратно ---------- */
@@ -277,25 +285,25 @@
     $('#hint').classList.add('off'); closeCard(); updatePins();
     // параллельно: видео подлёта и первые кадры облёта дома
     const vReady = setVideo(vurl(i, false));
-    want_(url(i + 1, want(), 0), 1); want_(url(i + 1, 'sm', 0), 0);
+    want_(url(i + 1, want(), hIdx(i, 0)), 1);
     // докрутка облёта посёлка к ракурсу дома (кратчайшим путём)
     const k = H_(i).orbitFrame; let d = wrapK(k - vf); if (d > N() / 2) d -= N();
-    await tween(v => { vf = v; }, vf, vf + d, RM ? 1 : Math.min(1400, 350 + Math.abs(d) * 45));
+    await tween(v => { vf = v; }, vf, vf + d, RM ? 1 : Math.min(1500, 350 + Math.abs(d) * 12));
     vf = k; need = true;
     spin.classList.remove('off'); const ok = await vReady; spin.classList.add('off');
     layout(); // на телефоне стоя кадр поднимается выше карточки
     if (ok) await playVideo();
-    await until(() => got(url(i + 1, 'sm', 0)) || got(url(i + 1, want(), 0)), 6000); // стык: кадр облёта дома уже здесь
+    await until(() => got(url(i + 1, want(), hIdx(i, 0))), 6000); // стык: кадр облёта дома уже здесь
     hf = 0; fly.house = true; need = true; draw();
     vid.classList.add('off');
     mode = 'house'; fly = null; openCard(i); prefetchAround();
-    setTimeout(() => { if (mode === 'house' && current === i) setVideo(vurl(i, true)); }, 1200); // обратный подлёт — заранее
+    setTimeout(() => { if (mode === 'house' && current === i) { setVideo(vurl(i, true)); prefetchAround(true); } }, 1200); // обратный подлёт и кадры шире — заранее
   }
   async function backToVillage() {
     if (fly || mode !== 'house') return;
     const i = current; mode = 'flying'; fly = { house: true }; closeCard();
     const vReady = setVideo(vurl(i, true));
-    await tween(v => { hf = v; }, hf, 0, RM ? 1 : Math.min(900, 200 + Math.abs(hf) * 40));
+    await tween(v => { hf = v; }, hf, 0, RM ? 1 : Math.min(1000, 200 + Math.abs(hf) * 12));
     hf = 0; need = true;
     spin.classList.remove('off'); const ok = await vReady; spin.classList.add('off');
     fly.house = false; vf = H_(i).orbitFrame; layout();
@@ -306,8 +314,8 @@
   }
   async function switchHouse(i) { // «следующий / предыдущий» в карточке: сразу к облёту другого дома
     mode = 'flying'; fly = { house: true }; closeCard();
-    want_(url(i + 1, 'sm', 0), 0); want_(url(i + 1, want(), 0), 1);
-    await new Promise(r => { const t0 = performance.now(); (function w() { if (got(url(i + 1, 'sm', 0)) || performance.now() - t0 > 6000) r(); else setTimeout(w, 50); })(); });
+    want_(url(i + 1, want(), hIdx(i, 0)), 0);
+    await until(() => got(url(i + 1, want(), hIdx(i, 0))), 6000);
     wrap.classList.add('fade'); await new Promise(r => setTimeout(r, 220));
     current = i; hf = 0; need = true; draw(); wrap.classList.remove('fade');
     mode = 'house'; fly = null; openCard(i); prefetchAround();
@@ -342,19 +350,25 @@
       if (anim.set) anim.set(v); else if (mode === 'house') hf = v; else vf = v;
       need = true;
       if (t >= 1) { const r = anim.res; anim = null; r && r(); }
-    } else if (!drag && Math.abs(vel) > .002 && (mode === 'aerial' || mode === 'house')) { // инерция
-      move(vel); vel *= .92;
-    } else if (!drag && mode === 'house') { // упор: возвращаемся в сектор
-      const h = H_(current).orbit;
-      if (hf < h.min - .001 || hf > h.max + .001) { hf += (clamp(hf, h.min, h.max) - hf) * .18; need = true; }
-    } else if (!drag && mode === 'aerial' && !RM && now - idleSince > 5000) { // медленный облёт сам по себе
-      vf += .012; need = true; if (Math.floor(vf * 4) !== Math.floor((vf - .012) * 4)) prefetchAround();
+    } else if (!drag && Math.abs(vel) > .04 && (mode === 'aerial' || mode === 'house')) { // инерция, мягко затухает
+      move(vel); vel *= .94;
+    } else if (!drag && (mode === 'aerial' || mode === 'house') && !settled) {
+      // палец отпущен: доезжаем до ближайшего настоящего кадра рендера (в покое — без досчитанных кадров),
+      // в облёте дома — заодно возвращаемся из-за края сектора
+      vel = 0; settled = true;
+      const E = EVERY(), cur = mode === 'house' ? hf : vf;
+      let to = Math.round(cur / E) * E;
+      if (mode === 'house') to = clamp(to, H_(current).orbit.min, H_(current).orbit.max);
+      if (Math.abs(to - cur) > .01) anim = { from: cur, to, t0: now, dur: 160 + Math.abs(to - cur) * 40 };
+    } else if (!drag && mode === 'aerial' && !RM && now - idleSince > 6000) { // медленный облёт сам по себе: кадр за кадром
+      const before = Math.round(vf); vf += .03; if (Math.round(vf) !== before) { need = true; if (Math.round(vf) % 4 === 0) prefetchAround(); }
     }
-    if (need) { need = false; draw(); updatePins(); }
+    if (need) { need = false; draw(now); updatePins(); }
   }
 
   /* ---------- старт ---------- */
   const step = p => { if (bar) bar.style.width = Math.round(p * 100) + '%'; };
+  if (/[?&]debug=1/.test(location.search)) window.__dbg = () => ({ mode, vf: +vf.toFixed(2), hf: +hf.toFixed(2), frame: curIdx(), size: want() });
   window.__village = { flyTo, backToVillage, get mode() { return mode === 'intro' ? 'intro' : mode; }, count: (SITE.houses || []).length };
   const introOn = !!window.__introRunning;
   async function start() {
@@ -362,11 +376,12 @@
       M = await (await fetch(BASE + 'manifest.json')).json();
     } catch (e) { return fallback3d(); }
     layout(); makePins();
-    want_(url('v', 'sm', 0), 0); want_(url('v', want(), 0), 1);
-    prefetchAround(); prefetchVillage();
+    want_(url('v', want(), 0), 0);
+    prefetchAround();
     requestAnimationFrame(loop);
     if (!introOn) step(.3);
-    await until(() => got(url('v', 'sm', 0)) || got(url('v', want(), 0)), 15000);
+    await until(() => got(url('v', want(), 0)), 15000);
+    setTimeout(() => prefetchAround(true), 1500); // после старта — шире вокруг
     if (!introOn) {
       step(1); loader.classList.add('off');
       mode = 'aerial'; need = true; emit('phase', { phase: 'short' });
@@ -379,8 +394,8 @@
   function thumbs() {
     const s = innerWidth * Math.min(devicePixelRatio || 1, 2) > 1600 ? 'hd' : 'md';
     emit('thumbs', {
-      images: M.houses.map((h, i) => url(i + 1, 'md', 0)),
-      scenes: { wide: url('v', s, 36), street: url(2, s, 6) }
+      images: M.houses.map((h, i) => url(i + 1, 'md', hIdx(i, 0))),
+      scenes: { wide: url('v', s, 144), street: url(2, s, hIdx(1, 24)) }
     });
   }
   const until = (f, ms) => new Promise(r => { const t0 = performance.now(); (function w() { if (f() || performance.now() - t0 > ms) r(); else setTimeout(w, 40); })(); });
@@ -400,7 +415,7 @@
     };
     addEventListener('village:phase', e => {
       const ph = e.detail.phase;
-      if (ph === 'clouds') setTimeout(() => until(() => M && got(url('v', 'sm', 0)), 8000).then(reveal), COARSE ? 1700 : 2000);
+      if (ph === 'clouds') setTimeout(() => until(() => M && got(url('v', want(), 0)), 8000).then(reveal), COARSE ? 1700 : 2000);
       if (ph === 'ready') { reveal(); mode = 'aerial'; need = true; idleSince = performance.now(); }
       if (ph === 'failed') { reveal(); loader.classList.add('off'); mode = 'aerial'; need = true; emit('phase', { phase: 'ready' }); }
     });
