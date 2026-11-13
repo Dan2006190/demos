@@ -11,6 +11,8 @@ trap {
   Read-Host 'Нажмите Enter, чтобы закрыть окно'; exit 3
 }
 $ProgressPreference = 'SilentlyContinue'
+# Windows PowerShell 5.1 по умолчанию может ходить по TLS 1.0 — blender.org его не принимает
+try { [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12 } catch {}
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $Root = Split-Path -Parent $PSScriptRoot
 $Log = Join-Path $Root 'log.txt'
@@ -23,7 +25,7 @@ Say '=== Арден v2: подготовка ===' 'Cyan'
 $awake = $true
 try {
   Add-Type -Namespace W -Name P -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint f);'
-  [W.P]::SetThreadExecutionState(0x80000003) | Out-Null   # ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+  [W.P]::SetThreadExecutionState([uint32]2147483651) | Out-Null   # 0x80000003 = ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED; hex-литерал в PowerShell 5.1 — отрицательный Int32
 } catch { $awake = $false; Say 'Не удалось запретить сон компьютера — отключите сон в настройках питания.' 'Yellow' }
 
 # 1. видеокарта и драйвер
@@ -64,7 +66,11 @@ if (-not (Test-Path $bl)) {
   $got = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLower()
   if ($sha -and $got -ne $sha.ToLower()) { Remove-Item $zip; Fail 'Архив Blender повреждён (контрольная сумма не совпала). Запустите START.bat ещё раз.' }
   Say 'Распаковываю Blender…'
-  Expand-Archive -Path $zip -DestinationPath $Root -Force
+  # встроенный tar (Windows 10 1803+) распаковывает в разы быстрее Expand-Archive
+  $tar = Join-Path $env:SystemRoot 'System32\tar.exe'
+  $ok = $false
+  if (Test-Path $tar) { & $tar -xf $zip -C $Root; $ok = ($LASTEXITCODE -eq 0) }
+  if (-not $ok) { Expand-Archive -Path $zip -DestinationPath $Root -Force }
   Move-Item (Join-Path $Root "blender-4.5.$ver-windows-x64") (Join-Path $Root 'blender')
   Remove-Item $zip
 }
@@ -84,5 +90,5 @@ for ($run = 1; $run -le 8; $run++) {
 $st = Join-Path $Root 'renders\status.txt'
 if (Test-Path $st) { Get-Content $st -Encoding UTF8 | Write-Host }
 Say '=== Работа окончена. Запустите pack.bat и пришлите получившийся zip. ===' 'Green'
-if ($awake) { [W.P]::SetThreadExecutionState(0x80000000) | Out-Null }
+if ($awake) { [W.P]::SetThreadExecutionState([uint32]2147483648) | Out-Null }
 Read-Host 'Нажмите Enter, чтобы закрыть окно'
