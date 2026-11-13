@@ -197,7 +197,7 @@ function openLb(k){
 /* ====================== МЕНЮ И КОРЗИНА ====================== */
 let cart=load('colibri_cart',{});
 Object.keys(cart).forEach(id=>{if(!ITEMS[id])delete cart[id]});
-function ctlHtml(id){const q=cart[id]||0;return q?`<button class="qb" data-dec="${id}" aria-label="Меньше">${ico('minus')}</button><span class="q">${q}</span><button class="qb" data-inc="${id}" aria-label="Больше">${ico('plus')}</button>`:`<button class="add" data-inc="${id}">${ico('plus')}В корзину</button>`}
+function ctlHtml(id){const q=cart[id]||0;return q?`<button class="qb" data-dec="${id}" aria-label="Меньше">${ico('minus')}</button><span class="q">${q}</span><button class="qb" data-inc="${id}" aria-label="Больше">${ico('plus')}</button>`:`<button class="add" data-inc="${id}" aria-label="В корзину">${ico('plus')}<span class="t">В корзину</span></button>`}
 function renderMenu(){
   $('#chips').innerHTML=MENU.map(c=>`<button class="cat" data-scroll="cat-${c.id}" data-cat="${c.id}">${esc(c.t.split(' ')[0])}<span class="mut"> · ${c.items.length}</span></button>`).join('')+`<button class="cat cartc" data-open-cart>${ico('bag')}Корзина</button>`;
   /* меню типографское: хит категории — крупным шрифтом, без фото */
@@ -207,7 +207,7 @@ function renderMenu(){
       <div class="feat-t"><p class="hit">Хит меню · ${i.w}</p><h3>${esc(i.n)}</h3><p>${esc(i.d)}</p></div>
       <div class="feat-f"><b class="p">${rub(i.p)}</b><span class="ctl" data-ctl="${i.id}">${ctlHtml(i.id)}</span></div></article>`).join('');
     return `<div class="cat-sec" id="cat-${c.id}" data-catsec="${c.id}"><div class="cat-h" data-reveal><h2>${esc(c.t)}</h2><span>${c.items.length} ${plural(c.items.length,'позиция','позиции','позиций')}</span></div>${fh}
-      <div class="grid" data-stagger>${rest.map(i=>`<article class="dish"><h3>${esc(i.n)}</h3><b class="p">${rub(i.p)}</b><p>${esc(i.d)}</p><span class="w">${i.w}</span><span class="ctl" data-ctl="${i.id}">${ctlHtml(i.id)}</span></article>`).join('')}</div></div>`;
+      <div class="grid" data-stagger>${rest.map(i=>`<article class="dish"><h3>${esc(i.n)}</h3><b class="p">${rub(i.p)}</b><p><span class="wm">${i.w} · </span>${esc(i.d)}</p><span class="w">${i.w}</span><span class="ctl" data-ctl="${i.id}">${ctlHtml(i.id)}</span></article>`).join('')}</div></div>`;
   }).join('');
 }
 function setQty(id,q){if(!ITEMS[id])return;if(q<=0)delete cart[id];else cart[id]=Math.min(q,99);save('colibri_cart',cart);refreshCart()}
