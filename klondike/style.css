@@ -484,3 +484,9 @@ textarea{resize:vertical}
   html{scroll-behavior:auto}
   .pframe img,.pframe .ph{top:0;height:100%}
 }
+
+/* стеклянные плашки на фото зала (motion-kit.js) */
+.hero-chips{position:absolute;inset:0;z-index:2;pointer-events:none;--mk-dot:#e6a53a;--mk-chip-bg:rgba(20,16,12,.28);--mk-chip-line:rgba(248,241,228,.3)}
+.hero-chips .mk-chip{position:absolute;font-size:13px}
+.hero-chips .mk-chip:nth-child(1){right:6%;top:14%}.hero-chips .mk-chip:nth-child(2){right:19%;top:21%}.hero-chips .mk-chip:nth-child(3){right:5%;top:28%}
+@media(max-width:860px){.hero-chips{display:none}}

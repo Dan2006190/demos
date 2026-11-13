@@ -96,6 +96,7 @@ document.addEventListener('error',function(e){
     <img id="heroImg" src="img/hero-1600.jpg" width="1600" height="1065" data-photo="hero" fetchpriority="high" decoding="async" alt="Зал «Клондайка»: зелёные лампы, кожаные диваны, вывеска GOLD и стена с часами">
   </picture></div>
   <div class="hero-shade"></div>
+  <div class="hero-chips" data-mk-chips aria-hidden="true"><span class="mk-chip">Пицца из печи · Гастелло, 57А</span><span class="mk-chip">4,6 на Яндекс Картах</span><span class="mk-chip">Живая музыка по вечерам</span></div>
   <div class="hero-in wrap" id="heroIn">
     <p class="eyebrow" data-hero>Тамбов · пиццерия «Колибри» и крафт-паб «Клондайк»</p>
     <h1 class="hero-h" id="heroH">Днём — пицца из печи. Вечером — крафт и живая музыка.</h1>
@@ -142,9 +143,9 @@ document.addEventListener('error',function(e){
   </section>
 
   <section class="wrap k-nums" data-stagger>
-    <div class="num"><b>22</b><span>пиццы в меню — от «Маргариты» за 440 ₽ до «Дары моря» за 745 ₽</span></div>
-    <div class="num"><b>4,6</b><span>оценка на Яндекс Картах, 490 оценок</span></div>
-    <div class="num"><b>3 кг</b><span>«Ассорти из рёбер» — самое большое блюдо, на компанию</span></div>
+    <div class="num"><b data-mk-count>22</b><span>пиццы в меню — от «Маргариты» за 440 ₽ до «Дары моря» за 745 ₽</span></div>
+    <div class="num"><b data-mk-count>4,6</b><span>оценка на Яндекс Картах, 490 оценок</span></div>
+    <div class="num"><b data-mk-count>3 кг</b><span>«Ассорти из рёбер» — самое большое блюдо, на компанию</span></div>
   </section>
 
   <!-- карусель пицц: вырезанные PNG без фона (img/pizza-N.png готовит build_site.bat, без них — materials/cut/) -->
@@ -218,7 +219,7 @@ document.addEventListener('error',function(e){
       <span class="kd-logo"><img src="img/logoKlondike.jpg" data-photo="logoKlondike" alt="Логотип «Клондайк» — крафт-паб, est. MMXVII"></span>
       <p class="kicker">крафт-паб · est. MMXVII</p>
       <h2 class="dsp kd">Клондайк</h2>
-      <p class="lead">Кожаные диваны, зелёные лампы, кирпичная стена с часами и винтажный проигрыватель у окна. Живая музыка, банкеты и корпоративы.</p>
+      <p class="lead" data-mk-words>Кожаные диваны, зелёные лампы, кирпичная стена с часами и винтажный проигрыватель у окна. Живая музыка, банкеты и корпоративы.</p>
       <div class="btns">
         <a class="btn amber" href="#kd-book" data-scroll="kd-book">Забронировать стол</a>
         <a class="btn amber-o" href="#kd-afisha" data-scroll="kd-afisha">Афиша</a>
@@ -414,5 +415,6 @@ document.addEventListener('error',function(e){
 
 <script src="motion.js"></script>
 <script src="app.js"></script>
+<script src="motion-kit.js" defer></script>
 </body>
 </html>
