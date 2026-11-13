@@ -4,8 +4,8 @@
 Что рендерит (подробно — README.md):
   village/orbit/000–071.webp   облёт посёлка, 72 кадра через 5°, Cycles 1920×1080
   village/intro.mp4            вступление сквозь облака, 10 с, Cycles; последний кадр = orbit/000
-  houses/NN/approach.mp4       подлёт с круга облёта к дому, 3,5 с при 24 к/с, EEVEE
-  houses/NN/orbit/000–047.webp облёт дома, 48 кадров через 7,5°, EEVEE; кадр 000 = конец подлёта
+  houses/NN/approach.mp4       подлёт с круга облёта к дому, 3,5 с при 24 к/с, Cycles (EEVEE — по --eevee)
+  houses/NN/orbit/000–047.webp облёт дома, 48 кадров через 7,5°, Cycles (EEVEE — по --eevee); кадр 000 = конец подлёта
   manifest.json                всё для сайта: экранные координаты домов на каждом кадре облёта,
                                какой кадр облёта ведёт к какому дому, размеры, fps
 
@@ -44,7 +44,8 @@ ap.add_argument('--house', type=int, default=0)
 ap.add_argument('--quality', default='final', choices=['final', 'draft'])
 ap.add_argument('--percent', type=int, default=0, help='масштаб разрешения, %%')
 ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки скрипта)')
-ap.add_argument('--no-eevee', action='store_true', help='всё в Cycles (если EEVEE не запускается)')
+ap.add_argument('--eevee', action='store_true', help='облёты и подлёты домов в EEVEE (быстрее, но в клубе упирался в процессор; ели упрощены)')
+ap.add_argument('--no-eevee', action='store_true', help=argparse.SUPPRESS)  # старый флаг: теперь Cycles и так по умолчанию
 ap.add_argument('--sky', default='sunset', choices=['sunset', 'hdri'], help='закат (физическое небо) или дневное небо сайта')
 ap.add_argument('--sun-az', type=float, default=-95, help='азимут солнца, градусы от +X Blender против часовой (вид сверху)')
 ap.add_argument('--sun-el', type=float, default=28, help='высота солнца над горизонтом, градусы')
@@ -69,6 +70,7 @@ INTRO_FPS, INTRO_SEC = 24, 10          # вступление: 241 кадр, п�
 # выборки: адаптивные — где чисто, Cycles останавливается раньше потолка
 SPP_ORBIT = (48, 16) if DRAFT else (192, 64)     # (потолок, минимум)
 SPP_INTRO = (64, 32) if DRAFT else (256, 128)    # облака: не меньше 128
+SPP_HOUSE = (32, 16) if DRAFT else (128, 32)     # облёт и подлёт дома в Cycles: кадры в движении
 SPP_EEVEE = 16 if DRAFT else 64
 
 
@@ -653,8 +655,12 @@ EEVEE = 'BLENDER_EEVEE_NEXT' if 'BLENDER_EEVEE_NEXT' in ENGINES else 'BLENDER_EE
 
 
 def use(engine, spp=SPP_ORBIT):
-    eevee_trees(engine == 'EEVEE')  # упрощённые ели — на этапах EEVEE (и при --no-eevee тоже, чтобы видеть ту же картинку)
-    if engine == 'EEVEE' and not A.no_eevee:
+    """engine: 'CYCLES' или 'HOUSE' (дома: Cycles по умолчанию, EEVEE — только с --eevee)."""
+    eevee = engine == 'HOUSE' and A.eevee and not A.no_eevee
+    eevee_trees(eevee)  # упрощённые ели — только в EEVEE; в Cycles ели полноценные
+    if engine == 'HOUSE' and not eevee:
+        spp = SPP_HOUSE
+    if eevee:
         r.engine = EEVEE
         e = sc.eevee
         e.taa_render_samples = SPP_EEVEE
@@ -667,6 +673,7 @@ def use(engine, spp=SPP_ORBIT):
                     pass
     else:
         r.engine = 'CYCLES'; cy.samples, cy.adaptive_min_samples = spp
+        cy.adaptive_threshold = .03 if (DRAFT or engine == 'HOUSE') else .02
 
 
 def shot(path, fmt='WEBP'):
@@ -685,7 +692,7 @@ def shot(path, fmt='WEBP'):
         bpy.ops.render.render(write_still=True)
     except RuntimeError as e:
         if r.engine != 'CYCLES':
-            log('EEVEE не запустился (%s) — дальше всё в Cycles' % e); A.no_eevee = True; use('EEVEE')
+            log('EEVEE не запустился (%s) — дальше всё в Cycles' % e); A.eevee = False; use('HOUSE')
             bpy.ops.render.render(write_still=True)
         else:
             raise
@@ -819,7 +826,7 @@ def stage_orbit(only=None):
 
 
 def stage_houses(only=None):
-    use('EEVEE'); clouds(False); r.use_motion_blur = False; res(); times = []
+    use('HOUSE'); clouds(False); r.use_motion_blur = False; res(); times = []
     for i, h in selected_houses():
         grass(True, [i])  # густой газон — на участке дома и у соседей
         for k in (only if only is not None else range(HOUSE_N)):
@@ -829,7 +836,7 @@ def stage_houses(only=None):
 
 
 def stage_approach(only=None):
-    use('EEVEE'); clouds(False); r.use_motion_blur = False; res(); times = []
+    use('HOUSE'); clouds(False); r.use_motion_blur = False; res(); times = []
     for i, h in selected_houses():
         grass(True, [i])
         folder = os.path.join(WORK, 'approach_%02d' % (i + 1))
@@ -901,8 +908,8 @@ if A.what == 'test':
     A.house = A.house or 1
     est = {}
     for name, fn, frame, total in (('облёт посёлка (Cycles)', stage_orbit, [0], ORBIT_N),
-                                   ('облёт дома (EEVEE)', stage_houses, [0], HOUSE_N * 6),
-                                   ('подлёт (EEVEE)', stage_approach, [APPROACH_N // 2], APPROACH_N * 6),
+                                   ('облёт дома (%s)' % ('EEVEE' if A.eevee else 'Cycles'), stage_houses, [0], HOUSE_N * 6),
+                                   ('подлёт (%s)' % ('EEVEE' if A.eevee else 'Cycles'), stage_approach, [APPROACH_N // 2], APPROACH_N * 6),
                                    ('вступление (Cycles, облака)', stage_intro, [INTRO_N // 2], INTRO_N)):
         fn(frame)                 # первый кадр — с загрузкой сцены в видеокарту
         t = fn([frame[0] + 1])    # второй — чистое время кадра

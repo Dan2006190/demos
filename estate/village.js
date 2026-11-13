@@ -32,6 +32,9 @@
     return;
   }
   const HOUSES = SITE.houses || [];
+  // window.VILLAGE_INTRO — страницу ведёт плеер «псевдо-3D» (player.js), здесь только вступление сквозь облака:
+  // без моделей домов (в облаках их не видно), без рендеров каталога и меток; по stop() движок выключается
+  const INTRO_ONLY = !!window.VILLAGE_INTRO;
   const MOBILE = matchMedia('(pointer:coarse)').matches || innerWidth < 760;
   // ?intro=1 — показать вступление всегда (ссылка для клиентов), иначе только при первом заходе
   const SEEN = !/[?&]intro=1/.test(location.search) && (() => { try { return localStorage.getItem('estate-intro') === '1'; } catch (e) { return false; } })();
@@ -169,7 +172,7 @@
   manager.onLoad = () => { assetsDone = true; onAssets && onAssets(); };
   // модели домов грузятся параллельно с небом и фактурами
   const gltf = new GLTFLoader(manager).setMeshoptDecoder(MeshoptDecoder);
-  const modelFiles = [...new Set(HOUSES.flatMap(h => [h.model, h.annex && h.annex.model]).filter(Boolean))];
+  const modelFiles = INTRO_ONLY ? [] : [...new Set(HOUSES.flatMap(h => [h.model, h.annex && h.annex.model]).filter(Boolean))];
   const modelsP = Promise.all(modelFiles.map(f => gltf.loadAsync(A + f).then(r => [f, r.scene], e => { console.warn('Модель не загрузилась:', f, e); return [f, null]; })))
     .then(list => Object.fromEntries(list));
   const pmrem = new THREE.PMREMGenerator(renderer);
@@ -826,7 +829,7 @@
 
   /* ---------- метки домов ---------- */
   const pinsBox = $('#pins');
-  const pins = houses.map((h, i) => {
+  const pins = INTRO_ONLY ? [] : houses.map((h, i) => {
     const el = document.createElement('button'); el.className = 'pin'; el.type = 'button';
     el.innerHTML = `<b>${h.data.name}</b><span>от ${mln(h.data.price)}</span>`;
     el.setAttribute('aria-label', h.data.name + ', показать дом');
@@ -836,7 +839,7 @@
   const tmp = new THREE.Vector3();
   function updatePins() {
     houses.forEach((h, i) => {
-      const el = pins[i];
+      const el = pins[i]; if (!el) return;
       if (mode !== 'aerial') { el.classList.remove('on'); return; }
       tmp.set(0, h.g.userData.H + 1, 0); h.g.localToWorld(tmp); tmp.project(camera);
       const vis = tmp.z < 1 && Math.abs(tmp.x) < 1.1 && Math.abs(tmp.y) < 1.1;
@@ -894,7 +897,7 @@
   // нажатие по дому
   const ray = new THREE.Raycaster(), ptr = new THREE.Vector2(); let down = null;
   canvas.addEventListener('pointerdown', e => { down = [e.clientX, e.clientY]; });
-  canvas.addEventListener('pointerup', e => {
+  if (!INTRO_ONLY) canvas.addEventListener('pointerup', e => {
     if (!down || Math.hypot(e.clientX - down[0], e.clientY - down[1]) > 6) return;
     { const rc = canvas.getBoundingClientRect(); ptr.set((e.clientX - rc.left) / rc.width * 2 - 1, -(e.clientY - rc.top) / rc.height * 2 + 1); } ray.setFromCamera(ptr, camera);
     const hit = ray.intersectObjects(hits, false)[0];
@@ -942,7 +945,7 @@
 
   /* ---------- цикл ---------- */
   await step(.95);
-  { const t = thumbs(); emit('thumbs', { images: t, scenes: t.scenes }); }
+  if (!INTRO_ONLY) { const t = thumbs(); emit('thumbs', { images: t, scenes: t.scenes }); }
   await step(1);
   loader.classList.add('off');
   const ready = () => {
@@ -965,7 +968,9 @@
   }
 
   const camPos = new THREE.Vector3();
+  let stopped = false;
   function frame(now) {
+    if (stopped) return;
     requestAnimationFrame(frame);
     if (!visible) return;
     wind.value = now / 1000;
@@ -1002,7 +1007,10 @@
   }
   const perf = { t0: 0, n: 0, done: LOW };
   requestAnimationFrame(frame);
-  window.__village = { flyTo, backToVillage, get mode() { return mode; }, count: houses.length };
+  if (INTRO_ONLY) window.__villageIntro = { // плеер забирает экран: останавливаем цикл и отдаём видеокарту
+    stop() { stopped = true; try { renderer.dispose(); renderer.forceContextLoss(); } catch (e) { } canvas.style.display = 'none'; }
+  };
+  else window.__village = { flyTo, backToVillage, get mode() { return mode; }, count: houses.length };
   // ?export=1 — выгрузка сцены для Blender (кнопка внизу слева), см. blender/README.md
   if (/[?&]export=1/.test(location.search)) import('./blender/export.js').then(m => m.default({ THREE, world, houses, camera, renderer, scene, sun, dir }));
   emit('phase', { phase: 'api' });
