@@ -187,6 +187,13 @@ sun.light_linking.receiver_collection = f_ex; sun.light_linking.blocker_collecti
 sun_f = bpy.data.objects.new('Солнце леса', sun_d.copy()); sc.collection.objects.link(sun_f)
 sun_f.data.color = (1.0, .82, .66); sun_f.data.energy = 4.8; sun_f.rotation_euler = sun.rotation_euler
 sun_f.light_linking.receiver_collection = f_in
+# заполняющий свет посёлка: голубоватый, сверху с противоположной стороны, без теней — тени газона и стен не проваливаются в черноту
+fill_d = bpy.data.lights.new('Заполняющий', 'SUN'); fill_d.energy = .7; fill_d.color = (.62, .76, 1.0); fill_d.angle = math.radians(30)
+fill_d.use_shadow = False
+fill = bpy.data.objects.new('Заполняющий', fill_d); sc.collection.objects.link(fill)
+fv = Vector((-sun_vec.x, -sun_vec.y, 0)).normalized() * math.cos(math.radians(55)); fv.z = math.sin(math.radians(55))
+fill.rotation_euler = fv.to_track_quat('Z', 'Y').to_euler()
+fill.light_linking.receiver_collection = f_ex
 
 # ---------------------------------------------------------------- облака (вступление)
 bpy.ops.mesh.primitive_cube_add()

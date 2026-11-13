@@ -17,7 +17,7 @@ UA = {'User-Agent': 'Mozilla/5.0 (render-script)'}  # без него Poly Haven
 # модели: деревья, трава (сканы), кусты и цветы, мебель и кадки, улица
 MODELS = [
     'fir_tree_01', 'tree_small_02',
-    'grass_bermuda_01', 'grass_medium_01', 'grass_medium_02',          # газон и некошеная трава — сканированные
+    'grass_medium_01', 'grass_medium_02',          # некошеная трава у заборов и на лугу — сканы (газон — процедурные травинки)
     'shrub_01', 'shrub_02', 'shrub_03', 'shrub_04',
     'dandelion_01', 'periwinkle_plant', 'shrub_sorrel_01', 'weed_plant_02', 'nettle_plant', 'fern_02',
     'outdoor_table_chair_set_01', 'wooden_picnic_table', 'painted_wooden_bench',

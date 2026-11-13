@@ -1,9 +1,9 @@
 """
 Арден v2: сцена без плоских заплаток. Подключается из arden_render.py после импорта village.glb.
 
-  газон        — сканированная трава Poly Haven (grass_bermuda_01) инстансами через Geometry Nodes,
-                 до ~400 пучков/м² у камеры, реже вдали (пучки крупнее), отсечение по кадру и расстоянию
-                 каждый кадр; полосы покоса и тон — в материале; кислица (как клевер) и одуванчики пятнами;
+  газон        — стриженый: узкие травинки 5–7 см пучками (Geometry Nodes, ~650 пучков/м² у камеры, вдали
+                 реже и шире, но не выше), отсечение по кадру и расстоянию каждый кадр; полосы покоса — наклоном
+                 травинок; тон от жёлто- до сине-зелёного, ~7 % сухих, просвет на кончиках; кислица и одуванчики пятнами;
                  у дорожек — подстриженная кромка; под травой — земля с рельефом
   некошеное    — grass_medium / сорняки у заборов, на луговой кромке, по обочинам; в лесу — папоротник
   заборы       — геометрия: профлист (настоящая волна), евроштакетник, деревянный штакетник; столбы, лаги,
@@ -230,7 +230,8 @@ class Scene2:
                         ('Мин доля', 'NodeSocketFloat', .1), ('Камера', 'NodeSocketVector', (0, 0, 0)), ('Взгляд', 'NodeSocketVector', (0, 1, 0)),
                         ('Кос угла', 'NodeSocketFloat', .6), ('Отступ', 'NodeSocketFloat', .12), ('Кромка', 'NodeSocketFloat', .5),
                         ('Масштаб', 'NodeSocketFloat', 1.0), ('Разброс', 'NodeSocketFloat', .3), ('Укрупнение', 'NodeSocketFloat', 2.5),
-                        ('Пятна', 'NodeSocketFloat', 0.0), ('Сид', 'NodeSocketInt', 0)):
+                        ('Пятна', 'NodeSocketFloat', 0.0), ('Сид', 'NodeSocketInt', 0),
+                        ('Плоско', 'NodeSocketFloat', 0.0), ('Покос', 'NodeSocketFloat', 0.0)):
             sock(n, t, v=v)
         N, Lk = ng.nodes, ng.links
         gi, go = N.new('NodeGroupInput'), N.new('NodeGroupOutput')
@@ -277,9 +278,21 @@ class Scene2:
         sc0 = math('MULTIPLY_ADD', math('SUBTRACT', r2.outputs[1], .5), math('MULTIPLY', G('Разброс'), 2.0), 1.0)
         edge = math('MAXIMUM', math('MINIMUM', math('DIVIDE', math('SUBTRACT', pd, G('Отступ')), G('Кромка')), 1.0), .45)
         lod = math('MINIMUM', math('POWER', math('MAXIMUM', math('DIVIDE', L, G('Ближе')), 1.0), .5), G('Укрупнение'))
-        scale = math('MULTIPLY', math('MULTIPLY', math('MULTIPLY', sc0, edge), lod), G('Масштаб'))
+        base = math('MULTIPLY', math('MULTIPLY', sc0, edge), G('Масштаб'))
+        # «Плоско»: вдали пучки шире, но не выше (стриженый газон не превращается в мех)
+        lod_z = math('ADD', math('MULTIPLY', lod, math('SUBTRACT', 1.0, G('Плоско'))), G('Плоско'))
+        scale = N.new('ShaderNodeCombineXYZ')
+        Lk.new(math('MULTIPLY', base, lod), scale.inputs['X']); Lk.new(math('MULTIPLY', base, lod), scale.inputs['Y'])
+        Lk.new(math('MULTIPLY', base, lod_z), scale.inputs['Z']); scale = scale.outputs[0]
         r3 = N.new('FunctionNodeRandomValue'); r3.data_type = 'FLOAT'; r3.inputs['Max'].default_value = 6.283; Lk.new(G('Сид'), r3.inputs['Seed'])
-        rot = N.new('ShaderNodeCombineXYZ'); Lk.new(r3.outputs[1], rot.inputs['Z'])
+        # «Покос» (ширина полосы, м): травинки наклонены «туда» или «обратно» через полосу ± разброс; 0 — как попало
+        sep = N.new('ShaderNodeSeparateXYZ'); Lk.new(pos, sep.inputs[0])
+        parity = math('FLOORED_MODULO', math('FLOOR', math('DIVIDE', sep.outputs['X'], math('MAXIMUM', G('Покос'), .01))), 2.0)
+        jit = math('MULTIPLY', math('SUBTRACT', r3.outputs[1], 3.1415), .32)  # ±58°: полосы заметны, контраст на ~⅓ мягче первого варианта
+        mow = math('ADD', math('MULTIPLY', parity, 3.1416), jit)
+        use = math('GREATER_THAN', G('Покос'), 0.0)
+        rz = math('ADD', math('MULTIPLY', mow, use), math('MULTIPLY', r3.outputs[1], math('SUBTRACT', 1.0, use)))
+        rot = N.new('ShaderNodeCombineXYZ'); Lk.new(rz, rot.inputs['Z'])
         ci = N.new('GeometryNodeCollectionInfo'); ci.transform_space = 'ORIGINAL'
         Lk.new(G('Образцы'), ci.inputs['Collection']); ci.inputs['Separate Children'].default_value = True; ci.inputs['Reset Children'].default_value = True
         r4 = N.new('FunctionNodeRandomValue'); r4.data_type = 'INT'; r4.inputs['Max'].default_value = 99; Lk.new(G('Сид'), r4.inputs['Seed'])
@@ -548,15 +561,14 @@ class Scene2:
         lawn = F['lawn']
         # земля под травой: почва с рельефом (не плоская), трава сверху её закрывает
         # под травой — травяной слой с рельефом (издалека газон зелёный, а не земля)
-        lawn.data.materials.clear(); lawn.data.materials.append(self.pbr('leafy_grass', 2.0, disp=.012, recolor=(.06, .24, .05)))
+        lawn.data.materials.clear(); lawn.data.materials.append(self.pbr('leafy_grass', 2.0, disp=.012, recolor=(.05, .19, .04)))  # подложка в тон травинок: сверху без тёмных проплешин
         self.adaptive(lawn)
-        # газон: сканированная бермудская трава (разные пучки), до ~400 шт./м² у камеры
-        lawn_p = [o for o in self.load('grass_bermuda_01') if 'dead' not in o.name]  # без сухих пучков
-        self.lawn_material(lawn_p)
-        self.scatter('Газон', lawn, lawn_p, excl, **{'Плотность': 400.0, 'Ближе': 14.0, 'Дальше': 420.0, 'Мин доля': .14,
-                                                      'Масштаб': .55, 'Разброс': .25, 'Укрупнение': 4.5, 'Отступ': .1, 'Кромка': .45})
-        # кислица (трилистник, как клевер) и одуванчики — пятнами
-        self.scatter('Клевер', lawn, self.load('shrub_sorrel_01'), excl, **{'Плотность': 18.0, 'Ближе': 12.0, 'Дальше': 120.0, 'Мин доля': .02,
+        # газон стриженый: узкие травинки 5–7 см пучками (до ~25 тыс. травинок/м² у камеры), полосы покоса — наклоном
+        self.scatter('Газон', lawn, self.lawn_blades(), excl, **{'Плотность': 650.0, 'Ближе': 15.0, 'Дальше': 420.0, 'Мин доля': .2,
+                                                                  'Масштаб': 1.0, 'Разброс': .2, 'Укрупнение': 5.0, 'Отступ': .08, 'Кромка': .3,
+                                                                  'Плоско': 1.0, 'Покос': 1.4})
+        # кислица (трилистник, как клевер) и одуванчики — редкими пятнами
+        self.scatter('Клевер', lawn, self.load('shrub_sorrel_01'), excl, **{'Плотность': 6.0, 'Ближе': 12.0, 'Дальше': 120.0, 'Мин доля': .02,
                                                                             'Масштаб': .6, 'Пятна': 1.0, 'Отступ': .25})
         self.scatter('Одуванчики', lawn, self.load('dandelion_01'), excl, **{'Плотность': 2.5, 'Ближе': 12.0, 'Дальше': 160.0, 'Мин доля': .05,
                                                                              'Масштаб': .8, 'Пятна': 1.0, 'Отступ': .3})
@@ -612,6 +624,96 @@ class Scene2:
             b.inputs['Roughness'].default_value = .75
             sp = b.inputs.get('Specular IOR Level')
             if sp: sp.default_value = .25
+
+    def lawn_blades(self, variants=6, blades=40):
+        """пучки стриженой травы: узкие (2–3,5 мм) травинки 4–8 см, изгиб и разный наклон, общий наклон — по +Y
+        (россыпь поворачивает пучок на 0 или 180° по полосе покоса). Атрибуты: тон, сухая, высота — для материала"""
+        if 'газон_травинки' in self.protos: return self.protos['газон_травинки']
+        R = random.Random(77); out = []
+        mat = self.blade_material()
+        for v in range(variants):
+            bm = bmesh.new()
+            lay_t = bm.verts.layers.float.new('тон'); lay_d = bm.verts.layers.float.new('сухая'); lay_h = bm.verts.layers.float.new('высота')
+            for _ in range(blades):
+                r, a = 0.05 * math.sqrt(R.random()), R.uniform(0, 6.283)   # пучок шире — дернина ровная, без кочек
+                x0, y0 = r * math.cos(a), r * math.sin(a)
+                h = R.uniform(.05, .07)                                   # стриженый: ровно 5–7 см
+                w = R.uniform(.002, .0035)
+                lean_dir = R.gauss(0, .45)                       # вокруг +Y
+                lean = h * R.uniform(.25, .45)                    # вылет кончика: ровный, без лохматых травинок
+                dx, dy = math.sin(lean_dir), math.cos(lean_dir)
+                px, py = dy, -dx                                  # поперёк травинки
+                tone, dry = R.random(), (1.0 if R.random() < .07 else 0.0)
+                twist = R.uniform(-.4, .4)
+                rows, SEG = [], 4
+                for k in range(SEG + 1):
+                    t = k / SEG
+                    off = lean * t * t                            # изгиб: сильнее к кончику
+                    z = h * t - .25 * lean * t * t * t * (lean / h)
+                    cx, cy = x0 + dx * off, y0 + dy * off
+                    ww = w * (1 - t ** 1.6) * .5 if k < SEG else 0
+                    ca, sa = math.cos(twist * t), math.sin(twist * t)
+                    qx, qy = px * ca - dx * sa * .3, py * ca - dy * sa * .3
+                    fold = w * .25 * (1 - t)                     # желобок посередине
+                    if k < SEG:
+                        row = [bm.verts.new((cx - qx * ww, cy - qy * ww, z)), bm.verts.new((cx - dx * fold, cy - dy * fold, z + fold * .3)),
+                               bm.verts.new((cx + qx * ww, cy + qy * ww, z))]
+                    else:
+                        row = [bm.verts.new((cx, cy, z))]
+                    for vv in row:
+                        vv[lay_t] = tone; vv[lay_d] = dry; vv[lay_h] = t
+                    rows.append(row)
+                for k in range(SEG - 1):
+                    a_, b_ = rows[k], rows[k + 1]
+                    bm.faces.new((a_[0], a_[1], b_[1], b_[0])); bm.faces.new((a_[1], a_[2], b_[2], b_[1]))
+                a_, tip = rows[SEG - 1], rows[SEG][0]
+                bm.faces.new((a_[0], a_[1], tip)); bm.faces.new((a_[1], a_[2], tip))
+            me = bpy.data.meshes.new('газон_пучок_%d' % v); bm.to_mesh(me); bm.free()
+            for pl in me.polygons: pl.use_smooth = True
+            me.materials.append(mat)
+            o = self.obj('газон_пучок_%d' % v, me, self.col_protos); o.location = (0, 0, -1000)
+            out.append(o)
+        self.protos['газон_травинки'] = out
+        return out
+
+    def blade_material(self):
+        """травинка: тон от жёлто-зелёного до сине-зелёного (по травинке и пучку), ~7 % сухих, к основанию темнее,
+        просвет на кончиках (против солнца светятся). Цвет — с поправкой на оранжевое закатное солнце"""
+        m = bpy.data.materials.new('газон_травинка'); m.use_nodes = True
+        nt, L = m.node_tree, m.node_tree.links; N = nt.nodes
+        b = N['Principled BSDF']; out = N['Material Output']
+        def attr(name):
+            a = N.new('ShaderNodeAttribute'); a.attribute_type = 'GEOMETRY'; a.attribute_name = name; return a.outputs['Fac']
+        def mth(op, x, y):
+            n = N.new('ShaderNodeMath'); n.operation = op
+            for i, v in enumerate((x, y)):
+                if isinstance(v, (int, float)): n.inputs[i].default_value = v
+                else: L.new(v, n.inputs[i])
+            return n.outputs[0]
+        oi = N.new('ShaderNodeObjectInfo')
+        tone = mth('FRACT', mth('ADD', attr('тон'), mth('MULTIPLY', oi.outputs['Random'], .22)), 0)
+        ramp = N.new('ShaderNodeValToRGB'); L.new(tone, ramp.inputs['Fac'])
+        cr = ramp.color_ramp; cr.interpolation = 'EASE'
+        cr.elements[0].position, cr.elements[0].color = 0.0, (.060, .125, .010, 1)    # жёлто-зелёный
+        cr.elements[1].position, cr.elements[1].color = 1.0, (.016, .100, .048, 1)    # сине-зелёный
+        mid = cr.elements.new(.5); mid.color = (.032, .125, .022, 1)
+        dry = N.new('ShaderNodeMix'); dry.data_type = 'RGBA'
+        L.new(attr('сухая'), dry.inputs['Factor']); L.new(ramp.outputs['Color'], dry.inputs['A']); dry.inputs['B'].default_value = (.15, .14, .055, 1)
+        # к основанию темнее (самозатенение в дернине), кончик светлее
+        hgt = N.new('ShaderNodeMapRange'); L.new(attr('высота'), hgt.inputs['Value']); hgt.inputs['To Min'].default_value = .45; hgt.inputs['To Max'].default_value = 1.25
+        col = N.new('ShaderNodeVectorMath'); col.operation = 'SCALE'; L.new(dry.outputs['Result'], col.inputs[0]); L.new(hgt.outputs['Result'], col.inputs['Scale'])
+        L.new(col.outputs['Vector'], b.inputs['Base Color'])
+        b.inputs['Roughness'].default_value = .5
+        sp = b.inputs.get('Specular IOR Level')
+        if sp: sp.default_value = .35
+        # просвет: полупрозрачный лист, ярче к кончику
+        tr = N.new('ShaderNodeBsdfTranslucent')
+        tcol = N.new('ShaderNodeVectorMath'); tcol.operation = 'MULTIPLY'; L.new(col.outputs['Vector'], tcol.inputs[0]); tcol.inputs[1].default_value = (2.0, 1.7, .9)
+        L.new(tcol.outputs['Vector'], tr.inputs['Color'])
+        fac = N.new('ShaderNodeMapRange'); L.new(attr('высота'), fac.inputs['Value']); fac.inputs['To Min'].default_value = .12; fac.inputs['To Max'].default_value = .42
+        mix = N.new('ShaderNodeMixShader'); L.new(fac.outputs['Result'], mix.inputs['Fac'])
+        L.new(b.outputs['BSDF'], mix.inputs[1]); L.new(tr.outputs['BSDF'], mix.inputs[2]); L.new(mix.outputs['Shader'], out.inputs['Surface'])
+        return m
 
     def fence_strips(self):
         """полосы 60 см вдоль заборов изнутри участков — для некошеной травы"""

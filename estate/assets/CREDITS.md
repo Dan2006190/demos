@@ -37,7 +37,7 @@
 
 ## Рендер v2: модели и фактуры Poly Haven (CC0)
 
-Трава: grass_bermuda_01, grass_medium_01, grass_medium_02. Деревья: fir_tree_01, tree_small_02. Кусты и цветы: shrub_01–04, dandelion_01, periwinkle_plant, shrub_sorrel_01, weed_plant_02, nettle_plant, fern_02. Мебель и кадки: outdoor_table_chair_set_01, wooden_picnic_table, painted_wooden_bench, planter_box_01, planter_box_02, planter_pot_clay, potted_plant_01, potted_plant_02. Улица: water_manhole_cover. Фактуры: asphalt_02, asphalt_04, brushed_concrete_03, concrete_pavers_02, brick_pavement_02, bicolour_gravel, brown_planks_05, corrugated_iron_02, forest_floor, sparse_grass, farm_soil, raked_dirt.
+Трава: grass_medium_01, grass_medium_02 (некошеная полоса и луг). Деревья: fir_tree_01, tree_small_02. Кусты и цветы: shrub_01–04, dandelion_01, periwinkle_plant, shrub_sorrel_01, weed_plant_02, nettle_plant, fern_02. Мебель и кадки: outdoor_table_chair_set_01, wooden_picnic_table, painted_wooden_bench, planter_box_01, planter_box_02, planter_pot_clay, potted_plant_01, potted_plant_02. Улица: water_manhole_cover. Фактуры: asphalt_02, asphalt_04, brushed_concrete_03, concrete_pavers_02, brick_pavement_02, bicolour_gravel, brown_planks_05, corrugated_iron_02, forest_floor, sparse_grass, leafy_grass, farm_soil, raked_dirt.
 
 ## Небо и фактуры — Poly Haven (polyhaven.com), лицензия CC0
 
