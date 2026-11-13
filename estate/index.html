@@ -208,6 +208,8 @@ section{scroll-margin-top:76px}
 /* калькулятор */
 .calc{display:grid;gap:clamp(36px,5vw,80px);grid-template-columns:1fr}
 @media(min-width:960px){.calc{grid-template-columns:1.15fr .85fr;align-items:start}}
+.res .base{margin:0 0 22px;font:400 15px/1.45 var(--font);letter-spacing:.02em}.res .base small{display:block;margin-top:6px;color:var(--muted);font-size:13px}
+.final .proj{margin:-6px auto 18px;text-align:center;color:var(--acc);font-size:14px;letter-spacing:.04em}
 .f{margin-bottom:36px}
 .f .caps{display:flex;justify-content:space-between;color:var(--muted);margin-bottom:14px}
 .f .caps output{color:var(--ink)}
@@ -327,6 +329,7 @@ footer .credits{flex-basis:100%;font-size:11.5px;line-height:1.6}footer .credits
   <p class="lbl caps rv">Бесплатно</p>
   <h2 class="h2"><span class="mask"><span>Выезд инженера</span></span><span class="mask"><span>на ваш участок</span></span></h2>
   <p class="sub rv">Замеры, осмотр, консультация и точная смета. Перезвоним в течение 15 минут.</p>
+  <p class="proj" id="f-proj" hidden></p>
   <div class="form rv"><label><span class="caps">Имя</span><input id="f-name" name="name" autocomplete="name" placeholder="Как к вам обращаться"></label><label><span class="caps">Телефон</span><input id="f-tel" name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></label><label class="addr"><span class="caps">Адрес объекта</span><input id="f-addr" name="addr" autocomplete="street-address" placeholder="Город, улица или посёлок"></label><button class="btn solid" id="f-send" type="button">Вызвать инженера</button><div class="err" id="f-err" role="alert" hidden>Укажите телефон — перезвоним в течение 15 минут</div></div>
   <p class="agree">Нажимая кнопку, вы соглашаетесь на обработку персональных данных.</p>
 </div></section>
@@ -356,6 +359,25 @@ $('#svcList').innerHTML=S.services.map((v,i)=>`<div class="svc rv"><span class="
 $('#feats').innerHTML=S.features.map((f,i)=>`<div class="rv"><b>0${i+1}</b><h3>${esc(f[0])}</h3><p>${esc(f[1])}</p></div>`).join('');
 $('#stepsBox').innerHTML=S.steps.map((f,i)=>`<div><b>0${i+1}</b><h3>${esc(f[0])}</h3><p>${esc(f[1])}</p></div>`).join('');
 if(!S.demo) $('#demoTag').hidden=true;
+
+/* калькулятор и цены проектов — одна формула: цена в карточке = расчёт калькулятора по параметрам проекта */
+const K=S.calc;
+const projParams=h=>({type:0,area:h.area,fl:h.floors===2?2:h.floors===1.5?1:0,mat:h.mat===1?1:h.mat===2?2:0,stage:2,lvl:0,
+  ex:new Set([...(h.terrace?[0]:[]),...(h.garage?[1]:[])])});
+function estimate(p){
+  const T=K.types[p.type]; let rows, sum, title;
+  if(T.kind==='house'){
+    const f=K.floors[p.fl], m=K.materials[p.mat], base=p.area*m.p[p.stage]*f.k, found=p.area/f.div*K.foundation;
+    rows=[[`${K.stages[p.stage]}, ${m.name.toLowerCase()}`,base],['Фундамент',found]]; sum=base+found;
+    K.extras.forEach((x,i)=>{if(p.ex.has(i)){sum+=x.price;rows.push([x.name,x.price]);}});
+    title=`Дом ${p.area} м², ${f.name.toLowerCase()}, ${m.name.toLowerCase()}, ${K.stages[p.stage].toLowerCase()}`;
+  }else{
+    sum=p.area*T.p[p.lvl]; rows=[[`${T.name}, ${K.levels[p.lvl].toLowerCase()}`,sum]];
+    title=`${T.name} ${p.area} ${T.unit}, ${K.levels[p.lvl].toLowerCase()}`;
+  }
+  return {rows,sum,title,lo:sum*(1-K.spread),hi:sum*(1+K.spread)};
+}
+S.houses.forEach(h=>{h.price=estimate(projParams(h)).lo;});  // «от» = нижняя граница вилки калькулятора
 
 /* коллекция: рендеры приходят из движка посёлка */
 $('#coll').innerHTML=S.houses.map((h,i)=>`<article class="item rv"><div class="ph"><span class="num">0${i+1}</span><span class="wait">Готовим рендер</span><img alt="${esc(h.name)} — дом в посёлке" data-i="${i}" width="1080" height="745" loading="lazy"></div>
@@ -401,15 +423,15 @@ document.addEventListener('click',e=>{
   if(e.target.closest('[data-req]'))toReq();
 });
 $('#c-calc').onclick=()=>{preset(+$('#c-calc').dataset.i);$('#calc').scrollIntoView({behavior:RM?'auto':'smooth'});};
-$('#c-want').onclick=()=>{want=S.houses[+$('#c-want').dataset.i].name;toReq();};
+$('#c-want').onclick=()=>{preset(+$('#c-want').dataset.i);toReq();};  // в заявку — проект и его расчёт
 
 /* калькулятор: дом по этажности, материалу и готовности; остальное — м² × уровень */
-const K=S.calc, st={type:0,area:120,fl:0,mat:0,stage:2,lvl:0,ex:new Set()};
+const st={type:0,area:120,fl:0,mat:0,stage:2,lvl:0,ex:new Set(),base:-1};
 const opt=(k,list,cur,label)=>`<div class="opts" role="group" aria-label="${label}" data-k="${k}">${list.map((o,i)=>`<button type="button" aria-pressed="${i===cur}" data-v="${i}">${esc(o.name||o)}</button>`).join('')}</div>`;
 function drawForm(){
   const T=K.types[st.type], house=T.kind==='house';
   $('#cform').innerHTML=`<div class="f"><div class="caps">Вид работ</div>${opt('type',K.types,st.type,'Вид работ')}</div>
-  <div class="f"><div class="caps"><label for="area">${house?'Площадь дома':'Площадь, '+esc(T.unit)}</label><output id="aOut" for="area">${st.area} м²</output></div><input type="range" id="area" min="${T.area[0]}" max="${T.area[1]}" step="${T.area[1]>200?5:1}" value="${st.area}"></div>
+  <div class="f"><div class="caps"><label for="area">${house?'Площадь дома':'Площадь, '+esc(T.unit)}</label><output id="aOut" for="area">${st.area} м²</output></div><input type="range" id="area" min="${T.area[0]}" max="${Math.max(T.area[1],st.base>=0?S.houses[st.base].area:0)}" step="${T.area[1]>200?5:1}" value="${st.area}"></div>
   ${house?`<div class="f"><div class="caps">Этажность</div>${opt('fl',K.floors,st.fl,'Этажность')}</div>
   <div class="f"><div class="caps">Материал</div>${opt('mat',K.materials,st.mat,'Материал')}</div>
   <div class="f"><div class="caps">Готовность</div>${opt('stage',K.stages,st.stage,'Готовность')}</div>
@@ -419,29 +441,35 @@ function drawForm(){
   $$('#cform [data-x]').forEach(c=>c.onchange=()=>{c.checked?st.ex.add(+c.dataset.x):st.ex.delete(+c.dataset.x);calc();});
   calc();
 }
-function setType(i){st.type=i;st.area=K.types[i].area[2];st.ex=new Set();want='';drawForm();}
+function setType(i){st.type=i;st.area=K.types[i].area[2];st.ex=new Set();st.base=-1;want='';drawForm();}
 $('#cform').addEventListener('click',e=>{const b=e.target.closest('.opts button');if(!b)return;const k=b.parentElement.dataset.k;if(k==='type'){setType(+b.dataset.v);return;}st[k]=+b.dataset.v;[...b.parentElement.children].forEach(x=>x.setAttribute('aria-pressed',x===b));calc();});
-let last=null;
+let last=null, lastDiff='';
 const fmt=n=>n>=1e6?mln(n):nf.format(Math.round(n/1000)*1000)+' ₽';
+// чем расчёт отличается от проекта-основы: «кирпич → газобетон», «+ септик», «без: гараж»
+function diffs(){
+  if(st.base<0||K.types[st.type].kind!=='house')return [];
+  const b=projParams(S.houses[st.base]), d=[], low=x=>String(x.name||x).toLowerCase();
+  if(st.area!==b.area)d.push(`${b.area} → ${st.area} м²`);
+  if(st.fl!==b.fl)d.push(`${low(K.floors[b.fl])} → ${low(K.floors[st.fl])}`);
+  if(st.mat!==b.mat)d.push(`${low(K.materials[b.mat])} → ${low(K.materials[st.mat])}`);
+  if(st.stage!==b.stage)d.push(`${low(K.stages[b.stage])} → ${low(K.stages[st.stage])}`);
+  K.extras.forEach((x,i)=>{if(st.ex.has(i)&&!b.ex.has(i))d.push('+ '+low(x));if(!st.ex.has(i)&&b.ex.has(i))d.push('без: '+low(x));});
+  return d;
+}
 function calc(){
-  const T=K.types[st.type]; let rows, sum, title;
-  if(T.kind==='house'){
-    const f=K.floors[st.fl], m=K.materials[st.mat], base=st.area*m.p[st.stage]*f.k, found=st.area/f.div*K.foundation;
-    rows=[[`${K.stages[st.stage]}, ${m.name.toLowerCase()}`,base],['Фундамент',found]]; sum=base+found;
-    K.extras.forEach((x,i)=>{if(st.ex.has(i)){sum+=x.price;rows.push([x.name,x.price]);}});
-    title=`Дом ${st.area} м², ${f.name.toLowerCase()}, ${m.name.toLowerCase()}, ${K.stages[st.stage].toLowerCase()}`;
-  }else{
-    sum=st.area*T.p[st.lvl]; rows=[[`${T.name}, ${K.levels[st.lvl].toLowerCase()}`,sum]];
-    title=`${T.name} ${st.area} ${T.unit}, ${K.levels[st.lvl].toLowerCase()}`;
-  }
-  const lo=sum*(1-K.spread), hi=sum*(1+K.spread);
+  const e=estimate(st), {rows,sum,lo,hi}=e;
   const r=lo>=1e6?mln(lo).replace(' млн ₽','')+'–'+mln(hi):nf.format(Math.round(lo/1000)*1000)+'–'+nf.format(Math.round(hi/1000)*1000)+' ₽';
-  last=`${title} — ${r}`;
-  $('#cres').innerHTML=`<p class="caps" style="color:var(--acc)">Предварительно</p><div class="sum">${r}</div><div class="per">≈ ${nf.format(Math.round(sum/st.area/10)*10)} ₽ за м²</div>
+  const d=diffs(), name=st.base>=0?S.houses[st.base].name:'';
+  last=`${e.title} — ${r}`; lastDiff=d.join(', ');
+  const head=!name||K.types[st.type].kind!=='house'?'':d.length
+    ?`<p class="base">Свой дом на основе проекта «${esc(name)}»<small>Изменено: ${esc(lastDiff)}</small></p>`
+    :`<p class="base">Проект «${esc(name)}»</p>`;
+  $('#cres').innerHTML=`${head}<p class="caps" style="color:var(--acc)">Предварительно</p><div class="sum">${r}</div><div class="per">≈ ${nf.format(Math.round(sum/st.area/10)*10)} ₽ за м²</div>
   <ul>${rows.map(l=>`<li><span>${esc(l[0])}</span><span>${fmt(l[1])}</span></li>`).join('')}</ul>
   <button class="btn solid" data-req type="button">Получить точную смету</button><small>Расчёт предварительный. Точную цену фиксируем в договоре после бесплатного выезда инженера.</small>`;
+  $('#f-proj').hidden=!want; if(want)$('#f-proj').textContent=d.length?`Заявка: свой дом на основе проекта «${want}»`:`Заявка по проекту «${want}»`;
 }
-function preset(i){const h=S.houses[i];st.type=0;st.area=h.area;st.fl=h.floors===2?2:h.floors===1.5?1:0;st.mat=h.mat===1?1:h.mat===2?2:0;st.stage=2;st.ex=new Set([...(h.terrace?[0]:[]),...(h.garage?[1]:[])]);want=h.name;drawForm();}
+function preset(i){Object.assign(st,projParams(S.houses[i]),{base:i});want=S.houses[i].name;drawForm();}
 drawForm();
 
 /* заявка → как она придёт в Telegram */
@@ -449,7 +477,7 @@ const modal=$('#modal'), sheet=$('#sheet');
 $('#f-send').onclick=()=>{
   const tel=$('#f-tel').value.replace(/\D/g,''); if(tel.length<10){$('#f-err').hidden=false;$('#f-tel').focus();return;}
   $('#f-err').hidden=true; const name=$('#f-name').value.trim()||'Без имени', t=new Date().toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'});
-  const addr=$('#f-addr').value.trim(); const rows=['🛠 Заявка: выезд инженера',`👤 ${name}`,`📞 ${$('#f-tel').value.trim()}`]; if(addr)rows.push(`📍 ${addr}`); if(want)rows.push(`🏠 Проект: ${want}`); if(last)rows.push(`🧮 ${last}`);
+  const addr=$('#f-addr').value.trim(); const rows=['🛠 Заявка: выезд инженера',`👤 ${name}`,`📞 ${$('#f-tel').value.trim()}`]; if(addr)rows.push(`📍 ${addr}`); if(want)rows.push(lastDiff?`🏠 На основе проекта: ${want}`:`🏠 Проект: ${want}`); if(want&&lastDiff)rows.push(`✏️ Изменено: ${lastDiff}`); if(last)rows.push(`🧮 ${last}`);
   sheet.innerHTML=`<p class="caps" style="color:var(--acc)">Спасибо, ${esc(name)}</p><h3>Инженер свяжется с вами</h3><p class="sub">Перезвоним в течение 15 минут, чтобы согласовать выезд. Так заявка придёт владельцу в Telegram:</p>
   <div class="tg"><div class="tg-h"><i>${esc(S.mono)}</i><div><b>Заявки · ${esc(S.brand)}</b><small>бот</small></div></div><div class="tg-m">${rows.map(esc).join('\n')}<time>${t}</time></div><div class="tg-b"><span>Позвонить</span><span>Взял в работу</span></div></div>
   <button class="btn solid" id="ok" type="button">Закрыть</button>`;

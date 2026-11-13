@@ -9,6 +9,9 @@
    Остальные поля — для калькулятора и запасного дома, если модель
    не загрузилась: w — ширина фасада (м), floors — 1 / 1.5 / 2,
    roof — gable / hip / flat, mat — 0 штукатурка, 1 кирпич, 2 дерево.
+   Цена проекта «от» отдельно не задаётся: её считает калькулятор (calc ниже)
+   по площади, этажности, материалу, «под ключ» и террасе/гаражу проекта —
+   в карточке, коллекции и калькуляторе всегда одна и та же цифра.
    ===================================================================== */
 window.SITE = {
   brand: 'АРДЕН',
@@ -51,29 +54,29 @@ window.SITE = {
   approaches: [0, 3, 1, 5, 4, 2],
   // дома по участкам: первые три — ближняя сторона улицы (слева направо), затем дальняя
   houses: [
-    { name: 'Терраса 150', w: 16, floors: 1, roof: 'hip', area: 150, mat: 0, terrace: true, price: 10400000,
+    { name: 'Терраса 150', w: 16, floors: 1, roof: 'hip', area: 150, mat: 0, terrace: true,
       lead: 'Одноэтажный, с крытой террасой во двор', specs: ['150 м²', '3 спальни', 'терраса'],
       model: 'models/05.glb', front: 0, door: 0,
       credit: { title: 'Ольга 11', author: 'labarch', url: 'https://sketchfab.com/3d-models/11-dba1047381634016bb03da8d8227bef2', profile: 'https://sketchfab.com/labarch' } },
-    { name: 'Классика 218', w: 15, floors: 2, roof: 'hip', area: 218, mat: 0, terrace: true, price: 15800000,
+    { name: 'Классика 218', w: 15, floors: 2, roof: 'hip', area: 218, mat: 0, terrace: true,
       lead: 'Два этажа, балконы и вальмовая кровля', specs: ['218 м²', '4 спальни', '2 этажа'],
       model: 'models/02.glb', front: 0, door: 2,
       credit: { title: 'Проект жилого дома 218 Вариант 1 (Реки)', author: 'labarch', url: 'https://sketchfab.com/3d-models/218-1-b63d3ec1111e4e27b7fe219c957f9bed', profile: 'https://sketchfab.com/labarch' } },
-    { name: 'Модерн 190', w: 18, floors: 2, roof: 'flat', area: 190, mat: 0, garage: true, price: 14900000,
+    { name: 'Модерн 190', w: 18, floors: 2, roof: 'flat', area: 190, mat: 0, garage: true,
       lead: 'Плоская кровля, камень и гараж в доме', specs: ['190 м²', 'плоская кровля', 'гараж'],
       model: 'models/00.glb', front: 0, door: 3,
       credit: { title: 'Жилой дом_', author: 'labarch', url: 'https://sketchfab.com/3d-models/fab830d71e6f4bc491c82d55a13e2582', profile: 'https://sketchfab.com/labarch' } },
-    { name: 'Сруб 110 с баней', w: 11, floors: 1.5, roof: 'gable', area: 110, mat: 2, price: 9200000,
+    { name: 'Сруб 110 с баней', w: 11, floors: 1.5, roof: 'gable', area: 110, mat: 2,
       lead: 'Дом из бревна и баня на одном участке', specs: ['110 м² + баня 60 м²', 'мансарда', 'бревно'],
       model: 'models/14.glb', front: 3.142, door: 0, dx: -7,
       annex: { model: 'models/22.glb', front: 4.712, scale: .9, dx: 6.4 },
       credit: { title: 'М ДОМ 1', author: 'Smart Wood', url: 'https://sketchfab.com/3d-models/1-22d30d75184b49559ed4b40b808d628d', profile: 'https://sketchfab.com/smwood' },
       annexCredit: { title: 'Банный комплекс_1', author: 'Smart Wood', url: 'https://sketchfab.com/3d-models/1-f3c343f4e1914f8595133b888a46ea53', profile: 'https://sketchfab.com/smwood' } },
-    { name: 'Усадьба 260', w: 26, floors: 2, roof: 'hip', area: 260, mat: 1, terrace: true, garage: true, price: 23500000,
+    { name: 'Усадьба 260', w: 26, floors: 2, roof: 'hip', area: 260, mat: 1, terrace: true, garage: true,
       lead: 'Кирпич и дерево, два навеса для машин', specs: ['260 м²', '5 спален', 'кирпич'],
       model: 'models/07.glb', front: 3.142, scale: .88, door: 0,
       credit: { title: 'Жилой дом_2', author: 'labarch', url: 'https://sketchfab.com/3d-models/2-d4ffce6e98474ae4973db2d33f01bbc0', profile: 'https://sketchfab.com/labarch' } },
-    { name: 'Шале 180', w: 15, floors: 1.5, roof: 'gable', area: 180, mat: 2, terrace: true, price: 13600000,
+    { name: 'Шале 180', w: 15, floors: 1.5, roof: 'gable', area: 180, mat: 2, terrace: true,
       lead: 'Тёмный брус и остеклённая терраса', specs: ['180 м²', '4 спальни', 'брус'],
       model: 'models/12.glb', front: 4.712, door: 0,
       credit: { title: 'Типовой дом 4', author: 'labarch', url: 'https://sketchfab.com/3d-models/4-4a8cb055b2e84ae19056fe864360bb49', profile: 'https://sketchfab.com/labarch' } }
