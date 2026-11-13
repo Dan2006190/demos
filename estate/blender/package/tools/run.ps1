@@ -3,17 +3,28 @@
 # Безопасно перезапускать: готовые кадры не пересчитываются. Ход работы — renders\status.txt.
 param([string]$Mode = 'night')
 $ErrorActionPreference = 'Stop'
+trap {
+  $m = 'ОШИБКА: ' + $_.Exception.Message + ' (строка ' + $_.InvocationInfo.ScriptLineNumber + ')'
+  Write-Host $m -ForegroundColor Red
+  try { Add-Content -Path (Join-Path (Split-Path -Parent $PSScriptRoot) 'log.txt') -Value $m -Encoding UTF8 } catch {}
+  Write-Host 'Сфотографируйте это окно и пришлите вместе с файлом log.txt.' -ForegroundColor Yellow
+  Read-Host 'Нажмите Enter, чтобы закрыть окно'; exit 3
+}
 $ProgressPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = [Text.Encoding]::UTF8
 $Root = Split-Path -Parent $PSScriptRoot
 $Log = Join-Path $Root 'log.txt'
 function Say($m, $c = 'Gray') { $l = (Get-Date -Format 'dd.MM HH:mm:ss') + '  ' + $m; Write-Host $l -ForegroundColor $c; Add-Content -Path $Log -Value $l -Encoding UTF8 }
-function Fail($m) { Say $m 'Red'; Say 'Сфотографируйте это окно и пришлите. Окно можно закрыть.' 'Yellow'; Read-Host 'Нажмите Enter'; exit 1 }
+function Fail($m) { Say $m 'Red'; Say 'Сфотографируйте это окно и пришлите. Окно можно закрыть.' 'Yellow'; Read-Host 'Нажмите Enter'; exit 3 }
 
+try { Add-Content -Path $Log -Value '' -Encoding UTF8 } catch { Write-Host "Нет прав на запись в папку $Root. Перенесите папку arden на диск D:\ и запустите START.bat оттуда." -ForegroundColor Red; Read-Host 'Нажмите Enter'; exit 3 }
 Say '=== Арден v2: подготовка ===' 'Cyan'
 # не даём компьютеру уснуть, пока работает рендер (без прав администратора)
-Add-Type -Namespace W -Name P -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint f);'
-[W.P]::SetThreadExecutionState(0x80000003) | Out-Null   # ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+$awake = $true
+try {
+  Add-Type -Namespace W -Name P -MemberDefinition '[DllImport("kernel32.dll")] public static extern uint SetThreadExecutionState(uint f);'
+  [W.P]::SetThreadExecutionState(0x80000003) | Out-Null   # ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED
+} catch { $awake = $false; Say 'Не удалось запретить сон компьютера — отключите сон в настройках питания.' 'Yellow' }
 
 # 1. видеокарта и драйвер
 $smi = Get-Command nvidia-smi -ErrorAction SilentlyContinue
@@ -73,5 +84,5 @@ for ($run = 1; $run -le 8; $run++) {
 $st = Join-Path $Root 'renders\status.txt'
 if (Test-Path $st) { Get-Content $st -Encoding UTF8 | Write-Host }
 Say '=== Работа окончена. Запустите pack.bat и пришлите получившийся zip. ===' 'Green'
-[W.P]::SetThreadExecutionState(0x80000000) | Out-Null
+if ($awake) { [W.P]::SetThreadExecutionState(0x80000000) | Out-Null }
 Read-Host 'Нажмите Enter, чтобы закрыть окно'
