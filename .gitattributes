@@ -1,0 +1,2 @@
+# пакет для Windows: CRLF и BOM храним как есть
+estate/blender/package/** -text
