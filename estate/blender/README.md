@@ -81,8 +81,14 @@ renders\
 
 ## После клуба: файлы для сайта
 
-Рендер кладётся в `estate/renders` (как есть, ~180 МБ). Сайт берёт не его, а облегчённые копии
-из `estate/media` — их собирает одна команда из корня репозитория (нужны Pillow, OpenCV, numpy и ffmpeg:
+Рендер (как есть, ~180 МБ) хранится в ветке `estate/renders`, в main его нет. Сайт берёт облегчённые копии
+из `estate/media`. Чтобы их пересобрать, сначала достаньте оригиналы в рабочую папку (в коммит их не добавлять):
+
+```bash
+git fetch origin estate/renders && git checkout origin/estate/renders -- estate/renders && git reset -q estate/renders
+```
+
+Копии в `estate/media` — их собирает одна команда из корня репозитория (нужны Pillow, OpenCV, numpy и ffmpeg:
 `pip install pillow opencv-python-headless numpy`):
 
 ```bash
