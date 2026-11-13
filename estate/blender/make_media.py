@@ -5,13 +5,16 @@
   python3 estate/blender/make_media.py --force    # пересобрать всё заново
 
 Что делает:
+  промежуточные → облёты учетверяются (посёлок 72 → 288 по кругу, шаг 1,25°; дом — в пределах чистого сектора,
+                  шаг 1,875° — как облёт 48 → 192): двусторонний оптический поток DIS (OpenCV) + деформация;
+                  каждый 4-й кадр — настоящий рендер (плеер в покое всегда встаёт на него);
   кадры облётов → три размера WebP: sm 640 px (мгновенно при свайпе, экономный режим),
                   md 1280 px (телефоны, обычные экраны), hd 1920 px (большие экраны);
   облёт дома   → только кадры чистого сектора (SECTORS ниже): сзади камера уходит в ёлки;
   подлёты      → MP4 H.264 720p и 1080p + обратные копии (для «назад»), faststart, без звука;
   manifest.json → копия рендерного + размеры, сектора, файлы.
 
-Нужны Pillow (с WebP) и ffmpeg.
+Нужны Pillow (с WebP), opencv-python-headless, numpy и ffmpeg.
 """
 import argparse
 import json
@@ -19,6 +22,8 @@ import os
 import subprocess
 import sys
 
+import cv2
+import numpy as np
 from PIL import Image
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # estate/
@@ -39,20 +44,76 @@ def fresh(dst, src):
     return not A.force and os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src)
 
 
-def frames(src_dir, names, dst_dir):
-    done = 0
-    for name in names:
-        src = os.path.join(src_dir, name + '.webp')
-        im = None
-        for size, (w, q) in SIZES.items():
-            dst = os.path.join(dst_dir, size, name + '.webp')
-            if fresh(dst, src):
-                continue
-            os.makedirs(os.path.dirname(dst), exist_ok=True)
-            im = im or Image.open(src).convert('RGB')
-            im.resize((w, round(w * im.height / im.width)), Image.LANCZOS).save(dst, 'WEBP', quality=q, method=6)
-            done += 1
-    return done
+STEPS = 4  # кадров на один шаг рендера: настоящий + 3 промежуточных
+
+
+def flow_pair(A, B):
+    ga, gb = cv2.cvtColor(A, cv2.COLOR_BGR2GRAY), cv2.cvtColor(B, cv2.COLOR_BGR2GRAY)
+    d = cv2.DISOpticalFlow_create(cv2.DISOPTICAL_FLOW_PRESET_MEDIUM)
+    return d.calc(ga, gb, None), d.calc(gb, ga, None)
+
+
+def warp(img, flow):
+    h, w = flow.shape[:2]
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    return cv2.remap(img, gx + flow[..., 0], gy + flow[..., 1], cv2.INTER_LINEAR, borderMode=cv2.BORDER_REPLICATE)
+
+
+def inside(flow, margin=1.0):
+    h, w = flow.shape[:2]
+    gx, gy = np.meshgrid(np.arange(w, dtype=np.float32), np.arange(h, dtype=np.float32))
+    x, y = gx + flow[..., 0], gy + flow[..., 1]
+    return ((x >= -margin) & (x <= w - 1 + margin) & (y >= -margin) & (y <= h - 1 + margin)).astype(np.float32)
+
+
+def inbetween(A, B, ts):
+    """Промежуточные кадры между A и B (доли ts): поток из промежуточного кадра к A и к B (как в Super SloMo),
+    смешивание с весом по согласованности прямого и обратного потока (окклюзии берутся с той стороны, где видно).
+    Подбор на «экзамене» (кадры 0 и 2 → настоящий 1): PSNR посёлок 21,2 / дом 18,2 против 16,5 / 15,4 у ближайшего кадра."""
+    f01, f10 = flow_pair(A, B)
+    e0 = np.linalg.norm(f01 + warp(f10, f01), axis=2); e1 = np.linalg.norm(f10 + warp(f01, f10), axis=2)
+    out = []
+    for t in ts:
+        ft0 = -(1 - t) * t * f01 + t * t * f10
+        ft1 = (1 - t) * (1 - t) * f01 - t * (1 - t) * f10
+        wa, wb = warp(A, ft0).astype(np.float32), warp(B, ft1).astype(np.float32)
+        va, vb = (1 - t) / (1 + warp(e0, ft0)), t / (1 + warp(e1, ft1))
+        # у краёв кадра при повороте входит новое: точка из-за края — не берём её с этой стороны (без полос)
+        va, vb = va * inside(ft0), vb * inside(ft1)
+        both = (va + vb) < 1e-4
+        img = (wa * va[..., None] + wb * vb[..., None]) / ((va + vb)[..., None] + 1e-6)
+        img[both] = (A if t < .5 else B)[both]
+        out.append(img.clip(0, 255).astype(np.uint8))
+    return out
+
+
+def encode(bgr, dst_dir, name, orig=True):
+    """640 — только для настоящих кадров рендера (запасной на телефоне), досчитанные — 1280 и 1920."""
+    im = Image.fromarray(cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB))
+    for size, (w, q) in SIZES.items():
+        if size == 'sm' and not orig:
+            continue
+        dst = os.path.join(dst_dir, size, name + '.webp'); os.makedirs(os.path.dirname(dst), exist_ok=True)
+        im.resize((w, round(w * im.height / im.width)), Image.LANCZOS).save(dst, 'WEBP', quality=q, method=6)
+
+
+def chain(src_dir, seq, dst_dir, closed):
+    """Кадры seq (номера рендера по порядку) → учетверённая цепочка 000, 001, …; closed — круг (последний → первый)."""
+    pairs = len(seq) if closed else len(seq) - 1
+    total, made = pairs * STEPS + (0 if closed else 1), 0
+    src = lambda k: os.path.join(src_dir, '%03d.webp' % k)
+    for j in range(pairs):
+        names = ['%03d' % (j * STEPS + s) for s in range(STEPS)]
+        if all(fresh(os.path.join(dst_dir, 'hd', n + '.webp'), src(seq[j])) for n in names):
+            continue
+        A, B = cv2.imread(src(seq[j])), cv2.imread(src(seq[(j + 1) % len(seq)]))
+        for s, (n, img) in enumerate(zip(names, [A] + inbetween(A, B, [s / STEPS for s in range(1, STEPS)]))):
+            encode(img, dst_dir, n, s == 0); made += 1
+    if not closed:
+        n = '%03d' % (total - 1)
+        if not fresh(os.path.join(dst_dir, 'hd', n + '.webp'), src(seq[-1])):
+            encode(cv2.imread(src(seq[-1])), dst_dir, n); made += 1
+    return total, made
 
 
 def video(src, dst_base):
@@ -78,17 +139,27 @@ def sector(first, last, n):
 
 m = json.load(open(os.path.join(SRC, 'manifest.json'), encoding='utf-8'))
 vo = m['village']['orbit']
-n = frames(os.path.join(SRC, 'village', 'orbit'), ['%03d' % k for k in range(vo['frames'])], os.path.join(DST, 'village', 'orbit'))
-print('облёт посёлка: %d новых файлов' % n)
+n0 = vo['frames']
+total, made = chain(os.path.join(SRC, 'village', 'orbit'), list(range(n0)), os.path.join(DST, 'village', 'orbit'), True)
+# метки — на каждый кадр учетверённого круга (линейно между кадрами рендера)
+L = vo['labels']
+vo['labels'] = [[[round(a[0] + (b[0] - a[0]) * s / STEPS, 4), round(a[1] + (b[1] - a[1]) * s / STEPS, 4), int(a[2] or b[2])]
+                 for a, b in zip(L[k], L[(k + 1) % n0])] for k in range(n0) for s in range(STEPS)]
+vo.update({'frames': total, 'stepDeg': vo['stepDeg'] / STEPS, 'originalEvery': STEPS})
+print('облёт посёлка: %d кадров, новых %d' % (total, made))
 for h in m['houses']:
     i, d = h['index'], 'houses/%02d' % h['index']
     first, last = SECTORS.get(i, (0, h['orbit']['frames'] - 1))
     keep = sector(first, last, h['orbit']['frames'])
-    n = frames(os.path.join(SRC, d, 'orbit'), ['%03d' % k for k in keep], os.path.join(DST, d, 'orbit'))
+    total, made = chain(os.path.join(SRC, d, 'orbit'), keep, os.path.join(DST, d, 'orbit'), False)
     video(os.path.join(SRC, h['approach']['file']), os.path.join(DST, d, 'approach'))
-    h['orbit'].update({'sector': keep, 'min': -keep.index(0), 'max': len(keep) - 1 - keep.index(0), 'pattern': d + '/orbit/{size}/{000}.webp'})
+    zero = keep.index(0) * STEPS
+    h['orbit'].update({'frames': total, 'zero': zero, 'min': -zero, 'max': total - 1 - zero, 'stepDeg': h['orbit']['stepDeg'] / STEPS,
+                       'originalEvery': STEPS, 'renderFrames': keep, 'pattern': d + '/orbit/{size}/{000}.webp'})
+    h['orbit'].pop('sector', None)
+    h['orbitFrame'] *= STEPS
     h['approach'].update({'file': d + '/approach-{size}.mp4', 'reverse': d + '/approach-{size}-rev.mp4'})
-    print('дом %d: кадров %d (сектор %+d…%+d), новых файлов %d' % (i, len(keep), h['orbit']['min'], h['orbit']['max'], n))
+    print('дом %d: кадров %d (сектор %+d…%+d), новых %d' % (i, total, h['orbit']['min'], h['orbit']['max'], made))
 vo['pattern'] = 'village/orbit/{size}/{000}.webp'
 m['sizes'] = {k: v[0] for k, v in SIZES.items()}
 m['videoSizes'] = {k: v[0] for k, v in VIDEO.items()}
