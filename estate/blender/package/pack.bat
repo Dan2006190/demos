@@ -1,27 +1,29 @@
 @echo off
 chcp 65001 >nul
 cd /d "%~dp0"
-if not exist "%~dp0tools\pack.ps1" goto nozip
-powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0tools\pack.ps1"
-if "%errorlevel%"=="0" exit /b 0
-if "%errorlevel%"=="3" exit /b 1
-goto fail
-
-:nozip
+rem Собирает готовые кадры (без черновиков _work) и log.txt в arden_renders.zip — встроенный в Windows tar
+if not exist "renders" goto norender
+if exist "arden_renders.zip" del "arden_renders.zip"
+set "LOG="
+if exist "log.txt" set "LOG=log.txt"
+tar -a -c -f "arden_renders.zip" --exclude "renders/_work" renders %LOG%
+if errorlevel 1 goto fail
 echo.
-echo   АРХИВ НЕ РАСПАКОВАН - так программа не запустится.
+echo   Готово: arden_renders.zip - пришлите этот файл.
 echo.
-echo   1. Закройте это окно.
-echo   2. Нажмите на arden-v2.zip правой кнопкой - "Извлечь все..." - укажите D:\ - "Извлечь".
-echo   3. Откройте папку D:\arden и запустите pack.bat уже оттуда.
+explorer /select,"%~dp0arden_renders.zip"
+pause
+exit /b 0
+:norender
+echo.
+echo   Папки renders ещё нет - рендер не запускался. Сначала START.bat.
 echo.
 pause
 exit /b 1
-
 :fail
 echo.
-echo   Что-то пошло не так (код %errorlevel%).
-echo   Сфотографируйте это окно и пришлите вместе с файлом log.txt из этой папки.
+echo   Не получилось упаковать. Можно просто заархивировать папку renders вручную
+echo   (правой кнопкой - "Отправить" - "Сжатая ZIP-папка"), папку renders\_work не включать.
 echo.
 pause
 exit /b 1

@@ -1,6 +1,6 @@
 """
 Собирает пакет для рендера на чужом ПК: arden-v2.zip (папка arden: bat-файлы, скрипты, сцена, машины).
-Blender и ассеты Poly Haven пакет докачивает сам при первом запуске (START.bat).
+Blender — установленный (blender.org, 4.5 LTS) или папка blender рядом; ассеты Poly Haven скрипт докачивает сам.
 
   python3 estate/blender/build_package.py СЦЕНА ВЫХОД.zip
   СЦЕНА — папка с village.glb, village.json, sky_2k.hdr и assets/cars (выгрузка сайта ?export=1 + машины Sketchfab)
@@ -12,7 +12,7 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 scene, out = os.path.abspath(sys.argv[1]), os.path.abspath(sys.argv[2])
 files = {}
-for name in ('START.bat', 'START_3h.bat', 'pack.bat', 'INSTRUKCIYA.txt', 'tools/run.ps1', 'tools/pack.ps1'):
+for name in ('START.bat', 'START_3h.bat', 'pack.bat', 'INSTRUKCIYA.txt'):
     files['arden/' + name] = os.path.join(HERE, 'package', name)
 for name in ('arden_render.py', 'arden_v2.py', 'arden_assets.py', 'sectors.json'):
     files['arden/' + name] = os.path.join(HERE, name)

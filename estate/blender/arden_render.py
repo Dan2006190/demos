@@ -68,6 +68,32 @@ with open(os.path.join(HERE, 'sectors.json'), encoding='utf-8') as f:
 PLAN = {'1. облёт посёлка': (ORBIT_N, 1.0), '2. облёты домов': (172, .47),  # уточняется по sectors.json ниже
         '3. подлёты': (6 * round(APPROACH_FPS * APPROACH_SEC), .5), '4. вступление': (round(INTRO_FPS * INTRO_SEC) + 1, .8)}
 COST = {k: c for k, (n, c) in PLAN.items()}
+# всё, что печатает скрипт (и ошибки Python), — ещё и в log.txt рядом с папкой renders
+class _Tee:
+    def __init__(self, *streams): self.streams = streams
+    def write(self, t):
+        for st in self.streams:
+            try: st.write(t); st.flush()
+            except Exception: pass
+    def flush(self):
+        for st in self.streams:
+            try: st.flush()
+            except Exception: pass
+try:
+    _logf = open(os.path.join(os.path.dirname(OUT), 'log.txt'), 'a', encoding='utf-8')
+    sys.stdout, sys.stderr = _Tee(sys.__stdout__, _logf), _Tee(sys.__stderr__, _logf)
+    print('\n=== %s: %s ===' % (time.strftime('%d.%m %H:%M:%S'), ' '.join(argv)), flush=True)
+except OSError:
+    pass
+# Windows: не уходить в сон, пока идёт рендер (ES_CONTINUOUS | ES_SYSTEM_REQUIRED | ES_AWAYMODE_REQUIRED)
+if os.name == 'nt':
+    try:
+        import ctypes
+        _k = ctypes.windll.kernel32; _k.SetThreadExecutionState.argtypes = [ctypes.c_uint]
+        _k.SetThreadExecutionState(0x80000003)
+    except Exception as _e:
+        print('[arden] запрет сна не включился (%s) - отключите сон в настройках питания' % _e, flush=True)
+
 STATUS = {'stage': '', 'done': 0, 'total': 0, 'times': [], 'level': 0, 'notes': [], 'stages': {}}
 
 
