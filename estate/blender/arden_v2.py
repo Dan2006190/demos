@@ -98,7 +98,12 @@ class Scene2:
             L.new(mix.outputs['Result'], b.inputs['Base Color'])
         else:
             L.new(col.outputs['Color'], b.inputs['Base Color'])
-        L.new(img('Rough', False).outputs['Color'], b.inputs['Roughness'])
+        if recolor:  # травяная подложка: матовая, иначе на закатном солнце блестит соломой
+            b.inputs['Roughness'].default_value = .92
+            sp = b.inputs.get('Specular IOR Level')
+            if sp: sp.default_value = .15
+        else:
+            L.new(img('Rough', False).outputs['Color'], b.inputs['Roughness'])
         nm = nt.nodes.new('ShaderNodeNormalMap'); L.new(img('nor_gl', False).outputs['Color'], nm.inputs['Color'])
         L.new(nm.outputs['Normal'], b.inputs['Normal'])
         if disp:
@@ -543,7 +548,7 @@ class Scene2:
         lawn = F['lawn']
         # земля под травой: почва с рельефом (не плоская), трава сверху её закрывает
         # под травой — травяной слой с рельефом (издалека газон зелёный, а не земля)
-        lawn.data.materials.clear(); lawn.data.materials.append(self.pbr('leafy_grass', 2.0, disp=.012, recolor=(.07, .14, .03)))
+        lawn.data.materials.clear(); lawn.data.materials.append(self.pbr('leafy_grass', 2.0, disp=.012, recolor=(.06, .24, .05)))
         self.adaptive(lawn)
         # газон: сканированная бермудская трава (разные пучки), до ~400 шт./м² у камеры
         lawn_p = [o for o in self.load('grass_bermuda_01') if 'dead' not in o.name]  # без сухих пучков
@@ -557,10 +562,10 @@ class Scene2:
                                                                              'Масштаб': .8, 'Пятна': 1.0, 'Отступ': .3})
         # луг между участками и лесом, обочины поперечных дорог: высокая трава и сорняки на земле с рельефом
         ground = F['ground']
-        meadow = self.displaced_grid('Луг', -112, -46, 112, 46, .005, .5, self.pbr('sparse_grass', 2.5, disp=.02, recolor=(.09, .14, .04)), 'sparse_grass', .05, tex_scale=2.5)
+        meadow = self.displaced_grid('Луг', -112, -46, 112, 46, .005, .5, self.pbr('sparse_grass', 2.5, disp=.02, recolor=(.08, .2, .05)), 'sparse_grass', .05, tex_scale=2.5)
         self.cut_faces(meadow, lambda c: (abs(-c.y) < ROAD / 2 + 1.7) or any(abs(c.x - px) < PW / 2 - .3 and NEAR - .1 < abs(c.y) < FAR + .2 for px in XS))
         tall = self.load('grass_medium_01') + self.load('grass_medium_02')
-        self.lawn_material(tall, green=(2.9, 4.2, 1.3), stripes=False)  # некошеная: зелень посуше, без полос
+        self.lawn_material(tall, green=(2.2, 5.0, 1.1), stripes=False)  # некошеная: зелень посуше, без полос
         weeds = self.load('weed_plant_02') + self.load('nettle_plant')
         self.scatter('Луг_трава', meadow, tall, excl, **{'Плотность': 14.0, 'Ближе': 20.0, 'Дальше': 450.0, 'Мин доля': .08, 'Масштаб': 1.0, 'Разброс': .35, 'Укрупнение': 2.0})
         self.scatter('Луг_сорняки', meadow, weeds, excl, **{'Плотность': 1.2, 'Ближе': 20.0, 'Дальше': 300.0, 'Мин доля': .1, 'Масштаб': 1.0, 'Пятна': 1.0})
@@ -576,7 +581,8 @@ class Scene2:
         ground.data.materials.clear(); ground.data.materials.append(self.pbr('leafy_grass', 4.0, recolor=(.05, .09, .03)))  # далеко за лесом
         return excl
 
-    LAWN_GREEN = (2.4, 4.6, 1.1)  # × яркость скана (~.021 лин.) → альбедо ≈ (.05, .10, .023)
+    # × яркость скана (~.021 лин.) → альбедо ≈ (.03, .12, .025): под оранжевым закатным солнцем (1; .6; .36) — живая зелень, не солома
+    LAWN_GREEN = (1.45, 5.7, 1.2)
 
     def lawn_material(self, protos, green=None, stripes=True):
         """газон: тон каждого пучка свой, полосы покоса (через 1,2 м поперёк участка), пятна посветлее"""

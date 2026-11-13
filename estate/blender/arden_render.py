@@ -64,6 +64,10 @@ SPP_INTRO = (32, 12) if FAST else (64, 16)  # облака: меньше выб�
 with open(os.path.join(HERE, 'sectors.json'), encoding='utf-8') as f:
     SECTORS = {int(k): v for k, v in json.load(f).items() if not k.startswith('_')}
 
+# относительная цена кадра этапа (замер: облёт = 1) и число кадров — для общего прогноза в status.txt
+PLAN = {'1. облёт посёлка': (ORBIT_N, 1.0), '2. облёты домов': (172, .47),  # уточняется по sectors.json ниже
+        '3. подлёты': (6 * round(APPROACH_FPS * APPROACH_SEC), .5), '4. вступление': (round(INTRO_FPS * INTRO_SEC) + 1, .8)}
+COST = {k: c for k, (n, c) in PLAN.items()}
 STATUS = {'stage': '', 'done': 0, 'total': 0, 'times': [], 'level': 0, 'notes': [], 'stages': {}}
 
 
@@ -78,10 +82,16 @@ def write_status(final=None):
     lines = ['Арден v2 — рендер (%s)' % ('ночь' if not FAST else '3 часа'), 'Обновлено: ' + time.strftime('%d.%m %H:%M:%S'), '']
     if final:
         lines += [final, '']
-    if s['stage']:
+    if s['stage'] and not final:
         lines += ['Сейчас: %s — кадр %d из %d' % (s['stage'], s['done'], s['total'])]
         if avg:
             lines += ['Кадр в среднем: %.0f с, этапу осталось ≈ %.0f мин' % (avg, avg * (s['total'] - s['done']) / 60)]
+            if A.what == 'all' and s['stage'] in COST:  # всё остальное — по относительной цене кадра этапов
+                unit = avg / COST[s['stage']]; left = 0
+                for name, (n, c) in PLAN.items():
+                    d = s['stages'].get(name, (0, n))[0]
+                    left += max(0, s['stages'].get(name, (0, n))[1] - d) * c * unit
+                lines += ['Всего осталось ≈ %.1f ч (готово примерно к %s)' % (left / 3600, time.strftime('%H:%M', time.localtime(time.time() + left)))]
     lines += ['', 'Этапы:']
     for name, (d, n) in s['stages'].items():
         lines.append('  %-22s %4d / %-4d %s' % (name, d, n, 'готово' if n and d >= n else ''))
@@ -410,6 +420,9 @@ def sector(i):
         k = (k + 1) % HOUSE_N
 
 
+PLAN['2. облёты домов'] = (sum(len(sector(i)) for i in SECTORS), .47)
+
+
 # ---------------------------------------------------------------- manifest
 def manifest():
     S2.enable_scatter(False)  # для меток трава не нужна — без неё быстрее
@@ -531,7 +544,9 @@ if A.look:
     look(v[:3], v[3:]); bpy.context.view_layer.update()
     for d in ((0, 0, -1), (aim.location - cam.location).normalized()):  # что под камерой и перед ней
         hit = sc.ray_cast(bpy.context.evaluated_depsgraph_get(), cam.location, Vector(d))
-        log('луч', d, '→', hit[4].name if hit[0] else 'ничего', '%.1f м' % ((hit[1] - cam.location).length if hit[0] else 0))
+        mat = hit[4].material_slots[hit[3] and 0].material.name if hit[0] and hit[4].material_slots and hit[4].material_slots[0].material else ''
+        log('луч', d, '→', hit[4].name if hit[0] else 'ничего', mat, '%.1f м' % ((hit[1] - cam.location).length if hit[0] else 0))
+    if os.environ.get('ARDEN_PROBE'): raise SystemExit(0)
     log('проверочный кадр: %.0f с' % (shot(os.path.join(WORK, 'look.webp')) or 0)); raise SystemExit(0)
 if A.what == 'test':
     # по одному кадру этапа (в _work/test), время → прогноз на всё
