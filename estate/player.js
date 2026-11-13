@@ -131,26 +131,33 @@
     return (has(set, k, 'sm') && got(url(set, 'sm', k))) || got(url(set, 'md', k)) || got(url(set, 'hd', k));
   }
 
-  /* ---------- рисование: один кадр, смена — подстройка ≤ 80 мс ---------- */
-  const curIdx = () => mode === 'house' || (mode === 'flying' && fly && fly.house) ? hIdx(current, hf) : wrapK(Math.round(vf));
-  const curSet = () => mode === 'house' || (mode === 'flying' && fly && fly.house) ? current + 1 : 'v';
-  let shownImg = null, prevImg = null, swapAt = 0, lastBg = null;
-  const SWAP = 80;
-  function draw(now = performance.now()) {
-    const im = pick(curSet(), curIdx());
-    if (!im) return;
-    if (im !== shownImg) { prevImg = shownImg; shownImg = im; swapAt = now; }
+  /* ---------- рисование: два соседних кадра со смешиванием по дробной позиции ---------- */
+  // позиция 10,3 → кадр 10 и поверх кадр 11 с прозрачностью 0,3; рисуется на каждом кадре экрана (rAF)
+  const inHouse = () => mode === 'house' || (mode === 'flying' && fly && fly.house);
+  const curIdx = () => inHouse() ? hIdx(current, hf) : wrapK(Math.round(vf));
+  const curSet = () => inHouse() ? current + 1 : 'v';
+  function pair() { // [кадр, следующий, доля следующего]
+    if (inHouse()) {
+      const o = H_(current).orbit, f = clamp(hf, o.min, o.max), a = Math.floor(f), t = f - a;
+      return [o.zero + a, o.zero + Math.min(o.max, a + 1), t];
+    }
+    const a = Math.floor(vf), t = vf - a;
+    return [wrapK(a), wrapK(a + 1), t];
+  }
+  let lastBg = null;
+  function draw() {
+    const set = curSet(), [k0, k1, t] = pair();
+    const a = pick(set, k0); if (!a) return;
+    const b = t > .004 ? pick(set, k1) : null;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     if (R.w < W - 1 || R.h < H - 1 || R.x > 0 || R.y > 0) { // подложка: тот же кадр, растянутый из 48×27 — мягкое размытие
-      if (lastBg !== im) { tctx.drawImage(im, 0, 0, tiny.width, tiny.height); lastBg = im; }
+      if (lastBg !== a) { tctx.drawImage(a, 0, 0, tiny.width, tiny.height); lastBg = a; }
       ctx.imageSmoothingEnabled = true;
       ctx.drawImage(tiny, 0, 0, W, H);
       ctx.fillStyle = 'rgba(18,18,18,.18)'; ctx.fillRect(0, 0, W, H);
     }
-    const t = prevImg && !RM ? clamp((now - swapAt) / SWAP, 0, 1) : 1;
-    if (t < 1) { ctx.drawImage(prevImg, R.x, R.y, R.w, R.h); ctx.globalAlpha = t; need = true; }
-    ctx.drawImage(im, R.x, R.y, R.w, R.h); ctx.globalAlpha = 1;
-    if (t >= 1) prevImg = null;
+    ctx.globalAlpha = 1; ctx.drawImage(a, R.x, R.y, R.w, R.h);
+    if (b && b !== a) { ctx.globalAlpha = t; ctx.drawImage(b, R.x, R.y, R.w, R.h); ctx.globalAlpha = 1; }
   }
 
   /* ---------- метки домов ---------- */
@@ -166,9 +173,9 @@
     });
   }
   function labelAt(i) { // метка дома i на показанном кадре облёта, в CSS-пикселях
-    const p = M.village.orbit.labels[wrapK(Math.round(vf))][i];
-    if (!p[2]) return null;
-    const x = R.x + p[0] * R.w, y = R.y + p[1] * R.h;
+    const L = M.village.orbit.labels, k = Math.floor(vf), t = vf - k, p = L[wrapK(k)][i], q = L[wrapK(k + 1)][i]; // плавно, как кадры
+    if (!p[2] && !q[2]) return null;
+    const x = R.x + (p[0] + (q[0] - p[0]) * t) * R.w, y = R.y + (p[1] + (q[1] - p[1]) * t) * R.h;
     return x < 8 || x > W - 8 || y < 60 || y > H - 20 ? null : { x, y };
   }
   function updatePins() {
@@ -342,6 +349,8 @@
   /* ---------- цикл ---------- */
   let visible = true;
   new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(hero);
+  const AUTO_SPEED = .035, AUTO_WAIT = 2500, AUTO_RAMP = 2000; // кадров за кадр экрана (~2,6°/с), пауза, разгон
+  let lastTick = 0;
   function loop(now) {
     requestAnimationFrame(loop);
     if (!M || !visible) return;
@@ -352,18 +361,22 @@
       if (t >= 1) { const r = anim.res; anim = null; r && r(); }
     } else if (!drag && Math.abs(vel) > .04 && (mode === 'aerial' || mode === 'house')) { // инерция, мягко затухает
       move(vel); vel *= .94;
-    } else if (!drag && (mode === 'aerial' || mode === 'house') && !settled) {
-      // палец отпущен: доезжаем до ближайшего настоящего кадра рендера (в покое — без досчитанных кадров),
+    } else if (!drag && (mode === 'house' || (mode === 'aerial' && RM)) && !settled) {
+      // полная остановка без автовращения (облёт дома; «уменьшить движение»): доезжаем до настоящего кадра рендера,
       // в облёте дома — заодно возвращаемся из-за края сектора
       vel = 0; settled = true;
       const E = EVERY(), cur = mode === 'house' ? hf : vf;
       let to = Math.round(cur / E) * E;
       if (mode === 'house') to = clamp(to, H_(current).orbit.min, H_(current).orbit.max);
       if (Math.abs(to - cur) > .01) anim = { from: cur, to, t0: now, dur: 160 + Math.abs(to - cur) * 40 };
-    } else if (!drag && mode === 'aerial' && !RM && now - idleSince > 6000) { // медленный облёт сам по себе: кадр за кадром
-      const before = Math.round(vf); vf += .03; if (Math.round(vf) !== before) { need = true; if (Math.round(vf) % 4 === 0) prefetchAround(); }
+    } else if (!drag && mode === 'aerial' && !RM) {
+      // автовращение по всем кадрам: после свайпа и инерции — пауза и мягкий разгон (smoothstep за 2 с)
+      settled = true;
+      const r = clamp((now - idleSince - AUTO_WAIT) / AUTO_RAMP, 0, 1), sp = AUTO_SPEED * r * r * (3 - 2 * r);
+      if (sp > 0) { const before = Math.floor(vf); vf += sp * Math.min(3, (now - (lastTick || now)) / 16.7); if (Math.floor(vf) !== before) prefetchAround(); need = true; }
     }
-    if (need) { need = false; draw(now); updatePins(); }
+    lastTick = now;
+    if (need || mode === 'aerial') { need = false; draw(); updatePins(); } // в облёте — каждый кадр экрана
   }
 
   /* ---------- старт ---------- */
