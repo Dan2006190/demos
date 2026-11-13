@@ -5,7 +5,7 @@
   python3 estate/blender/make_media.py --force    # пересобрать всё заново
 
 Что делает:
-  промежуточные → посёлок 72 → 288 по кругу (шаг 1,25°, поток DIS MEDIUM, 3 досчитанных между кадрами рендера);
+  промежуточные → рендер v2: посёлок 144 → 288 по кругу (1 досчитанный между кадрами рендера, шаг 1,25°, поток DIS MEDIUM);
                   дом — 1 досчитанный между кадрами рендера в чистом секторе (шаг 3,75°, как 48 → 96; поток DIS FAST —
                   на трубах и тонких деталях на фоне леса чище, чем MEDIUM); плеер в покое всегда встаёт на кадр рендера;
   кадры облётов → три размера WebP: sm 640 px (мгновенно при свайпе, экономный режим),
@@ -31,9 +31,10 @@ SRC, DST = os.path.join(ROOT, 'renders'), os.path.join(ROOT, 'media')
 SIZES = {'sm': (640, 60), 'md': (1280, 74), 'hd': (1920, 72)}         # ширина, качество WebP
 VIDEO = {'md': (1280, 26), 'hd': (1920, 24)}                          # ширина, CRF
 
-# Чистые сектора облёта дома: (первый, последний) кадр по ходу свайпа, через кадр 0.
+# Чистые сектора облёта дома: (первый, последний) кадр по ходу свайпа, через кадр 0 (общие с arden_render.py).
 # Кадры вне сектора — камера в ёлках (проверено по контактным листам и доле листвы в кадре).
-SECTORS = {1: (37, 20), 2: (37, 19), 3: (40, 19), 4: (29, 10), 5: (32, 8), 6: (30, 7)}
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'sectors.json'), encoding='utf-8') as _f:
+    SECTORS = {int(k): tuple(v) for k, v in json.load(_f).items() if not k.startswith('_')}
 
 ap = argparse.ArgumentParser()
 ap.add_argument('--force', action='store_true')
@@ -44,7 +45,8 @@ def fresh(dst, src):
     return not A.force and os.path.exists(dst) and os.path.getmtime(dst) >= os.path.getmtime(src)
 
 
-STEPS_V, STEPS_H = 4, 2  # кадров на шаг рендера: посёлок — рендер + 3 досчитанных, дом — рендер + 1
+# кадров на шаг рендера: рендер + досчитанные. v2: посёлок 144 кадра → ×2 = 288; дом — сектор через 7,5° → ×2
+STEPS_V, STEPS_H = 2, 2
 
 
 def flow_pair(A, B, preset=cv2.DISOPTICAL_FLOW_PRESET_MEDIUM):
