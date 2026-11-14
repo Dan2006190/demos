@@ -541,7 +541,7 @@ $$('.rv,.mask').forEach(el=>io.observe(el));
   const q=location.search, add=src=>{const s=document.createElement('script');s.src=src;document.body.appendChild(s);};
   if(/[?&]3d=1/.test(q)){add('village.js');return;}
   let seen=false;try{seen=localStorage.getItem('estate-intro')==='1';}catch(e){}
-  if(!seen||/[?&]intro=1/.test(q)){window.VILLAGE_INTRO=true;window.__introRunning=true;add('village.js');}
+  if(!seen||/[?&]intro=1/.test(q)) window.__introVideo=true; // вступление сквозь облака — видео рендера (player.js)
   add('player.js');
 })();
 </script>

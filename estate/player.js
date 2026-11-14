@@ -453,6 +453,7 @@
   if (/[?&]debug=1/.test(location.search)) window.__dbg = () => ({ mode, vf: +vf.toFixed(2), hf: +hf.toFixed(2), frame: curIdx(), size: want() });
   window.__village = { flyTo, backToVillage, get mode() { return mode === 'intro' ? 'intro' : mode; }, count: (SITE.houses || []).length };
   const introOn = !!window.__introRunning;
+  const introVid = !!window.__introVideo && !RM;
   async function start() {
     try {
       M = await (await fetch(BASE + 'manifest.json')).json();
@@ -461,6 +462,7 @@
     want_(url('v', want(), 0), 0);
     prefetchAround();
     requestAnimationFrame(loop);
+    if (introVid && M.village.intro && await playIntro()) return; // вступление сквозь облака — видео рендера
     if (!introOn) step(.3);
     await until(() => got(url('v', want(), 0)), 15000);
     setTimeout(() => prefetchAround(true), 1500); // после старта — шире вокруг
@@ -472,6 +474,33 @@
     }
     // рендеры каталога и сцены для секций — после первого кадра, чтобы не мешали
     setTimeout(thumbs, introOn ? 9000 : 1500);
+  }
+  // вступление: видео рендера (make_spin.py) — облака, пролёт сквозь них, посёлок; последний кадр = кадр 0 облёта.
+  // Сигналы фаз те же, что у живого 3D (index.html показывает по ним строки текста и заголовок).
+  // Не запустилось за 6 с (энергосбережение iPhone, ошибка) — сразу облёт, без вступления.
+  async function playIntro() {
+    const I = M.village.intro, src = BASE + I.file.replace('{size}', vsize());
+    mode = 'intro'; layout();
+    const ok = await new Promise(res => {
+      let done = false; const fin = v => { if (!done) { done = true; res(v); } };
+      vid.onplaying = () => fin(true); vid.onerror = () => fin(false); setTimeout(() => fin(false), 6000);
+      vid.src = src; vid.load(); vid.currentTime = 0;
+      const pr = vid.play(); if (pr && pr.catch) pr.catch(() => fin(false));
+    });
+    vid.onplaying = vid.onerror = null;
+    if (!ok) { vid.pause(); vid.classList.add('off'); mode = 'aerial'; return false; }
+    vid.classList.remove('off'); step(1); loader.classList.add('off');
+    emit('phase', { phase: 'intro' });
+    const clouds = setTimeout(() => emit('phase', { phase: 'clouds' }), (I.clouds || 3.4) * 1000);
+    await new Promise(res => { vid.onended = res; setTimeout(res, ((vid.duration || 8) + 2) * 1000); });
+    vid.onended = null; clearTimeout(clouds);
+    await until(() => got(url('v', want(), 0)), 4000);
+    vf = 0; need = true; draw(); vid.classList.add('off');
+    mode = 'aerial'; idleSince = performance.now(); layout();
+    emit('phase', { phase: 'ready' }); $('#hint').classList.remove('off');
+    try { localStorage.setItem('estate-intro', '1'); } catch (e) { }
+    setTimeout(() => prefetchAround(true), 600); setTimeout(thumbs, 1500);
+    return true;
   }
   function thumbs() {
     const s = innerWidth * Math.min(devicePixelRatio || 1, 2) > 1600 ? 'hd' : 'md';
