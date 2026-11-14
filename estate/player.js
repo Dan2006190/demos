@@ -44,8 +44,8 @@
   wrap.append(cv, sv, vid, spin);
   hero.insertBefore(wrap, $('#scene').nextSibling);
   const ctx = cv.getContext('2d');
-  const tiny = document.createElement('canvas'); tiny.width = 48; tiny.height = 27; // размытая подложка (телефон стоя)
-  const tctx = tiny.getContext('2d');
+  // телефон стоя: кадр 16:9 по центру, сверху и снизу — тёмный фон в цвет леса, края кадра плавно уходят в него
+  const BG = 'rgb(15,18,14)', BG_0 = 'rgba(15,18,14,0)', FADE = () => Math.min(110, R.h * .16);
   let W = 1, H = 1, DPR = 1, R = { x: 0, y: 0, w: 1, h: 1 };  // R — прямоугольник кадра в CSS-пикселях
 
   function layout() {
@@ -63,6 +63,11 @@
     }
     Object.assign(vid.style, { left: R.x + 'px', top: R.y + 'px', width: R.w + 'px', height: R.h + 'px' });
     Object.assign(sv.style, { left: R.x + 'px', top: R.y + 'px', width: R.w + 'px', height: R.h + 'px' });
+    // видео (вступление, автовращение, подлёт) — те же мягкие края, что у кадра на холсте
+    const lbv = R.h < H - 1 || R.y > .5, fp = (FADE() / R.h * 100).toFixed(1) + '%';
+    const mask = lbv ? `linear-gradient(to bottom, transparent 0, #000 ${fp}, #000 calc(100% - ${fp}), transparent 100%)` : '';
+    for (const v of [vid, sv]) { v.style.webkitMaskImage = mask; v.style.maskImage = mask; }
+    hero.style.backgroundColor = lbv ? BG : '';
     need = true;
   }
   addEventListener('resize', layout);
@@ -149,20 +154,22 @@
     const a = Math.floor(vf), t = vf - a;
     return [wrapK(a), wrapK(a + 1), t];
   }
-  let lastBg = null;
   function draw() {
     const set = curSet(), [k0, k1, t] = pair();
     const a = pick(set, k0); if (!a) return;
     const b = t > .004 ? pick(set, k1) : null;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    if (R.w < W - 1 || R.h < H - 1 || R.x > 0 || R.y > 0) { // подложка: тот же кадр, растянутый из 48×27 — мягкое размытие
-      if (lastBg !== a) { tctx.drawImage(a, 0, 0, tiny.width, tiny.height); lastBg = a; }
-      ctx.imageSmoothingEnabled = true;
-      ctx.drawImage(tiny, 0, 0, W, H);
-      ctx.fillStyle = 'rgba(18,18,18,.18)'; ctx.fillRect(0, 0, W, H);
-    }
+    const lb = R.h < H - 1 || R.y > .5; // телефон стоя: сверху и снизу кадра — тёмный фон, края кадра уходят в него
+    if (lb) { ctx.fillStyle = BG; ctx.fillRect(0, 0, W, H); }
     ctx.globalAlpha = 1; ctx.drawImage(a, R.x, R.y, R.w, R.h);
     if (b && b !== a) { ctx.globalAlpha = t; ctx.drawImage(b, R.x, R.y, R.w, R.h); ctx.globalAlpha = 1; }
+    if (lb) {
+      const f = FADE();
+      for (const [y0, y1] of [[R.y, R.y + f], [R.y + R.h, R.y + R.h - f]]) {
+        const g = ctx.createLinearGradient(0, y0, 0, y1); g.addColorStop(0, BG); g.addColorStop(1, BG_0);
+        ctx.fillStyle = g; ctx.fillRect(0, Math.min(y0, y1), W, f);
+      }
+    }
   }
 
   /* ---------- метки домов ---------- */
