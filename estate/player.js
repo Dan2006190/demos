@@ -37,7 +37,11 @@
   const vid = document.createElement('video');
   vid.muted = true; vid.playsInline = true; vid.setAttribute('playsinline', ''); vid.preload = 'auto'; vid.className = 'off';
   const spin = document.createElement('i'); spin.className = 'spin off';
-  wrap.append(cv, vid, spin);
+  // плавный ролик облёта (make_spin.py): посёлок — автовращение подряд, дом — перемотка пальцем.
+  // Холст с чёткими кадрами рендера остаётся под ним и показывается, когда всё стоит.
+  const sv = document.createElement('video');
+  sv.muted = true; sv.playsInline = true; sv.setAttribute('playsinline', ''); sv.preload = 'auto'; sv.className = 'off';
+  wrap.append(cv, sv, vid, spin);
   hero.insertBefore(wrap, $('#scene').nextSibling);
   const ctx = cv.getContext('2d');
   const tiny = document.createElement('canvas'); tiny.width = 48; tiny.height = 27; // размытая подложка (телефон стоя)
@@ -58,6 +62,7 @@
       R.y = clamp(H * cy - R.h / 2, 0, H - R.h);
     }
     Object.assign(vid.style, { left: R.x + 'px', top: R.y + 'px', width: R.w + 'px', height: R.h + 'px' });
+    Object.assign(sv.style, { left: R.x + 'px', top: R.y + 'px', width: R.w + 'px', height: R.h + 'px' });
     need = true;
   }
   addEventListener('resize', layout);
@@ -189,12 +194,61 @@
     });
   }
 
+  /* ---------- плавный ролик облёта (spin.mp4) ---------- */
+  // sp.set: 'v' — посёлок, 1..6 — дом; sp.on — ролик сейчас на экране; sp.want — куда перемотать (дом)
+  const sp = { set: null, on: false, ready: false, want: null };
+  const spinOf = set => { const o = set === 'v' ? M.village.orbit : M.houses[set - 1].orbit; return o.spin || null; };
+  function spinLoad(set) {
+    const S = !RM && !SLOW && M && spinOf(set); if (!S) return false;
+    if (sp.set !== set) {
+      spinHide(); sp.set = set; sp.ready = false; sp.want = null;
+      sv.loop = set === 'v'; sv.src = BASE + S.file; sv.load();
+    }
+    return true;
+  }
+  sv.addEventListener('loadeddata', () => {
+    sp.ready = true;
+    // iOS Safari не рисует кадр перемотки у ролика, который ни разу не играл: короткий play/pause «будит» его
+    if (sp.set !== 'v') { const pr = sv.play(); if (pr && pr.then) pr.then(() => sv.pause()).catch(() => { }); }
+  });
+  sv.addEventListener('seeked', () => {
+    if (sp.want !== null && Math.abs(sv.currentTime - sp.want) > .001) { const t = sp.want; sp.want = null; sv.currentTime = t; return; }
+    sp.want = null;
+    if (sp.set !== 'v' && sp.set !== null && mode === 'house' && spinActive()) spinShow(); // кадр ролика готов — показываем
+  });
+  sv.addEventListener('playing', () => { if (sp.set === 'v' && mode === 'aerial') spinShow(); });
+  function spinShow() { if (!sp.on) { sp.on = true; sv.classList.remove('off'); } }
+  function spinHide() {
+    if (sp.set === 'v' && sp.on) { const S = spinOf('v'); vf = sv.currentTime * S.fps / S.per; } // остановились там, где ролик
+    if (!sv.paused) sv.pause();
+    if (sp.on) { sp.on = false; sv.classList.add('off'); need = true; if (mode === 'aerial') prefetchAround(); }
+  }
+  // дом: ролик виден, пока облёт в движении (палец, инерция, доводка); в покое — чёткий кадр рендера
+  const spinActive = () => !!(drag && drag.moved) || Math.abs(vel) > .04 || !!anim;
+  function spinSeekHouse() {
+    if (sp.set !== current + 1 || !sp.ready) return;
+    const o = H_(current).orbit, S = o.spin, f = clamp(hf, o.min, o.max);
+    const t = Math.min((f - o.min) * S.per / S.fps, (sv.duration || 1e9) - .02);
+    if (sv.seeking) sp.want = t; else if (Math.abs(sv.currentTime - t) > .5 / S.fps) sv.currentTime = t; else if (spinActive()) spinShow();
+  }
+  // посёлок: ролик играет с того места, где сейчас облёт; дальше облёт берёт позицию у ролика
+  function spinPlayVillage() {
+    const S = spinOf('v'); if (!S || !sp.ready || !sv.paused) return;
+    const n = N(), t = (((vf % n) + n) % n) * S.per / S.fps;
+    try { sv.currentTime = t; } catch (_) { }
+    const pr = sv.play(); if (pr && pr.catch) pr.catch(() => { });
+  }
+  document.addEventListener('visibilitychange', () => { if (document.hidden) spinHide(); });
+  // любое касание первого экрана (холст, метка дома, заголовок) — ролик посёлка останавливается на месте
+  hero.addEventListener('pointerdown', () => { if (mode === 'aerial' && sp.on) { spinHide(); idleSince = performance.now(); } }, true);
+
   /* ---------- свайп / перетаскивание ---------- */
   // чувствительность: протяжка на всю ширину экрана — 90° (сенсорный экран — 120°)
   let drag = null, vel = 0, lastMove = 0, idleSince = performance.now(), settled = true;
   const perPx = () => (COARSE ? 120 : 90) / Math.max(W, 320) / degPerFrame(); // кадров на пиксель
   cv.addEventListener('pointerdown', e => {
     if (mode !== 'aerial' && mode !== 'house') return;
+    if (mode === 'aerial') spinHide();
     drag = { x: e.clientX, y: e.clientY, x0: e.clientX, t: performance.now(), moved: false, id: e.pointerId };
     vel = 0; anim = null; idleSince = performance.now();
   });
@@ -234,6 +288,7 @@
     if (e.key === 'Escape' && mode === 'house') backToVillage();
   });
   function glide(d) { // стрелки: к соседнему настоящему кадру рендера
+    if (mode === 'aerial') spinHide();
     vel = 0; const E = EVERY(), cur = mode === 'house' ? hf : vf, to = (Math.round(cur / E) + d) * E;
     anim = { from: cur, to: mode === 'house' ? clamp(to, H_(current).orbit.min, H_(current).orbit.max) : to, t0: performance.now(), dur: 380 };
   }
@@ -288,6 +343,7 @@
     if (fly || !M || i < 0 || i >= M.houses.length) return;
     if (mode === 'house') { if (i === current) return; return switchHouse(i); }
     if (mode !== 'aerial') return;
+    spinHide();
     mode = 'flying'; current = i; fly = { house: false };
     $('#hint').classList.add('off'); closeCard(); updatePins();
     // параллельно: видео подлёта и первые кадры облёта дома
@@ -303,12 +359,12 @@
     await until(() => got(url(i + 1, want(), hIdx(i, 0))), 6000); // стык: кадр облёта дома уже здесь
     hf = 0; fly.house = true; need = true; draw();
     vid.classList.add('off');
-    mode = 'house'; fly = null; openCard(i); prefetchAround();
+    mode = 'house'; fly = null; openCard(i); prefetchAround(); spinLoad(i + 1);
     setTimeout(() => { if (mode === 'house' && current === i) { setVideo(vurl(i, true)); prefetchAround(true); } }, 1200); // обратный подлёт и кадры шире — заранее
   }
   async function backToVillage() {
     if (fly || mode !== 'house') return;
-    const i = current; mode = 'flying'; fly = { house: true }; closeCard();
+    const i = current; mode = 'flying'; fly = { house: true }; closeCard(); spinHide();
     const vReady = setVideo(vurl(i, true));
     await tween(v => { hf = v; }, hf, 0, RM ? 1 : Math.min(1000, 200 + Math.abs(hf) * 12));
     hf = 0; need = true;
@@ -320,12 +376,12 @@
     $('#hint').classList.remove('off'); prefetchAround();
   }
   async function switchHouse(i) { // «следующий / предыдущий» в карточке: сразу к облёту другого дома
-    mode = 'flying'; fly = { house: true }; closeCard();
+    mode = 'flying'; fly = { house: true }; closeCard(); spinHide();
     want_(url(i + 1, want(), hIdx(i, 0)), 0);
     await until(() => got(url(i + 1, want(), hIdx(i, 0))), 6000);
     wrap.classList.add('fade'); await new Promise(r => setTimeout(r, 220));
     current = i; hf = 0; need = true; draw(); wrap.classList.remove('fade');
-    mode = 'house'; fly = null; openCard(i); prefetchAround();
+    mode = 'house'; fly = null; openCard(i); prefetchAround(); spinLoad(i + 1);
     setTimeout(() => { if (mode === 'house' && current === i) setVideo(vurl(i, true)); }, 1200);
   }
   function tween(set, from, to, dur) { return new Promise(res => { anim = { from, to, t0: performance.now(), dur, set, res }; }); }
@@ -353,7 +409,7 @@
   let lastTick = 0;
   function loop(now) {
     requestAnimationFrame(loop);
-    if (!M || !visible) return;
+    if (!M || !visible) { if (sp.on) spinHide(); return; }
     if (anim) {
       const t = clamp((now - anim.t0) / anim.dur, 0, 1), v = anim.from + (anim.to - anim.from) * ease(t);
       if (anim.set) anim.set(v); else if (mode === 'house') hf = v; else vf = v;
@@ -372,11 +428,19 @@
     } else if (!drag && mode === 'aerial' && !RM) {
       // автовращение по всем кадрам: после свайпа и инерции — пауза и мягкий разгон (smoothstep за 2 с)
       settled = true;
-      const r = clamp((now - idleSince - AUTO_WAIT) / AUTO_RAMP, 0, 1), sp = AUTO_SPEED * r * r * (3 - 2 * r);
-      if (sp > 0) { const before = Math.floor(vf); vf += sp * Math.min(3, (now - (lastTick || now)) / 16.7); if (Math.floor(vf) !== before) prefetchAround(); need = true; }
+      const r = clamp((now - idleSince - AUTO_WAIT) / AUTO_RAMP, 0, 1), spd = AUTO_SPEED * r * r * (3 - 2 * r);
+      if (r > 0) spinLoad('v');                                   // ролик грузится, пока идёт разгон
+      if (sp.on) {                                                // на полной скорости облёт — по ролику, 25 к/с
+        const S = spinOf('v'); vf = sv.currentTime * S.fps / S.per; need = true;
+      } else if (spd > 0) {
+        const before = Math.floor(vf); vf += spd * Math.min(3, (now - (lastTick || now)) / 16.7); if (Math.floor(vf) !== before) prefetchAround(); need = true;
+        if (r >= 1 && sp.set === 'v' && sp.ready) spinPlayVillage();
+      }
     }
     lastTick = now;
-    if (need || mode === 'aerial') { need = false; draw(); updatePins(); } // в облёте — каждый кадр экрана
+    if (mode === 'house' && sp.set === current + 1) { if (spinActive()) spinSeekHouse(); else if (sp.on) spinHide(); }
+    if (mode === 'aerial' && sp.on && (drag || anim || Math.abs(vel) > .04)) spinHide(); // страховка: облёт в руках — ролик стоп
+    if (need || mode === 'aerial') { need = false; if (!sp.on || mode === 'house') draw(); updatePins(); } // в облёте — каждый кадр экрана
   }
 
   /* ---------- старт ---------- */
