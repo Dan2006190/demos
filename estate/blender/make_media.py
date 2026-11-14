@@ -70,7 +70,7 @@ def inside(flow, margin=1.0):
 
 def inbetween(A, B, ts, preset=cv2.DISOPTICAL_FLOW_PRESET_MEDIUM):
     """Промежуточные кадры между A и B (доли ts): поток из промежуточного кадра к A и к B (как в Super SloMo),
-    смешивание с весом по согласованности прямого и обратного потока (окклюзии берутся с той стороны, где видно).
+    каждая точка — целиком с той стороны, где прямой и обратный поток согласованнее (без смешивания: оно мылит лес).
     Подбор на «экзамене» (кадры 0 и 2 → настоящий 1): PSNR посёлок 21,2 / дом 18,2 против 16,5 / 15,4 у ближайшего кадра."""
     f01, f10 = flow_pair(A, B, preset)
     e0 = np.linalg.norm(f01 + warp(f10, f01), axis=2); e1 = np.linalg.norm(f10 + warp(f01, f10), axis=2)
@@ -83,7 +83,9 @@ def inbetween(A, B, ts, preset=cv2.DISOPTICAL_FLOW_PRESET_MEDIUM):
         # у краёв кадра при повороте входит новое: точка из-за края — не берём её с этой стороны (без полос)
         va, vb = va * inside(ft0), vb * inside(ft1)
         both = (va + vb) < 1e-4
-        img = (wa * va[..., None] + wb * vb[..., None]) / ((va + vb)[..., None] + 1e-6)
+        # каждую точку берём целиком с одной стороны — там, где поток надёжнее. Смешивание двух сдвинутых
+        # кадров давало мыло на лесе (резкость досчитанного 127 против 381 у настоящего); так — 337
+        img = np.where((va >= vb)[..., None], wa, wb)
         img[both] = (A if t < .5 else B)[both]
         out.append(img.clip(0, 255).astype(np.uint8))
     return out
