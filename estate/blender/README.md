@@ -59,6 +59,14 @@ pip install pillow opencv-python-headless numpy
 python3 estate/blender/make_media.py --force
 ```
 
+Плавные ролики облёта (автовращение посёлка и перемотка облёта дома пальцем, без смешивания кадров) — из тех же
+кадров рендера, после `make_media.py` (нужен ffmpeg):
+
+```bash
+python3 estate/blender/make_spin.py --force
+```
+
+
 ## Проверка скрипта без видеокарты
 
 ```bash
