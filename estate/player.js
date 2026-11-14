@@ -142,9 +142,9 @@
   const curIdx = () => inHouse() ? hIdx(current, hf) : wrapK(Math.round(vf));
   const curSet = () => inHouse() ? current + 1 : 'v';
   function pair() { // [кадр, следующий, доля следующего]
-    if (inHouse()) {
-      const o = H_(current).orbit, f = clamp(hf, o.min, o.max), a = Math.floor(f), t = f - a;
-      return [o.zero + a, o.zero + Math.min(o.max, a + 1), t];
+    if (inHouse()) { // дом: только настоящие кадры рендера (через 7,5°), без смешивания и досчёта — чётко, без двойного изображения
+      const o = H_(current).orbit, E = o.originalEvery || 1, k = clamp(Math.round(clamp(hf, o.min, o.max) / E) * E, o.min, o.max);
+      return [o.zero + k, o.zero + k, 0];
     }
     const a = Math.floor(vf), t = vf - a;
     return [wrapK(a), wrapK(a + 1), t];
@@ -196,13 +196,13 @@
 
   /* ---------- плавный ролик облёта (spin.mp4) ---------- */
   // sp.set: 'v' — посёлок, 1..6 — дом; sp.on — ролик сейчас на экране; sp.want — куда перемотать (дом)
-  const sp = { set: null, on: false, ready: false, want: null };
+  const sp = { set: null, on: false, ready: false, want: null, starting: false };
   const spinOf = set => { const o = set === 'v' ? M.village.orbit : M.houses[set - 1].orbit; return o.spin || null; };
   function spinLoad(set) {
     const S = !RM && !SLOW && M && spinOf(set); if (!S) return false;
     if (sp.set !== set) {
       spinHide(); sp.set = set; sp.ready = false; sp.want = null;
-      sv.loop = set === 'v'; sv.src = BASE + S.file; sv.load();
+      sv.loop = set === 'v'; sv.src = BASE + S.file.replace('{size}', want() === 'hd' ? 'hd' : 'md'); sv.load(); // большой экран — 1920
     }
     return true;
   }
@@ -232,11 +232,16 @@
     if (sv.seeking) sp.want = t; else if (Math.abs(sv.currentTime - t) > .5 / S.fps) sv.currentTime = t; else if (spinActive()) spinShow();
   }
   // посёлок: ролик играет с того места, где сейчас облёт; дальше облёт берёт позицию у ролика
+  // iOS Safari не грузит видео заранее (loadeddata не приходит до play) — запускаем сразу, позицию ставим, как только
+  // известна длительность; показываем по событию «playing»
   function spinPlayVillage() {
-    const S = spinOf('v'); if (!S || !sp.ready || !sv.paused) return;
-    const n = N(), t = (((vf % n) + n) % n) * S.per / S.fps;
-    try { sv.currentTime = t; } catch (_) { }
-    const pr = sv.play(); if (pr && pr.catch) pr.catch(() => { });
+    const S = spinOf('v'); if (!S || !sv.paused || sp.starting || sp.blocked) return;
+    sp.starting = true;
+    const seek = () => { const n = N(); try { sv.currentTime = (((vf % n) + n) % n) * S.per / S.fps; } catch (_) { } };
+    if (sv.readyState >= 1) seek(); else sv.addEventListener('loadedmetadata', seek, { once: true });
+    const pr = sv.play(); const done = () => { sp.starting = false; };
+    // автозапуск запрещён (энергосбережение iPhone) — остаёмся на кадрах, не дёргаем play() каждый кадр
+    if (pr && pr.then) pr.then(done, () => { sp.blocked = true; done(); }); else done();
   }
   document.addEventListener('visibilitychange', () => { if (document.hidden) spinHide(); });
   // любое касание первого экрана (холст, метка дома, заголовок) — ролик посёлка останавливается на месте
@@ -405,7 +410,7 @@
   /* ---------- цикл ---------- */
   let visible = true;
   new IntersectionObserver(es => { visible = es[0].isIntersecting; }).observe(hero);
-  const AUTO_SPEED = .035, AUTO_WAIT = 2500, AUTO_RAMP = 2000; // кадров за кадр экрана (~2,6°/с), пауза, разгон
+  const AUTO_SPEED = .0463, AUTO_WAIT = 2500, AUTO_RAMP = 2000; // кадров за кадр экрана (~3,5°/с — как ролик spin), пауза, разгон
   let lastTick = 0;
   function loop(now) {
     requestAnimationFrame(loop);
@@ -434,7 +439,7 @@
         const S = spinOf('v'); vf = sv.currentTime * S.fps / S.per; need = true;
       } else if (spd > 0) {
         const before = Math.floor(vf); vf += spd * Math.min(3, (now - (lastTick || now)) / 16.7); if (Math.floor(vf) !== before) prefetchAround(); need = true;
-        if (r >= 1 && sp.set === 'v' && sp.ready) spinPlayVillage();
+        if (r >= 1 && sp.set === 'v') spinPlayVillage();
       }
     }
     lastTick = now;
