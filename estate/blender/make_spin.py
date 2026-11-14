@@ -101,5 +101,22 @@ for h, sh in (zip(m['houses'], src_m['houses']) if ARGS.houses else []):  # пр
     r = spin([os.path.join(SRC, d, 'orbit', '%03d.webp' % k) for k in keep], False, PER_H, dst.replace('spin.mp4', 'spin-{size}.mp4'), gop=4, crf={'md': (1280, 24), 'hd': (1920, 22)})
     h['orbit']['spin'] = {'file': d + '/orbit/spin-{size}.mp4', 'per': PER_H / STEPS_H, 'fps': FPS}
     print('дом %d: ролик' % i, 'без изменений' if r is None else '%d кадров' % r)
+# вступление: облака белее и холоднее (рендер — бежевые, «песок»), секунда внутри облака — размытие (шум рендера);
+# с 5,0 до 5,6 с плавно к исходному кадру — посёлок в своём цвете, последний кадр = кадр 0 облёта
+intro = os.path.join(SRC, 'village', 'intro.mp4')
+if os.path.exists(intro):
+    G = ('hqdn3d=10:8:16:16,eq=brightness=0.10:contrast=1.3:saturation=0.35:gamma=1.15,'
+         'colorbalance=rs=-0.06:gs=-0.02:bs=0.08:rm=-0.05:bm=0.05:rh=-0.02:bh=0.04')
+    K1, K2 = r'clip((5.6-T)/0.6\,0\,1)', r'clip(min((T-3.3)/0.3\,(4.95-T)/0.3)\,0\,1)'
+    fc = ("[0:v]split=3[a][b][c];[b]%s[g];[c]%s,gblur=sigma=9:steps=2[gb];[g][gb]blend=all_expr='A*(1-%s)+B*%s'[g2];"
+          "[a][g2]blend=all_expr='A*(1-%s)+B*%s'" % (G, G, K2, K2, K1, K1))
+    for k, (w, q) in {'md': (1280, 27), 'hd': (1920, 27)}.items():
+        dst = os.path.join(DST, 'village', 'intro-%s.mp4' % k)
+        if ARGS.force or not os.path.exists(dst) or os.path.getmtime(dst) < os.path.getmtime(intro):
+            subprocess.run(['ffmpeg', '-v', 'error', '-y', '-i', intro, '-filter_complex', fc + ',scale=%d:-2:flags=lanczos' % w,
+                            '-an', '-c:v', 'libx264', '-preset', 'slow', '-crf', str(q), '-pix_fmt', 'yuv420p', '-g', '24',
+                            '-movflags', '+faststart', dst], check=True)
+    m['village']['intro'] = {'file': 'village/intro-{size}.mp4', 'clouds': 3.4}
+    print('вступление:', ', '.join('%s %.1f МБ' % (k, os.path.getsize(os.path.join(DST, 'village', 'intro-%s.mp4' % k)) / 1e6) for k in ('md', 'hd')))
 with open(mpath, 'w', encoding='utf-8') as f:
     json.dump(m, f, ensure_ascii=False, separators=(',', ':'))
