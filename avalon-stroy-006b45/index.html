@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Авалон-Строй — строительство и ремонт дорог в Тамбове</title>
+<meta name="description" content="Авалон-Строй — дорожный подрядчик в Тамбове: строительство и ремонт дорог для организаций. Офис: проезд Энергетиков, 30, офис 224. Телефон +7 900 514-46-72.">
+<meta name="theme-color" content="#1D2125">
+
+<!-- Разметка для поисковиков. Подстановки заменяются при сборке под клиента. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "Авалон-Строй",
+  "telephone": "+7 900 514-46-72",
+  "address": { "@type": "PostalAddress", "streetAddress": "проезд Энергетиков, 30, офис 224, Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+  "openingHours": "",
+  "hasMap": "https://yandex.ru/maps/?text=%D0%90%D0%B2%D0%B0%D0%BB%D0%BE%D0%BD-%D0%A1%D1%82%D1%80%D0%BE%D0%B9%2C%20%D0%BF%D1%80%D0%BE%D0%B5%D0%B7%D0%B4%20%D0%AD%D0%BD%D0%B5%D1%80%D0%B3%D0%B5%D1%82%D0%B8%D0%BA%D0%BE%D0%B2%2C%2030%2C%20%D0%BE%D1%84%D0%B8%D1%81%20224%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+}
+</script>
+
+<style>
+  :root {
+    /* Образ: дорожный подрядчик. Асфальт + жёлтая дорожная разметка + бетон.
+       Контраст: текст #1D2125 на #F1F0EC ≈ 15:1; #4A4F55 на #F1F0EC ≈ 7:1; #8A5A00 на белом ≈ 5.9:1;
+       тёмный текст на жёлтом #F5B800 ≈ 9:1 */
+    --color-primary: #8A5A00;          /* охра: ссылки и акценты на светлом */
+    --color-primary-strong: #6B4500;
+    --color-secondary: #F5B800;
+    --color-accent: #F5B800;           /* жёлтая разметка — фон кнопок */
+    --color-on-accent: #1D2125;
+    --color-accent-text: #8A5A00;
+    --color-background: #F1F0EC;       /* светлый бетон */
+    --color-foreground: #1D2125;       /* асфальт */
+    --color-asphalt-2: #2A2F34;
+    --color-card: #FFFFFF;
+    --color-muted: #E6E4DE;
+    --color-muted-foreground: #4A4F55;
+    --color-border: #D3D0C7;
+    --color-destructive: #B42318;
+    --color-ring: #1D2125;
+    --color-on-dark: #FFFFFF;
+    --color-on-dark-muted: #C9CCCF;    /* на #1D2125 ≈ 10:1 */
+    --step-1: #B42318;   /* проблема */
+    --step-2: #8A5A00;   /* процесс */
+    --step-3: #1F5F3A;   /* действие */
+
+    --font-head: "Bahnschrift", "DIN Alternate", "DIN Condensed", "Roboto Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius: 2px;
+    --shadow: 0 1px 0 rgba(29, 33, 37, .12);
+    --wrap: 1180px;
+    --t: 200ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+  img, svg { display: block; max-width: 100%; }
+  .hero__in > *, .sec-head > *, .prices > *, .why__in > *, .order__in > *, .contacts__in > *,
+  .svc-grid > *, .form > *, .field, .problem__list li > div, .why__list li > div, .c-list li > div { min-width: 0; }
+  a { color: var(--color-primary); }
+  a:hover { color: var(--color-primary-strong); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 600; line-height: 1.1; letter-spacing: .01em; margin: 0; }
+  h2 { font-size: clamp(30px, 4.2vw, 48px); text-transform: uppercase; letter-spacing: .02em; }
+  h3 { font-size: 22px; font-weight: 600; }
+  p { margin: 0; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 0; }
+  .hero :focus-visible, .order :focus-visible, .svc--action :focus-visible { outline-color: var(--color-accent); }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--color-foreground); color: #fff; padding: 10px 14px; z-index: 100; border-radius: var(--radius); }
+  .skip:focus { top: 12px; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 24px;
+    font: 600 16px/1 var(--font-body); letter-spacing: .02em;
+    border-radius: var(--radius); border: 2px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color var(--t), color var(--t), border-color var(--t);
+  }
+  .btn .icon { width: 20px; height: 20px; }
+  .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn--accent:hover { background: #FFC929; color: var(--color-on-accent); }
+  .btn--line { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn--line:hover { background: var(--color-foreground); color: #fff; }
+  .btn--dark { background: var(--color-foreground); color: #fff; }
+  .btn--dark:hover { background: #3A4047; color: #fff; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .link-arrow .icon { width: 18px; height: 18px; transition: transform var(--t); }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ---------- Шапка ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(241, 240, 236, .97); border-bottom: 3px solid var(--color-foreground); }
+  .header__in { display: flex; align-items: center; gap: 32px; min-height: 66px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-foreground); font: 700 21px/1 var(--font-head); text-transform: uppercase; letter-spacing: .04em; }
+  .logo:hover { color: var(--color-foreground); }
+  .logo__mark { width: 34px; height: 34px; }
+  .nav { display: flex; gap: 24px; margin-left: auto; }
+  .nav a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: 15px; padding: 6px 0; border-bottom: 3px solid transparent; transition: border-color var(--t); }
+  .nav a:hover { border-color: var(--color-accent); color: var(--color-foreground); }
+  .header__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 700; color: var(--color-foreground); text-decoration: none; white-space: nowrap; }
+  .header__phone .icon { width: 20px; height: 20px; color: var(--color-foreground); }
+
+  /* ---------- Первый экран: асфальт и разметка ---------- */
+  .hero {
+    position: relative; overflow: hidden; padding: clamp(56px, 8vw, 104px) 0 clamp(72px, 9vw, 112px);
+    background: var(--color-foreground); color: var(--color-on-dark);
+  }
+  .hero__grid {
+    position: absolute; inset: -80px 0 0 0; pointer-events: none;
+    background-image:
+      /* прерывистая осевая разметка внизу экрана */
+      repeating-linear-gradient(90deg, #F5B800 0 64px, transparent 64px 112px),
+      /* сплошная краевая линия */
+      linear-gradient(#E8E6E0, #E8E6E0),
+      /* фактура асфальта */
+      radial-gradient(rgba(255,255,255,.05) 1px, transparent 1.2px),
+      radial-gradient(rgba(255,255,255,.035) 1px, transparent 1.2px);
+    background-size: 100% 6px, 100% 2px, 9px 9px, 13px 13px;
+    background-position: 0 calc(100% - 22px), 0 calc(100% - 4px), 0 0, 4px 6px;
+    background-repeat: repeat-x, no-repeat, repeat, repeat;
+  }
+  .hero__in { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--color-primary); }
+  .eyebrow::before { content: ""; width: 28px; height: 4px; background: var(--color-accent); }
+  .hero .eyebrow { color: var(--color-accent); }
+  .hero h1 { margin: 18px 0 20px; font-size: clamp(44px, 7.4vw, 92px); text-transform: uppercase; letter-spacing: .01em; word-break: break-word; color: #fff; }
+  .hero__lead { font-size: clamp(18px, 2vw, 21px); max-width: 34em; color: #DDDFE1; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero .btn--line { color: #fff; border-color: #fff; }
+  .hero .btn--line:hover { background: #fff; color: var(--color-foreground); }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 36px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--color-on-dark-muted); }
+  .hero__facts li { display: flex; align-items: center; gap: 8px; }
+  .hero__facts .icon { width: 18px; height: 18px; color: var(--color-accent); }
+  .hero__art { width: 100%; max-width: 460px; justify-self: end; color: #E8E6E0; }
+
+  /* ---------- Заголовки секций ---------- */
+  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 48px; }
+  .sec-head p { color: var(--color-muted-foreground); max-width: 32em; }
+  .step-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 600 14px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; }
+  .step-tag b { display: inline-grid; place-items: center; min-width: 34px; height: 26px; padding: 0 6px; border-radius: var(--radius); color: #fff; font-weight: 600; }
+  .step-tag--1 { color: var(--step-1); } .step-tag--1 b { background: var(--step-1); }
+  .step-tag--2 { color: var(--step-2); } .step-tag--2 b { background: var(--step-2); }
+  .step-tag--3 { color: var(--step-3); } .step-tag--3 b { background: var(--step-3); }
+
+  /* ---------- Шаг 1: проблема ---------- */
+  .problem { background: var(--color-card); border-bottom: 1px solid var(--color-border); }
+  .problem__list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 3px solid var(--color-foreground); }
+  .problem__list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 28px 24px 28px 0; border-bottom: 1px solid var(--color-border); }
+  .problem__list li:nth-child(odd) { border-right: 1px solid var(--color-border); }
+  .problem__list li:nth-child(even) { padding-left: 24px; }
+  .problem__list .icon { width: 28px; height: 28px; color: var(--step-1); margin-top: 2px; }
+  .problem__list h3 { margin-bottom: 6px; }
+  .problem__list p { color: var(--color-muted-foreground); }
+  .mini-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .mini-cta span { color: var(--color-muted-foreground); }
+
+  /* ---------- Услуги ---------- */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .svc {
+    position: relative; display: flex; flex-direction: column; gap: 12px;
+    padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-foreground); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .svc--wide { grid-column: span 2; }
+  .svc__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius); background: var(--color-accent); color: var(--color-foreground); }
+  .svc p { color: var(--color-muted-foreground); font-size: 16px; }
+  .svc ul { margin: 0; padding: 0 0 0 18px; color: var(--color-muted-foreground); font-size: 16px; columns: 2; column-gap: 32px; }
+  .svc__foot { margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; border-top: 1px dashed var(--color-border); }
+  .price { font: 600 22px/1.1 var(--font-head); letter-spacing: .01em; }
+  .price small { font: 500 15px var(--font-body); color: var(--color-muted-foreground); }
+  .svc--action { background: var(--color-foreground); color: #fff; border-color: var(--color-foreground); border-top-color: var(--color-accent); }
+  .svc--action .svc__icon { background: var(--color-accent); color: var(--color-foreground); }
+  .svc--action p { color: var(--color-on-dark-muted); }
+  .svc--action .svc__foot { border-color: rgba(255,255,255,.25); }
+  .svc--action .price small { color: var(--color-on-dark-muted); }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+  .prices h3 { font-size: 28px; text-transform: uppercase; margin-bottom: 12px; }
+  .prices__note { color: var(--color-muted-foreground); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; }
+  th, td { text-align: left; padding: 14px 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  thead th { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-muted-foreground); border-bottom: 3px solid var(--color-foreground); }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; padding-left: 16px; font-weight: 600; }
+
+  /* ---------- Почему мы ---------- */
+  .why { background: var(--color-card); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .why__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .why__lead { margin-top: 20px; color: var(--color-muted-foreground); max-width: 30em; }
+  .photo-ph {
+    margin-top: 32px; aspect-ratio: 4 / 3; border-radius: var(--radius); border: 2px dashed #8E8A80;
+    display: grid; place-items: center; text-align: center; padding: 24px; color: var(--color-muted-foreground); font-size: 15px;
+    background:
+      repeating-linear-gradient(135deg, rgba(245,184,0,.16) 0 14px, transparent 14px 28px),
+      var(--color-background);
+  }
+  .photo-ph .icon { width: 36px; height: 36px; margin: 0 auto 10px; color: var(--color-foreground); }
+  .why__list { margin: 0; padding: 0; list-style: none; counter-reset: why; }
+  .why__list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--color-border); }
+  .why__list li:first-child { padding-top: 0; }
+  .why__list .num { font: 700 38px/1 var(--font-head); color: var(--color-accent-text); }
+  .why__list h3 { margin-bottom: 6px; display: flex; gap: 10px; align-items: center; }
+  .why__list h3 .icon { color: var(--color-foreground); width: 22px; height: 22px; }
+  .why__list p { color: var(--color-muted-foreground); }
+
+  /* ---------- Шаг 2: процесс ---------- */
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps li { position: relative; padding: 28px 20px 0 0; border-top: 4px dashed var(--color-border); }
+  .steps li::before {
+    counter-increment: st; content: counter(st, decimal-leading-zero);
+    position: absolute; top: -16px; left: 0; display: grid; place-items: center; width: 44px; height: 28px;
+    font: 700 14px/1 var(--font-body); color: var(--color-foreground); background: var(--color-accent); border-radius: var(--radius);
+  }
+  .steps li:first-child { border-top-style: solid; border-top-color: var(--color-foreground); }
+  .steps h3 { margin: 8px 0 8px; font-size: 21px; }
+  .steps p { color: var(--color-muted-foreground); font-size: 16px; }
+  .steps .when { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--step-2); }
+
+  /* ---------- Шаг 3: форма ---------- */
+  .order { background: var(--color-foreground); color: #fff; border-top: 6px solid var(--color-accent); }
+  .order .step-tag--3 { color: var(--color-accent); } .order .step-tag--3 b { background: var(--color-accent); color: var(--color-foreground); }
+  .order__in { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .order__text p { margin-top: 20px; color: var(--color-on-dark-muted); max-width: 28em; }
+  .order__contacts { margin-top: 32px; display: grid; gap: 12px; }
+  .order__contacts a { color: #fff; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; text-decoration: none; }
+  .order__contacts a:hover { color: var(--color-accent); }
+  .order__contacts .icon { color: var(--color-accent); }
+
+  .form { background: var(--color-card); color: var(--color-foreground); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .form :focus-visible { outline-color: var(--color-foreground); }
+  .field { display: grid; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  label { font-weight: 600; font-size: 15px; }
+  label .req { color: var(--color-destructive); }
+  input, select, textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    font: 400 16px/1.4 var(--font-body); color: var(--color-foreground);
+    background: #fff; border: 1.5px solid #8E8A80; border-radius: var(--radius);
+    transition: border-color var(--t);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: var(--color-foreground); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(245,184,0,.7); outline-offset: 0; border-color: var(--color-foreground); }
+  [aria-invalid="true"] { border-color: var(--color-destructive); }
+  .err { min-height: 1.2em; font-size: 14px; color: var(--color-destructive); }
+  .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .form__foot small { color: var(--color-muted-foreground); font-size: 13px; max-width: 26em; }
+  .form-ok {
+    grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius); background: #FFF6D6; border: 1px solid #E0B43A; color: var(--color-foreground); font-weight: 600;
+  }
+  .form-ok.is-on { display: flex; }
+  .form-ok .icon { color: var(--step-3); }
+
+  /* ---------- Контакты ---------- */
+  .contacts__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .c-list { margin: 0; padding: 0; list-style: none; border-top: 3px solid var(--color-foreground); }
+  .c-list li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .c-list .icon { color: var(--color-foreground); margin-top: 2px; }
+  .c-list dt, .c-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .c-value { font-size: 19px; font-weight: 500; }
+  .c-value a { color: var(--color-foreground); }
+  .route { padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-left: 4px solid var(--color-accent); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .route h3 { margin-bottom: 10px; }
+  .route p { color: var(--color-muted-foreground); margin-bottom: 20px; }
+
+  /* ---------- Подвал ---------- */
+  .footer { padding: 40px 0 96px; border-top: 3px solid var(--color-foreground); font-size: 15px; color: var(--color-muted-foreground); }
+  .footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+  .footer a { color: var(--color-foreground); }
+  .demo-mark { margin-top: 20px; font-size: 12px; color: var(--color-muted-foreground); }
+
+  /* ---------- Мобильная панель ---------- */
+  .mbar { display: none; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1024px) {
+    .nav { display: none; }
+    .header__phone { margin-left: auto; }
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__art { max-width: 380px; justify-self: start; }
+    .steps { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 860px) {
+    .sec-head, .prices, .why__in, .order__in, .contacts__in { grid-template-columns: 1fr; gap: 32px; }
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+    .svc--wide { grid-column: span 2; }
+    .problem__list { grid-template-columns: 1fr; }
+    .problem__list li:nth-child(odd) { border-right: 0; }
+    .problem__list li:nth-child(even) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px; }
+    .header__phone span { display: none; }
+    .hero__art { display: none; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .svc--wide { grid-column: auto; }
+    .svc ul { columns: 1; }
+    .steps { grid-template-columns: 1fr; }
+    .form { grid-template-columns: 1fr; }
+    .form__foot .btn { width: 100%; }
+    td:last-child, th:last-child { white-space: normal; }
+    .mbar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-card); border-top: 3px solid var(--color-foreground);
+    }
+    .mbar .btn { min-height: 48px; padding: 0 12px; min-width: 0; }
+    .hero__facts { gap: 10px 20px; }
+    .footer__in > * { min-width: 0; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+
+<!-- Набор иконок (линейные, толщина 1.75, в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-road" viewBox="0 0 24 24"><path d="M9 3 4 21"/><path d="m15 3 5 18"/><path d="M12 4v2"/><path d="M12 10v3"/><path d="M12 17v3"/></symbol>
+  <symbol id="i-cone" viewBox="0 0 24 24"><path d="M10 3h4l5 16H5z"/><path d="M8.2 10h7.6"/><path d="M6.9 14.5h10.2"/><path d="M3 21h18"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="1"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M12 6h.01M16 6h.01M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M16 14h.01"/></symbol>
+  <symbol id="i-truck" viewBox="0 0 24 24"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.62l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></symbol>
+  <symbol id="i-map" viewBox="0 0 24 24"><path d="M14.1 6.1 9.9 3.9a2 2 0 0 0-1.8 0L3.6 6.2A1 1 0 0 0 3 7v12.8a1 1 0 0 0 1.4.9l3.7-1.8a2 2 0 0 1 1.8 0l4.2 2.1a2 2 0 0 0 1.8 0l4.5-2.3a1 1 0 0 0 .6-.9V5.2a1 1 0 0 0-1.4-.9l-3.7 1.8a2 2 0 0 1-1.8 0z"/><path d="M9 3.8v15"/><path d="M15 6.2v15"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержанию</a>
+
+<header class="header">
+  <div class="wrap header__in">
+    <a class="logo" href="#top" aria-label="Авалон-Строй — на главную">
+      <svg class="logo__mark" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="2" fill="#1D2125"/>
+        <path d="M11 6 6 28M23 6l5 22" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+        <path d="M17 7v4M17 15v5M17 24v4" stroke="#F5B800" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <span>Авалон-Строй</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#services">Направления</a>
+      <a href="#why">Для заказчика</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="header__phone" href="tel:+79005144672" aria-label="Позвонить: +7 900 514-46-72">
+      <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>+7 900 514-46-72</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== Первый экран ========== -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <div>
+        <span class="eyebrow" data-hero>Строительство и ремонт дорог · Тамбов</span>
+        <h1 id="hero-title" data-hero>Авалон-Строй</h1>
+        <!-- УТП: проверьте с владельцем, что каждое утверждение соответствует его работе -->
+        <p class="hero__lead" data-hero>Дорожный подрядчик из Тамбова. Заказчику не нужно искать нас по точке на карте: здесь направления работ, объекты, реквизиты для тендера и прямой телефон&nbsp;— всё, чтобы проверить подрядчика до звонка.</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn btn--accent" href="tel:+79005144672" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить
+          </a>
+          <a class="btn btn--line" href="#order" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Запросить реквизиты
+          </a>
+        </div>
+        <ul class="hero__facts" data-hero>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-road"/></svg>Строительство и ремонт дорог</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>Работа с организациями</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Офис: проезд Энергетиков, 30</li>
+        </ul>
+      </div>
+
+      <!-- Декоративная схема дорожного полотна, без внешних картинок -->
+      <svg class="hero__art" data-hero viewBox="0 0 460 400" aria-hidden="true" focusable="false">
+        <path d="M0 52h460" stroke="#5B6168" stroke-width="1.5"/>
+        <path d="M178 52h104l158 318H20z" fill="#2A2F34"/>
+        <g fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round">
+          <path d="M178 52 20 370"/>
+          <path d="M282 52l158 318"/>
+        </g>
+        <g fill="none" stroke="#F5B800" stroke-linecap="butt">
+          <path d="M230 62v14" stroke-width="3"/>
+          <path d="M230 96v22" stroke-width="4"/>
+          <path d="M230 144v30" stroke-width="5"/>
+          <path d="M230 206v40" stroke-width="6"/>
+          <path d="M230 284v56" stroke-width="7"/>
+        </g>
+        <g fill="none" stroke="#8E949A" stroke-width="1.2">
+          <path d="M20 388h420M20 380v16M440 380v16"/>
+          <path d="M16 388l8-4M16 388l8 4M444 388l-8-4M444 388l-8 4"/>
+        </g>
+        <g font-family="Segoe UI, Arial, sans-serif" font-size="13" fill="#C9CCCF">
+          <text x="186" y="40">проезжая часть</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 1: задача ========== -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--1"><b>01</b>Задача</div>
+          <h2 id="problem-title">Как заказчик проверяет дорожного подрядчика</h2>
+        </div>
+        <p>Перед договором или тендером организация ищет компанию в интернете. Если находит только адрес на карте&nbsp;— вопросы остаются без ответа.</p>
+      </div>
+      <ul class="problem__list" data-stagger>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-search"/></svg>
+          <div><h3>Только точка на карте</h3><p>В 2ГИС и Яндекс Картах видно рубрику и адрес, но не видно, какие дороги компания уже делала.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>
+          <div><h3>Реквизиты — через переписку</h3><p>Для закупки нужны данные компании, а их приходится запрашивать письмом и ждать ответа.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>
+          <div><h3>Непонятно, какая техника</h3><p>Заказчику важно знать, чем будут работать на объекте, до первого звонка.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><h3>Не с кем связаться напрямую</h3><p>Без сайта трудно понять, кому звонить по объекту и где находится офис.</p></div>
+        </li>
+      </ul>
+      <div class="mini-cta" data-reveal>
+        <a class="link-arrow" href="#order">Обсудить ваш объект <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>или позвоните: <a href="tel:+79005144672">+7 900 514-46-72</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Направления ========== -->
+  <!-- Цен в материалах нет — не публиковать цифры без владельца. Состав работ уточнить у владельца. -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Направления</span>
+          <h2 id="services-title" style="margin-top:14px">Чем занимается Авалон-Строй</h2>
+        </div>
+        <p>Стоимость зависит от объекта, объёма и условий закупки&nbsp;— цены уточняйте по телефону.</p>
+      </div>
+
+      <div class="svc-grid" data-stagger>
+        <article class="svc svc--wide" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-road"/></svg></div>
+          <h3>Строительство и ремонт дорог</h3>
+          <p>Основное направление компании&nbsp;— так оно и указано в 2ГИС и Яндекс Картах. Конкретный состав работ по вашему участку обсудим по телефону.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Строительство и ремонт дорог">Обсудить объект <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg></div>
+          <h3>Для организаций и тендеров</h3>
+          <p>Работаем с организациями. Запросите реквизиты компании для закупки&nbsp;— пришлём на почту или в мессенджер.</p>
+          <div class="svc__foot">
+            <span class="price">Реквизиты <small>/ по запросу</small></span>
+            <a class="link-arrow" href="#order" data-service="Запрос реквизитов">Запросить <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc svc--wide svc--action" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-cone"/></svg></div>
+          <h3>Расчёт по вашему объекту</h3>
+          <p>Опишите участок и задачу: где находится дорога, что нужно сделать и к какому сроку. Перезвоним и обсудим, как выйти на объект.</p>
+          <div class="svc__foot">
+            <span class="price">Условия <small>/ уточните по телефону</small></span>
+            <a class="btn btn--accent" href="#order" data-service="Расчёт объекта" data-btn>Оставить заявку</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="prices" data-reveal>
+        <div>
+          <h3>Что покажем заказчику</h3>
+          <p class="prices__note">Раздел для проверки подрядчика перед договором. Содержание заполнит владелец&nbsp;— сейчас это заготовка.</p>
+        </div>
+        <!-- ЗАГОТОВКА: заполнить данными владельца -->
+        <table>
+          <caption class="sr-only">Материалы для проверки подрядчика</caption>
+          <thead><tr><th scope="col">Раздел</th><th scope="col">Статус</th></tr></thead>
+          <tbody>
+            <tr><td>Реквизиты компании для закупки</td><td>добавит владелец</td></tr>
+            <tr><td>Выполненные объекты: адрес, вид работ, год</td><td>добавит владелец</td></tr>
+            <tr><td>Техника на объектах</td><td>добавит владелец</td></tr>
+            <tr><td>Контакт ответственного по объектам</td><td>добавит владелец</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Для заказчика ========== -->
+  <!-- Пункты — заготовки разделов. Заполнить только тем, что владелец подтвердит. -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__in">
+      <div data-reveal>
+        <span class="eyebrow">Для заказчика</span>
+        <h2 id="why-title" style="margin-top:14px">Подрядчик, которого можно проверить заранее</h2>
+        <p class="why__lead">Всё, что организация спрашивает перед договором, собрано на одной странице: объекты, техника, реквизиты и контакты офиса на проезде Энергетиков.</p>
+        <div class="photo-ph" role="img" aria-label="Место для фотографии с объекта">
+          <div>
+            <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+            Фото с дорожного объекта или техники<br>— добавит владелец
+          </div>
+        </div>
+      </div>
+      <ol class="why__list" data-stagger>
+        <li data-item>
+          <span class="num" aria-hidden="true">1</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-map"/></svg>Объекты с адресами</h3>
+          <p>Участки дорог, которые уже сделаны: где, какие работы и когда. Список добавит владелец.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">2</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-truck"/></svg>Техника</h3>
+          <p>Чем работаем на объекте&nbsp;— перечень добавит владелец.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">3</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Реквизиты для тендера</h3>
+          <p>Данные компании для закупки&nbsp;— можно запросить через форму ниже.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">4</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Прямой контакт</h3>
+          <p>Телефон <a href="tel:+79005144672">+7 900 514-46-72</a> и офис в Тамбове: проезд Энергетиков, 30, офис 224.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 2: процесс ========== -->
+  <section id="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--2"><b>02</b>Процесс</div>
+          <h2 id="steps-title">Как начать работу</h2>
+        </div>
+        <p>Пять шагов от запроса до сдачи участка. Сроки зависят от объекта и фиксируются в договоре.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Запрос</h3><p>Звонок или форма на сайте. Уточняем, где участок и что нужно сделать.</p><span class="when">первый шаг</span></li>
+        <li data-item><h3>Осмотр участка</h3><p>Смотрим дорогу на месте, оцениваем объём работ.</p><span class="when">по согласованию</span></li>
+        <li data-item><h3>Расчёт и документы</h3><p>Расчёт стоимости, реквизиты и документы для договора или закупки.</p><span class="when">до начала работ</span></li>
+        <li data-item><h3>Работы</h3><p>Выходим на объект по согласованному графику.</p><span class="when">по графику</span></li>
+        <li data-item><h3>Сдача</h3><p>Приёмка участка заказчиком и закрывающие документы.</p><span class="when">по завершении</span></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn--dark" href="#order" data-btn>Отправить запрос <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>Ответим на вопросы по объекту&nbsp;— по телефону <a href="tel:+79005144672">+7 900 514-46-72</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 3: заявка ========== -->
+  <section class="order" id="order" aria-labelledby="order-title">
+    <div class="wrap order__in">
+      <div class="order__text" data-reveal>
+        <div class="step-tag step-tag--3"><b>03</b>Заявка</div>
+        <h2 id="order-title">Обсудить объект или запросить реквизиты</h2>
+        <p>Оставьте телефон и удобное время&nbsp;— перезвоним и уточним участок и объём работ. Если проверяете подрядчика для закупки, напишите об этом в комментарии.</p>
+        <div class="order__contacts">
+          <a href="tel:+79005144672"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>+7 900 514-46-72</a>
+        </div>
+      </div>
+
+      <form class="form" id="lead-form" novalidate data-reveal aria-describedby="form-note">
+        <div class="field">
+          <label for="f-name">Имя <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" placeholder="Имя и организация">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone" placeholder="+7 900 000-00-00">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-service">Что нужно <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="e-service">
+            <option value="">Выберите вариант</option>
+            <option>Строительство и ремонт дорог</option>
+            <option>Расчёт объекта</option>
+            <option>Запрос реквизитов</option>
+            <option>Другое</option>
+          </select>
+          <span class="err" id="e-service" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-time">Удобное время для звонка <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-time" name="time" required aria-describedby="e-time">
+            <option value="">Выберите время</option>
+            <option>Утром, 9:00–12:00</option>
+            <option>Днём, 12:00–15:00</option>
+            <option>После обеда, 15:00–18:00</option>
+            <option>Вечером, 18:00–20:00</option>
+            <option>В любое время</option>
+          </select>
+          <span class="err" id="e-time" aria-live="polite"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-comment">Объект и задача <span style="font-weight:400;color:var(--color-muted-foreground)">(необязательно)</span></label>
+          <textarea id="f-comment" name="comment" placeholder="Например: ремонт покрытия подъездной дороги к складу"></textarea>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--accent" type="submit" data-btn>Отправить заявку</button>
+          <small id="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</small>
+        </div>
+        <div class="form-ok" id="form-ok" role="status" aria-live="polite" tabindex="-1">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Заявка принята, перезвоним.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== Контакты ========== -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title" style="margin-top:14px">Офис в Тамбове</h2>
+        </div>
+        <p>Проезд Энергетиков, 30, офис 224. Перед визитом лучше позвонить и договориться о времени.</p>
+      </div>
+      <div class="contacts__in">
+        <ul class="c-list" data-stagger>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Адрес</div><div class="c-value">проезд Энергетиков, 30, офис 224, Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            <div><div class="c-label">Телефон</div><div class="c-value"><a href="tel:+79005144672">+7 900 514-46-72</a></div></div>
+          </li>
+          <li data-item data-hours-row>
+            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+            <div><div class="c-label">Часы работы</div><div class="c-value" data-hours></div></div>
+          </li>
+        </ul>
+        <div class="route" data-reveal data-card>
+          <h3>Как добраться</h3>
+          <!-- Текст маршрута можно дополнить: остановка, вход, парковка — со слов владельца -->
+          <p>Компания есть в 2ГИС и Яндекс Картах в рубрике «Строительство и ремонт дорог». Откройте точку и постройте маршрут до офиса 224.</p>
+          <a class="btn btn--dark" href="https://yandex.ru/maps/?text=%D0%90%D0%B2%D0%B0%D0%BB%D0%BE%D0%BD-%D0%A1%D1%82%D1%80%D0%BE%D0%B9%2C%20%D0%BF%D1%80%D0%BE%D0%B5%D0%B7%D0%B4%20%D0%AD%D0%BD%D0%B5%D1%80%D0%B3%D0%B5%D1%82%D0%B8%D0%BA%D0%BE%D0%B2%2C%2030%2C%20%D0%BE%D1%84%D0%B8%D1%81%20224%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__in">
+      <div>© 2026 Авалон-Строй · строительство и ремонт дорог · Тамбов</div>
+      <div><a href="tel:+79005144672">+7 900 514-46-72</a> · проезд Энергетиков, 30, офис 224, Тамбов</div>
+    </div>
+    <p class="demo-mark">Демо-макет. Состав работ, объекты, техника и реквизиты — заготовки, заполняются владельцем.</p>
+  </div>
+</footer>
+
+<div class="mbar" aria-label="Быстрые действия">
+  <a class="btn btn--accent" href="tel:+79005144672"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn--dark" href="#order">Заявка</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Часы работы: если пусто — прячем строку ---------- */
+  var hours = document.querySelector("[data-hours]");
+  if (hours && !hours.textContent.trim()) {
+    var row = document.querySelector("[data-hours-row]");
+    if (row) row.hidden = true;
+  }
+
+  /* ---------- Кнопки услуг подставляют услугу в форму ---------- */
+  var select = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === v) { select.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* ---------- Форма: проверка и сообщение (без отправки на сервер) ---------- */
+  var form = document.getElementById("lead-form");
+  var ok = document.getElementById("form-ok");
+  function setErr(input, msg) {
+    var e = document.getElementById(input.getAttribute("aria-describedby"));
+    if (e) e.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+  function check(input) {
+    var v = input.value.trim();
+    if (input.name === "name") return setErr(input, v.length < 2 ? "Укажите имя" : "");
+    if (input.name === "phone") {
+      var digits = v.replace(/\D/g, "");
+      return setErr(input, digits.length < 10 || digits.length > 15 ? "Укажите телефон, например +7 900 000-00-00" : "");
+    }
+    if (input.name === "service") return setErr(input, v ? "" : "Выберите услугу");
+    if (input.name === "time") return setErr(input, v ? "" : "Выберите удобное время");
+    return true;
+  }
+  var fields = form.querySelectorAll("[required]");
+  fields.forEach(function (f) {
+    f.addEventListener("blur", function () { if (f.value) check(f); });
+    f.addEventListener("input", function () { if (f.getAttribute("aria-invalid")) check(f); });
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var firstBad = null;
+    fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f; });
+    if (firstBad) { firstBad.focus(); return; }
+    /* Здесь можно подключить отправку: в Telegram-бота, CRM или на почту владельца. */
+    form.reset();
+    ok.classList.add("is-on");
+    ok.focus();
+    if (window.Motion && !reduce) {
+      window.Motion.animate(ok, { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: 0.35 });
+    }
+  });
+
+  /* ---------- Анимации (Motion). Без motion.js и при reduced-motion — просто статичная страница ---------- */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduce || typeof M.animate !== "function") return;
+
+  var EASE = [0.22, 1, 0.36, 1];
+  var opts = function (d, extra) {
+    var o = { duration: d, ease: EASE, easing: EASE };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+  var hide = function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; };
+  var show = { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0px)"] };
+  var elOf = function (a) { return a && a.nodeType === 1 ? a : (a && (a.currentTarget || a.target)) || null; };
+
+  try {
+    /* Первый экран: по очереди */
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll("[data-hero]"));
+    heroItems.forEach(hide);
+    M.animate(heroItems, show, opts(0.55, { delay: M.stagger ? M.stagger(0.09) : 0 }));
+
+    /* Блоки при прокрутке */
+    if (typeof M.inView === "function") {
+      var singles = document.querySelectorAll("[data-reveal]");
+      singles.forEach(hide);
+      singles.forEach(function (el) {
+        M.inView(el, function () { M.animate(el, show, opts(0.5)); }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+
+      document.querySelectorAll("[data-stagger]").forEach(function (group) {
+        var items = group.querySelectorAll("[data-item]");
+        items.forEach(hide);
+        M.inView(group, function () {
+          M.animate(items, show, opts(0.45, { delay: M.stagger ? M.stagger(0.07) : 0 }));
+        }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+    } else {
+      // нет inView — ничего не прячем
+    }
+
+    /* Наведение и нажатие */
+    if (typeof M.hover === "function") {
+      M.hover("[data-card]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-3px)" }, opts(0.25));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.25)); };
+      });
+      M.hover("[data-btn]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-1px)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.2)); };
+      });
+    }
+    if (typeof M.press === "function") {
+      M.press("[data-btn], .mbar .btn", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "scale(0.97)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "scale(1)" }, opts(0.25)); };
+      });
+    }
+
+    /* Лёгкий параллакс сетки на первом экране */
+    var hero = document.querySelector(".hero");
+    var grid = document.querySelector(".hero__grid");
+    if (typeof M.scroll === "function" && hero && grid) {
+      M.scroll(function (p) {
+        var v = typeof p === "number" ? p : (p && p.y ? p.y.progress : 0);
+        grid.style.transform = "translate3d(0," + Math.round(v * 70) + "px,0)";
+      }, { target: hero, offset: ["start start", "end start"] });
+    }
+  } catch (e) {
+    /* Если что-то пошло не так — показываем всё как есть */
+    document.querySelectorAll("[data-hero],[data-reveal],[data-item]").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

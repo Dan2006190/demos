@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Каркас — каркасное строительство в Тамбове · Затонная, 4а</title>
+<meta name="description" content="Каркас, Тамбов, Затонная улица, 4а: каркасные дома, пристройки, фундамент, кровля, утепление. 5 из 5 на 2ГИС (5 оценок). Заявка на замер онлайн или по телефону +7 900 499-50-00.">
+<meta name="theme-color" content="#2A2118">
+
+<!-- Разметка для поисковиков. Подстановки заменяются при сборке под клиента. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "Каркас",
+  "telephone": "+7 900 499-50-00",
+  "address": { "@type": "PostalAddress", "streetAddress": "Затонная улица, 4а, Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+  "openingHours": "",
+  "hasMap": "https://yandex.ru/maps/?text=%D0%9A%D0%B0%D1%80%D0%BA%D0%B0%D1%81%2C%20%D0%97%D0%B0%D1%82%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%204%D0%B0%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+}
+</script>
+
+<style>
+  :root {
+    /* Образ «Каркас»: строганая сосна, лиственница и графит. Светлый тёплый фон, тёмное дерево, янтарный акцент.
+       Контраст текста проверен: 4.5:1 и выше. */
+    --color-primary: #7C4A1E;          /* лиственница — ссылки/акценты на светлом: ~6.2:1 к #F6F1E8 */
+    --color-primary-strong: #5E3712;
+    --color-secondary: #B9874F;
+    --color-accent: #D9822B;           /* янтарь — фон кнопок; текст на нём тёмный */
+    --color-on-accent: #1A120B;        /* ~6.7:1 к #D9822B */
+    --color-accent-text: #9A4F0F;      /* янтарь для текста на светлом: ~5.6:1 */
+    --color-background: #F6F1E8;       /* строганая доска */
+    --color-foreground: #2A2118;       /* тёмное дерево / графит */
+    --color-card: #FFFDF9;
+    --color-muted: #EFE6D8;
+    --color-muted-foreground: #5E5246; /* ~6.5:1 к фону */
+    --color-border: #E0D3BF;
+    --color-destructive: #A3261B;
+    --color-ring: #7C4A1E;
+    --step-1: #A3261B;   /* проблема */
+    --step-2: #9A4F0F;   /* процесс */
+    --step-3: #3F6B3A;   /* действие — хвойный */
+
+    /* Только системные шрифты: узкий технический заголовок + спокойный текст */
+    --font-head: "Bahnschrift", "DIN Alternate", "Franklin Gothic Medium", "Arial Narrow", "Roboto Condensed", sans-serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius: 2px;
+    --shadow: 0 1px 0 rgba(42, 33, 24, .10), 0 3px 0 -1px rgba(124, 74, 30, .10);
+    --wrap: 1180px;
+    --t: 200ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+  img, svg { display: block; max-width: 100%; }
+  .hero__in > *, .sec-head > *, .prices > *, .why__in > *, .order__in > *, .contacts__in > *,
+  .svc-grid > *, .form > *, .field, .problem__list li > div, .why__list li > div, .c-list li > div { min-width: 0; }
+  a { color: var(--color-primary); }
+  a:hover { color: var(--color-primary-strong); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 600; line-height: 1.1; letter-spacing: .005em; margin: 0; }
+  h2 { font-size: clamp(30px, 4.2vw, 46px); }
+  h3 { font-size: 21px; font-weight: 600; }
+  p { margin: 0; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 1px; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--color-foreground); color: #fff; padding: 10px 14px; z-index: 100; border-radius: var(--radius); }
+  .skip:focus { top: 12px; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 24px;
+    font: 600 16px/1 var(--font-body);
+    border-radius: var(--radius); border: 2px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color var(--t), color var(--t), border-color var(--t);
+  }
+  .btn .icon { width: 20px; height: 20px; }
+  .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn--accent:hover { background: #E6943F; color: var(--color-on-accent); }
+  .btn--line { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn--line:hover { background: var(--color-foreground); color: #fff; }
+  .btn--dark { background: var(--color-foreground); color: #fff; }
+  .btn--dark:hover { background: #45362A; color: #fff; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .link-arrow .icon { width: 18px; height: 18px; transition: transform var(--t); }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ---------- Шапка ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(246, 241, 232, .97); border-bottom: 1px solid var(--color-border); }
+  .header__in { display: flex; align-items: center; gap: 32px; min-height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-foreground); font: 700 21px/1 var(--font-head); text-transform: uppercase; letter-spacing: .08em; }
+  .logo:hover { color: var(--color-foreground); }
+  .logo__mark { width: 34px; height: 34px; }
+  .nav { display: flex; gap: 24px; margin-left: auto; }
+  .nav a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: 15px; padding: 6px 0; border-bottom: 2px solid transparent; transition: border-color var(--t); }
+  .nav a:hover { border-color: var(--color-accent); color: var(--color-foreground); }
+  .header__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--color-foreground); text-decoration: none; white-space: nowrap; }
+  .header__phone .icon { width: 20px; height: 20px; color: var(--color-primary); }
+
+  /* ---------- Первый экран: узор «стойки, обвязка и раскосы» каркасной стены ---------- */
+  .hero {
+    position: relative; overflow: hidden; padding: clamp(56px, 8vw, 104px) 0 clamp(64px, 8vw, 96px);
+    border-bottom: 4px solid var(--color-foreground);
+    background: linear-gradient(180deg, #F6F1E8 0%, #EFE4D2 100%);
+  }
+  .hero__grid {
+    position: absolute; inset: -80px 0 0 0; pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='160' viewBox='0 0 120 160'%3E%3Cg fill='none' stroke='%237C4A1E' stroke-opacity='.13' stroke-width='3'%3E%3Cpath d='M0 2h120M0 158h120'/%3E%3Cpath d='M2 0v160M62 0v160'/%3E%3Cpath d='M2 158 62 2' stroke-width='2'/%3E%3C/g%3E%3Cg fill='none' stroke='%237C4A1E' stroke-opacity='.07' stroke-width='1'%3E%3Cpath d='M32 0v160M92 0v160'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 120px 160px;
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 55%);
+            mask-image: linear-gradient(90deg, transparent 0%, #000 55%);
+  }
+  .hero__in { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--color-primary); }
+  .eyebrow::before { content: ""; width: 28px; height: 4px; background: var(--color-accent); }
+  .hero h1 { margin: 18px 0 20px; font-size: clamp(40px, 6.2vw, 78px); letter-spacing: -.005em; word-break: break-word; }
+  .hero h1 .h1-name { display: block; font-size: .5em; letter-spacing: .14em; text-transform: uppercase; color: var(--color-primary); margin-bottom: .25em; }
+  .hero__lead { font-size: clamp(18px, 2vw, 21px); max-width: 34em; color: #3B2F24; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 36px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--color-muted-foreground); }
+  .hero__facts li { display: flex; align-items: center; gap: 8px; }
+  .hero__facts li:first-child { color: var(--color-foreground); font-weight: 600; }
+  .hero__facts .icon { width: 18px; height: 18px; color: var(--color-primary); }
+  .hero__art { width: 100%; max-width: 460px; justify-self: end; color: var(--color-foreground); }
+
+  /* ---------- Заголовки секций ---------- */
+  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 48px; }
+  .sec-head p { color: var(--color-muted-foreground); max-width: 32em; }
+  .step-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 600 14px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; }
+  .step-tag b { display: inline-grid; place-items: center; min-width: 34px; height: 26px; padding: 0 6px; border-radius: var(--radius); color: #fff; font-weight: 600; }
+  .step-tag--1 { color: var(--step-1); } .step-tag--1 b { background: var(--step-1); }
+  .step-tag--2 { color: var(--step-2); } .step-tag--2 b { background: var(--step-2); }
+  .step-tag--3 { color: var(--step-3); } .step-tag--3 b { background: var(--step-3); }
+
+  /* ---------- Шаг 1: проблема ---------- */
+  .problem { background: var(--color-card); border-bottom: 1px solid var(--color-border); }
+  .problem__list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 4px solid var(--color-foreground); }
+  .problem__list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 28px 24px 28px 0; border-bottom: 1px solid var(--color-border); }
+  .problem__list li:nth-child(odd) { border-right: 1px solid var(--color-border); }
+  .problem__list li:nth-child(even) { padding-left: 24px; }
+  .problem__list .icon { width: 28px; height: 28px; color: var(--step-1); margin-top: 2px; }
+  .problem__list h3 { margin-bottom: 6px; }
+  .problem__list p { color: var(--color-muted-foreground); }
+  .mini-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .mini-cta span { color: var(--color-muted-foreground); }
+
+  /* ---------- Услуги ---------- */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .svc {
+    position: relative; display: flex; flex-direction: column; gap: 12px;
+    padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-top: 4px solid var(--color-secondary); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .svc--wide { grid-column: span 2; }
+  .svc__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius); background: var(--color-muted); color: var(--color-primary); }
+  .svc p { color: var(--color-muted-foreground); font-size: 16px; }
+  .svc ul { margin: 0; padding: 0 0 0 18px; color: var(--color-muted-foreground); font-size: 16px; columns: 2; column-gap: 32px; }
+  .svc__foot { margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; border-top: 1px dashed var(--color-border); }
+  .price { font: 600 19px/1.1 var(--font-head); letter-spacing: .01em; }
+  .price small { font: 500 15px var(--font-body); color: var(--color-muted-foreground); }
+  .svc--action { background: var(--color-foreground); color: #fff; border-color: var(--color-foreground); border-top-color: var(--color-accent); }
+  .svc--action .svc__icon { background: rgba(255,255,255,.1); color: #F2B36B; }
+  .svc--action p { color: #E6D9C6; }
+  .svc--action .svc__foot { border-color: rgba(255,255,255,.25); }
+  .svc--action .price small { color: #E6D9C6; }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+  .prices h3 { font-size: 28px; margin-bottom: 12px; }
+  .prices__note { color: var(--color-muted-foreground); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; }
+  th, td { text-align: left; padding: 14px 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  thead th { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-muted-foreground); border-bottom: 3px solid var(--color-foreground); }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; padding-left: 16px; font-weight: 600; color: var(--color-accent-text); }
+
+  /* ---------- Почему мы ---------- */
+  .why { background: var(--color-card); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .why__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .why__lead { margin-top: 20px; color: var(--color-muted-foreground); max-width: 30em; }
+  .photo-ph {
+    margin-top: 32px; aspect-ratio: 4 / 3; border-radius: var(--radius); border: 1px dashed #B9A68C;
+    display: grid; place-items: center; text-align: center; padding: 24px; color: var(--color-muted-foreground); font-size: 15px;
+    background:
+      repeating-linear-gradient(90deg, rgba(124,74,30,.07) 0 6px, transparent 6px 46px),
+      var(--color-background);
+  }
+  .photo-ph .icon { width: 36px; height: 36px; margin: 0 auto 10px; color: var(--color-primary); }
+  .why__list { margin: 0; padding: 0; list-style: none; counter-reset: why; }
+  .why__list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--color-border); }
+  .why__list li:first-child { padding-top: 0; }
+  .why__list .num { font: 600 34px/1 var(--font-head); color: var(--color-accent-text); }
+  .why__list h3 { margin-bottom: 6px; display: flex; gap: 10px; align-items: center; }
+  .why__list h3 .icon { color: var(--color-primary); width: 22px; height: 22px; }
+  .why__list p { color: var(--color-muted-foreground); }
+
+  /* ---------- Шаг 2: процесс ---------- */
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps li { position: relative; padding: 28px 20px 0 0; border-top: 4px solid var(--color-border); }
+  .steps li::before {
+    counter-increment: st; content: counter(st, decimal-leading-zero);
+    position: absolute; top: -16px; left: 0; display: grid; place-items: center; width: 44px; height: 27px;
+    font: 600 14px/1 var(--font-body); color: #fff; background: var(--step-2); border-radius: var(--radius);
+  }
+  .steps li:first-child { border-top-color: var(--step-2); }
+  .steps h3 { margin: 8px 0 8px; font-size: 20px; }
+  .steps p { color: var(--color-muted-foreground); font-size: 16px; }
+  .steps .when { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--step-2); }
+
+  /* ---------- Шаг 3: форма ---------- */
+  .order { background: var(--color-foreground); color: #fff; }
+  .order .step-tag--3 { color: #B5D9A8; } .order .step-tag--3 b { background: #8CC47F; color: #14200F; }
+  .order__in { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .order__text p { margin-top: 20px; color: #E6D9C6; max-width: 28em; }
+  .order__contacts { margin-top: 32px; display: grid; gap: 12px; }
+  .order__contacts a { color: #fff; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; text-decoration: none; }
+  .order__contacts a:hover { color: #F2B36B; }
+  .order__contacts .icon { color: #F2B36B; }
+
+  .form { background: var(--color-card); color: var(--color-foreground); border-radius: var(--radius); border-top: 4px solid var(--color-accent); padding: clamp(24px, 4vw, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field { display: grid; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  label { font-weight: 600; font-size: 15px; }
+  label .req { color: var(--color-destructive); }
+  input, select, textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    font: 400 16px/1.4 var(--font-body); color: var(--color-foreground);
+    background: #fff; border: 1.5px solid #A8957B; border-radius: var(--radius);
+    transition: border-color var(--t);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: var(--color-primary); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(124,74,30,.35); outline-offset: 0; border-color: var(--color-primary); }
+  [aria-invalid="true"] { border-color: var(--color-destructive); }
+  .err { min-height: 1.2em; font-size: 14px; color: var(--color-destructive); }
+  .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .form__foot small { color: var(--color-muted-foreground); font-size: 13px; max-width: 26em; }
+  .form-ok {
+    grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius); background: #EEF5EA; border: 1px solid #8CC47F; color: #1F3A1B; font-weight: 600;
+  }
+  .form-ok.is-on { display: flex; }
+  .form-ok .icon { color: var(--step-3); }
+
+  /* ---------- Контакты ---------- */
+  .contacts__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .c-list { margin: 0; padding: 0; list-style: none; border-top: 4px solid var(--color-foreground); }
+  .c-list li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .c-list .icon { color: var(--color-primary); margin-top: 2px; }
+  .c-list dt, .c-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .c-value { font-size: 19px; font-weight: 500; }
+  .c-value a { color: var(--color-foreground); }
+  .route { padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .route h3 { margin-bottom: 10px; }
+  .route p { color: var(--color-muted-foreground); margin-bottom: 20px; }
+
+  /* ---------- Подвал ---------- */
+  .footer { padding: 40px 0 96px; border-top: 4px solid var(--color-foreground); font-size: 15px; color: var(--color-muted-foreground); }
+  .footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+  .footer a { color: var(--color-foreground); }
+  .demo-mark { margin-top: 20px; font-size: 12px; color: var(--color-muted-foreground); }
+
+  /* ---------- Мобильная панель ---------- */
+  .mbar { display: none; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1024px) {
+    .nav { display: none; }
+    .header__phone { margin-left: auto; }
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__art { max-width: 380px; justify-self: start; }
+    .steps { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 860px) {
+    .sec-head, .prices, .why__in, .order__in, .contacts__in { grid-template-columns: 1fr; gap: 32px; }
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+    .svc--wide { grid-column: span 2; }
+    .problem__list { grid-template-columns: 1fr; }
+    .problem__list li:nth-child(odd) { border-right: 0; }
+    .problem__list li:nth-child(even) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px; }
+    .header__phone span { display: none; }
+    .hero__art { display: none; }
+    .hero__grid { -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 70%); mask-image: linear-gradient(180deg, #000 0%, transparent 70%); opacity: .6; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .svc--wide { grid-column: auto; }
+    .svc ul { columns: 1; }
+    .steps { grid-template-columns: 1fr; }
+    .form { grid-template-columns: 1fr; }
+    .form__foot .btn { width: 100%; }
+    .mbar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-card); border-top: 1px solid var(--color-border);
+    }
+    .mbar .btn { min-height: 48px; padding: 0 12px; min-width: 0; }
+    .hero__facts { gap: 10px 20px; }
+    .footer__in > * { min-width: 0; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+
+<!-- Набор иконок (линейные, толщина 1.75, в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="2" y="2" width="16" height="6" rx="2"/><path d="M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="8" y="16" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-roof" viewBox="0 0 24 24"><path d="M2 11 12 3l10 8"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="i-brick" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9.33h18M3 14.67h18M9 4v5.33M15 9.33v5.34M9 14.67V20"/></symbol>
+  <symbol id="i-found" viewBox="0 0 24 24"><path d="M2 20h20"/><path d="M4 20v-6h16v6"/><path d="M8 14V8h8v6"/><path d="M11 8V4h2v4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <!-- Иконки под каркасную тему (та же толщина линии) -->
+  <symbol id="i-frame" viewBox="0 0 24 24"><path d="M3 21V10l9-7 9 7v11"/><path d="M3 21h18"/><path d="M8 21V7.1M16 21V7.1M12 21V3"/><path d="M3 14h18"/></symbol>
+  <symbol id="i-studs" viewBox="0 0 24 24"><path d="M3 4h18M3 20h18"/><path d="M5 4v16M12 4v16M19 4v16"/><path d="m5 20 7-16"/></symbol>
+  <symbol id="i-annex" viewBox="0 0 24 24"><path d="M2 21V9l7-6 7 6v12"/><path d="M16 13h6v8h-6"/><path d="M2 21h20"/><path d="M7 21v-6h4v6"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></symbol>
+  <symbol id="i-insul" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="1"/><path d="M3 8c3 0 3 2 6 2s3-2 6-2 3 2 6 2M3 14c3 0 3 2 6 2s3-2 6-2 3 2 6 2"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержанию</a>
+
+<header class="header">
+  <div class="wrap header__in">
+    <a class="logo" href="#top" aria-label="Каркас — на главную">
+      <svg class="logo__mark" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="2" fill="#2A2118"/>
+        <path d="M7 26V14l10-7 10 7v12" fill="none" stroke="#F6F1E8" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M12 26V11M17 26V7M22 26V11M7 19h20" fill="none" stroke="#F6F1E8" stroke-width="1.4"/>
+        <path d="M6 26h22" stroke="#D9822B" stroke-width="2.6" stroke-linecap="square"/>
+      </svg>
+      <span>Каркас</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#services">Что строим</a>
+      <a href="#why">Почему мы</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="header__phone" href="tel:+79004995000" aria-label="Позвонить: +7 900 499-50-00">
+      <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>+7 900 499-50-00</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== Первый экран ========== -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <div>
+        <span class="eyebrow" data-hero>Строительство · Тамбов, Затонная, 4а</span>
+        <h1 id="hero-title" data-hero><span class="h1-name">Каркас</span>Дом начинается с&nbsp;каркаса. Заявка&nbsp;— с&nbsp;одной формы</h1>
+        <!-- УТП: направление «каркасное строительство» выведено из названия и не подтверждено — проверить с владельцем -->
+        <p class="hero__lead" data-hero>Каркасные дома, пристройки и&nbsp;веранды в&nbsp;Тамбове и&nbsp;области. Не&nbsp;нужно дозваниваться: оставьте заявку на&nbsp;замер&nbsp;— перезвоним сами, приедем на&nbsp;участок и&nbsp;посчитаем смету по&nbsp;этапам.</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn btn--accent" href="#order" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку на замер
+          </a>
+          <a class="btn btn--line" href="tel:+79004995000" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить
+          </a>
+        </div>
+        <ul class="hero__facts" data-hero>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>5 из 5 на 2ГИС · 5 оценок</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-ruler"/></svg>Выезд на замер участка</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Смета по этапам до начала работ</li>
+        </ul>
+      </div>
+
+      <!-- Декоративный чертёж каркасного дома: обвязка, стойки, раскосы, стропила. Без внешних картинок -->
+      <svg class="hero__art" data-hero viewBox="0 0 460 400" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+          <path d="M70 330V170L230 60l160 110v160"/>
+          <path d="M70 170h320"/>
+          <path d="M110 330V170M150 330V170M190 330V142M230 330V60M270 330V142M310 330V170M350 330V170"/>
+          <path d="M70 250h320" stroke-opacity=".55"/>
+          <path d="M70 330 110 250M350 250l40 80" stroke-width="1.6"/>
+          <rect x="196" y="210" width="68" height="120" stroke-width="2.4"/>
+          <path d="M30 330h400" stroke-width="4"/>
+          <path d="M60 330v20h340v-20" stroke-opacity=".5"/>
+        </g>
+        <path d="M40 190 230 58l190 132" fill="none" stroke="#D9822B" stroke-width="4" stroke-linejoin="round"/>
+        <g fill="none" stroke="#7C4A1E" stroke-width="1.2">
+          <path d="M70 370h320M70 362v16M390 362v16"/>
+          <path d="M430 170v160M422 170h16M422 330h16"/>
+          <path d="M66 370l8-4M66 370l8 4M394 370l-8-4M394 370l-8 4"/>
+        </g>
+        <g font-family="Bahnschrift, Segoe UI, sans-serif" font-size="13" fill="#7C4A1E">
+          <text x="200" y="392">каркас · шаг стоек</text>
+          <text x="440" y="236" transform="rotate(90 440 236)">высота этажа</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 1: задача ========== -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--1"><b>01</b>Задача</div>
+          <h2 id="problem-title">Чего боятся, когда заказывают каркасный дом</h2>
+        </div>
+        <p>Каркас прощает многое, кроме ошибок в&nbsp;узлах, утеплении и&nbsp;плёнках&nbsp;— их&nbsp;не&nbsp;видно после обшивки. Поэтому сначала договариваемся, потом строим.</p>
+      </div>
+      <ul class="problem__list" data-stagger>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><h3>Смета «по телефону»</h3><p>Цену за квадрат называют сразу, а потом всплывают обвязка, фундамент, кровля и&nbsp;доборные элементы.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-insul"/></svg>
+          <div><h3>Холодные углы и&nbsp;сырость</h3><p>Утеплитель уложен с&nbsp;зазорами, пароизоляция без проклейки&nbsp;— зимой дом промерзает.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-wallet"/></svg>
+          <div><h3>Оплата вперёд целиком</h3><p>Деньги отданы до&nbsp;начала работ, и&nbsp;повлиять на&nbsp;сроки и&nbsp;качество уже нечем.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+          <div><h3>Не&nbsp;видно, что внутри стен</h3><p>Каркас зашили&nbsp;— и&nbsp;никто не&nbsp;знает, какой там брус, шаг стоек и&nbsp;как сделаны узлы.</p></div>
+        </li>
+      </ul>
+      <div class="mini-cta" data-reveal>
+        <a class="link-arrow" href="#order">Рассказать о&nbsp;вашем участке <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>или позвоните: <a href="tel:+79004995000">+7 900 499-50-00</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Услуги ========== -->
+  <!-- СОСТАВ УСЛУГ — по названию компании (каркасное строительство), НЕ ПОДТВЕРЖДЁН. Цен в материалах нет — не указываем. -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Услуги</span>
+          <h2 id="services-title" style="margin-top:14px">Что строим</h2>
+        </div>
+        <p>Цены уточняйте по&nbsp;телефону или в&nbsp;заявке: сумма зависит от&nbsp;площади, проекта и&nbsp;материалов и&nbsp;фиксируется в&nbsp;смете после замера.</p>
+      </div>
+
+      <div class="svc-grid" data-stagger>
+        <article class="svc svc--wide" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-frame"/></svg></div>
+          <h3>Каркасный дом</h3>
+          <ul>
+            <li>фундамент и обвязка</li>
+            <li>каркас стен и перекрытий</li>
+            <li>стропильная система и кровля</li>
+            <li>утепление, плёнки, обшивка</li>
+            <li>окна и двери</li>
+            <li>внутренняя отделка — по договорённости</li>
+          </ul>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Каркасный дом">Записаться на замер <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-annex"/></svg></div>
+          <h3>Пристройка и веранда</h3>
+          <p>Тёплая пристройка, терраса или веранда на&nbsp;каркасе к&nbsp;существующему дому.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Пристройка и веранда">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-studs"/></svg></div>
+          <h3>Дом-коробка</h3>
+          <p>Каркас, кровля и&nbsp;закрытый контур&nbsp;— дальше отделку можно вести самостоятельно.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Дом-коробка">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-found"/></svg></div>
+          <h3>Фундамент</h3>
+          <p>Основание под каркасный дом или пристройку: тип подбирается по&nbsp;грунту и&nbsp;нагрузке.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Фундамент">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-roof"/></svg></div>
+          <h3>Кровля</h3>
+          <p>Стропильная система, утепление и&nbsp;покрытие для нового дома или замена старой крыши.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Кровля">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-insul"/></svg></div>
+          <h3>Утепление и обшивка</h3>
+          <p>Утеплитель, паро- и&nbsp;ветрозащита, наружная обшивка стен каркасного дома.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Утепление и обшивка">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc svc--wide svc--action" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-ruler"/></svg></div>
+          <h3>Замер и смета</h3>
+          <p>Приезжаем на&nbsp;участок или объект, смотрим место под дом, подъезд и&nbsp;грунт, обсуждаем планировку. После&nbsp;— смета с&nbsp;разбивкой на&nbsp;работы и&nbsp;материалы по&nbsp;этапам.</p>
+          <div class="svc__foot">
+            <span class="price">Условия выезда <small>— уточните по телефону</small></span>
+            <a class="btn btn--accent" href="#order" data-service="Замер и смета" data-btn>Записаться на замер</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="prices" data-reveal>
+        <div>
+          <h3>Отдельные работы</h3>
+          <p class="prices__note">Если нужен не&nbsp;весь дом, а&nbsp;конкретный этап. Стоимость считаем по&nbsp;смете после осмотра&nbsp;— цены уточняйте по&nbsp;телефону.</p>
+        </div>
+        <!-- Цен в материалах нет. Владелец может вписать свои «от» вместо «по смете». -->
+        <table>
+          <caption class="sr-only">Отдельные виды работ</caption>
+          <thead><tr><th scope="col">Работа</th><th scope="col">Стоимость</th></tr></thead>
+          <tbody>
+            <tr><td>Фундамент под каркасное строение</td><td>по смете</td></tr>
+            <tr><td>Каркас стен и перекрытий</td><td>по смете</td></tr>
+            <tr><td>Стропильная система и кровля</td><td>по смете</td></tr>
+            <tr><td>Утепление и пароизоляция</td><td>по смете</td></tr>
+            <tr><td>Наружная обшивка</td><td>по смете</td></tr>
+            <tr><td>Пристройка, веранда, терраса</td><td>по смете</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Почему мы ========== -->
+  <!-- Пункты 2–4 — типовые принципы. Оставьте только то, что владелец действительно делает. -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__in">
+      <div data-reveal>
+        <span class="eyebrow">Почему Каркас</span>
+        <h2 id="why-title" style="margin-top:14px">Все оценки на&nbsp;2ГИС&nbsp;— пятёрки</h2>
+        <p class="why__lead">5 из&nbsp;5 по&nbsp;пяти оценкам на&nbsp;2ГИС. Здесь будут фото построенных объектов, чтобы до&nbsp;звонка было видно, как выглядит работа.</p>
+        <div class="photo-ph" role="img" aria-label="Место для фотографии с объекта">
+          <div>
+            <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+            Фото ваших объектов: каркас до обшивки и готовый дом<br>— добавит владелец
+          </div>
+        </div>
+      </div>
+      <ol class="why__list" data-stagger>
+        <li data-item>
+          <span class="num" aria-hidden="true">1</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>5,0 на 2ГИС</h3>
+          <p>Пять оценок, все&nbsp;— «отлично». Ссылку на&nbsp;карточку можно поставить прямо сюда.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">2</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Смета по этапам</h3>
+          <p>Фундамент, каркас, кровля, утепление расписаны отдельно. Видно, за&nbsp;что и&nbsp;когда вы&nbsp;платите.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">3</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>Фото каркаса до обшивки</h3>
+          <p>Стойки, узлы, утеплитель и&nbsp;плёнки фиксируем до&nbsp;того, как их&nbsp;закроют.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">4</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Приёмка по этапам</h3>
+          <p>Каждый этап принимаете вы. Следующий начинается после вашего «да».</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 2: процесс ========== -->
+  <section id="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--2"><b>02</b>Процесс</div>
+          <h2 id="steps-title">От заявки до готового дома</h2>
+        </div>
+        <p>Пять шагов. Сроки каждого зависят от&nbsp;объекта и&nbsp;сезона и&nbsp;прописываются в&nbsp;графике.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Заявка</h3><p>Форма на сайте или звонок. Уточняем, что строим, где участок и когда удобно встретиться.</p><span class="when">в день обращения</span></li>
+        <li data-item><h3>Замер участка</h3><p>Смотрим место, грунт и подъезд для техники, обсуждаем планировку.</p><span class="when">в согласованный день</span></li>
+        <li data-item><h3>Смета и договор</h3><p>Разбивка по этапам, график, порядок оплаты. Подписываем, когда всё понятно.</p><span class="when">после замера</span></li>
+        <li data-item><h3>Фундамент и каркас</h3><p>Идём по графику: основание, обвязка, стены, кровля, утепление. Фото по каждому этапу.</p><span class="when">по графику</span></li>
+        <li data-item><h3>Сдача</h3><p>Итоговая приёмка, уборка участка, передача документов.</p><span class="when">в конце</span></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn--dark" href="#order" data-btn>Начать с замера <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>Ответим на вопросы до выезда&nbsp;— <a href="tel:+79004995000">+7 900 499-50-00</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 3: заявка ========== -->
+  <section class="order" id="order" aria-labelledby="order-title">
+    <div class="wrap order__in">
+      <div class="order__text" data-reveal>
+        <div class="step-tag step-tag--3"><b>03</b>Заявка</div>
+        <h2 id="order-title">Заявка на замер без дозвона</h2>
+        <p>Четыре поля&nbsp;— и&nbsp;всё. Перезвоним в&nbsp;выбранное время, уточним адрес участка и&nbsp;договоримся о&nbsp;выезде. Если удобнее голосом&nbsp;— звоните.</p>
+        <div class="order__contacts">
+          <a href="tel:+79004995000"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>+7 900 499-50-00</a>
+        </div>
+      </div>
+
+      <form class="form" id="lead-form" novalidate data-reveal aria-describedby="form-note">
+        <div class="field">
+          <label for="f-name">Имя <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" placeholder="Как к вам обращаться">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone" placeholder="+7 900 000-00-00">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-service">Что строим <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="e-service">
+            <option value="">Выберите услугу</option>
+            <option>Замер и смета</option>
+            <option>Каркасный дом</option>
+            <option>Пристройка и веранда</option>
+            <option>Дом-коробка</option>
+            <option>Фундамент</option>
+            <option>Кровля</option>
+            <option>Утепление и обшивка</option>
+            <option>Отдельные работы</option>
+          </select>
+          <span class="err" id="e-service" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-time">Удобное время для звонка <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-time" name="time" required aria-describedby="e-time">
+            <option value="">Выберите время</option>
+            <option>Утром, 9:00–12:00</option>
+            <option>Днём, 12:00–15:00</option>
+            <option>После обеда, 15:00–18:00</option>
+            <option>Вечером, 18:00–20:00</option>
+            <option>В любое время</option>
+          </select>
+          <span class="err" id="e-time" aria-live="polite"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-comment">Что нужно сделать <span style="font-weight:400;color:var(--color-muted-foreground)">(необязательно)</span></label>
+          <textarea id="f-comment" name="comment" placeholder="Например: каркасный дом около 100 м², участок под Тамбовом, фундамента пока нет"></textarea>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--accent" type="submit" data-btn>Отправить заявку</button>
+          <small id="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</small>
+        </div>
+        <div class="form-ok" id="form-ok" role="status" aria-live="polite" tabindex="-1">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Заявка принята, перезвоним в выбранное время.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== Контакты ========== -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title" style="margin-top:14px">Затонная улица, 4а</h2>
+        </div>
+        <p>На&nbsp;замер выезжаем к&nbsp;вам на&nbsp;участок. Если хотите приехать сами&nbsp;— позвоните заранее, чтобы застать нас на&nbsp;месте.</p>
+      </div>
+      <div class="contacts__in">
+        <ul class="c-list" data-stagger>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Адрес</div><div class="c-value">Затонная улица, 4а, Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            <div><div class="c-label">Телефон</div><div class="c-value"><a href="tel:+79004995000">+7 900 499-50-00</a></div></div>
+          </li>
+          <li data-item data-hours-row>
+            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+            <div><div class="c-label">Часы работы</div><div class="c-value" data-hours></div></div>
+          </li>
+        </ul>
+        <div class="route" data-reveal data-card>
+          <h3>Как добраться</h3>
+          <!-- Текст маршрута можно дополнить: остановка, вход, парковка — со слов владельца -->
+          <p>Откройте точку на&nbsp;карте и&nbsp;постройте маршрут из&nbsp;своего приложения. Перед визитом лучше позвонить&nbsp;— бригада может быть на&nbsp;объекте.</p>
+          <a class="btn btn--dark" href="https://yandex.ru/maps/?text=%D0%9A%D0%B0%D1%80%D0%BA%D0%B0%D1%81%2C%20%D0%97%D0%B0%D1%82%D0%BE%D0%BD%D0%BD%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%204%D0%B0%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__in">
+      <div>© 2026 Каркас · каркасное строительство · Тамбов</div>
+      <div><a href="tel:+79004995000">+7 900 499-50-00</a> · Затонная улица, 4а, Тамбов</div>
+    </div>
+    <p class="demo-mark">Демо-макет. Состав услуг и тексты — черновые, цены и фото добавляет владелец.</p>
+  </div>
+</footer>
+
+<div class="mbar" aria-label="Быстрые действия">
+  <a class="btn btn--accent" href="tel:+79004995000"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn--dark" href="#order">Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Часы работы: если пусто — прячем строку ---------- */
+  var hours = document.querySelector("[data-hours]");
+  if (hours && !hours.textContent.trim()) {
+    var row = document.querySelector("[data-hours-row]");
+    if (row) row.hidden = true;
+  }
+
+  /* ---------- Кнопки услуг подставляют услугу в форму ---------- */
+  var select = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === v) { select.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* ---------- Форма: проверка и сообщение (без отправки на сервер) ---------- */
+  var form = document.getElementById("lead-form");
+  var ok = document.getElementById("form-ok");
+  function setErr(input, msg) {
+    var e = document.getElementById(input.getAttribute("aria-describedby"));
+    if (e) e.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+  function check(input) {
+    var v = input.value.trim();
+    if (input.name === "name") return setErr(input, v.length < 2 ? "Укажите имя" : "");
+    if (input.name === "phone") {
+      var digits = v.replace(/\D/g, "");
+      return setErr(input, digits.length < 10 || digits.length > 15 ? "Укажите телефон, например +7 900 000-00-00" : "");
+    }
+    if (input.name === "service") return setErr(input, v ? "" : "Выберите услугу");
+    if (input.name === "time") return setErr(input, v ? "" : "Выберите удобное время");
+    return true;
+  }
+  var fields = form.querySelectorAll("[required]");
+  fields.forEach(function (f) {
+    f.addEventListener("blur", function () { if (f.value) check(f); });
+    f.addEventListener("input", function () { if (f.getAttribute("aria-invalid")) check(f); });
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var firstBad = null;
+    fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f; });
+    if (firstBad) { firstBad.focus(); return; }
+    /* Здесь можно подключить отправку: в Telegram-бота, CRM или на почту владельца. */
+    form.reset();
+    ok.classList.add("is-on");
+    ok.focus();
+    if (window.Motion && !reduce) {
+      window.Motion.animate(ok, { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: 0.35 });
+    }
+  });
+
+  /* ---------- Анимации (Motion). Без motion.js и при reduced-motion — просто статичная страница ----------
+     Характер «Каркас»: блоки «встают на место» короткой вертикальной подачей, без пружин и подскоков. */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduce || typeof M.animate !== "function") return;
+
+  var EASE = [0.25, 0.8, 0.3, 1];
+  var opts = function (d, extra) {
+    var o = { duration: d, ease: EASE, easing: EASE };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+  var hide = function (el) { el.style.opacity = "0"; el.style.transform = "translateY(12px)"; };
+  var show = { opacity: [0, 1], transform: ["translateY(12px)", "translateY(0px)"] };
+  var elOf = function (a) { return a && a.nodeType === 1 ? a : (a && (a.currentTarget || a.target)) || null; };
+
+  try {
+    /* Первый экран: по очереди */
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll("[data-hero]"));
+    heroItems.forEach(hide);
+    M.animate(heroItems, show, opts(0.5, { delay: M.stagger ? M.stagger(0.08) : 0 }));
+
+    /* Блоки при прокрутке */
+    if (typeof M.inView === "function") {
+      var singles = document.querySelectorAll("[data-reveal]");
+      singles.forEach(hide);
+      singles.forEach(function (el) {
+        M.inView(el, function () { M.animate(el, show, opts(0.45)); }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+
+      document.querySelectorAll("[data-stagger]").forEach(function (group) {
+        var items = group.querySelectorAll("[data-item]");
+        items.forEach(hide);
+        M.inView(group, function () {
+          M.animate(items, show, opts(0.4, { delay: M.stagger ? M.stagger(0.06) : 0 }));
+        }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+    } else {
+      // нет inView — ничего не прячем
+    }
+
+    /* Наведение и нажатие */
+    if (typeof M.hover === "function") {
+      M.hover("[data-card]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-2px)" }, opts(0.22));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.22)); };
+      });
+      M.hover("[data-btn]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-1px)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.2)); };
+      });
+    }
+    if (typeof M.press === "function") {
+      M.press("[data-btn], .mbar .btn", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "scale(0.98)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "scale(1)" }, opts(0.25)); };
+      });
+    }
+
+    /* Лёгкий параллакс узора каркаса на первом экране */
+    var hero = document.querySelector(".hero");
+    var grid = document.querySelector(".hero__grid");
+    if (typeof M.scroll === "function" && hero && grid) {
+      M.scroll(function (p) {
+        var v = typeof p === "number" ? p : (p && p.y ? p.y.progress : 0);
+        grid.style.transform = "translate3d(0," + Math.round(v * 60) + "px,0)";
+      }, { target: hero, offset: ["start start", "end start"] });
+    }
+  } catch (e) {
+    /* Если что-то пошло не так — показываем всё как есть */
+    document.querySelectorAll("[data-hero],[data-reveal],[data-item]").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

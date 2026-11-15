@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ДревСтрой — дома и бани из бруса и бревна, Тамбов</title>
+<meta name="description" content="ДревСтрой: дома и бани из бруса и бревна в Тамбове, свой лес. Расчёт стоимости по размеру и материалу. Моршанское шоссе, 26, офис 15. Телефон +7 920 474-51-04.">
+<meta name="theme-color" content="#2A1B0F">
+
+<!-- Разметка для поисковиков. Подстановки заменяются при сборке под клиента. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "ДревСтрой",
+  "telephone": "+7 920 474-51-04",
+  "address": { "@type": "PostalAddress", "streetAddress": "Моршанское шоссе, 26, офис 15, Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+  "openingHours": "",
+  "hasMap": "https://yandex.ru/maps/?text=%D0%94%D1%80%D0%B5%D0%B2%D0%A1%D1%82%D1%80%D0%BE%D0%B9%2C%20%D0%9C%D0%BE%D1%80%D1%88%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%D0%B5%20%D1%88%D0%BE%D1%81%D1%81%D0%B5%2C%2026%2C%20%D0%BE%D1%84%D0%B8%D1%81%2015%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+}
+</script>
+
+<style>
+  :root {
+    /* Палитра «ДревСтрой»: струганый брус, смола, тёмное дерево и хвойный лес. Контраст текста 4.5:1+ */
+    --color-primary: #7A4A1E;          /* тёмная сосна: ~7:1 к фону */
+    --color-primary-strong: #5C3612;
+    --color-secondary: #3F6B3A;        /* хвоя */
+    --color-accent: #D98A1C;           /* смола/янтарь — фон кнопок; текст на нём тёмный */
+    --color-on-accent: #1F140A;        /* ~6.5:1 к #D98A1C */
+    --color-accent-text: #9A4F0B;      /* янтарь для текста на светлом: ~5.5:1 */
+    --color-background: #F7F0E3;       /* свежий спил */
+    --color-foreground: #2A1B0F;       /* морёное дерево */
+    --color-card: #FFFCF6;
+    --color-muted: #EFE4D0;
+    --color-muted-foreground: #5E4A38;
+    --color-border: #DCCBAE;
+    --color-destructive: #A8321E;
+    --color-ring: #7A4A1E;
+    --step-1: #A8321E;   /* проблема — кирпично-красный */
+    --step-2: #9A4F0B;   /* процесс — янтарь */
+    --step-3: #3F6B3A;   /* действие — хвоя */
+
+    /* Только системные шрифты: брусковая антиква для заголовков + спокойный гротеск для текста */
+    --font-head: Rockwell, "Roboto Slab", "Bookman Old Style", "Cambria", Georgia, serif;
+    --font-body: "Segoe UI", "PT Sans", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius: 3px;
+    --shadow: 0 2px 0 rgba(42, 27, 15, .10);
+    --wrap: 1180px;
+    --t: 200ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+  img, svg { display: block; max-width: 100%; }
+  /* Дети grid/flex не должны распирать страницу шире экрана */
+  .hero__in > *, .sec-head > *, .prices > *, .why__in > *, .order__in > *, .contacts__in > *,
+  .svc-grid > *, .form > *, .field, .problem__list li > div, .why__list li > div, .c-list li > div { min-width: 0; }
+  a { color: var(--color-primary); }
+  a:hover { color: var(--color-primary-strong); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 700; line-height: 1.12; letter-spacing: 0; margin: 0; }
+  h2 { font-size: clamp(28px, 3.8vw, 44px); }
+  h3 { font-size: 21px; font-weight: 700; }
+  p { margin: 0; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 2px; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--color-foreground); color: #fff; padding: 10px 14px; z-index: 100; border-radius: var(--radius); }
+  .skip:focus { top: 12px; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 24px;
+    font: 600 16px/1 var(--font-body);
+    border-radius: var(--radius); border: 2px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color var(--t), color var(--t), border-color var(--t);
+  }
+  .btn .icon { width: 20px; height: 20px; }
+  .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn--accent:hover { background: #E79D33; color: var(--color-on-accent); }
+  .btn--line { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn--line:hover { background: var(--color-foreground); color: #fff; }
+  .btn--dark { background: var(--color-foreground); color: #fff; }
+  .btn--dark:hover { background: #4A2F18; color: #fff; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .link-arrow .icon { width: 18px; height: 18px; transition: transform var(--t); }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ---------- Шапка ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(247, 240, 227, .97); border-bottom: 3px solid var(--color-foreground); }
+  .header__in { display: flex; align-items: center; gap: 32px; min-height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-foreground); font: 700 22px/1 var(--font-head); letter-spacing: 0; }
+  .logo:hover { color: var(--color-foreground); }
+  .logo__mark { width: 34px; height: 34px; }
+  .nav { display: flex; gap: 24px; margin-left: auto; }
+  .nav a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: 15px; padding: 6px 0; border-bottom: 2px solid transparent; transition: border-color var(--t); }
+  .nav a:hover { border-color: var(--color-accent); color: var(--color-foreground); }
+  .header__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--color-foreground); text-decoration: none; white-space: nowrap; }
+  .header__phone .icon { width: 20px; height: 20px; color: var(--color-primary); }
+
+  /* ---------- Первый экран ---------- */
+  .hero {
+    position: relative; overflow: hidden; padding: clamp(56px, 8vw, 104px) 0 clamp(64px, 8vw, 96px);
+    border-bottom: 1px solid var(--color-border);
+    background: linear-gradient(160deg, #FBF5EA 0%, #F3E6CF 100%);
+  }
+  /* Фон первого экрана: «стена из бруса» — горизонтальные венцы со швами + торцы бревна справа */
+  .hero__grid {
+    position: absolute; inset: -80px 0 0 0; pointer-events: none;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140' viewBox='0 0 140 140'%3E%3Cg fill='none' stroke='%237A4A1E' stroke-opacity='.10' stroke-width='1.2'%3E%3Ccircle cx='70' cy='70' r='52'/%3E%3Ccircle cx='70' cy='70' r='38'/%3E%3Ccircle cx='70' cy='70' r='24'/%3E%3Ccircle cx='70' cy='70' r='11'/%3E%3C/g%3E%3C/svg%3E"),
+      repeating-linear-gradient(180deg, transparent 0 44px, rgba(122, 74, 30, .13) 44px 46px, rgba(255, 255, 255, .35) 46px 48px);
+    background-repeat: no-repeat, repeat;
+    background-position: right -40px top 120px, 0 0;
+    background-size: 420px 420px, auto;
+    -webkit-mask-image: linear-gradient(180deg, #000 40%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 40%, transparent 100%);
+  }
+  .hero__in { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); }
+  .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--color-accent); }
+  .hero h1 { margin: 18px 0 20px; font-size: clamp(38px, 5.6vw, 70px); letter-spacing: 0; word-break: break-word; }
+  .hero__lead { font-size: clamp(18px, 2vw, 21px); max-width: 34em; color: #4A3522; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 36px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--color-muted-foreground); }
+  .hero__facts li { display: flex; align-items: center; gap: 8px; }
+  .hero__facts .icon { width: 18px; height: 18px; color: var(--color-primary); }
+  .hero__art { width: 100%; max-width: 460px; justify-self: end; color: var(--color-foreground); }
+
+  /* ---------- Заголовки секций ---------- */
+  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 48px; }
+  .sec-head p { color: var(--color-muted-foreground); max-width: 32em; }
+  .step-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 600 14px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; }
+  .step-tag b { display: inline-grid; place-items: center; min-width: 34px; height: 26px; padding: 0 6px; border-radius: 4px; color: #fff; font-weight: 600; }
+  .step-tag--1 { color: var(--step-1); } .step-tag--1 b { background: var(--step-1); }
+  .step-tag--2 { color: var(--step-2); } .step-tag--2 b { background: var(--step-2); }
+  .step-tag--3 { color: var(--step-3); } .step-tag--3 b { background: var(--step-3); }
+
+  /* ---------- Шаг 1: проблема ---------- */
+  .problem { background: var(--color-card); border-bottom: 1px solid var(--color-border); }
+  .problem__list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--color-foreground); }
+  .problem__list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 28px 24px 28px 0; border-bottom: 1px solid var(--color-border); }
+  .problem__list li:nth-child(odd) { border-right: 1px solid var(--color-border); }
+  .problem__list li:nth-child(even) { padding-left: 24px; }
+  .problem__list .icon { width: 28px; height: 28px; color: var(--step-1); margin-top: 2px; }
+  .problem__list h3 { margin-bottom: 6px; }
+  .problem__list p { color: var(--color-muted-foreground); }
+  .mini-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .mini-cta span { color: var(--color-muted-foreground); }
+
+  /* ---------- Услуги ---------- */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .svc {
+    position: relative; display: flex; flex-direction: column; gap: 12px;
+    padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .svc--wide { grid-column: span 2; }
+  .svc__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius); background: var(--color-muted); color: var(--color-primary); }
+  .svc p { color: var(--color-muted-foreground); font-size: 16px; }
+  .svc ul { margin: 0; padding: 0 0 0 18px; color: var(--color-muted-foreground); font-size: 16px; columns: 2; column-gap: 32px; }
+  .svc__foot { margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; border-top: 1px dashed var(--color-border); }
+  .price { font: 700 20px/1.2 var(--font-head); letter-spacing: 0; }
+  .price small { font: 500 15px var(--font-body); color: var(--color-muted-foreground); }
+  .svc { border-top: 4px solid var(--color-primary); }
+  .svc--action { background: var(--color-foreground); color: #fff; border-color: var(--color-foreground); border-top-color: var(--color-accent); }
+  .svc--action .svc__icon { background: rgba(255,255,255,.1); color: #F2B65A; }
+  .svc--action p { color: #E8D9C2; }
+  .svc--action .svc__foot { border-color: rgba(255,255,255,.25); }
+  .svc--action .price small { color: #E8D9C2; }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+  .prices h3 { font-size: 28px; margin-bottom: 12px; }
+  .prices__note { color: var(--color-muted-foreground); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; }
+  th, td { text-align: left; padding: 14px 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  thead th { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-muted-foreground); border-bottom: 2px solid var(--color-foreground); }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; padding-left: 16px; font-weight: 600; }
+
+  /* ---------- Почему мы ---------- */
+  .why { background: var(--color-card); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .why__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .why__lead { margin-top: 20px; color: var(--color-muted-foreground); max-width: 30em; }
+  .photo-ph {
+    margin-top: 32px; aspect-ratio: 4 / 3; border-radius: var(--radius); border: 1px dashed #9C7F58;
+    display: grid; place-items: center; text-align: center; padding: 24px; color: var(--color-muted-foreground); font-size: 15px;
+    background:
+      repeating-linear-gradient(180deg, rgba(122,74,30,.07) 0 22px, transparent 22px 24px),
+      var(--color-background);
+  }
+  .photo-ph .icon { width: 36px; height: 36px; margin: 0 auto 10px; color: var(--color-primary); }
+  .why__list { margin: 0; padding: 0; list-style: none; counter-reset: why; }
+  .why__list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--color-border); }
+  .why__list li:first-child { padding-top: 0; }
+  .why__list .num { font: 600 34px/1 var(--font-head); color: var(--color-accent-text); }
+  .why__list h3 { margin-bottom: 6px; display: flex; gap: 10px; align-items: center; }
+  .why__list h3 .icon { color: var(--color-primary); width: 22px; height: 22px; }
+  .why__list p { color: var(--color-muted-foreground); }
+
+  /* ---------- Шаг 2: процесс ---------- */
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps li { position: relative; padding: 28px 20px 0 0; border-top: 3px solid var(--color-border); }
+  .steps li::before {
+    counter-increment: st; content: counter(st, decimal-leading-zero);
+    position: absolute; top: -15px; left: 0; display: grid; place-items: center; width: 44px; height: 27px;
+    font: 600 14px/1 var(--font-body); color: #fff; background: var(--step-2); border-radius: 4px;
+  }
+  .steps li:first-child { border-top-color: var(--step-2); }
+  .steps h3 { margin: 8px 0 8px; font-size: 21px; }
+  .steps p { color: var(--color-muted-foreground); font-size: 16px; }
+  .steps .when { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--step-2); }
+
+  /* ---------- Шаг 3: форма ---------- */
+  .order { background: var(--color-foreground); color: #fff; }
+  .order .step-tag--3 { color: #B7D89E; } .order .step-tag--3 b { background: #8DBA6F; color: #16260F; }
+  .order__in { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .order__text p { margin-top: 20px; color: #E8D9C2; max-width: 28em; }
+  .order__contacts { margin-top: 32px; display: grid; gap: 12px; }
+  .order__contacts a { color: #fff; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; text-decoration: none; }
+  .order__contacts a:hover { color: #F2B65A; }
+  .order__contacts .icon { color: #F2B65A; }
+
+  .form { background: var(--color-card); color: var(--color-foreground); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field { display: grid; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  label { font-weight: 600; font-size: 15px; }
+  label .req { color: var(--color-destructive); }
+  input, select, textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    font: 400 16px/1.4 var(--font-body); color: var(--color-foreground);
+    background: #fff; border: 1.5px solid #9C7F58; border-radius: var(--radius);
+    transition: border-color var(--t);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: var(--color-primary); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(122,74,30,.35); outline-offset: 0; border-color: var(--color-primary); }
+  [aria-invalid="true"] { border-color: var(--color-destructive); }
+  .err { min-height: 1.2em; font-size: 14px; color: var(--color-destructive); }
+  .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .form__foot small { color: var(--color-muted-foreground); font-size: 13px; max-width: 26em; }
+  .form-ok {
+    grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius); background: #EEF5E8; border: 1px solid #A9CF8F; color: #24401F; font-weight: 600;
+  }
+  .form-ok.is-on { display: flex; }
+  .form-ok .icon { color: var(--color-primary); }
+
+  /* ---------- Контакты ---------- */
+  .contacts__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .c-list { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--color-foreground); }
+  .c-list li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .c-list .icon { color: var(--color-primary); margin-top: 2px; }
+  .c-list dt, .c-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .c-value { font-size: 19px; font-weight: 500; }
+  .c-value a { color: var(--color-foreground); }
+  .route { padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .route h3 { margin-bottom: 10px; }
+  .route p { color: var(--color-muted-foreground); margin-bottom: 20px; }
+
+  /* ---------- Подвал ---------- */
+  .footer { padding: 40px 0 96px; border-top: 1px solid var(--color-border); font-size: 15px; color: var(--color-muted-foreground); }
+  .footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+  .footer a { color: var(--color-foreground); }
+  .demo-mark { margin-top: 20px; font-size: 12px; color: var(--color-muted-foreground); }
+
+  /* ---------- Мобильная панель ---------- */
+  .mbar { display: none; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1024px) {
+    .nav { display: none; }
+    .header__phone { margin-left: auto; }
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__art { max-width: 380px; justify-self: start; }
+    .steps { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 860px) {
+    .sec-head, .prices, .why__in, .order__in, .contacts__in { grid-template-columns: 1fr; gap: 32px; }
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+    .svc--wide { grid-column: span 2; }
+    .problem__list { grid-template-columns: 1fr; }
+    .problem__list li:nth-child(odd) { border-right: 0; }
+    .problem__list li:nth-child(even) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px; }
+    .header__phone span { display: none; }
+    .hero__art { display: none; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .svc--wide { grid-column: auto; }
+    .svc ul { columns: 1; }
+    .steps { grid-template-columns: 1fr; }
+    .form { grid-template-columns: 1fr; }
+    .form__foot .btn { width: 100%; }
+    .mbar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-card); border-top: 1px solid var(--color-border);
+    }
+    .mbar .btn { min-height: 48px; padding: 0 12px; min-width: 0; }
+    .hero__facts { gap: 10px 20px; }
+    .footer__in > * { min-width: 0; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+
+<!-- Набор иконок (линейные, толщина 1.75, в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="2" y="2" width="16" height="6" rx="2"/><path d="M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="8" y="16" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-roof" viewBox="0 0 24 24"><path d="M2 11 12 3l10 8"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="i-brick" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9.33h18M3 14.67h18M9 4v5.33M15 9.33v5.34M9 14.67V20"/></symbol>
+  <symbol id="i-found" viewBox="0 0 24 24"><path d="M2 20h20"/><path d="M4 20v-6h16v6"/><path d="M8 14V8h8v6"/><path d="M11 8V4h2v4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-log" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5.5"/><circle cx="12" cy="12" r="2"/></symbol>
+  <symbol id="i-beam" viewBox="0 0 24 24"><path d="M3 8h18v4H3zM3 12h18v4H3zM3 16h18v4H3z"/><path d="M8 4h8l5 4H3z"/></symbol>
+  <symbol id="i-sauna" viewBox="0 0 24 24"><path d="M3 11 12 5l9 6"/><path d="M5 10v10h14V10"/><path d="M5 14h14M5 17h14"/><path d="M9 3c-1 1 1 1.5 0 2.5M13 2c-1 1 1 1.5 0 2.5"/></symbol>
+  <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 2 6 10h3l-4 6h14l-4-6h3z"/><path d="M12 16v6"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5V5a2 2 0 0 1 2-2h14v16H6a2 2 0 0 0-2 2"/><path d="M20 19v3H6a2 2 0 0 1-2-2"/><path d="M9 8h7M9 12h5"/></symbol>
+  <symbol id="i-calc" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8"/><path d="M8 11h.01M12 11h.01M16 11h.01M8 15h.01M12 15h.01M16 15h.01M8 18.5h.01M12 18.5h4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="m12 2 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержанию</a>
+
+<header class="header">
+  <div class="wrap header__in">
+    <a class="logo" href="#top" aria-label="ДревСтрой — на главную">
+      <svg class="logo__mark" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="3" fill="#2A1B0F"/>
+        <path d="M6 15 17 7l11 8" fill="none" stroke="#D98A1C" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/>
+        <path d="M9 17h16M9 21h16M9 25h16" stroke="#fff" stroke-width="2.2" stroke-linecap="round"/>
+      </svg>
+      <span>ДревСтрой</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#services">Что строим</a>
+      <a href="#why">Почему мы</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="header__phone" href="tel:+79204745104" aria-label="Позвонить: +7 920 474-51-04">
+      <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>+7 920 474-51-04</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== Первый экран ========== -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <div>
+        <span class="eyebrow" data-hero>ДревСтрой · деревянные дома · Тамбов</span>
+        <h1 id="hero-title" data-hero>Дом или баня из бруса и&nbsp;бревна&nbsp;— из&nbsp;своего леса</h1>
+        <!-- УТП: проверьте с владельцем, что каждое утверждение соответствует его работе -->
+        <p class="hero__lead" data-hero>Выберите, что строим: дом или баню, брус или бревно. Назовите размер&nbsp;— посчитаем стоимость и перезвоним. Без поиска по каталогу и звонков наугад.</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn btn--accent" href="#order" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-calc"/></svg>Узнать стоимость
+          </a>
+          <a class="btn btn--line" href="tel:+79204745104" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить до 22:00
+          </a>
+        </div>
+        <ul class="hero__facts" data-hero>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-tree"/></svg>Свой лес</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-beam"/></svg>Брус и бревно</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>На связи до 22:00</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg><a href="https://yandex.ru/maps/?text=%D0%94%D1%80%D0%B5%D0%B2%D0%A1%D1%82%D1%80%D0%BE%D0%B9%2C%20%D0%9C%D0%BE%D1%80%D1%88%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%D0%B5%20%D1%88%D0%BE%D1%81%D1%81%D0%B5%2C%2026%2C%20%D0%BE%D1%84%D0%B8%D1%81%2015%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener">4.2 на Яндекс Картах — 8 оценок, 4 отзыва</a></li>
+        </ul>
+      </div>
+
+      <!-- Декоративный сруб из бревна, без внешних картинок -->
+      <svg class="hero__art" data-hero viewBox="0 0 460 400" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+          <!-- кровля -->
+          <path d="M40 180 230 56l190 124" stroke="#D98A1C" stroke-width="4"/>
+          <path d="M80 170 230 72l150 98"/>
+          <rect x="205" y="112" width="50" height="40"/>
+          <path d="M230 112v40M205 132h50"/>
+          <!-- венцы -->
+          <path d="M80 190h300M80 210h300M80 230h300M80 250h300M80 270h300M80 290h300M80 310h300M80 330h300"/>
+          <!-- торцы бревна по углам -->
+          <g fill="#FFFCF6">
+            <circle cx="72" cy="180" r="9"/><circle cx="72" cy="200" r="9"/><circle cx="72" cy="220" r="9"/><circle cx="72" cy="240" r="9"/>
+            <circle cx="72" cy="260" r="9"/><circle cx="72" cy="280" r="9"/><circle cx="72" cy="300" r="9"/><circle cx="72" cy="320" r="9"/>
+            <circle cx="388" cy="180" r="9"/><circle cx="388" cy="200" r="9"/><circle cx="388" cy="220" r="9"/><circle cx="388" cy="240" r="9"/>
+            <circle cx="388" cy="260" r="9"/><circle cx="388" cy="280" r="9"/><circle cx="388" cy="300" r="9"/><circle cx="388" cy="320" r="9"/>
+          </g>
+          <!-- окно и дверь -->
+          <rect x="120" y="215" width="64" height="58" fill="#F3E6CF"/>
+          <path d="M152 215v58M120 244h64"/>
+          <rect x="262" y="236" width="62" height="94" fill="#F3E6CF"/>
+          <circle cx="312" cy="286" r="3" fill="currentColor"/>
+          <path d="M30 334h400" stroke-width="3"/>
+        </g>
+        <g fill="none" stroke="#3F6B3A" stroke-width="2" stroke-linejoin="round">
+          <path d="M420 334V300M420 300l-16 0 16-28 16 28zM420 286l-12 0 12-22 12 22z" fill="#EEF5E8"/>
+          <path d="M28 334V308M28 308l-12 0 12-22 12 22z" fill="#EEF5E8"/>
+        </g>
+        <g font-family="Segoe UI, sans-serif" font-size="13" fill="#7A4A1E">
+          <path d="M80 366h300M80 358v16M380 358v16" fill="none" stroke="#7A4A1E" stroke-width="1.2"/>
+          <text x="206" y="390">ваш размер</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 1: задача ========== -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--1"><b>01</b>Задача</div>
+          <h2 id="problem-title">С&nbsp;чего начинают выбор деревянного дома</h2>
+        </div>
+        <p>Четыре вопроса, которые задают почти все, кто думает о доме или бане из дерева. Ответы&nbsp;— в расчёте под ваш размер.</p>
+      </div>
+      <ul class="problem__list" data-stagger>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-beam"/></svg>
+          <div><h3>Брус или бревно?</h3><p>От материала зависят вид стен, отделка и итоговая цена. Строим из обоих&nbsp;— сравним варианты для вашего размера.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-calc"/></svg>
+          <div><h3>Сколько это будет стоить?</h3><p>Цена зависит от размера, материала и комплектации. Скажите, что хотите,&nbsp;— посчитаем и назовём сумму.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-sauna"/></svg>
+          <div><h3>Дом или баня?</h3><p>Это разные проекты и разные расчёты. Сразу отметьте в заявке, что нужно,&nbsp;— не придётся искать по всему каталогу.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-tree"/></svg>
+          <div><h3>Откуда лес?</h3><p>Материал&nbsp;— из своего леса. Подробности о древесине расскажем по телефону.</p></div>
+        </li>
+      </ul>
+      <div class="mini-cta" data-reveal>
+        <a class="link-arrow" href="#order">Посчитать мой дом или баню <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>или позвоните: <a href="tel:+79204745104">+7 920 474-51-04</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Услуги и цены ========== -->
+  <!-- Цен в материалах нет — везде «цены уточняйте». Реальные цены добавит владелец. -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Что строим</span>
+          <h2 id="services-title" style="margin-top:14px">Дома и бани из бруса и бревна</h2>
+        </div>
+        <p>Цены уточняйте по телефону или через заявку: сумма зависит от размера, материала и комплектации.</p>
+      </div>
+
+      <div class="svc-grid" data-stagger>
+        <article class="svc svc--wide" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-beam"/></svg></div>
+          <h3>Дома из бруса</h3>
+          <p>Ровные стены из бруса&nbsp;— из своего леса. Подберём проект из каталога или посчитаем дом под ваш размер.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Дом из бруса">Узнать стоимость <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-log"/></svg></div>
+          <h3>Дома из бревна</h3>
+          <p>Сруб из бревна для тех, кому нужен классический деревянный дом.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Дом из бревна">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-sauna"/></svg></div>
+          <h3>Бани из бруса и бревна</h3>
+          <p>Баня на участок&nbsp;— из того же материала, что и дома. Отдельный расчёт под ваш размер.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Баня">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-book"/></svg></div>
+          <h3>Проекты из каталога</h3>
+          <p>Готовые варианты домов и бань. Не нашли подходящий&nbsp;— опишите свой в заявке.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Проект из каталога">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc svc--action" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-calc"/></svg></div>
+          <h3>Расчёт стоимости</h3>
+          <p>Напишите, что строим (дом или баня), из чего (брус или бревно) и какого размера. Перезвоним и назовём сумму&nbsp;— на связи до&nbsp;22:00.</p>
+          <div class="svc__foot">
+            <span class="price"><small>Условия расчёта уточните по телефону</small></span>
+            <a class="btn btn--accent" href="#order" data-service="Расчёт стоимости" data-btn>Посчитать стоимость</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="prices" data-reveal>
+        <div>
+          <h3>Что нужно для расчёта</h3>
+          <p class="prices__note">Пять ответов&nbsp;— и мы назовём цену. Можно написать в заявке или сказать по телефону.</p>
+        </div>
+        <table>
+          <caption class="sr-only">Что указать для расчёта стоимости дома или бани</caption>
+          <thead><tr><th scope="col">Вопрос</th><th scope="col">Что указать</th></tr></thead>
+          <tbody>
+            <tr><td>Что строим</td><td>дом или баня</td></tr>
+            <tr><td>Материал</td><td>брус или бревно</td></tr>
+            <tr><td>Размер</td><td>например, 6×6 м</td></tr>
+            <tr><td>Проект</td><td>из каталога или свой</td></tr>
+            <tr><td>Где участок</td><td>город или район</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Почему мы ========== -->
+  <!-- Пункты — типовые принципы работы. Оставьте только то, что владелец действительно делает. -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__in">
+      <div data-reveal>
+        <span class="eyebrow">Почему ДревСтрой</span>
+        <h2 id="why-title" style="margin-top:14px">Свой лес, два материала, связь до&nbsp;22:00</h2>
+        <p class="why__lead">Коротко о&nbsp;том, чем мы отличаемся. Отзывы клиентов&nbsp;— на Яндекс Картах: 4.2, 8&nbsp;оценок, 4&nbsp;отзыва.</p>
+        <div class="photo-ph" role="img" aria-label="Место для фотографии построенного дома или бани">
+          <div>
+            <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+            Фото построенного дома или бани<br>— добавит владелец
+          </div>
+        </div>
+      </div>
+      <ol class="why__list" data-stagger>
+        <li data-item>
+          <span class="num" aria-hidden="true">1</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-tree"/></svg>Свой лес</h3>
+          <p>Брус и бревно для домов и бань&nbsp;— из собственного леса.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">2</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-beam"/></svg>И брус, и бревно</h3>
+          <p>Не нужно искать разных подрядчиков: сравните оба варианта в одном расчёте.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">3</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>Отвечаем до 22:00</h3>
+          <p>Можно позвонить вечером, после работы,&nbsp;— и обсудить дом спокойно.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">4</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Офис в Тамбове</h3>
+          <p>Моршанское шоссе, 26, офис&nbsp;15&nbsp;— проекты и расчёт можно обсудить лично.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 2: процесс ========== -->
+  <section id="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--2"><b>02</b>Процесс</div>
+          <h2 id="steps-title">Как проходит работа</h2>
+        </div>
+        <p>Пять шагов от заявки до готового дома или бани. Сроки зависят от проекта&nbsp;— их назовём при расчёте.</p>
+      </div>
+      <!-- Этапы — типовые; уточнить с владельцем, как у него на самом деле -->
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Заявка</h3><p>Звонок или форма: дом или баня, брус или бревно, размер.</p><span class="when">в любой день до 22:00</span></li>
+        <li data-item><h3>Расчёт</h3><p>Считаем стоимость по вашим вводным и перезваниваем с цифрой.</p><span class="when">после заявки</span></li>
+        <li data-item><h3>Проект</h3><p>Выбираем вариант из каталога или дорабатываем под ваш размер.</p><span class="when">по согласованию</span></li>
+        <li data-item><h3>Договор</h3><p>Фиксируем состав работ, материал и сроки.</p><span class="when">когда всё понятно</span></li>
+        <li data-item><h3>Строительство</h3><p>Строим дом или баню из бруса или бревна на вашем участке.</p><span class="when">по графику</span></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn--dark" href="#order" data-btn>Начать с расчёта <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>Ответим на вопросы до выезда&nbsp;— по телефону <a href="tel:+79204745104">+7 920 474-51-04</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 3: заявка ========== -->
+  <section class="order" id="order" aria-labelledby="order-title">
+    <div class="wrap order__in">
+      <div class="order__text" data-reveal>
+        <div class="step-tag step-tag--3"><b>03</b>Заявка</div>
+        <h2 id="order-title">Узнайте стоимость дома или бани</h2>
+        <p>Выберите, что строим, и оставьте телефон&nbsp;— перезвоним в удобное время, уточним размер и назовём цену.</p>
+        <div class="order__contacts">
+          <a href="tel:+79204745104"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>+7 920 474-51-04</a>
+        </div>
+      </div>
+
+      <form class="form" id="lead-form" novalidate data-reveal aria-describedby="form-note">
+        <div class="field">
+          <label for="f-name">Имя <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" placeholder="Как к вам обращаться">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone" placeholder="+7 900 000-00-00">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-service">Услуга <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="e-service">
+            <option value="">Выберите услугу</option>
+            <option>Расчёт стоимости</option>
+            <option>Дом из бруса</option>
+            <option>Дом из бревна</option>
+            <option>Баня</option>
+            <option>Проект из каталога</option>
+            <option>Пока не решил — нужна консультация</option>
+          </select>
+          <span class="err" id="e-service" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-time">Удобное время для звонка <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-time" name="time" required aria-describedby="e-time">
+            <option value="">Выберите время</option>
+            <option>Утром, 9:00–12:00</option>
+            <option>Днём, 12:00–15:00</option>
+            <option>После обеда, 15:00–18:00</option>
+            <option>Вечером, 18:00–22:00</option>
+            <option>В любое время</option>
+          </select>
+          <span class="err" id="e-time" aria-live="polite"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-comment">Что нужно сделать <span style="font-weight:400;color:var(--color-muted-foreground)">(необязательно)</span></label>
+          <textarea id="f-comment" name="comment" placeholder="Например: баня из бруса 6×4, участок под Тамбовом"></textarea>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--accent" type="submit" data-btn>Отправить заявку</button>
+          <small id="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</small>
+        </div>
+        <div class="form-ok" id="form-ok" role="status" aria-live="polite" tabindex="-1">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Заявка принята, перезвоним.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== Контакты ========== -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title" style="margin-top:14px">Офис на Моршанском шоссе</h2>
+        </div>
+        <p>В офисе можно обсудить проект и расчёт дома или бани. Перед визитом лучше позвонить.</p>
+      </div>
+      <div class="contacts__in">
+        <ul class="c-list" data-stagger>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Адрес</div><div class="c-value">Моршанское шоссе, 26, офис 15, Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            <div><div class="c-label">Телефон</div><div class="c-value"><a href="tel:+79204745104">+7 920 474-51-04</a></div></div>
+          </li>
+          <li data-item data-hours-row>
+            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+            <div><div class="c-label">Часы работы</div><div class="c-value" data-hours>На связи до 22:00, дни работы уточняйте по телефону</div></div>
+          </li>
+        </ul>
+        <div class="route" data-reveal data-card>
+          <h3>Как добраться</h3>
+          <!-- Текст маршрута можно дополнить: остановка, вход, парковка — со слов владельца -->
+          <p>Откройте точку на Яндекс Картах и постройте маршрут&nbsp;— там же рейтинг 4.2 и отзывы клиентов. Фото и новости&nbsp;— в группе <a href="https://vk.ru/doma_iz_brusa_tambov" target="_blank" rel="noopener">ВКонтакте</a>.</p>
+          <a class="btn btn--dark" href="https://yandex.ru/maps/?text=%D0%94%D1%80%D0%B5%D0%B2%D0%A1%D1%82%D1%80%D0%BE%D0%B9%2C%20%D0%9C%D0%BE%D1%80%D1%88%D0%B0%D0%BD%D1%81%D0%BA%D0%BE%D0%B5%20%D1%88%D0%BE%D1%81%D1%81%D0%B5%2C%2026%2C%20%D0%BE%D1%84%D0%B8%D1%81%2015%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__in">
+      <div>© 2026 ДревСтрой · дома и бани из бруса и бревна · Тамбов</div>
+      <div><a href="tel:+79204745104">+7 920 474-51-04</a> · Моршанское шоссе, 26, офис 15, Тамбов</div>
+    </div>
+    <p class="demo-mark">Демо-макет. Состав услуг и тексты уточняются владельцем, цены он добавит сам.</p>
+  </div>
+</footer>
+
+<div class="mbar" aria-label="Быстрые действия">
+  <a class="btn btn--accent" href="tel:+79204745104"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn--dark" href="#order">Расчёт</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Часы работы: если пусто — прячем строку ---------- */
+  var hours = document.querySelector("[data-hours]");
+  if (hours && !hours.textContent.trim()) {
+    var row = document.querySelector("[data-hours-row]");
+    if (row) row.hidden = true;
+  }
+
+  /* ---------- Кнопки услуг подставляют услугу в форму ---------- */
+  var select = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === v) { select.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* ---------- Форма: проверка и сообщение (без отправки на сервер) ---------- */
+  var form = document.getElementById("lead-form");
+  var ok = document.getElementById("form-ok");
+  function setErr(input, msg) {
+    var e = document.getElementById(input.getAttribute("aria-describedby"));
+    if (e) e.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+  function check(input) {
+    var v = input.value.trim();
+    if (input.name === "name") return setErr(input, v.length < 2 ? "Укажите имя" : "");
+    if (input.name === "phone") {
+      var digits = v.replace(/\D/g, "");
+      return setErr(input, digits.length < 10 || digits.length > 15 ? "Укажите телефон, например +7 900 000-00-00" : "");
+    }
+    if (input.name === "service") return setErr(input, v ? "" : "Выберите услугу");
+    if (input.name === "time") return setErr(input, v ? "" : "Выберите удобное время");
+    return true;
+  }
+  var fields = form.querySelectorAll("[required]");
+  fields.forEach(function (f) {
+    f.addEventListener("blur", function () { if (f.value) check(f); });
+    f.addEventListener("input", function () { if (f.getAttribute("aria-invalid")) check(f); });
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var firstBad = null;
+    fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f; });
+    if (firstBad) { firstBad.focus(); return; }
+    /* Здесь можно подключить отправку: в Telegram-бота, CRM или на почту владельца. */
+    form.reset();
+    ok.classList.add("is-on");
+    ok.focus();
+    if (window.Motion && !reduce) {
+      window.Motion.animate(ok, { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: 0.35 });
+    }
+  });
+
+  /* ---------- Анимации (Motion). Без motion.js и при reduced-motion — просто статичная страница ---------- */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduce || typeof M.animate !== "function") return;
+
+  var EASE = [0.22, 1, 0.36, 1];
+  var opts = function (d, extra) {
+    var o = { duration: d, ease: EASE, easing: EASE };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+  var hide = function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; };
+  var show = { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0px)"] };
+  var elOf = function (a) { return a && a.nodeType === 1 ? a : (a && (a.currentTarget || a.target)) || null; };
+
+  try {
+    /* Первый экран: по очереди */
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll("[data-hero]"));
+    heroItems.forEach(hide);
+    M.animate(heroItems, show, opts(0.55, { delay: M.stagger ? M.stagger(0.09) : 0 }));
+
+    /* Блоки при прокрутке */
+    if (typeof M.inView === "function") {
+      var singles = document.querySelectorAll("[data-reveal]");
+      singles.forEach(hide);
+      singles.forEach(function (el) {
+        M.inView(el, function () { M.animate(el, show, opts(0.5)); }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+
+      document.querySelectorAll("[data-stagger]").forEach(function (group) {
+        var items = group.querySelectorAll("[data-item]");
+        items.forEach(hide);
+        M.inView(group, function () {
+          M.animate(items, show, opts(0.45, { delay: M.stagger ? M.stagger(0.07) : 0 }));
+        }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+    } else {
+      // нет inView — ничего не прячем
+    }
+
+    /* Наведение и нажатие */
+    if (typeof M.hover === "function") {
+      M.hover("[data-card]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-3px)" }, opts(0.25));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.25)); };
+      });
+      M.hover("[data-btn]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-1px)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.2)); };
+      });
+    }
+    if (typeof M.press === "function") {
+      M.press("[data-btn], .mbar .btn", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "scale(0.97)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "scale(1)" }, opts(0.25)); };
+      });
+    }
+
+    /* Лёгкий параллакс сетки на первом экране */
+    var hero = document.querySelector(".hero");
+    var grid = document.querySelector(".hero__grid");
+    if (typeof M.scroll === "function" && hero && grid) {
+      M.scroll(function (p) {
+        var v = typeof p === "number" ? p : (p && p.y ? p.y.progress : 0);
+        grid.style.transform = "translate3d(0," + Math.round(v * 70) + "px,0)";
+      }, { target: hero, offset: ["start start", "end start"] });
+    }
+  } catch (e) {
+    /* Если что-то пошло не так — показываем всё как есть */
+    document.querySelectorAll("[data-hero],[data-reveal],[data-item]").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

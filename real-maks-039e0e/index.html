@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Реал-Макс — строительство жилых и нежилых зданий в Тамбове</title>
+<meta name="description" content="Реал-Макс: строительство жилых и нежилых зданий в Тамбове. Офис: Студенецкая улица, 16а к1, пом. 12. Телефон +7 910 750-00-77.">
+<meta name="theme-color" content="#1C1F24">
+
+<!-- Разметка для поисковиков. Подстановки заменяются при сборке под клиента. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "Реал-Макс",
+  "telephone": "+7 910 750-00-77",
+  "address": { "@type": "PostalAddress", "streetAddress": "Студенецкая улица, 16а к1, пом. 12, Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+  "openingHours": "",
+  "hasMap": "https://yandex.ru/maps/?text=%D0%A0%D0%B5%D0%B0%D0%BB-%D0%9C%D0%B0%D0%BA%D1%81%2C%20%D0%A1%D1%82%D1%83%D0%B4%D0%B5%D0%BD%D0%B5%D1%86%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%2016%D0%B0%20%D0%BA1%2C%20%D0%BF%D0%BE%D0%BC.%2012%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+}
+</script>
+
+<style>
+  :root {
+    /* Образ «Реал-Макс»: бетон, графит и сигнальный жёлтый стройплощадки + стальной синий чертежа.
+       Отличается от зелёно-оранжевого набора ниши. Контраст текста проверен (4.5:1+). */
+    --color-primary: #1D4E89;          /* стальной синий: 7.6:1 к белому, 6.6:1 к фону */
+    --color-primary-strong: #143A68;
+    --color-secondary: #5B6470;
+    --color-accent: #F2B705;           /* сигнальный жёлтый — только фон кнопок и метки */
+    --color-on-accent: #1C1F24;        /* 10:1 к #F2B705 */
+    --color-accent-text: #8A5A00;      /* тёмная охра для текста на светлом: 5.6:1 */
+    --color-background: #EFEDE8;       /* светлый бетон */
+    --color-foreground: #1C1F24;       /* графит */
+    --color-foreground-soft: #3A3F46;
+    --color-card: #FFFFFF;
+    --color-muted: #E4E1DA;
+    --color-muted-foreground: #4B5057; /* 7:1 к фону */
+    --color-border: #CFCBC2;
+    --color-destructive: #B42318;
+    --color-ring: #1D4E89;
+    --step-1: #B42318;   /* проблема */
+    --step-2: #8A5A00;   /* процесс */
+    --step-3: #1D4E89;   /* действие */
+
+    /* Только системные шрифты: Bahnschrift (DIN-подобный, есть кириллица) для заголовков */
+    --font-head: "Bahnschrift", "DIN Alternate", "Roboto Condensed", "Arial Narrow", "Segoe UI", sans-serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius: 2px;
+    --shadow: 0 1px 0 rgba(28, 31, 36, .10), 4px 4px 0 rgba(28, 31, 36, .06);
+    --wrap: 1180px;
+    --t: 200ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+  img, svg { display: block; max-width: 100%; }
+  /* Дети grid/flex не должны распирать страницу шире экрана */
+  .hero__in > *, .sec-head > *, .prices > *, .why__in > *, .order__in > *, .contacts__in > *,
+  .svc-grid > *, .form > *, .field, .problem__list li > div, .why__list li > div, .c-list li > div { min-width: 0; }
+  a { color: var(--color-primary); }
+  a:hover { color: var(--color-primary-strong); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 600; line-height: 1.1; letter-spacing: .005em; margin: 0; font-stretch: condensed; }
+  h2 { font-size: clamp(30px, 4.2vw, 48px); text-transform: uppercase; }
+  h3 { font-size: 22px; font-weight: 500; }
+  p { margin: 0; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 2px; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--color-foreground); color: #fff; padding: 10px 14px; z-index: 100; border-radius: var(--radius); }
+  .skip:focus { top: 12px; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 24px;
+    font: 600 16px/1 var(--font-body);
+    border-radius: var(--radius); border: 2px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color var(--t), color var(--t), border-color var(--t);
+  }
+  .btn .icon { width: 20px; height: 20px; }
+  .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn--accent:hover { background: #FFC72C; color: var(--color-on-accent); }
+  .btn--line { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn--line:hover { background: var(--color-foreground); color: #fff; }
+  .btn--dark { background: var(--color-foreground); color: #fff; }
+  .btn--dark:hover { background: var(--color-primary-strong); color: #fff; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .link-arrow .icon { width: 18px; height: 18px; transition: transform var(--t); }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ---------- Шапка ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(239, 237, 232, .97); border-bottom: 1px solid var(--color-border); }
+  .header__in { display: flex; align-items: center; gap: 32px; min-height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--color-foreground); font: 600 20px/1 var(--font-head); text-transform: uppercase; letter-spacing: .03em; }
+  .logo:hover { color: var(--color-foreground); }
+  .logo__mark { width: 34px; height: 34px; }
+  .nav { display: flex; gap: 24px; margin-left: auto; }
+  .nav a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: 15px; padding: 6px 0; border-bottom: 2px solid transparent; transition: border-color var(--t); }
+  .nav a:hover { border-color: var(--color-accent); color: var(--color-foreground); }
+  .header__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--color-foreground); text-decoration: none; white-space: nowrap; }
+  .header__phone .icon { width: 20px; height: 20px; color: var(--color-primary); }
+
+  /* ---------- Первый экран ---------- */
+  .hero { position: relative; overflow: hidden; padding: clamp(56px, 8vw, 104px) 0 clamp(64px, 8vw, 96px); border-bottom: 1px solid var(--color-border); }
+  .hero__grid {
+    position: absolute; inset: -80px 0 0 0; pointer-events: none;
+    /* Кладка из блоков (перевязка швов) — узор под стройку зданий */
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='48'%3E%3Cg fill='none' stroke='%231C1F24' stroke-opacity='.09'%3E%3Cpath d='M0 .5h120M0 24.5h120M.5 0v24M60.5 24v24'/%3E%3C/g%3E%3C/svg%3E"),
+      linear-gradient(90deg, rgba(239,237,232,1) 0%, rgba(239,237,232,.6) 45%, rgba(239,237,232,0) 75%);
+    background-size: 120px 48px, 100% 100%;
+    -webkit-mask-image: linear-gradient(180deg, #000 45%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 45%, transparent 100%);
+  }
+  /* Сигнальная лента по нижнему краю первого экрана */
+  .hero::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 8px;
+    background: repeating-linear-gradient(-45deg, var(--color-accent) 0 14px, var(--color-foreground) 14px 28px); }
+  .hero__in { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--color-primary); }
+  .eyebrow::before { content: ""; width: 28px; height: 2px; background: var(--color-accent); }
+  .hero h1 { margin: 18px 0 20px; font-size: clamp(44px, 7.4vw, 92px); text-transform: uppercase; letter-spacing: 0; word-break: break-word; }
+  .hero__lead { font-size: clamp(18px, 2vw, 21px); max-width: 34em; color: var(--color-foreground-soft); }
+  .hero h1 small { display: block; margin-top: 10px; font-size: .42em; line-height: 1.15; letter-spacing: .02em; color: var(--color-primary); }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 36px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--color-muted-foreground); }
+  .hero__facts li { display: flex; align-items: center; gap: 8px; }
+  .hero__facts .icon { width: 18px; height: 18px; color: var(--color-primary); }
+  .hero__art { width: 100%; max-width: 460px; justify-self: end; color: var(--color-foreground); }
+
+  /* ---------- Заголовки секций ---------- */
+  .sec-head { display: grid; grid-template-columns: 1fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 48px; }
+  .sec-head p { color: var(--color-muted-foreground); max-width: 32em; }
+  .step-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 14px; font: 600 14px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; }
+  .step-tag b { display: inline-grid; place-items: center; min-width: 34px; height: 26px; padding: 0 6px; border-radius: 4px; color: #fff; font-weight: 600; }
+  .step-tag--1 { color: var(--step-1); } .step-tag--1 b { background: var(--step-1); }
+  .step-tag--2 { color: var(--step-2); } .step-tag--2 b { background: var(--step-2); }
+  .step-tag--3 { color: var(--step-3); } .step-tag--3 b { background: var(--step-3); }
+
+  /* ---------- Шаг 1: проблема ---------- */
+  .problem { background: var(--color-card); border-bottom: 1px solid var(--color-border); }
+  .problem__list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--color-foreground); }
+  .problem__list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 28px 24px 28px 0; border-bottom: 1px solid var(--color-border); }
+  .problem__list li:nth-child(odd) { border-right: 1px solid var(--color-border); }
+  .problem__list li:nth-child(even) { padding-left: 24px; }
+  .problem__list .icon { width: 28px; height: 28px; color: var(--step-1); margin-top: 2px; }
+  .problem__list h3 { margin-bottom: 6px; }
+  .problem__list p { color: var(--color-muted-foreground); }
+  .mini-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .mini-cta span { color: var(--color-muted-foreground); }
+
+  /* ---------- Услуги ---------- */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .svc {
+    position: relative; display: flex; flex-direction: column; gap: 12px;
+    padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .svc--wide { grid-column: span 2; }
+  .svc__icon { width: 44px; height: 44px; display: grid; place-items: center; border-radius: var(--radius); background: var(--color-muted); color: var(--color-primary); }
+  .svc p { color: var(--color-muted-foreground); font-size: 16px; }
+  .svc ul { margin: 0; padding: 0 0 0 18px; color: var(--color-muted-foreground); font-size: 16px; columns: 2; column-gap: 32px; }
+  .svc__foot { margin-top: auto; padding-top: 12px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; border-top: 1px dashed var(--color-border); }
+  .price { font: 600 24px/1.1 var(--font-head); letter-spacing: .01em; }
+  .price small { font: 500 15px var(--font-body); color: var(--color-muted-foreground); }
+  .svc--action { background: var(--color-foreground); color: #fff; border-color: var(--color-foreground); }
+  .svc--action .svc__icon { background: rgba(255,255,255,.1); color: var(--color-accent); }
+  .svc--action p { color: #D5D3CE; }
+  .svc--action .svc__foot { border-color: rgba(255,255,255,.25); }
+  .svc--action .price small { color: #D5D3CE; }
+  .price--ask { font-size: 18px; color: var(--color-foreground-soft); }
+  .svc--action .price--ask { color: #fff; }
+  .svc .rating { font: 600 44px/1 var(--font-head); color: var(--color-foreground); }
+  .svc .rating small { font: 500 15px var(--font-body); color: var(--color-muted-foreground); }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
+  .prices h3 { font-size: 28px; text-transform: uppercase; margin-bottom: 12px; }
+  .prices__note { color: var(--color-muted-foreground); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; }
+  th, td { text-align: left; padding: 14px 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  thead th { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--color-muted-foreground); border-bottom: 2px solid var(--color-foreground); }
+  td:last-child, th:last-child { text-align: right; white-space: nowrap; padding-left: 16px; font-weight: 600; }
+
+  /* ---------- Почему мы ---------- */
+  .why { background: var(--color-card); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .why__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .why__lead { margin-top: 20px; color: var(--color-muted-foreground); max-width: 30em; }
+  .photo-ph {
+    margin-top: 32px; aspect-ratio: 4 / 3; border-radius: var(--radius); border: 1px dashed #8F8A80;
+    display: grid; place-items: center; text-align: center; padding: 24px; color: var(--color-muted-foreground); font-size: 15px;
+    background:
+      repeating-linear-gradient(135deg, rgba(28,31,36,.05) 0 12px, transparent 12px 24px),
+      var(--color-background);
+  }
+  .photo-ph .icon { width: 36px; height: 36px; margin: 0 auto 10px; color: var(--color-primary); }
+  .why__list { margin: 0; padding: 0; list-style: none; counter-reset: why; }
+  .why__list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--color-border); }
+  .why__list li:first-child { padding-top: 0; }
+  .why__list .num { font: 600 34px/1 var(--font-head); color: var(--color-accent-text); }
+  .why__list h3 { margin-bottom: 6px; display: flex; gap: 10px; align-items: center; }
+  .why__list h3 .icon { color: var(--color-primary); width: 22px; height: 22px; }
+  .why__list p { color: var(--color-muted-foreground); }
+
+  /* ---------- Шаг 2: процесс ---------- */
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps li { position: relative; padding: 28px 20px 0 0; border-top: 3px solid var(--color-border); }
+  .steps li::before {
+    counter-increment: st; content: counter(st, decimal-leading-zero);
+    position: absolute; top: -15px; left: 0; display: grid; place-items: center; width: 44px; height: 27px;
+    font: 600 14px/1 var(--font-body); color: #fff; background: var(--step-2); border-radius: 4px;
+  }
+  .steps li:first-child { border-top-color: var(--step-2); }
+  .steps h3 { margin: 8px 0 8px; font-size: 21px; }
+  .steps p { color: var(--color-muted-foreground); font-size: 16px; }
+  .steps .when { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--step-2); }
+
+  /* ---------- Шаг 3: форма ---------- */
+  .order { background: var(--color-foreground); color: #fff; }
+  .order { border-top: 8px solid var(--color-accent); }
+  .order .step-tag--3 { color: var(--color-accent); } .order .step-tag--3 b { background: var(--color-accent); color: var(--color-on-accent); }
+  .order__in { display: grid; grid-template-columns: .9fr 1.1fr; gap: 56px; align-items: start; }
+  .order__text p { margin-top: 20px; color: #D5D3CE; max-width: 28em; }
+  .order__contacts { margin-top: 32px; display: grid; gap: 12px; }
+  .order__contacts a { color: #fff; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; text-decoration: none; }
+  .order__contacts a:hover { color: var(--color-accent); }
+  .order__contacts .icon { color: var(--color-accent); }
+  .order :focus-visible { outline-color: var(--color-accent); }
+
+  .form { background: var(--color-card); color: var(--color-foreground); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .field { display: grid; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  label { font-weight: 600; font-size: 15px; }
+  label .req { color: var(--color-destructive); }
+  input, select, textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    font: 400 16px/1.4 var(--font-body); color: var(--color-foreground);
+    background: #fff; border: 1.5px solid #8F8A80; border-radius: var(--radius);
+    transition: border-color var(--t);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: var(--color-primary); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(29,78,137,.35); outline-offset: 0; border-color: var(--color-primary); }
+  [aria-invalid="true"] { border-color: var(--color-destructive); }
+  .err { min-height: 1.2em; font-size: 14px; color: var(--color-destructive); }
+  .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .form__foot small { color: var(--color-muted-foreground); font-size: 13px; max-width: 26em; }
+  .form-ok {
+    grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius); background: #EEF3FA; border: 1px solid #9DB5D6; color: #143A68; font-weight: 600;
+  }
+  .form-ok.is-on { display: flex; }
+  .form-ok .icon { color: var(--color-primary); }
+
+  /* ---------- Контакты ---------- */
+  .contacts__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .c-list { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--color-foreground); }
+  .c-list li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .c-list .icon { color: var(--color-primary); margin-top: 2px; }
+  .c-list dt, .c-label { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .c-value { font-size: 19px; font-weight: 500; }
+  .c-value a { color: var(--color-foreground); }
+  .route { padding: 28px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .route h3 { margin-bottom: 10px; }
+  .route p { color: var(--color-muted-foreground); margin-bottom: 20px; }
+
+  /* ---------- Подвал ---------- */
+  .footer { padding: 40px 0 96px; border-top: 1px solid var(--color-border); font-size: 15px; color: var(--color-muted-foreground); }
+  .footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+  .footer a { color: var(--color-foreground); }
+  .demo-mark { margin-top: 20px; font-size: 12px; color: var(--color-muted-foreground); }
+
+  /* ---------- Цвета SVG под палитру «Реал-Макс» (перекрывают атрибуты разметки) ---------- */
+  .logo__mark rect { fill: var(--color-foreground); }
+  .logo__mark path[stroke="#EA580C"] { stroke: var(--color-accent); }
+  .hero__art path[stroke="#EA580C"] { stroke: var(--color-accent-text); }
+  .hero__art g[stroke="#047857"] { stroke: var(--color-primary); }
+  .hero__art g[fill="#047857"] { fill: var(--color-primary); font-family: var(--font-body); }
+  .step-tag b, .steps li::before { border-radius: var(--radius); }
+
+  /* ---------- Мобильная панель ---------- */
+  .mbar { display: none; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1024px) {
+    .nav { display: none; }
+    .header__phone { margin-left: auto; }
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__art { max-width: 380px; justify-self: start; }
+    .steps { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 860px) {
+    .sec-head, .prices, .why__in, .order__in, .contacts__in { grid-template-columns: 1fr; gap: 32px; }
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+    .svc--wide { grid-column: span 2; }
+    .problem__list { grid-template-columns: 1fr; }
+    .problem__list li:nth-child(odd) { border-right: 0; }
+    .problem__list li:nth-child(even) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px; }
+    .header__phone span { display: none; }
+    .hero__art { display: none; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .svc--wide { grid-column: auto; }
+    .svc ul { columns: 1; }
+    .steps { grid-template-columns: 1fr; }
+    .form { grid-template-columns: 1fr; }
+    .form__foot .btn { width: 100%; }
+    .mbar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-card); border-top: 1px solid var(--color-border);
+    }
+    .mbar .btn { min-height: 48px; padding: 0 12px; min-width: 0; }
+    .hero__facts { gap: 10px 20px; }
+    .footer__in > * { min-width: 0; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+
+<!-- Набор иконок (линейные, толщина 1.75, в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="2" y="2" width="16" height="6" rx="2"/><path d="M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="8" y="16" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-roof" viewBox="0 0 24 24"><path d="M2 11 12 3l10 8"/><path d="M5 9v11h14V9"/><path d="M10 20v-5h4v5"/></symbol>
+  <symbol id="i-brick" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="1"/><path d="M3 9.33h18M3 14.67h18M9 4v5.33M15 9.33v5.34M9 14.67V20"/></symbol>
+  <symbol id="i-found" viewBox="0 0 24 24"><path d="M2 20h20"/><path d="M4 20v-6h16v6"/><path d="M8 14V8h8v6"/><path d="M11 8V4h2v4"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-building" viewBox="0 0 24 24"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/><path d="M10 6h4M10 10h4M10 14h4M10 18h4"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></symbol>
+  <symbol id="i-wallet"viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержанию</a>
+
+<header class="header">
+  <div class="wrap header__in">
+    <a class="logo" href="#top" aria-label="Реал-Макс — на главную">
+      <svg class="logo__mark" viewBox="0 0 34 34" aria-hidden="true">
+        <rect x="1" y="1" width="32" height="32" rx="5" fill="#0F2A22"/>
+        <path d="M8 24V14l9-6 9 6v10" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M8 24h18" stroke="#EA580C" stroke-width="2.6" stroke-linecap="round"/>
+      </svg>
+      <span>Реал-Макс</span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#services">Что строим</a>
+      <a href="#why">Объекты</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="header__phone" href="tel:+79107500077" aria-label="Позвонить: +7 910 750-00-77">
+      <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>+7 910 750-00-77</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== Первый экран ========== -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <div>
+        <span class="eyebrow" data-hero>Строительная компания · Тамбов</span>
+        <h1 id="hero-title" data-hero>Реал-Макс<small>Жилые и нежилые здания</small></h1>
+        <!-- УТП: проверьте с владельцем, что каждое утверждение соответствует его работе -->
+        <p class="hero__lead" data-hero>Прежде чем доверить стройку, посмотрите, что мы уже построили в&nbsp;Тамбове: объекты с фото, состав работ и отзывы заказчиков&nbsp;— на одной странице. Обсудить ваш объект можно в офисе на Студенецкой или по телефону.</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn btn--accent" href="tel:+79107500077" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить
+          </a>
+          <a class="btn btn--line" href="#order" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Обсудить объект
+          </a>
+        </div>
+        <ul class="hero__facts" data-hero>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg>Жилые здания</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg>Нежилые здания</li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Офис: Студенецкая, 16а к1</li>
+        </ul>
+      </div>
+
+      <!-- Декоративный «чертёж» фасада, без внешних картинок -->
+      <svg class="hero__art" data-hero viewBox="0 0 460 400" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+          <path d="M70 330V170L230 60l160 110v160"/>
+          <path d="M40 190 230 58l190 132" stroke="#EA580C" stroke-width="3"/>
+          <rect x="110" y="210" width="70" height="60"/>
+          <path d="M145 210v60M110 240h70"/>
+          <rect x="260" y="230" width="70" height="100"/>
+          <circle cx="318" cy="282" r="3" fill="currentColor"/>
+          <rect x="205" y="120" width="50" height="40"/>
+          <path d="M30 330h400" stroke-width="3"/>
+          <path d="M60 330v20h340v-20" stroke-opacity=".5"/>
+        </g>
+        <g fill="none" stroke="#047857" stroke-width="1.2">
+          <path d="M70 370h320M70 362v16M390 362v16"/>
+          <path d="M430 170v160M422 170h16M422 330h16"/>
+          <path d="M66 370l8-4M66 370l8 4M394 370l-8-4M394 370l-8 4" />
+        </g>
+        <g font-family="Golos Text, Segoe UI, sans-serif" font-size="13" fill="#047857">
+          <text x="214" y="392">план</text>
+          <text x="440" y="254" transform="rotate(90 440 254)">высота</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 1: задача ========== -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--1"><b>01</b>Задача</div>
+          <h2 id="problem-title">Как выбрать подрядчика на здание</h2>
+        </div>
+        <p>Стройка здания&nbsp;— это месяцы работы и крупный бюджет. Вот что стоит проверить у любого подрядчика до договора, в&nbsp;том числе у нас.</p>
+      </div>
+      <ul class="problem__list" data-stagger>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+          <div><h3>Нечего посмотреть</h3><p>Нет фото построенных объектов, только пара отзывов на картах&nbsp;— и непонятно, что компания реально сдала.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>
+          <div><h3>Нет графика</h3><p>Сроки этапов не записаны: когда фундамент, когда коробка, когда кровля&nbsp;— никто не скажет.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-wallet"/></svg>
+          <div><h3>Оплата вперёд целиком</h3><p>Деньги отданы до начала работ, и повлиять на качество уже нечем.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><h3>Смета «на глаз» и скрытые работы</h3><p>Цена названа по телефону, а армирование и гидроизоляцию закрыли&nbsp;— и никто не видел, как они сделаны.</p></div>
+        </li>
+      </ul>
+      <div class="mini-cta" data-reveal>
+        <a class="link-arrow" href="#order">Обсудить ваш объект <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>или позвоните: <a href="tel:+79107500077">+7 910 750-00-77</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Услуги и цены ========== -->
+  <!-- Направления — по данным Яндекс Карт и 2ГИС (жилые и нежилые здания). Цен в открытых источниках нет — «цены уточняйте».
+       В 2ГИС есть «Реал-Макс» (бетон и раствор) в Рассказове — если это та же компания, можно добавить карточку. -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Что строим</span>
+          <h2 id="services-title" style="margin-top:14px">Жилые и нежилые здания</h2>
+        </div>
+        <p>Стоимость зависит от проекта, площади, участка и материалов, поэтому цены по телефону не называем&nbsp;— уточняйте, считаем смету под ваш объект.</p>
+      </div>
+
+      <div class="svc-grid" data-stagger>
+        <article class="svc svc--wide" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-home"/></svg></div>
+          <h3>Жилые здания</h3>
+          <p>Строительство жилых домов в Тамбове и области. Объём работ&nbsp;— целиком или отдельные этапы&nbsp;— согласуем на первой встрече.</p>
+          <!-- Состав этапов уточнить у владельца: оставить то, что компания делает своими силами -->
+          <ul>
+            <li>фундамент</li>
+            <li>стены и перекрытия</li>
+            <li>кровля</li>
+            <li>инженерные сети</li>
+          </ul>
+          <div class="svc__foot">
+            <span class="price price--ask">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Жилое здание">Обсудить объект <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-building"/></svg></div>
+          <h3>Нежилые здания</h3>
+          <p>Здания под бизнес и хозяйственные нужды. Назначение, проект и сроки обсуждаем до сметы.</p>
+          <div class="svc__foot">
+            <span class="price price--ask">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Нежилое здание">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg></div>
+          <h3>Отзывы о нас</h3>
+          <p class="rating">3,7 <small>на Яндекс Картах · 4 оценки, 7 отзывов</small></p>
+          <p>Читайте отзывы целиком и оставляйте свой после сдачи объекта.</p>
+          <div class="svc__foot">
+            <a class="link-arrow" href="https://yandex.ru/maps/?text=%D0%A0%D0%B5%D0%B0%D0%BB-%D0%9C%D0%B0%D0%BA%D1%81%2C%20%D0%A1%D1%82%D1%83%D0%B4%D0%B5%D0%BD%D0%B5%D1%86%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%2016%D0%B0%20%D0%BA1%2C%20%D0%BF%D0%BE%D0%BC.%2012%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener">Отзывы на Яндекс Картах <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc svc--wide svc--action" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-ruler"/></svg></div>
+          <h3>Встреча и смета</h3>
+          <p>Обсуждаем участок, назначение здания и проект, смотрим объект. После&nbsp;— смета с разбивкой на работы и материалы по этапам.</p>
+          <div class="svc__foot">
+            <span class="price price--ask">Условия выезда уточните по телефону</span>
+            <a class="btn btn--accent" href="#order" data-service="Встреча и смета" data-btn>Записаться на встречу</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="prices" data-reveal>
+        <div>
+          <h3>С чем прийти на встречу</h3>
+          <p class="prices__note">Чем больше исходных данных, тем точнее смета. Если чего-то нет&nbsp;— не страшно, разберёмся вместе.</p>
+        </div>
+        <table>
+          <caption class="sr-only">Исходные данные для расчёта сметы</caption>
+          <thead><tr><th scope="col">Что понадобится</th><th scope="col">Если нет</th></tr></thead>
+          <tbody>
+            <tr><td>Назначение здания: жилое или нежилое</td><td>обсудим</td></tr>
+            <tr><td>Адрес участка и документы на землю</td><td>подскажем</td></tr>
+            <tr><td>Проект или эскиз с размерами</td><td>обсудим</td></tr>
+            <tr><td>Желаемые сроки начала и сдачи</td><td>по графику</td></tr>
+            <tr><td>Ориентир по бюджету</td><td>по смете</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Почему мы ========== -->
+  <!-- Пункты — типовые принципы работы. Оставьте только то, что владелец действительно делает. -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__in">
+      <div data-reveal>
+        <span class="eyebrow">Объекты Реал-Макс</span>
+        <h2 id="why-title" style="margin-top:14px">Здания, которые мы сдали</h2>
+        <p class="why__lead">Здесь будут фото построенных жилых и нежилых зданий с подписью: что за объект, где и какие работы выполнены. Рядом&nbsp;— правила, по которым ведём стройку.</p>
+        <div class="photo-ph" role="img" aria-label="Место для фотографий построенных объектов">
+          <div>
+            <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+            Фото сданных объектов Реал-Макс<br>— добавит владелец
+          </div>
+        </div>
+      </div>
+      <ol class="why__list" data-stagger>
+        <li data-item>
+          <span class="num" aria-hidden="true">1</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-file"/></svg>Смета по этапам</h3>
+          <p>Работы и материалы расписаны отдельно. Видно, за что и когда вы платите.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">2</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Один ответственный на объекте</h3>
+          <p>Прораб, которому можно позвонить и спросить, на каком этапе стройка, без «перезвоните менеджеру».</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">3</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>Фото скрытых работ</h3>
+          <p>Армирование фундамента, гидроизоляция и сети фиксируются до того, как их закроют.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">4</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg>Приёмка и акт</h3>
+          <p>Каждый этап принимаете вы. Следующий начинается после подписанного акта.</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 2: процесс ========== -->
+  <section id="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--2"><b>02</b>Процесс</div>
+          <h2 id="steps-title">Как проходит работа</h2>
+        </div>
+        <p>Пять шагов от звонка до сдачи здания. Сроки каждого шага зависят от объекта и прописываются в графике.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Заявка</h3><p>Звонок или форма на сайте. Уточняем, какое здание нужно, где участок и когда удобно встретиться.</p><span class="when">в день обращения</span></li>
+        <li data-item><h3>Встреча</h3><p>В офисе на Студенецкой или на участке: смотрим проект, грунт и подъезд к объекту.</p><span class="when">в согласованный день</span></li>
+        <li data-item><h3>Смета и договор</h3><p>Разбивка по этапам, график, порядок оплаты. Подписываем, когда всё понятно.</p><span class="when">после встречи</span></li>
+        <li data-item><h3>Работы</h3><p>Идём по графику. Отчёт и фото по каждому этапу, приёмка по акту.</p><span class="when">по графику</span></li>
+        <li data-item><h3>Сдача</h3><p>Итоговая приёмка здания, передача документов. И просьба оставить честный отзыв.</p><span class="when">в конце</span></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn--dark" href="#order" data-btn>Начать со встречи <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>Ответим на вопросы до встречи&nbsp;— по телефону <a href="tel:+79107500077">+7 910 750-00-77</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 3: заявка ========== -->
+  <section class="order" id="order" aria-labelledby="order-title">
+    <div class="wrap order__in">
+      <div class="order__text" data-reveal>
+        <div class="step-tag step-tag--3"><b>03</b>Заявка</div>
+        <h2 id="order-title">Обсудим ваше здание</h2>
+        <p>Оставьте телефон и удобное время&nbsp;— перезвоним, уточним, что и где нужно построить, и договоримся о встрече.</p>
+        <div class="order__contacts">
+          <a href="tel:+79107500077"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>+7 910 750-00-77</a>
+        </div>
+      </div>
+
+      <form class="form" id="lead-form" novalidate data-reveal aria-describedby="form-note">
+        <div class="field">
+          <label for="f-name">Имя <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" placeholder="Как к вам обращаться">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone" placeholder="+7 900 000-00-00">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-service">Услуга <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="e-service">
+            <option value="">Выберите услугу</option>
+            <option>Встреча и смета</option>
+            <option>Жилое здание</option>
+            <option>Нежилое здание</option>
+            <option>Отдельный этап работ</option>
+            <option>Другое</option>
+          </select>
+          <span class="err" id="e-service" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-time">Удобное время для звонка <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-time" name="time" required aria-describedby="e-time">
+            <option value="">Выберите время</option>
+            <option>Утром, 9:00–12:00</option>
+            <option>Днём, 12:00–15:00</option>
+            <option>После обеда, 15:00–18:00</option>
+            <option>Вечером, 18:00–20:00</option>
+            <option>В любое время</option>
+          </select>
+          <span class="err" id="e-time" aria-live="polite"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-comment">Что нужно сделать <span style="font-weight:400;color:var(--color-muted-foreground)">(необязательно)</span></label>
+          <textarea id="f-comment" name="comment" placeholder="Например: жилой дом на своём участке под Тамбовом, проект есть"></textarea>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--accent" type="submit" data-btn>Отправить заявку</button>
+          <small id="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</small>
+        </div>
+        <div class="form-ok" id="form-ok" role="status" aria-live="polite" tabindex="-1">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Заявка принята, перезвоним.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== Контакты ========== -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title" style="margin-top:14px">Офис на Студенецкой</h2>
+        </div>
+        <p>В офисе обсуждаем проект и смету, на участок выезжаем по договорённости. Часы работы уточняйте по телефону.</p>
+      </div>
+      <div class="contacts__in">
+        <ul class="c-list" data-stagger>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Адрес</div><div class="c-value">Студенецкая улица, 16а к1, пом. 12, Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            <div><div class="c-label">Телефон</div><div class="c-value"><a href="tel:+79107500077">+7 910 750-00-77</a></div></div>
+          </li>
+          <li data-item data-hours-row>
+            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+            <div><div class="c-label">Часы работы</div><div class="c-value" data-hours></div></div>
+          </li>
+        </ul>
+        <div class="route" data-reveal data-card>
+          <h3>Как добраться</h3>
+          <!-- Текст маршрута можно дополнить: остановка, вход, парковка — со слов владельца -->
+          <p>Корпус 1 дома 16а по Студенецкой улице, помещение 12. Откройте точку на карте и постройте маршрут. Перед визитом лучше позвонить&nbsp;— прораб может быть на объекте.</p>
+          <a class="btn btn--dark" href="https://yandex.ru/maps/?text=%D0%A0%D0%B5%D0%B0%D0%BB-%D0%9C%D0%B0%D0%BA%D1%81%2C%20%D0%A1%D1%82%D1%83%D0%B4%D0%B5%D0%BD%D0%B5%D1%86%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%2016%D0%B0%20%D0%BA1%2C%20%D0%BF%D0%BE%D0%BC.%2012%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__in">
+      <div>© 2026 Реал-Макс · строительство жилых и нежилых зданий · Тамбов</div>
+      <div><a href="tel:+79107500077">+7 910 750-00-77</a> · Студенецкая улица, 16а к1, пом. 12, Тамбов</div>
+    </div>
+    <p class="demo-mark">Демо-макет. Состав работ и тексты — черновые, уточняются владельцем; фото объектов добавит владелец.</p>
+  </div>
+</footer>
+
+<div class="mbar" aria-label="Быстрые действия">
+  <a class="btn btn--accent" href="tel:+79107500077"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn--dark" href="#order">Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Часы работы: если пусто — прячем строку ---------- */
+  var hours = document.querySelector("[data-hours]");
+  if (hours && !hours.textContent.trim()) {
+    var row = document.querySelector("[data-hours-row]");
+    if (row) row.hidden = true;
+  }
+
+  /* ---------- Кнопки услуг подставляют услугу в форму ---------- */
+  var select = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === v) { select.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* ---------- Форма: проверка и сообщение (без отправки на сервер) ---------- */
+  var form = document.getElementById("lead-form");
+  var ok = document.getElementById("form-ok");
+  function setErr(input, msg) {
+    var e = document.getElementById(input.getAttribute("aria-describedby"));
+    if (e) e.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+  function check(input) {
+    var v = input.value.trim();
+    if (input.name === "name") return setErr(input, v.length < 2 ? "Укажите имя" : "");
+    if (input.name === "phone") {
+      var digits = v.replace(/\D/g, "");
+      return setErr(input, digits.length < 10 || digits.length > 15 ? "Укажите телефон, например +7 900 000-00-00" : "");
+    }
+    if (input.name === "service") return setErr(input, v ? "" : "Выберите услугу");
+    if (input.name === "time") return setErr(input, v ? "" : "Выберите удобное время");
+    return true;
+  }
+  var fields = form.querySelectorAll("[required]");
+  fields.forEach(function (f) {
+    f.addEventListener("blur", function () { if (f.value) check(f); });
+    f.addEventListener("input", function () { if (f.getAttribute("aria-invalid")) check(f); });
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var firstBad = null;
+    fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f; });
+    if (firstBad) { firstBad.focus(); return; }
+    /* Здесь можно подключить отправку: в Telegram-бота, CRM или на почту владельца. */
+    form.reset();
+    ok.classList.add("is-on");
+    ok.focus();
+    if (window.Motion && !reduce) {
+      window.Motion.animate(ok, { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: 0.35 });
+    }
+  });
+
+  /* ---------- Анимации (Motion). Без motion.js и при reduced-motion — просто статичная страница ---------- */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduce || typeof M.animate !== "function") return;
+
+  var EASE = [0.22, 1, 0.36, 1];
+  var opts = function (d, extra) {
+    var o = { duration: d, ease: EASE, easing: EASE };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+  var hide = function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; };
+  var show = { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0px)"] };
+  var elOf = function (a) { return a && a.nodeType === 1 ? a : (a && (a.currentTarget || a.target)) || null; };
+
+  try {
+    /* Первый экран: по очереди */
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll("[data-hero]"));
+    heroItems.forEach(hide);
+    M.animate(heroItems, show, opts(0.55, { delay: M.stagger ? M.stagger(0.09) : 0 }));
+
+    /* Блоки при прокрутке */
+    if (typeof M.inView === "function") {
+      var singles = document.querySelectorAll("[data-reveal]");
+      singles.forEach(hide);
+      singles.forEach(function (el) {
+        M.inView(el, function () { M.animate(el, show, opts(0.5)); }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+
+      document.querySelectorAll("[data-stagger]").forEach(function (group) {
+        var items = group.querySelectorAll("[data-item]");
+        items.forEach(hide);
+        M.inView(group, function () {
+          M.animate(items, show, opts(0.45, { delay: M.stagger ? M.stagger(0.07) : 0 }));
+        }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+    } else {
+      // нет inView — ничего не прячем
+    }
+
+    /* Наведение и нажатие */
+    if (typeof M.hover === "function") {
+      M.hover("[data-card]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-3px)" }, opts(0.25));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.25)); };
+      });
+      M.hover("[data-btn]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-1px)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.2)); };
+      });
+    }
+    if (typeof M.press === "function") {
+      M.press("[data-btn], .mbar .btn", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "scale(0.97)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "scale(1)" }, opts(0.25)); };
+      });
+    }
+
+    /* Лёгкий параллакс сетки на первом экране */
+    var hero = document.querySelector(".hero");
+    var grid = document.querySelector(".hero__grid");
+    if (typeof M.scroll === "function" && hero && grid) {
+      M.scroll(function (p) {
+        var v = typeof p === "number" ? p : (p && p.y ? p.y.progress : 0);
+        grid.style.transform = "translate3d(0," + Math.round(v * 70) + "px,0)";
+      }, { target: hero, offset: ["start start", "end start"] });
+    }
+  } catch (e) {
+    /* Если что-то пошло не так — показываем всё как есть */
+    document.querySelectorAll("[data-hero],[data-reveal],[data-item]").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

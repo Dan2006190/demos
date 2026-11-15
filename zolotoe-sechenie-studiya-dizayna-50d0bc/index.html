@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Золотое Сечение — студия дизайна и ремонта в Тамбове</title>
+<meta name="description" content="Золотое Сечение — студия дизайна и ремонта в Тамбове: дизайн-проект интерьера, ремонт, замер и консультация. Две студии: Мичуринская, 213г и ТРЦ «Студенец». Телефон +7 953 708-09-66.">
+<meta name="theme-color" content="#1F1B16">
+
+<!-- Разметка для поисковиков. Подстановки заменяются при сборке под клиента. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "HomeAndConstructionBusiness",
+  "name": "Золотое Сечение (студия дизайна и ремонта)",
+  "telephone": "+7 953 708-09-66",
+  "address": { "@type": "PostalAddress", "streetAddress": "Мичуринская улица, 213г, Тамбов", "addressLocality": "Тамбов" },
+  "geo": { "@type": "GeoCoordinates", "latitude": "0.000000", "longitude": "0.000000" },
+  "openingHours": "",
+  "hasMap": "https://yandex.ru/maps/?text=%D0%97%D0%BE%D0%BB%D0%BE%D1%82%D0%BE%D0%B5%20%D0%A1%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D0%B5%20%28%D1%81%D1%82%D1%83%D0%B4%D0%B8%D1%8F%20%D0%B4%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD%D0%B0%20%D0%B8%20%D1%80%D0%B5%D0%BC%D0%BE%D0%BD%D1%82%D0%B0%29%2C%20%D0%9C%D0%B8%D1%87%D1%83%D1%80%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%20213%D0%B3%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2"
+}
+</script>
+
+<style>
+  :root {
+    /* Образ «Золотое Сечение»: слоновая кость + графит + латунь/золото. Пропорция 1 : 1,618 в сетке и знаке.
+       Фирменных цветов у студии не найдено — палитру согласовать с владельцем. Контраст текста 4.5:1+ */
+    --color-primary: #6B4E16;          /* бронза: ссылки и акценты на светлом, 7.6:1 к белому */
+    --color-primary-strong: #4F3A10;
+    --color-secondary: #C9A24A;
+    --color-accent: #C9A24A;           /* золото: фон кнопок, текст на нём тёмный */
+    --color-on-accent: #1F1B16;        /* 8:1 к #C9A24A */
+    --color-accent-hover: #D6B463;
+    --color-accent-text: #8A6418;      /* латунь для текста на светлом: 5.2:1 к белому, 4.7:1 к фону */
+    --color-accent-light: #D8B565;     /* золото для текста на тёмном */
+    --color-background: #F7F3EC;
+    --color-foreground: #1F1B16;
+    --color-card: #FFFFFF;
+    --color-muted: #EFE8DC;
+    --color-muted-foreground: #5A5248; /* 7:1 к фону */
+    --color-border: #DED3C1;
+    --color-field: #8F8270;            /* рамки полей: 3.9:1 к белому */
+    --color-destructive: #A3301F;
+    --color-ring: #6B4E16;
+    --step-1: #9A3B2E;   /* проблема — терракота */
+    --step-2: #8A6418;   /* процесс — латунь */
+    --step-3: #3F5E4A;   /* действие — шалфей */
+
+    --font-head: Georgia, "Palatino Linotype", "Book Antiqua", Palatino, "Times New Roman", serif;
+    --font-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+
+    --radius: 2px;
+    --shadow: 0 1px 0 rgba(31, 27, 22, .06);
+    --wrap: 1180px;
+    --t: 250ms ease;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { transition: none !important; } }
+
+  body {
+    margin: 0;
+    font-family: var(--font-body);
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--color-foreground);
+    background: var(--color-background);
+    overflow-x: hidden;
+    overflow-wrap: break-word;
+  }
+  img, svg { display: block; max-width: 100%; }
+  /* Дети grid/flex не должны распирать страницу шире экрана */
+  .hero__in > *, .sec-head > *, .prices > *, .why__in > *, .order__in > *, .contacts__in > *,
+  .svc-grid > *, .form > *, .field, .problem__list li > div, .why__list li > div, .c-list li > div { min-width: 0; }
+  a { color: var(--color-primary); text-underline-offset: 3px; }
+  a:hover { color: var(--color-primary-strong); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 400; line-height: 1.15; letter-spacing: -.005em; margin: 0; }
+  h2 { font-size: clamp(30px, 4vw, 46px); }
+  h3 { font-size: 22px; }
+  p { margin: 0; }
+
+  :focus-visible { outline: 3px solid var(--color-ring); outline-offset: 3px; border-radius: 2px; }
+  .skip { position: absolute; left: 12px; top: -60px; background: var(--color-foreground); color: #fff; padding: 10px 14px; z-index: 100; border-radius: var(--radius); }
+  .skip:focus { top: 12px; color: #fff; }
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  section { padding: clamp(64px, 9vw, 112px) 0; }
+  .icon { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Кнопки ---------- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 10px;
+    min-height: 52px; padding: 0 26px;
+    font: 600 15px/1 var(--font-body); letter-spacing: .04em;
+    border-radius: var(--radius); border: 1.5px solid transparent;
+    text-decoration: none; cursor: pointer;
+    transition: background-color var(--t), color var(--t), border-color var(--t);
+  }
+  .btn .icon { width: 20px; height: 20px; }
+  .btn--accent { background: var(--color-accent); color: var(--color-on-accent); }
+  .btn--accent:hover { background: var(--color-accent-hover); color: var(--color-on-accent); }
+  .btn--line { background: transparent; color: var(--color-foreground); border-color: var(--color-foreground); }
+  .btn--line:hover { background: var(--color-foreground); color: #fff; }
+  .btn--dark { background: var(--color-foreground); color: #fff; }
+  .btn--dark:hover { background: #3A322A; color: #fff; }
+  .link-arrow { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-decoration: none; cursor: pointer; }
+  .link-arrow .icon { width: 18px; height: 18px; transition: transform var(--t); }
+  .link-arrow:hover .icon { transform: translateX(3px); }
+
+  /* ---------- Шапка ---------- */
+  .header { position: sticky; top: 0; z-index: 50; background: rgba(247, 243, 236, .97); border-bottom: 1px solid var(--color-border); }
+  .header__in { display: flex; align-items: center; gap: 32px; min-height: 70px; }
+  .logo { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--color-foreground); min-width: 0; }
+  .logo:hover { color: var(--color-foreground); }
+  .logo__mark { width: 42px; height: 26px; flex: none; }
+  .logo__name { display: grid; line-height: 1.1; }
+  .logo__name b { font: 400 21px/1.1 var(--font-head); }
+  .logo__name small { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .nav { display: flex; gap: 26px; margin-left: auto; }
+  .nav a { color: var(--color-foreground); text-decoration: none; font-weight: 500; font-size: 15px; padding: 6px 0; border-bottom: 1px solid transparent; transition: border-color var(--t); }
+  .nav a:hover { border-color: var(--color-accent-text); color: var(--color-foreground); }
+  .header__phone { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--color-foreground); text-decoration: none; white-space: nowrap; }
+  .header__phone .icon { width: 20px; height: 20px; color: var(--color-accent-text); }
+
+  /* ---------- Первый экран ---------- */
+  .hero { position: relative; overflow: hidden; padding: clamp(56px, 8vw, 110px) 0 clamp(64px, 8vw, 100px); border-bottom: 1px solid var(--color-border); }
+  /* Сетка в пропорции 1 : 1,618 (162 × 100) + тёплый свет от «окна» справа */
+  .hero__grid {
+    position: absolute; inset: -80px 0 0 0; pointer-events: none;
+    background-image:
+      radial-gradient(ellipse 60% 70% at 88% 18%, rgba(201, 162, 74, .20), transparent 70%),
+      linear-gradient(90deg, rgba(107, 78, 22, .09) 1px, transparent 1px),
+      linear-gradient(rgba(107, 78, 22, .09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(107, 78, 22, .045) 1px, transparent 1px);
+    background-size: 100% 100%, 162px 100px, 162px 100px, 61.8px 100px;
+    -webkit-mask-image: linear-gradient(180deg, #000 35%, transparent 100%);
+            mask-image: linear-gradient(180deg, #000 35%, transparent 100%);
+  }
+  .hero__in { position: relative; display: grid; grid-template-columns: 1.618fr 1fr; gap: 48px; align-items: center; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--color-accent-text); }
+  .eyebrow::before { content: ""; width: 38px; height: 1px; background: var(--color-accent-text); }
+  .hero h1 { margin: 20px 0 22px; font-size: clamp(40px, 6.2vw, 78px); line-height: 1.05; }
+  .hero h1 em { font-style: italic; color: var(--color-accent-text); }
+  .hero__lead { font-size: clamp(18px, 2vw, 21px); max-width: 32em; color: #3A322A; }
+  .hero__cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 34px; }
+  .hero__facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 38px 0 0; padding: 18px 0 0; list-style: none; font-size: 15px; color: var(--color-muted-foreground); border-top: 1px solid var(--color-border); }
+  .hero__facts li { display: flex; align-items: center; gap: 8px; }
+  .hero__facts b { color: var(--color-foreground); font-weight: 600; }
+  .hero__facts .icon { width: 18px; height: 18px; color: var(--color-accent-text); }
+  .hero__art { width: 100%; max-width: 440px; justify-self: end; color: var(--color-foreground); }
+
+  /* ---------- Заголовки секций ---------- */
+  .sec-head { display: grid; grid-template-columns: 1.618fr 1fr; gap: 24px 48px; align-items: end; margin-bottom: 48px; }
+  .sec-head p { color: var(--color-muted-foreground); max-width: 32em; }
+  .step-tag { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 16px; font: 600 13px/1 var(--font-body); letter-spacing: .14em; text-transform: uppercase; }
+  .step-tag b { display: inline-grid; place-items: center; min-width: 34px; height: 24px; padding: 0 6px; border-radius: var(--radius); color: #fff; font-weight: 600; }
+  .step-tag--1 { color: var(--step-1); } .step-tag--1 b { background: var(--step-1); }
+  .step-tag--2 { color: var(--step-2); } .step-tag--2 b { background: var(--step-2); }
+  .step-tag--3 { color: var(--step-3); } .step-tag--3 b { background: var(--step-3); }
+
+  /* ---------- Шаг 1: проблема ---------- */
+  .problem { background: var(--color-card); border-bottom: 1px solid var(--color-border); }
+  .problem__list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-foreground); }
+  .problem__list li { display: grid; grid-template-columns: 48px 1fr; gap: 16px; padding: 28px 24px 28px 0; border-bottom: 1px solid var(--color-border); }
+  .problem__list li:nth-child(odd) { border-right: 1px solid var(--color-border); }
+  .problem__list li:nth-child(even) { padding-left: 24px; }
+  .problem__list .icon { width: 28px; height: 28px; color: var(--step-1); margin-top: 2px; }
+  .problem__list h3 { margin-bottom: 6px; }
+  .problem__list p { color: var(--color-muted-foreground); }
+  .mini-cta { margin-top: 32px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 24px; }
+  .mini-cta span { color: var(--color-muted-foreground); }
+
+  /* ---------- Услуги ---------- */
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .svc {
+    position: relative; display: flex; flex-direction: column; gap: 12px;
+    padding: 30px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+  .svc--wide { grid-column: span 2; }
+  .svc__icon { width: 48px; height: 48px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--color-accent); color: var(--color-accent-text); }
+  .svc p { color: var(--color-muted-foreground); font-size: 16px; }
+  .svc ul { margin: 0; padding: 0 0 0 18px; color: var(--color-muted-foreground); font-size: 16px; columns: 2; column-gap: 32px; }
+  .svc__foot { margin-top: auto; padding-top: 14px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 8px 16px; border-top: 1px solid var(--color-border); }
+  .price { font: 400 19px/1.2 var(--font-head); font-style: italic; }
+  .price small { font: 400 15px var(--font-body); font-style: normal; color: var(--color-muted-foreground); }
+  .svc--action { background: var(--color-foreground); color: #fff; border-color: var(--color-foreground); }
+  .svc--action .svc__icon { border-color: var(--color-accent-light); color: var(--color-accent-light); }
+  .svc--action p { color: #E2D9CA; }
+  .svc--action .svc__foot { border-color: rgba(255,255,255,.2); }
+  .svc--action .price small { color: #E2D9CA; }
+
+  .prices { margin-top: 56px; display: grid; grid-template-columns: 1fr 1.618fr; gap: 48px; align-items: start; }
+  .prices h3 { font-size: 30px; margin-bottom: 12px; }
+  .prices__note { color: var(--color-muted-foreground); font-size: 15px; }
+  table { width: 100%; border-collapse: collapse; font-size: 16px; }
+  caption { text-align: left; }
+  th, td { text-align: left; padding: 14px 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+  thead th { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .12em; color: var(--color-muted-foreground); border-bottom: 1px solid var(--color-foreground); }
+  td:last-child, th:last-child { text-align: right; padding-left: 16px; font-weight: 600; }
+
+  /* ---------- Почему мы ---------- */
+  .why { background: var(--color-card); border-top: 1px solid var(--color-border); border-bottom: 1px solid var(--color-border); }
+  .why__in { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+  .why__lead { margin-top: 20px; color: var(--color-muted-foreground); max-width: 30em; }
+  .photo-ph {
+    margin-top: 32px; aspect-ratio: 1.618 / 1; border-radius: var(--radius); border: 1px dashed var(--color-field);
+    display: grid; place-items: center; text-align: center; padding: 24px; color: var(--color-muted-foreground); font-size: 15px;
+    background:
+      linear-gradient(90deg, transparent 61.8%, rgba(107,78,22,.12) 61.8%, rgba(107,78,22,.12) calc(61.8% + 1px), transparent calc(61.8% + 1px)),
+      var(--color-background);
+  }
+  .photo-ph .icon { width: 36px; height: 36px; margin: 0 auto 10px; color: var(--color-accent-text); }
+  .why__list { margin: 0; padding: 0; list-style: none; counter-reset: why; }
+  .why__list li { display: grid; grid-template-columns: 56px 1fr; gap: 16px; padding: 24px 0; border-bottom: 1px solid var(--color-border); }
+  .why__list li:first-child { padding-top: 0; }
+  .why__list .num { font: italic 400 38px/1 var(--font-head); color: var(--color-accent-text); }
+  .why__list h3 { margin-bottom: 6px; display: flex; gap: 10px; align-items: center; }
+  .why__list h3 .icon { color: var(--color-accent-text); width: 22px; height: 22px; }
+  .why__list p { color: var(--color-muted-foreground); }
+
+  /* ---------- Шаг 2: процесс ---------- */
+  .steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: 0; margin: 0; padding: 0; list-style: none; counter-reset: st; }
+  .steps li { position: relative; padding: 28px 20px 0 0; border-top: 1px solid var(--color-field); }
+  .steps li::before {
+    counter-increment: st; content: counter(st, decimal-leading-zero);
+    position: absolute; top: -13px; left: 0; display: grid; place-items: center; width: 44px; height: 25px;
+    font: 600 13px/1 var(--font-body); color: #fff; background: var(--step-2); border-radius: var(--radius);
+  }
+  .steps li:first-child { border-top: 2px solid var(--step-2); }
+  .steps h3 { margin: 8px 0 8px; font-size: 21px; }
+  .steps p { color: var(--color-muted-foreground); font-size: 16px; }
+  .steps .when { display: inline-block; margin-top: 10px; font-size: 14px; font-weight: 600; color: var(--step-2); }
+
+  /* ---------- Шаг 3: форма ---------- */
+  .order { background: var(--color-foreground); color: #fff; }
+  .order .step-tag--3 { color: #B9CDBE; } .order .step-tag--3 b { background: #9DBBA6; color: #1F1B16; }
+  .order__in { display: grid; grid-template-columns: 1fr 1.618fr; gap: 56px; align-items: start; }
+  .order__text p { margin-top: 20px; color: #E2D9CA; max-width: 28em; }
+  .order__contacts { margin-top: 32px; display: grid; gap: 12px; }
+  .order__contacts a { color: #fff; display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 20px; text-decoration: none; }
+  .order__contacts a:hover { color: var(--color-accent-light); }
+  .order__contacts .icon { color: var(--color-accent-light); }
+
+  .form { background: var(--color-card); color: var(--color-foreground); border-radius: var(--radius); padding: clamp(24px, 4vw, 40px); display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 3px solid var(--color-accent); }
+  .field { display: grid; gap: 6px; }
+  .field--full { grid-column: 1 / -1; }
+  label { font-weight: 600; font-size: 15px; }
+  label .req { color: var(--color-destructive); }
+  input, select, textarea {
+    width: 100%; min-height: 50px; padding: 12px 14px;
+    font: 400 16px/1.4 var(--font-body); color: var(--color-foreground);
+    background: #fff; border: 1px solid var(--color-field); border-radius: var(--radius);
+    transition: border-color var(--t);
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  input:hover, select:hover, textarea:hover { border-color: var(--color-primary); }
+  input:focus-visible, select:focus-visible, textarea:focus-visible { outline: 3px solid rgba(107,78,22,.35); outline-offset: 0; border-color: var(--color-primary); }
+  [aria-invalid="true"] { border-color: var(--color-destructive); }
+  .err { min-height: 1.2em; font-size: 14px; color: var(--color-destructive); }
+  .form__foot { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+  .form__foot small { color: var(--color-muted-foreground); font-size: 13px; max-width: 26em; }
+  .form-ok {
+    grid-column: 1 / -1; display: none; gap: 12px; align-items: flex-start;
+    padding: 16px 18px; border-radius: var(--radius); background: #EEF4EF; border: 1px solid #9DBBA6; color: #24392C; font-weight: 600;
+  }
+  .form-ok.is-on { display: flex; }
+  .form-ok .icon { color: var(--step-3); }
+
+  /* ---------- Контакты ---------- */
+  .contacts__in { display: grid; grid-template-columns: 1.618fr 1fr; gap: 56px; align-items: start; }
+  .c-list { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--color-foreground); }
+  .c-list li { display: grid; grid-template-columns: 40px 1fr; gap: 12px; padding: 20px 0; border-bottom: 1px solid var(--color-border); }
+  .c-list .icon { color: var(--color-accent-text); margin-top: 2px; }
+  .c-list dt, .c-label { font-size: 12px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; color: var(--color-muted-foreground); }
+  .c-value { font-size: 19px; font-weight: 500; }
+  .c-value a { color: var(--color-foreground); }
+  .route { padding: 30px; background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+  .route h3 { margin-bottom: 10px; }
+  .route p { color: var(--color-muted-foreground); margin-bottom: 20px; }
+
+  /* ---------- Подвал ---------- */
+  .footer { padding: 40px 0 96px; border-top: 1px solid var(--color-border); font-size: 15px; color: var(--color-muted-foreground); }
+  .footer__in { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; }
+  .footer a { color: var(--color-foreground); }
+  .demo-mark { margin-top: 20px; font-size: 12px; color: var(--color-muted-foreground); }
+
+  /* ---------- Мобильная панель ---------- */
+  .mbar { display: none; }
+
+  /* ---------- Адаптив ---------- */
+  @media (max-width: 1024px) {
+    .nav { display: none; }
+    .header__phone { margin-left: auto; }
+    .hero__in { grid-template-columns: 1fr; }
+    .hero__art { max-width: 380px; justify-self: start; }
+    .steps { grid-template-columns: repeat(3, 1fr); row-gap: 40px; }
+  }
+  @media (max-width: 860px) {
+    .sec-head, .prices, .why__in, .order__in, .contacts__in { grid-template-columns: 1fr; gap: 32px; }
+    .svc-grid { grid-template-columns: 1fr 1fr; }
+    .svc--wide { grid-column: span 2; }
+    .problem__list { grid-template-columns: 1fr; }
+    .problem__list li:nth-child(odd) { border-right: 0; }
+    .problem__list li:nth-child(even) { padding-left: 0; }
+  }
+  @media (max-width: 640px) {
+    body { font-size: 16px; }
+    .wrap { padding: 0 18px; }
+    .header__phone span { display: none; }
+    .logo__name small { display: none; }
+    .hero__art { display: none; }
+    .hero__cta .btn { flex: 1 1 100%; }
+    .svc-grid { grid-template-columns: 1fr; }
+    .svc--wide { grid-column: auto; }
+    .svc ul { columns: 1; }
+    .steps { grid-template-columns: 1fr; }
+    .form { grid-template-columns: 1fr; }
+    .form__foot .btn { width: 100%; }
+    .mbar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: var(--color-card); border-top: 1px solid var(--color-border);
+    }
+    .mbar .btn { min-height: 48px; padding: 0 12px; min-width: 0; }
+    .hero__facts { gap: 10px 20px; }
+    .footer__in > * { min-width: 0; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+
+<!-- Набор иконок (линейные, толщина 1.5, в стиле Lucide) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M21.3 15.3a2.4 2.4 0 0 1 0 3.4l-2.6 2.6a2.4 2.4 0 0 1-3.4 0L2.7 8.7a2.41 2.41 0 0 1 0-3.4l2.6-2.6a2.41 2.41 0 0 1 3.4 0Z"/><path d="m14.5 12.5 2-2"/><path d="m11.5 9.5 2-2"/><path d="m8.5 6.5 2-2"/><path d="m17.5 15.5 2-2"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/><path d="M16 13H8"/><path d="M16 17H8"/></symbol>
+  <symbol id="i-camera" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  <symbol id="i-roller" viewBox="0 0 24 24"><rect x="2" y="2" width="16" height="6" rx="2"/><path d="M10 16v-2a2 2 0 0 1 2-2h8a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="8" y="16" width="4" height="6" rx="1"/></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"/><path d="M12 9v4"/><path d="M12 17h.01"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 2 2 7l10 5 10-5-10-5z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></symbol>
+  <!-- Иконки студии дизайна -->
+  <symbol id="i-pencil-ruler" viewBox="0 0 24 24"><path d="M13 7 8.7 2.7a2.41 2.41 0 0 0-3.4 0L2.7 5.3a2.41 2.41 0 0 0 0 3.4L7 13"/><path d="m8 6 2-2"/><path d="m18 16 2-2"/><path d="m17 11 4.3 4.3c.94.94.94 2.46 0 3.4l-2.6 2.6c-.94.94-2.46.94-3.4 0L11 17"/><path d="M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z"/><path d="m15 5 4 4"/></symbol>
+  <symbol id="i-sofa" viewBox="0 0 24 24"><path d="M20 9V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v3"/><path d="M2 16a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-5a2 2 0 0 0-4 0v1.5a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5V11a2 2 0 0 0-4 0z"/><path d="M4 18v2M20 18v2M12 4v9"/></symbol>
+  <symbol id="i-message" viewBox="0 0 24 24"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M11.525 2.295a.53.53 0 0 1 .95 0l2.31 4.679a2.12 2.12 0 0 0 1.595 1.16l5.166.756a.53.53 0 0 1 .294.904l-3.736 3.638a2.12 2.12 0 0 0-.611 1.878l.882 5.14a.53.53 0 0 1-.771.56l-4.618-2.428a2.12 2.12 0 0 0-1.973 0L6.396 21.01a.53.53 0 0 1-.77-.56l.881-5.139a2.12 2.12 0 0 0-.611-1.879L2.16 9.795a.53.53 0 0 1 .294-.906l5.165-.755a2.12 2.12 0 0 0 1.597-1.16z"/></symbol>
+  <symbol id="i-spiral" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="1"/><path d="M15.6 5v14M15.6 9.4H22"/><path d="M2 19A14 14 0 0 1 15.6 5.4"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Перейти к содержанию</a>
+
+<header class="header">
+  <div class="wrap header__in">
+    <a class="logo" href="#top" aria-label="Золотое Сечение (студия дизайна и ремонта) — на главную">
+      <!-- Знак: золотой прямоугольник 1 : 1,618 со спиралью -->
+      <svg class="logo__mark" viewBox="0 0 42 26" aria-hidden="true">
+        <rect x="1" y="1" width="40" height="24" fill="none" stroke="#1F1B16" stroke-width="1.5"/>
+        <path d="M25.7 1v24M25.7 10.4H41M32.6 10.4v14.6" fill="none" stroke="#1F1B16" stroke-width="1"/>
+        <path d="M1 25A24 24 0 0 1 25 1 A15.3 15.3 0 0 1 41 10.4 A9 9 0 0 1 32.6 25" fill="none" stroke="#B08A35" stroke-width="2"/>
+      </svg>
+      <span class="logo__name"><b>Золотое Сечение</b><small>студия дизайна и ремонта</small></span>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#services">Услуги</a>
+      <a href="#why">О студии</a>
+      <a href="#steps">Этапы</a>
+      <a href="#contacts">Две студии</a>
+    </nav>
+    <a class="header__phone" href="tel:+79537080966" aria-label="Позвонить: +7 953 708-09-66">
+      <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg><span>+7 953 708-09-66</span>
+    </a>
+  </div>
+</header>
+
+<main id="main">
+
+  <!-- ========== Первый экран ========== -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero__grid" aria-hidden="true"></div>
+    <div class="wrap hero__in">
+      <div>
+        <span class="eyebrow" data-hero>Студия дизайна и ремонта · Тамбов</span>
+        <h1 id="hero-title" data-hero>Интерьер в&nbsp;верных <em>пропорциях</em>&nbsp;— от&nbsp;проекта до&nbsp;ремонта</h1>
+        <!-- УТП: проверьте с владельцем, что каждое утверждение соответствует его работе -->
+        <p class="hero__lead" data-hero>«Золотое Сечение» делает дизайн интерьера и&nbsp;ремонт. Запишитесь на&nbsp;замер или консультацию прямо здесь&nbsp;— без переписки и&nbsp;поиска нужного контакта. Встретиться можно на&nbsp;Мичуринской, 213г или в&nbsp;ТРЦ «Студенец».</p>
+        <div class="hero__cta" data-hero>
+          <a class="btn btn--accent" href="#order" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-calendar"/></svg>Записаться на замер
+          </a>
+          <a class="btn btn--line" href="tel:+79537080966" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить
+          </a>
+        </div>
+        <ul class="hero__facts" data-hero>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg><span><b>5</b> на 2ГИС, 13 оценок</span></li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg><span><b>4.5</b> на Яндекс Картах, 14 оценок</span></li>
+          <li><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg><span>2 студии в Тамбове</span></li>
+        </ul>
+      </div>
+
+      <!-- Декоративный золотой прямоугольник со спиралью, без внешних картинок -->
+      <svg class="hero__art" data-hero viewBox="0 0 460 330" aria-hidden="true" focusable="false">
+        <g transform="translate(20 20)" fill="none" stroke-linejoin="round">
+          <g stroke="currentColor" stroke-width="1.5">
+            <rect x="0" y="0" width="420" height="260"/>
+            <path d="M260 0v260M260 160h160M320 160v100M260 200h60M300 160v40"/>
+          </g>
+          <path d="M0 260A260 260 0 0 1 260 0A160 160 0 0 1 420 160A100 100 0 0 1 320 260A60 60 0 0 1 260 200A40 40 0 0 1 300 160" stroke="#B08A35" stroke-width="3" stroke-linecap="round"/>
+          <g stroke="#6B4E16" stroke-width="1">
+            <path d="M0 284h420M0 278v12M420 278v12M260 278v12"/>
+          </g>
+        </g>
+        <g font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="15" fill="#6B4E16">
+          <text x="138" y="324">1,618</text>
+          <text x="352" y="324">1</text>
+        </g>
+      </svg>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 1: задача ========== -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--1"><b>01</b>Задача</div>
+          <h2 id="problem-title">С&nbsp;чего начинаются переделки в&nbsp;ремонте</h2>
+        </div>
+        <p>Типичные ситуации, когда ремонт делают без проекта. Их проще решить на&nbsp;бумаге у&nbsp;дизайнера, чем потом на&nbsp;объекте.</p>
+      </div>
+      <ul class="problem__list" data-stagger>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-alert"/></svg>
+          <div><h3>Решения принимаются на&nbsp;ходу</h3><p>Плитку, свет и&nbsp;розетки выбирают уже во&nbsp;время работ&nbsp;— и&nbsp;потом что-то приходится переносить.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-sofa"/></svg>
+          <div><h3>Мебель «не встаёт»</h3><p>Размеры шкафа или кухни не учли заранее, и&nbsp;пространство работает хуже, чем могло бы.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-layers"/></svg>
+          <div><h3>Проект и&nbsp;ремонт&nbsp;— у&nbsp;разных людей</h3><p>Дизайнер нарисовал, бригада сделала по-своему, а&nbsp;разбираться между ними приходится вам.</p></div>
+        </li>
+        <li data-item>
+          <svg class="icon" aria-hidden="true"><use href="#i-message"/></svg>
+          <div><h3>Трудно просто записаться</h3><p>Чтобы договориться о&nbsp;замере, нужно искать контакт, писать и&nbsp;ждать ответа. Здесь&nbsp;— одна форма.</p></div>
+        </li>
+      </ul>
+      <div class="mini-cta" data-reveal>
+        <a class="link-arrow" href="#order">Обсудить ваш интерьер <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>или позвоните: <a href="tel:+79537080966">+7 953 708-09-66</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Услуги ========== -->
+  <!-- Цен в открытых источниках нет — везде «цены уточняйте». Состав услуг согласовать с владельцем. -->
+  <section id="services" aria-labelledby="services-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Услуги</span>
+          <h2 id="services-title" style="margin-top:14px">Дизайн и&nbsp;ремонт в&nbsp;одной студии</h2>
+        </div>
+        <p>Стоимость зависит от&nbsp;площади, задачи и&nbsp;материалов&nbsp;— её&nbsp;называют после замера и&nbsp;разговора с&nbsp;вами.</p>
+      </div>
+
+      <div class="svc-grid" data-stagger>
+        <article class="svc svc--wide" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-pencil-ruler"/></svg></div>
+          <h3>Дизайн-проект интерьера</h3>
+          <!-- Состав проекта уточнить у студии -->
+          <p>Квартира, дом или отдельная комната. Что войдёт в&nbsp;проект&nbsp;— планировка, отделка, свет, мебель&nbsp;— обсуждаете с&nbsp;дизайнером на&nbsp;первой встрече.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте <small>· по телефону или в студии</small></span>
+            <a class="link-arrow" href="#order" data-service="Дизайн-проект интерьера">Записаться на консультацию <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-roller"/></svg></div>
+          <h3>Ремонт</h3>
+          <p>Ремонт квартир и&nbsp;помещений, в&nbsp;том числе по&nbsp;дизайн-проекту студии. Объём работ определяется после замера.</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Ремонт">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg></div>
+          <h3>Консультация в&nbsp;студии</h3>
+          <p>Приходите с&nbsp;планировкой или фото помещения на&nbsp;Мичуринскую, 213г или в&nbsp;ТРЦ «Студенец».</p>
+          <div class="svc__foot">
+            <span class="price">Цены уточняйте</span>
+            <a class="link-arrow" href="#order" data-service="Консультация в студии">Заявка <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+          </div>
+        </article>
+
+        <article class="svc svc--wide svc--action" data-item data-card>
+          <div class="svc__icon"><svg class="icon" aria-hidden="true"><use href="#i-ruler"/></svg></div>
+          <h3>Замер</h3>
+          <p>Специалист приезжает на&nbsp;объект и&nbsp;снимает размеры&nbsp;— с&nbsp;этого начинается и&nbsp;проект, и&nbsp;ремонт. Запишитесь онлайн, студия перезвонит и&nbsp;согласует день.</p>
+          <div class="svc__foot">
+            <span class="price">Условия выезда <small>· уточните по телефону</small></span>
+            <a class="btn btn--accent" href="#order" data-service="Замер" data-btn>Записаться на замер</a>
+          </div>
+        </article>
+      </div>
+
+      <div class="prices" data-reveal>
+        <div>
+          <h3>Две студии и&nbsp;оценки клиентов</h3>
+          <p class="prices__note">Отзывы о&nbsp;студии открыты на&nbsp;2ГИС и&nbsp;Яндекс Картах&nbsp;— их&nbsp;можно прочитать до&nbsp;записи.</p>
+        </div>
+        <table>
+          <caption class="sr-only">Адреса студий и оценки на картах</caption>
+          <thead><tr><th scope="col">Где</th><th scope="col">Что</th></tr></thead>
+          <tbody>
+            <tr><td>Студия на Мичуринской</td><td>Мичуринская ул., 213г</td></tr>
+            <tr><td>Студия в торговом центре</td><td>ТРЦ «Студенец»</td></tr>
+            <tr><td>2ГИС</td><td>5 · 13 оценок</td></tr>
+            <tr><td>Яндекс Карты</td><td>4.5 · 14 оценок, 10 отзывов</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== О студии ========== -->
+  <!-- Пункты — только факты из открытых источников. Дополнить словами владельца. -->
+  <section class="why" id="why" aria-labelledby="why-title">
+    <div class="wrap why__in">
+      <div data-reveal>
+        <span class="eyebrow">Почему «Золотое Сечение»</span>
+        <h2 id="why-title" style="margin-top:14px">Гармония, которую видно в&nbsp;готовом интерьере</h2>
+        <p class="why__lead">Золотое сечение&nbsp;— пропорция, по&nbsp;которой веками строили красивые пространства. Здесь будут проекты студии: до&nbsp;и&nbsp;после, планировки, детали.</p>
+        <div class="photo-ph" role="img" aria-label="Место для фотографий проектов студии">
+          <div>
+            <svg class="icon" aria-hidden="true"><use href="#i-camera"/></svg>
+            Портфолио: фото проектов студии<br>— добавит владелец
+          </div>
+        </div>
+      </div>
+      <ol class="why__list" data-stagger>
+        <li data-item>
+          <span class="num" aria-hidden="true">1</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-spiral"/></svg>Дизайн и&nbsp;ремонт&nbsp;— в&nbsp;одних руках</h3>
+          <p>Проект и&nbsp;работы по&nbsp;нему ведёт одна студия, не&nbsp;нужно искать отдельно дизайнера и&nbsp;бригаду.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">2</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Две студии в&nbsp;городе</h3>
+          <p>На&nbsp;Мичуринской, 213г и&nbsp;в&nbsp;ТРЦ «Студенец»&nbsp;— выбирайте, куда удобнее приехать.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">3</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-message"/></svg>Пишите, где привычно</h3>
+          <p>WhatsApp, Telegram, ВКонтакте или MAX&nbsp;— или оставьте заявку на&nbsp;этой странице.</p></div>
+        </li>
+        <li data-item>
+          <span class="num" aria-hidden="true">4</span>
+          <div><h3><svg class="icon" aria-hidden="true"><use href="#i-star"/></svg>Открытые оценки</h3>
+          <p>5 на&nbsp;2ГИС (13 оценок) и&nbsp;4.5 на&nbsp;Яндекс Картах (14 оценок, 10 отзывов).</p></div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 2: процесс ========== -->
+  <section id="steps" aria-labelledby="steps-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <div class="step-tag step-tag--2"><b>02</b>Процесс</div>
+          <h2 id="steps-title">Как проходит работа</h2>
+        </div>
+        <p>Пять шагов от&nbsp;заявки до&nbsp;готового интерьера. Сроки каждого шага зависят от&nbsp;объекта и&nbsp;обсуждаются заранее.</p>
+      </div>
+      <ol class="steps" data-stagger>
+        <li data-item><h3>Заявка</h3><p>Форма на&nbsp;сайте, звонок или сообщение в&nbsp;мессенджер.</p><span class="when">онлайн или по телефону</span></li>
+        <li data-item><h3>Консультация</h3><p>Разговор о&nbsp;задаче, стиле и&nbsp;бюджете в&nbsp;одной из&nbsp;двух студий.</p><span class="when">Мичуринская или «Студенец»</span></li>
+        <li data-item><h3>Замер</h3><p>Выезд на&nbsp;объект, обмеры и&nbsp;осмотр помещения.</p><span class="when">в согласованный день</span></li>
+        <li data-item><h3>Проект</h3><p>Дизайнерские решения, которые вы&nbsp;видите и&nbsp;утверждаете до&nbsp;начала работ.</p><span class="when">до ремонта</span></li>
+        <li data-item><h3>Ремонт</h3><p>Работы по&nbsp;утверждённому проекту и&nbsp;сдача готового интерьера.</p><span class="when">по договорённости</span></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn--dark" href="#order" data-btn>Начать с замера <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        <span>Вопросы до&nbsp;встречи&nbsp;— по&nbsp;телефону <a href="tel:+79537080966">+7 953 708-09-66</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ========== Шаг 3: заявка ========== -->
+  <section class="order" id="order" aria-labelledby="order-title">
+    <div class="wrap order__in">
+      <div class="order__text" data-reveal>
+        <div class="step-tag step-tag--3"><b>03</b>Заявка</div>
+        <h2 id="order-title">Запишитесь на&nbsp;замер или консультацию</h2>
+        <p>Оставьте телефон и&nbsp;удобное время&nbsp;— студия перезвонит и&nbsp;договорится о&nbsp;встрече: на&nbsp;объекте, на&nbsp;Мичуринской или в&nbsp;ТРЦ «Студенец».</p>
+        <div class="order__contacts">
+          <a href="tel:+79537080966"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>+7 953 708-09-66</a>
+        </div>
+      </div>
+
+      <form class="form" id="lead-form" novalidate data-reveal aria-describedby="form-note">
+        <div class="field">
+          <label for="f-name">Имя <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name" placeholder="Как к вам обращаться">
+          <span class="err" id="e-name" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-phone">Телефон <span class="req" aria-hidden="true">*</span></label>
+          <input id="f-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" required aria-describedby="e-phone" placeholder="+7 900 000-00-00">
+          <span class="err" id="e-phone" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-service">Услуга <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-service" name="service" required aria-describedby="e-service">
+            <option value="">Выберите услугу</option>
+            <option>Замер</option>
+            <option>Консультация в студии</option>
+            <option>Дизайн-проект интерьера</option>
+            <option>Ремонт</option>
+            <option>Пока не знаю — нужен совет</option>
+          </select>
+          <span class="err" id="e-service" aria-live="polite"></span>
+        </div>
+        <div class="field">
+          <label for="f-time">Удобное время для звонка <span class="req" aria-hidden="true">*</span></label>
+          <select id="f-time" name="time" required aria-describedby="e-time">
+            <option value="">Выберите время</option>
+            <option>Утром, 9:00–12:00</option>
+            <option>Днём, 12:00–15:00</option>
+            <option>После обеда, 15:00–18:00</option>
+            <option>Вечером, 18:00–20:00</option>
+            <option>В любое время</option>
+          </select>
+          <span class="err" id="e-time" aria-live="polite"></span>
+        </div>
+        <div class="field field--full">
+          <label for="f-comment">Что нужно сделать <span style="font-weight:400;color:var(--color-muted-foreground)">(необязательно)</span></label>
+          <textarea id="f-comment" name="comment" placeholder="Например: двушка 54 м² в новостройке, нужен дизайн-проект и ремонт"></textarea>
+        </div>
+        <div class="form__foot">
+          <button class="btn btn--accent" type="submit" data-btn>Отправить заявку</button>
+          <small id="form-note">Нажимая кнопку, вы соглашаетесь на обработку контактных данных для обратного звонка.</small>
+        </div>
+        <div class="form-ok" id="form-ok" role="status" aria-live="polite" tabindex="-1">
+          <svg class="icon" aria-hidden="true"><use href="#i-check"/></svg>
+          <span>Заявка принята, студия перезвонит.</span>
+        </div>
+      </form>
+    </div>
+  </section>
+
+  <!-- ========== Контакты ========== -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <div>
+          <span class="eyebrow">Контакты</span>
+          <h2 id="contacts-title" style="margin-top:14px">Две студии в&nbsp;Тамбове</h2>
+        </div>
+        <p>На&nbsp;замер специалист приезжает к&nbsp;вам. Обсудить проект можно в&nbsp;любой из&nbsp;студий&nbsp;— перед визитом лучше позвонить.</p>
+      </div>
+      <div class="contacts__in">
+        <ul class="c-list" data-stagger>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Студия на Мичуринской</div><div class="c-value">Мичуринская улица, 213г, Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>
+            <div><div class="c-label">Студия в торговом центре</div><div class="c-value">ТРЦ «Студенец», Тамбов</div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>
+            <div><div class="c-label">Телефон</div><div class="c-value"><a href="tel:+79537080966">+7 953 708-09-66</a></div></div>
+          </li>
+          <li data-item>
+            <svg class="icon" aria-hidden="true"><use href="#i-message"/></svg>
+            <div><div class="c-label">Мессенджеры и соцсети</div><div class="c-value">WhatsApp, Telegram, ВКонтакте, MAX</div></div>
+          </li>
+          <li data-item data-hours-row>
+            <svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg>
+            <div><div class="c-label">Часы работы</div><div class="c-value" data-hours></div></div>
+          </li>
+        </ul>
+        <div class="route" data-reveal data-card>
+          <h3>Как добраться и&nbsp;где отзывы</h3>
+          <!-- Текст маршрута можно дополнить: остановка, вход, парковка — со слов владельца -->
+          <p>Откройте студию на&nbsp;Яндекс Картах: там маршрут из&nbsp;вашего приложения и&nbsp;10 отзывов клиентов.</p>
+          <a class="btn btn--dark" href="https://yandex.ru/maps/?text=%D0%97%D0%BE%D0%BB%D0%BE%D1%82%D0%BE%D0%B5%20%D0%A1%D0%B5%D1%87%D0%B5%D0%BD%D0%B8%D0%B5%20%28%D1%81%D1%82%D1%83%D0%B4%D0%B8%D1%8F%20%D0%B4%D0%B8%D0%B7%D0%B0%D0%B9%D0%BD%D0%B0%20%D0%B8%20%D1%80%D0%B5%D0%BC%D0%BE%D0%BD%D1%82%D0%B0%29%2C%20%D0%9C%D0%B8%D1%87%D1%83%D1%80%D0%B8%D0%BD%D1%81%D0%BA%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%20213%D0%B3%2C%20%D0%A2%D0%B0%D0%BC%D0%B1%D0%BE%D0%B2" target="_blank" rel="noopener" data-btn>
+            <svg class="icon" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer__in">
+      <div>© 2026 Золотое Сечение — студия дизайна и ремонта · Тамбов</div>
+      <div><a href="tel:+79537080966">+7 953 708-09-66</a> · Мичуринская улица, 213г · ТРЦ «Студенец»</div>
+    </div>
+    <p class="demo-mark">Демо-макет. Состав услуг, условия и тексты — примерные, уточняются владельцем. Фото проектов добавит студия.</p>
+  </div>
+</footer>
+
+<div class="mbar" aria-label="Быстрые действия">
+  <a class="btn btn--accent" href="tel:+79537080966"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn--dark" href="#order">Записаться</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Часы работы: если пусто — прячем строку ---------- */
+  var hours = document.querySelector("[data-hours]");
+  if (hours && !hours.textContent.trim()) {
+    var row = document.querySelector("[data-hours-row]");
+    if (row) row.hidden = true;
+  }
+
+  /* ---------- Кнопки услуг подставляют услугу в форму ---------- */
+  var select = document.getElementById("f-service");
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < select.options.length; i++) {
+        if (select.options[i].text === v) { select.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  /* ---------- Форма: проверка и сообщение (без отправки на сервер) ---------- */
+  var form = document.getElementById("lead-form");
+  var ok = document.getElementById("form-ok");
+  function setErr(input, msg) {
+    var e = document.getElementById(input.getAttribute("aria-describedby"));
+    if (e) e.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+  function check(input) {
+    var v = input.value.trim();
+    if (input.name === "name") return setErr(input, v.length < 2 ? "Укажите имя" : "");
+    if (input.name === "phone") {
+      var digits = v.replace(/\D/g, "");
+      return setErr(input, digits.length < 10 || digits.length > 15 ? "Укажите телефон, например +7 900 000-00-00" : "");
+    }
+    if (input.name === "service") return setErr(input, v ? "" : "Выберите услугу");
+    if (input.name === "time") return setErr(input, v ? "" : "Выберите удобное время");
+    return true;
+  }
+  var fields = form.querySelectorAll("[required]");
+  fields.forEach(function (f) {
+    f.addEventListener("blur", function () { if (f.value) check(f); });
+    f.addEventListener("input", function () { if (f.getAttribute("aria-invalid")) check(f); });
+  });
+  form.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var firstBad = null;
+    fields.forEach(function (f) { if (!check(f) && !firstBad) firstBad = f; });
+    if (firstBad) { firstBad.focus(); return; }
+    /* Здесь можно подключить отправку: в Telegram-бота, CRM или на почту владельца. */
+    form.reset();
+    ok.classList.add("is-on");
+    ok.focus();
+    if (window.Motion && !reduce) {
+      window.Motion.animate(ok, { opacity: [0, 1], transform: ["translateY(8px)", "translateY(0)"] }, { duration: 0.35 });
+    }
+  });
+
+  /* ---------- Анимации (Motion). Без motion.js и при reduced-motion — просто статичная страница ---------- */
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduce || typeof M.animate !== "function") return;
+
+  var EASE = [0.22, 1, 0.36, 1];
+  var opts = function (d, extra) {
+    var o = { duration: d, ease: EASE, easing: EASE };
+    if (extra) for (var k in extra) o[k] = extra[k];
+    return o;
+  };
+  var hide = function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; };
+  var show = { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0px)"] };
+  var elOf = function (a) { return a && a.nodeType === 1 ? a : (a && (a.currentTarget || a.target)) || null; };
+
+  try {
+    /* Первый экран: по очереди */
+    var heroItems = Array.prototype.slice.call(document.querySelectorAll("[data-hero]"));
+    heroItems.forEach(hide);
+    M.animate(heroItems, show, opts(0.55, { delay: M.stagger ? M.stagger(0.09) : 0 }));
+
+    /* Блоки при прокрутке */
+    if (typeof M.inView === "function") {
+      var singles = document.querySelectorAll("[data-reveal]");
+      singles.forEach(hide);
+      singles.forEach(function (el) {
+        M.inView(el, function () { M.animate(el, show, opts(0.5)); }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+
+      document.querySelectorAll("[data-stagger]").forEach(function (group) {
+        var items = group.querySelectorAll("[data-item]");
+        items.forEach(hide);
+        M.inView(group, function () {
+          M.animate(items, show, opts(0.45, { delay: M.stagger ? M.stagger(0.07) : 0 }));
+        }, { margin: "0px 0px -2% 0px", amount: 0 });
+      });
+    } else {
+      // нет inView — ничего не прячем
+    }
+
+    /* Наведение и нажатие */
+    if (typeof M.hover === "function") {
+      M.hover("[data-card]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-3px)" }, opts(0.25));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.25)); };
+      });
+      M.hover("[data-btn]", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "translateY(-1px)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "translateY(0px)" }, opts(0.2)); };
+      });
+    }
+    if (typeof M.press === "function") {
+      M.press("[data-btn], .mbar .btn", function (a) {
+        var el = elOf(a); if (!el) return;
+        M.animate(el, { transform: "scale(0.97)" }, opts(0.2));
+        return function () { M.animate(el, { transform: "scale(1)" }, opts(0.25)); };
+      });
+    }
+
+    /* Лёгкий параллакс сетки на первом экране */
+    var hero = document.querySelector(".hero");
+    var grid = document.querySelector(".hero__grid");
+    if (typeof M.scroll === "function" && hero && grid) {
+      M.scroll(function (p) {
+        var v = typeof p === "number" ? p : (p && p.y ? p.y.progress : 0);
+        grid.style.transform = "translate3d(0," + Math.round(v * 70) + "px,0)";
+      }, { target: hero, offset: ["start start", "end start"] });
+    }
+  } catch (e) {
+    /* Если что-то пошло не так — показываем всё как есть */
+    document.querySelectorAll("[data-hero],[data-reveal],[data-item]").forEach(function (el) {
+      el.style.opacity = ""; el.style.transform = "";
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>
