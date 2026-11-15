@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Дом Life — загородные дома, Новая Усмань (Воронежская область)</title>
+<meta name="description" content="Дом Life: Солнечная улица, 8, с. Новая Усмань. Заявка онлайн или звонок по +79515448044 — перезвоним и ответим на вопросы по дому.">
+<style>
+  /* Образ «Дом Life»: Солнечная улица — тёплый «солнечный» загород: кремовый фон, графитово-синий текст,
+     янтарный акцент как солнце. Чёткая геометрия, мелкие скругления, отличие от зелёных соседей по нише. */
+  :root {
+    --c-primary: #1E2A38;       /* графитово-синий — кнопки, акценты (белый текст, контраст ~14:1) */
+    --c-primary-hover: #111A25;
+    --c-secondary: #D97706;     /* янтарь — линии, цифры шагов */
+    --c-accent: #B45309;        /* янтарный CTA (белый текст, контраст ~5:1) */
+    --c-accent-hover: #92400E;
+    --c-bg: #FBF6EC;
+    --c-bg-alt: #F5EAD6;
+    --c-fg: #1E2A38;
+    --c-card: #FFFFFF;
+    --c-muted: #F1E6D2;
+    --c-muted-fg: #574D40;      /* контраст на кремовом ~7:1 */
+    --c-border: #E3D3B6;
+    --c-danger: #B42318;
+    --c-wood: #8A5A35;
+    --radius: 4px;
+    --shadow: 0 1px 0 rgba(30, 42, 56, .06), 0 6px 0 -3px rgba(30, 42, 56, .05);
+    --f-head: "Bahnschrift", "DIN Alternate", "Avenir Next Condensed", "Segoe UI Semibold", "Arial Narrow", Arial, sans-serif;
+    --f-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --max: 1160px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body { overflow-x: hidden; }
+  .problem-grid > *, .extras > *, .why-grid > *, .booking-grid > *, .contacts-grid > *, .house-grid > *, .form-row > *, .timeline > li { min-width: 0; }
+  .field select, .field input { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+  h1, h2, h3 { overflow-wrap: break-word; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; font-family: var(--f-body); font-size: 17px; line-height: 1.6;
+    color: var(--c-fg); background: var(--c-bg); -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--f-head); line-height: 1.2; margin: 0 0 .5em; font-weight: 600; }
+  h1 { font-size: clamp(2.1rem, 5vw, 3.6rem); letter-spacing: -.01em; }
+  h2 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0 0 1em; }
+  a { color: var(--c-primary); }
+  img, svg { display: block; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  :focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: -9999px; top: 8px; background: #fff; padding: 8px 14px; z-index: 100; }
+  .skip:focus { left: 8px; }
+
+  /* Кнопки */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px;
+    border-radius: var(--radius); font: 600 1rem/1 var(--f-body); text-decoration: none;
+    border: 2px solid transparent; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s;
+    min-height: 48px;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-accent { background: var(--c-accent); color: #fff; }
+  .btn-accent:hover { background: var(--c-accent-hover); }
+  .btn-primary { background: var(--c-primary); color: #fff; }
+  .btn-primary:hover { background: var(--c-primary-hover); }
+  .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.75); }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); }
+  .btn-line { background: transparent; color: var(--c-primary); border-color: var(--c-primary); }
+  .btn-line:hover { background: var(--c-bg-alt); }
+
+  .ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Шапка */
+  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; color: #fff; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 600 1.25rem var(--f-head); color: #fff; text-decoration: none; }
+  .logo svg { width: 30px; height: 30px; }
+  .top nav { display: flex; gap: 22px; }
+  .top nav a { color: #fff; text-decoration: none; font-weight: 500; font-size: .95rem; }
+  .top nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .top-phone { color: #fff; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 860px) { .top nav { display: none; } }
+
+  /* Первый экран */
+  .hero { position: relative; overflow: hidden; color: #fff; background: #1E2A38; min-height: 640px; display: flex; align-items: flex-end; }
+  .hero-bg { position: absolute; inset: -60px 0 -60px 0; will-change: transform; }
+  .hero-bg svg { width: 100%; height: 100%; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(17,26,37,.35) 0%, rgba(17,26,37,.25) 35%, rgba(17,26,37,.88) 100%); }
+  .hero .wrap { position: relative; z-index: 2; padding-top: 140px; padding-bottom: 72px; width: 100%; }
+  .hero-kicker { display: inline-block; font-weight: 600; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; color: #FCD9A0; margin-bottom: 14px; border-left: 3px solid #F59E0B; padding-left: 10px; }
+  .hero h1 { max-width: 780px; font-weight: 700; letter-spacing: -.005em; }
+  .hero-lead { font-size: 1.15rem; max-width: 620px; color: #F3EBDD; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 34px 0 0; padding: 0; list-style: none; color: #F3EBDD; font-size: .95rem; }
+  .hero-facts li { display: flex; align-items: center; gap: 8px; }
+  .hero-facts .ico { width: 20px; height: 20px; color: #FBBF24; flex: none; }
+
+  section { padding: 88px 0; }
+  .sec-head { max-width: 680px; margin-bottom: 40px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--c-primary); margin-bottom: 10px; }
+  .step-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-size: .85rem; color: #fff; letter-spacing: 0; }
+  .muted { color: var(--c-muted-fg); }
+
+  /* Шаг 1: проблема */
+  .problem { background: var(--c-card); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: start; }
+  .problem .step-num { background: var(--c-danger); }
+  .problem .eyebrow { color: var(--c-danger); }
+  .pain-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-border); }
+  .pain-list li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 20px 0; border-bottom: 1px solid var(--c-border); }
+  .pain-list .ico { color: var(--c-danger); margin-top: 2px; }
+  .pain-list strong { display: block; margin-bottom: 2px; }
+  .pain-list span { color: var(--c-muted-fg); }
+  .mini-cta { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+
+  /* Шаг 2: дома и цены */
+  .houses .step-num { background: #B45309; }
+  .houses .eyebrow { color: #92400E; }
+  .house-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .house { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); transition: border-color .2s; }
+  .house:hover { border-color: var(--c-secondary); }
+  .house.wide { grid-column: span 2; flex-direction: row; }
+  .house.wide .ph { flex: 0 0 46%; aspect-ratio: auto; }
+  .ph { position: relative; aspect-ratio: 16/10; background: repeating-linear-gradient(135deg, rgba(30,42,56,.035) 0 2px, transparent 2px 14px), linear-gradient(180deg, #FCEBCB 0%, #F5D9A8 100%) !important; display: grid; place-items: center; border-bottom: 1px solid var(--c-border); }
+  .ph svg { width: 46%; max-width: 180px; height: auto; }
+  .ph svg [stroke] { stroke: #1E2A38; }
+  .ph::before { content: ""; position: absolute; top: 14%; right: 12%; width: 34px; height: 34px; border-radius: 50%; background: #F59E0B; box-shadow: 0 0 0 8px rgba(245,158,11,.18); }
+  .ph figcaption { position: absolute; left: 10px; bottom: 8px; font-size: .78rem; color: #1E2A38; background: rgba(255,255,255,.88); padding: 2px 8px; border-radius: 2px; }
+  .price b { color: var(--c-muted-fg); font-size: 1.1rem !important; }
+  .house-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .house-body h3 { margin: 0; }
+  .house-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; color: var(--c-muted-fg); margin: 0; padding: 0; list-style: none; }
+  .house-meta li { display: flex; align-items: center; gap: 6px; }
+  .house-meta .ico { width: 18px; height: 18px; color: var(--c-primary); }
+  .price { margin-top: auto; padding-top: 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .price b { font: 600 1.45rem var(--f-head); }
+  .price small { color: var(--c-muted-fg); font-size: .85rem; }
+  .price-link { font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+  .price-link:hover { text-decoration: underline; }
+
+  .extras { margin-top: 48px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
+  .price-table { width: 100%; border-collapse: collapse; background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; }
+  .price-table th, .price-table td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--c-border); }
+  .price-table th { background: var(--c-bg-alt); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; color: var(--c-primary); }
+  .price-table td:last-child, .price-table th:last-child { text-align: right; white-space: nowrap; font-weight: 600; }
+  .price-table tr:last-child td { border-bottom: 0; }
+  .note { font-size: .88rem; color: var(--c-muted-fg); margin-top: 12px; }
+
+  /* Почему мы */
+  .why { background: var(--c-primary); color: #fff; }
+  .why h2 { color: #fff; }
+  .why { background-image: radial-gradient(circle at 100% 0, rgba(245,158,11,.16) 0, rgba(245,158,11,0) 380px); }
+  .why .eyebrow { color: #FCD34D; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; }
+  .why-item { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,.22); }
+  .why-item .ico { width: 30px; height: 30px; color: #FBBF24; }
+  .why-item h3 { color: #fff; margin-bottom: 4px; font-size: 1.15rem; }
+  .why-item p { color: #E7DFD2; margin: 0; }
+
+  /* Шаг 3: как проходит */
+  .steps .step-num { background: #15803D; }
+  .steps .eyebrow { color: #166534; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: s; position: relative; }
+  .timeline li { position: relative; padding: 0 24px 0 0; }
+  .timeline li::before {
+    counter-increment: s; content: counter(s, decimal-leading-zero);
+    display: block; font: 700 2.6rem/1 var(--f-head); color: var(--c-secondary); margin-bottom: 14px;
+  }
+  .timeline li::after { content: ""; position: absolute; top: 20px; left: 72px; right: 18px; height: 2px; background: var(--c-border); }
+  .timeline li:last-child::after { display: none; }
+  .timeline h3 { margin-bottom: 6px; }
+  .timeline p { color: var(--c-muted-fg); margin: 0; font-size: .97rem; }
+
+  /* Форма */
+  .booking { background: var(--c-bg-alt); }
+  .booking-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: start; }
+  .form { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-weight: 600; font-size: .95rem; }
+  .field input, .field select, .field textarea {
+    font: inherit; font-size: 1rem; padding: 12px 14px; border: 1.5px solid #8C7A5E; border-radius: var(--radius);
+    background: #fff; color: var(--c-fg); min-height: 48px; width: 100%;
+  }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 3px solid rgba(180,83,9,.35); border-color: var(--c-primary); }
+  .field .err { color: var(--c-danger); font-size: .87rem; min-height: 0; }
+  .field [aria-invalid="true"] { border-color: var(--c-danger); }
+  .consent { font-size: .85rem; color: var(--c-muted-fg); margin: 4px 0 18px; }
+  .form .btn { width: 100%; justify-content: center; }
+  .success { display: none; text-align: left; padding: 10px 0; }
+  .success.show { display: block; }
+  .success .ico { width: 44px; height: 44px; color: var(--c-primary); margin-bottom: 12px; }
+  .booking-aside ul { list-style: none; padding: 0; margin: 24px 0 0; }
+  .booking-aside li { display: flex; gap: 12px; padding: 10px 0; }
+  .booking-aside li .ico { color: var(--c-primary); flex: none; }
+
+  /* Контакты */
+  .contacts-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: stretch; }
+  .contact-list { list-style: none; margin: 0; padding: 0; }
+  .contact-list li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--c-border); }
+  .contact-list .ico { color: var(--c-primary); width: 26px; height: 26px; margin-top: 2px; }
+  .contact-list small { display: block; color: var(--c-muted-fg); font-size: .85rem; }
+  .contact-list a { font-weight: 600; }
+  .route { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .route ol { margin: 0; padding-left: 1.2em; color: var(--c-muted-fg); }
+  .route ol li { margin-bottom: 6px; }
+  .route .btn { align-self: flex-start; }
+
+  footer { background: #111A25; color: #E2D8C7; padding: 36px 0 26px; font-size: .92rem; border-top: 4px solid #D97706; }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 30px; align-items: center; }
+  footer a { color: #fff; }
+  .demo-mark { width: 100%; font-size: .75rem; color: #B5A992; margin-top: 10px; }
+  .timeline li::before { color: #B45309; }
+  .price-table th { color: var(--c-fg); }
+  .step-num { border-radius: 2px; }
+
+  /* Мобильная панель */
+  .mobile-bar { display: none; }
+  @media (max-width: 1024px) {
+    .house-grid { grid-template-columns: 1fr 1fr; }
+    .house.wide { grid-column: span 2; }
+    .timeline { grid-template-columns: 1fr 1fr; gap: 36px 0; }
+    .timeline li:nth-child(2)::after { display: none; }
+  }
+  @media (max-width: 768px) {
+    body { font-size: 16px; padding-bottom: 72px; }
+    section { padding: 64px 0; }
+    .hero { min-height: 600px; }
+    .hero .wrap { padding-top: 110px; padding-bottom: 48px; }
+    .problem-grid, .extras, .why-grid, .booking-grid, .contacts-grid { grid-template-columns: 1fr; gap: 32px; }
+    .house-grid { grid-template-columns: 1fr; }
+    .house.wide { grid-column: auto; flex-direction: column; }
+    .house.wide .ph { flex: none; aspect-ratio: 16/10; }
+    .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+    .mobile-bar .btn { min-width: 0; }
+    .timeline { grid-template-columns: 1fr; gap: 28px; }
+    .timeline li::after { display: none; }
+    .form { padding: 22px; }
+    .form-row { grid-template-columns: 1fr; gap: 0; }
+    .top-phone { display: none; }
+    .mobile-bar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--c-border);
+    }
+    .mobile-bar .btn { justify-content: center; padding: 12px; }
+  }
+  @media (max-width: 400px) {
+    .hero-actions .btn { width: 100%; justify-content: center; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Набор SVG-иконок (линейные, толщина 1.75) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.4 1.3 2.8 2.5 2.8z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4 12 14l-3-3"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 9h8M8 13h6"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 22v-5M8 17h8l-3-4h2l-3-5h1.5L12 2 8.5 8H10l-3 5h2z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17H3v-5l2-5h14l2 5v5h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5M3 12h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Дом Life — на главную">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 15 16 4l13 11" fill="none" stroke="#FBBF24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v15h18V13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><path d="M13 28v-8h6v8" fill="none" stroke="#fff" stroke-width="2.2"/></svg>
+      Дом Life
+    </a>
+    <nav aria-label="Разделы">
+      <a href="#houses">Дома</a>
+      <a href="#how">Как это проходит</a>
+      <a href="#booking">Заявка</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:+79515448044">+79515448044</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true">
+      <!-- Иллюстрация «Солнечная улица»: закатное солнце, лучи, современный дом. Заменяется на реальное фото дома владельца. -->
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1E2A38"/><stop offset=".45" stop-color="#6B4A3A"/><stop offset=".75" stop-color="#D98A3D"/><stop offset="1" stop-color="#F6C982"/></linearGradient>
+        </defs>
+        <rect width="1440" height="800" fill="url(#sky)"/>
+        <g stroke="#FCD34D" stroke-width="2" opacity=".18">
+          <path d="M1100 520 L1100 80M1100 520 L860 120M1100 520 L1340 120M1100 520 L700 260M1100 520 L1440 240M1100 520 L620 420M1100 520 L1440 400"/>
+        </g>
+        <circle cx="1100" cy="520" r="120" fill="#FBBF24" opacity=".9"/>
+        <circle cx="1100" cy="520" r="170" fill="none" stroke="#FDE68A" stroke-width="2" opacity=".35"/>
+        <path d="M0 560 H1440 V800 H0Z" fill="#3A2C25"/>
+        <g stroke="#5A4434" stroke-width="2" opacity=".7"><path d="M0 600H1440M0 650H1440M0 710H1440"/></g>
+        <g transform="translate(760 330)">
+          <path d="M0 110 L200 20 L420 110Z" fill="#111A25"/>
+          <rect x="30" y="108" width="360" height="125" fill="#1E2A38"/>
+          <rect x="60" y="135" width="110" height="60" fill="#FCD9A0"/>
+          <rect x="200" y="135" width="60" height="98" fill="#2B3A4C"/>
+          <rect x="290" y="135" width="70" height="60" fill="#FCD9A0"/>
+          <path d="M60 165h110M325 135v60" stroke="#1E2A38" stroke-width="4"/>
+        </g>
+        <path d="M0 740 Q720 700 1440 740 V800 H0Z" fill="#241B16"/>
+      </svg>
+    </div>
+    <div class="wrap">
+      <span class="hero-kicker" data-hero>Загородные дома · Новая Усмань</span>
+      <h1 id="hero-title" data-hero>Дом Life на Солнечной, 8 — посмотреть дом и узнать условия без долгой переписки</h1>
+      <p class="hero-lead" data-hero>Оставьте заявку за минуту: имя, телефон и что вас интересует. Перезвоним сами, ответим на вопросы по дому и договоримся о просмотре на месте в Новой Усмани.</p>
+      <div class="hero-actions" data-hero>
+        <a class="btn btn-accent" href="tel:+79515448044"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+        <a class="btn btn-ghost" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+      </div>
+      <ul class="hero-facts" data-hero>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Солнечная улица, 8, с. Новая Усмань, Новоусманский район, Воронежская область</li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>Часы приёма звонков уточняйте по телефону</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 1: проблема -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap problem-grid">
+      <div data-reveal>
+        <span class="eyebrow"><span class="step-num">1</span>С чем сталкиваются</span>
+        <h2 id="problem-title">Про дом за городом хочется знать всё до поездки</h2>
+        <p class="muted">Ехать в Новую Усмань «наугад» никто не любит. Поэтому на этой странице — адрес, телефон и форма заявки, а ответы на вопросы по дому мы даём по телефону до встречи.</p>
+        <div class="mini-cta">
+          <a class="btn btn-line" href="#houses">Что можно узнать<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+      <ul class="pain-list" data-reveal-list>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Информации в интернете почти нет</strong><span>Здесь собрано главное: где находится «Дом Life» и как с нами связаться.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Не хочется звонить «на удачу»</strong><span>Оставьте заявку — перезвоним в удобное для вас время.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Непонятно, сколько это стоит</strong><span>Цены и условия называем по телефону — под ваш вопрос, а не «в среднем».</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Сложно найти дорогу в селе</strong><span>Адрес — Солнечная улица, 8. Кнопка «Открыть на карте» ведёт в Яндекс Карты.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 2: дома и цены -->
+  <section class="houses" id="houses" aria-labelledby="houses-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">2</span>Дома и цены</span>
+        <h2 id="houses-title">Дома «Дом Life» — состав и цены уточняйте</h2>
+        <p class="muted">Здесь появятся фото, планировки и условия по каждому дому. Пока — позвоните или оставьте заявку, и мы расскажем подробно.</p>
+      </div>
+
+      <!-- ВЛАДЕЛЕЦ: названия домов, вместимость, фото и цены пришлёт владелец — карточки ниже пустые шаблоны -->
+      <div class="house-grid">
+        <article class="house wide" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M8 44 60 8l52 36" fill="none" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M18 38v46h84V38" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3"/><rect x="30" y="50" width="18" height="16" fill="none" stroke="#1F4D3D" stroke-width="3"/><rect x="72" y="50" width="18" height="16" fill="none" stroke="#1F4D3D" stroke-width="3"/><path d="M52 84V62h16v22" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Большой коттедж</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>вместимость уточняйте</li>
+              <li><svg class="ico" aria-hidden="true"><use href="#i-bed"/></svg>планировка — по запросу</li>
+            </ul>
+            <p class="muted" style="margin:0">Место для описания большого дома: площадь, комнаты, участок. Заполним по данным владельца.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Большой коттедж">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M14 48 60 14l46 34" fill="none" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M24 42v42h72V42" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3"/><rect x="36" y="52" width="16" height="14" fill="none" stroke="#1F4D3D" stroke-width="3"/><path d="M64 84V60h16v24" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Семейный дом</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>вместимость уточняйте</li>
+            </ul>
+            <p class="muted" style="margin:0">Место для описания дома для семьи. Детали — по телефону.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Семейный дом">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M30 84 60 12l30 72z" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M52 84V62h16v22" fill="none" stroke="#1F4D3D" stroke-width="3"/><circle cx="60" cy="44" r="6" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Домик на двоих</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>вместимость уточняйте</li>
+            </ul>
+            <p class="muted" style="margin:0">Место для описания небольшого дома. Детали — по телефону.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Домик на двоих">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0;background:linear-gradient(160deg,#F3E3CF 0%,#E3C29E 60%,#C99B6E 100%)">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M20 40h80v44H20z" fill="#fff" fill-opacity=".5" stroke="#5B3A22" stroke-width="3"/><path d="M14 40 60 16l46 24" fill="none" stroke="#5B3A22" stroke-width="3" stroke-linejoin="round"/><path d="M44 30c0-6 6-6 6-12M60 30c0-6 6-6 6-12M76 30c0-6 6-6 6-12" fill="none" stroke="#5B3A22" stroke-width="2.5" stroke-linecap="round"/><path d="M20 54h80M20 68h80" stroke="#5B3A22" stroke-width="2"/></svg>
+            <figcaption>Место для фото бани</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Баня</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg>наличие уточняйте</li>
+            </ul>
+            <p class="muted" style="margin:0">Если на участке есть баня или другие удобства — расскажем по телефону.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Баня">Записаться<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="extras">
+        <div data-reveal>
+          <h3 style="font-size:1.5rem">Что можно узнать по телефону</h3>
+          <p class="muted">Спросите при звонке или укажите в заявке — ответим до того, как вы поедете в Новую Усмань.</p>
+          <div class="mini-cta">
+            <a class="btn btn-primary" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+          </div>
+        </div>
+        <div data-reveal>
+          <!-- ВЛАДЕЛЕЦ: перечень и цены заполним по вашим данным -->
+          <table class="price-table">
+            <caption class="sr-only">Вопросы, на которые ответим по телефону</caption>
+            <thead><tr><th scope="col">Вопрос</th><th scope="col">Ответ</th></tr></thead>
+            <tbody>
+              <tr><td>Какие дома есть и что в них</td><td>по телефону</td></tr>
+              <tr><td>Стоимость и условия</td><td>цены уточняйте</td></tr>
+              <tr><td>Просмотр на месте</td><td>по договорённости</td></tr>
+              <tr><td>Как проехать на Солнечную, 8</td><td>подскажем</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Информация на странице не является публичной офертой. Условия подтверждаем при разговоре.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Почему мы -->
+  <section class="why" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">Как с нами работать</span>
+        <h2 id="why-title">«Дом Life» — один адрес и один номер для всех вопросов</h2>
+      </div>
+      <div class="why-grid" data-reveal-list>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><div><h3>Солнечная улица, 8</h3><p>Село Новая Усмань, Новоусманский район Воронежской области.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><div><h3>Прямой номер</h3><p>+79515448044 — звонок сразу владельцу, без колл-центра.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg><div><h3>Заявка без звонка</h3><p>Не дозвонились — оставьте заявку на сайте, перезвоним в выбранное время.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-receipt"/></svg><div><h3>Условия — до встречи</h3><p>Цену и детали обсуждаем по телефону, чтобы вы ехали уже с ответами.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 3: как проходит -->
+  <section class="steps" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">3</span>Как это проходит</span>
+        <h2 id="how-title">От заявки до встречи на Солнечной, 8</h2>
+      </div>
+      <ol class="timeline" data-reveal-list>
+        <li><h3>Заявка или звонок</h3><p>Имя, телефон и что вас интересует — в форме ниже или по номеру +79515448044.</p></li>
+        <li><h3>Перезваниваем</h3><p>Отвечаем на вопросы и называем условия.</p></li>
+        <li><h3>Договариваемся о дате</h3><p>Выбираем день, когда удобно приехать.</p></li>
+        <li><h3>Встреча на месте</h3><p>Новая Усмань, Солнечная улица, 8 — показываем дом.</p></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Начать с заявки</a>
+        <span class="muted">или позвоните: <a href="tel:+79515448044">+79515448044</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Форма записи -->
+  <section class="booking" id="booking" aria-labelledby="booking-title">
+    <div class="wrap booking-grid">
+      <div class="booking-aside" data-reveal>
+        <span class="eyebrow">Заявка</span>
+        <h2 id="booking-title">Оставьте заявку — «Дом Life» перезвонит сам</h2>
+        <p class="muted">Заявка ни к чему не обязывает. Это просто способ договориться о звонке, не дозваниваясь самому.</p>
+        <ul>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Быстрее по телефону: <a href="tel:+79515448044">+79515448044</a></span></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span>Часы приёма звонков уточняйте по телефону</span></li>
+        </ul>
+      </div>
+
+      <div class="form" data-reveal>
+        <form id="bookingForm" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Ваше имя</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+              <span class="err" id="e-name" role="alert"></span>
+            </div>
+            <div class="field">
+              <label for="f-phone">Телефон</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 ___ ___-__-__" required aria-describedby="e-phone">
+              <span class="err" id="e-phone" role="alert"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-service">Что бронируете</label>
+            <select id="f-service" name="service" required aria-describedby="e-service">
+              <option value="">Выберите вариант</option>
+              <option>Большой коттедж</option>
+              <option>Семейный дом</option>
+              <option>Домик на двоих</option>
+              <option>Баня</option>
+              <option>Праздник / мероприятие</option>
+              <option>Пока не знаю, нужна консультация</option>
+            </select>
+            <span class="err" id="e-service" role="alert"></span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-date">Дата заезда</label>
+              <input id="f-date" name="date" type="date">
+            </div>
+            <div class="field">
+              <label for="f-guests">Гостей</label>
+              <input id="f-guests" name="guests" type="number" min="1" max="50" inputmode="numeric" placeholder="Например, 6">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-time">Когда удобно принять звонок</label>
+            <select id="f-time" name="time">
+              <option>В любое время</option>
+              <option>Утром, 9:00–12:00</option>
+              <option>Днём, 12:00–17:00</option>
+              <option>Вечером, 17:00–21:00</option>
+            </select>
+          </div>
+          <p class="consent">Нажимая кнопку, вы соглашаетесь на обработку имени и телефона для обратного звонка.</p>
+          <button class="btn btn-accent" type="submit"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Отправить заявку</button>
+        </form>
+        <div class="success" id="formSuccess" role="status" aria-live="polite" tabindex="-1">
+          <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
+          <h3 style="font-size:1.5rem">Заявка принята, перезвоним</h3>
+          <p class="muted">Проверим свободные даты и свяжемся с вами в выбранное время. Если удобнее — позвоните сами: <a href="tel:+79515448044">+79515448044</a>.</p>
+          <button class="btn btn-line" type="button" id="formAgain">Отправить ещё одну</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap contacts-grid">
+      <div data-reveal>
+        <span class="eyebrow">Контакты</span>
+        <h2 id="contacts-title">Как нас найти</h2>
+        <ul class="contact-list">
+          <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><div><small>Адрес</small>Солнечная улица, 8, с. Новая Усмань, Новоусманский район, Воронежская область</div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><div><small>Телефон для бронирования</small><a href="tel:+79515448044">+79515448044</a></div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><div><small>Приём звонков</small>уточняйте по телефону</div></li>
+        </ul>
+      </div>
+      <div class="route" data-reveal>
+        <h3>Дорога до Солнечной, 8</h3>
+        <ol>
+          <li>Откройте адрес на Яндекс Картах кнопкой ниже.</li>
+          <li>Позвоните перед выездом — договоримся о времени встречи.</li>
+          <li>Если навигатор ведёт не туда — звоните, подскажем.</li>
+        </ol>
+        <p class="muted" style="margin:0">Село Новая Усмань, Новоусманский район, Воронежская область.</p>
+        <a class="btn btn-primary" href="https://yandex.ru/maps/?text=%D0%94%D0%BE%D0%BC%20Life%2C%20%D0%A1%D0%BE%D0%BB%D0%BD%D0%B5%D1%87%D0%BD%D0%B0%D1%8F%20%D1%83%D0%BB%D0%B8%D1%86%D0%B0%2C%208%2C%20%D1%81.%20%D0%9D%D0%BE%D0%B2%D0%B0%D1%8F%20%D0%A3%D1%81%D0%BC%D0%B0%D0%BD%D1%8C%2C%20%D0%9D%D0%BE%D0%B2%D0%BE%D1%83%D1%81%D0%BC%D0%B0%D0%BD%D1%81%D0%BA%D0%B8%D0%B9%20%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%2C%20%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%B5%D0%B6%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong style="color:#fff">Дом Life</strong> · загородные дома, Новая Усмань</div>
+    <div><a href="tel:+79515448044">+79515448044</a> · Солнечная улица, 8, с. Новая Усмань, Новоусманский район, Воронежская область</div>
+    <div>© 2026 Дом Life</div>
+    <div class="demo-mark">Демо-макет. Состав домов, цены и фото заполняются по данным владельца; иллюстрации — заглушки.</div>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-primary" href="tel:+79515448044"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Заявка</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Форма ---------- */
+  var form = document.getElementById("bookingForm");
+  var success = document.getElementById("formSuccess");
+  var serviceSel = document.getElementById("f-service");
+
+  function setErr(input, errId, msg) {
+    var el = document.getElementById(errId);
+    el.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = form.elements.name, phone = form.elements.phone, service = form.elements.service;
+    var digits = phone.value.replace(/\D/g, "");
+    var ok = true;
+    ok = setErr(name, "e-name", name.value.trim().length < 2 ? "Укажите имя" : "") && ok;
+    ok = setErr(phone, "e-phone", digits.length < 10 ? "Укажите телефон — не меньше 10 цифр" : "") && ok;
+    ok = setErr(service, "e-service", !service.value ? "Выберите, что бронируете" : "") && ok;
+    if (!ok) {
+      var firstBad = form.querySelector('[aria-invalid="true"]');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+    // Демо: данные никуда не отправляются. Подключение к боту/CRM — на этапе внедрения.
+    form.style.display = "none";
+    success.classList.add("show");
+    success.focus();
+    if (window.Motion && !reduced) {
+      Motion.animate(success, { opacity: [0, 1], transform: ["translateY(12px)", "translateY(0)"] }, { duration: 0.4 });
+    }
+  });
+
+  document.getElementById("formAgain").addEventListener("click", function () {
+    form.reset();
+    success.classList.remove("show");
+    form.style.display = "";
+    form.elements.name.focus();
+  });
+
+  // Кнопки «Забронировать» в карточках подставляют выбранный дом в форму
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < serviceSel.options.length; i++) {
+        if (serviceSel.options[i].text === v) { serviceSel.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  // Минимальная дата заезда — сегодня
+  var dateInput = document.getElementById("f-date");
+  var t = new Date();
+  dateInput.min = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+
+  /* ---------- Анимации (Motion) ---------- */
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduced || typeof M.animate !== "function") return; // без библиотеки или при reduce — всё видно статично
+
+  var ease = [0.22, 1, 0.36, 1];
+
+  // Первый экран: элементы по очереди
+  var heroEls = document.querySelectorAll("[data-hero]");
+  heroEls.forEach(function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; });
+  M.animate(heroEls, { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0)"] },
+    { duration: 0.55, delay: M.stagger ? M.stagger(0.1) : 0, ease: ease });
+
+  // Параллакс фона первого экрана
+  var heroBg = document.querySelector(".hero-bg");
+  var hero = document.querySelector(".hero");
+  if (M.scroll && heroBg) {
+    M.scroll(M.animate(heroBg, { transform: ["translateY(0px)", "translateY(60px)"] }, { ease: "linear" }),
+      { target: hero, offset: ["start start", "end start"] });
+  }
+
+  // Появление блоков при прокрутке
+  function hide(el) { el.style.opacity = "0"; el.style.transform = "translateY(24px)"; }
+  function show(targets, stag) {
+    M.animate(targets, { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0)"] },
+      { duration: 0.5, delay: stag && M.stagger ? M.stagger(0.08) : 0, ease: ease });
+  }
+  if (M.inView) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) {
+      hide(el);
+      M.inView(el, function () { show(el, false); }, { amount: 0.2 });
+    });
+    document.querySelectorAll("[data-reveal-list]").forEach(function (list) {
+      var items = Array.prototype.slice.call(list.children);
+      items.forEach(hide);
+      M.inView(list, function () { show(items, true); }, { amount: 0.15 });
+    });
+    var cards = Array.prototype.slice.call(document.querySelectorAll("[data-card]"));
+    if (cards.length) {
+      cards.forEach(hide);
+      M.inView(".house-grid", function () { show(cards, true); }, { amount: 0.1 });
+    }
+  }
+
+  // Наведение и нажатие: кнопки и карточки
+  if (M.hover) {
+    M.hover(".btn", function (el) {
+      M.animate(el, { transform: "translateY(-2px)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.2 }); };
+    });
+    M.hover("[data-card]", function (el) {
+      M.animate(el, { transform: "translateY(-4px)" }, { duration: 0.25 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.25 }); };
+    });
+  }
+  if (M.press) {
+    M.press(".btn", function (el) {
+      M.animate(el, { transform: "scale(0.97)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "scale(1)" }, { duration: 0.2 }); };
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

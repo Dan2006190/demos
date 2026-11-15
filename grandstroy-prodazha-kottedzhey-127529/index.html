@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ГрандСтрой — кирпичные дома под ключ, Воронеж</title>
+<meta name="description" content="ГрандСтрой (продажа коттеджей): кирпичные дома под ключ от 5,7 млн ₽ за 5 месяцев, гарантия 5 лет. Офис: улица Ворошилова, 1а, БЦ Гран-При, Воронеж. Телефон +79036555050.">
+<style>
+  :root {
+    /* Образ: кирпич + графит. Практично, современно, без «загородной» зелени */
+    --c-primary: #2B2F33;       /* графит — кнопки, тёмные блоки (белый текст, контраст > 12:1) */
+    --c-primary-hover: #17191C;
+    --c-secondary: #A4532F;     /* светлый кирпич — крупные цифры, обводки */
+    --c-accent: #A63D1E;        /* кирпично-красный CTA (белый текст, контраст ≈ 6.5:1) */
+    --c-accent-hover: #85301A;
+    --c-bg: #F5F1EC;            /* тёплый бетон */
+    --c-bg-alt: #ECE5DC;
+    --c-fg: #1F2226;
+    --c-card: #FFFFFF;
+    --c-muted: #EEE9E3;
+    --c-muted-fg: #57514B;      /* контраст на фоне ≈ 7:1 */
+    --c-border: #DCD2C6;
+    --c-danger: #B42318;
+    --c-solution: #3E6B4A;
+    --c-sand: #E9AE86;          /* акцент на тёмном */
+    --c-wood: #A4532F;
+    --radius: 3px;
+    --shadow: 0 1px 0 rgba(31, 34, 38, .07), 0 2px 6px rgba(31, 34, 38, .06);
+    --f-head: "Bahnschrift", "DIN Alternate", "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+    --f-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --max: 1160px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body { overflow-x: hidden; }
+  .problem-grid > *, .extras > *, .why-grid > *, .booking-grid > *, .contacts-grid > *, .house-grid > *, .form-row > *, .timeline > li { min-width: 0; }
+  .field select, .field input { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+  h1, h2, h3 { overflow-wrap: break-word; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; font-family: var(--f-body); font-size: 17px; line-height: 1.6;
+    color: var(--c-fg); background: var(--c-bg); -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--f-head); line-height: 1.15; margin: 0 0 .5em; font-weight: 600; letter-spacing: -.005em; }
+  h1 { font-size: clamp(2.1rem, 5vw, 3.6rem); }
+  h2 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0 0 1em; }
+  a { color: var(--c-accent); }
+  img, svg { display: block; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  :focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; border-radius: 2px; }
+  .hero :focus-visible, .top :focus-visible, .why :focus-visible, footer :focus-visible { outline-color: var(--c-sand); }
+  .skip { position: absolute; left: -9999px; top: 8px; background: #fff; padding: 8px 14px; z-index: 100; }
+  .skip:focus { left: 8px; }
+
+  /* Кнопки */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px;
+    border-radius: var(--radius); font: 600 1rem/1 var(--f-body); text-decoration: none;
+    border: 2px solid transparent; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s;
+    min-height: 48px;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-accent { background: var(--c-accent); color: #fff; }
+  .btn-accent:hover { background: var(--c-accent-hover); }
+  .btn-primary { background: var(--c-primary); color: #fff; }
+  .btn-primary:hover { background: var(--c-primary-hover); }
+  .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.75); }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); }
+  .btn-line { background: transparent; color: var(--c-primary); border-color: var(--c-primary); }
+  .btn-line:hover { background: var(--c-bg-alt); }
+
+  .ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Шапка */
+  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; color: #fff; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 600 1.3rem var(--f-head); color: #fff; text-decoration: none; letter-spacing: .02em; }
+  .logo svg { width: 30px; height: 30px; }
+  .top nav { display: flex; gap: 22px; }
+  .top nav a { color: #fff; text-decoration: none; font-weight: 500; font-size: .95rem; }
+  .top nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .top-phone { color: #fff; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 860px) { .top nav { display: none; } }
+
+  /* Первый экран */
+  .hero { position: relative; overflow: hidden; color: #fff; background: #1F2226; min-height: 640px; display: flex; align-items: flex-end; }
+  .hero-bg { position: absolute; inset: -60px 0 -60px 0; will-change: transform; }
+  .hero-bg svg { width: 100%; height: 100%; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(23,25,28,.88) 0%, rgba(23,25,28,.62) 50%, rgba(23,25,28,.25) 100%), linear-gradient(180deg, rgba(23,25,28,.2) 0%, rgba(23,25,28,.75) 100%); }
+  .hero .wrap { position: relative; z-index: 2; padding-top: 140px; padding-bottom: 72px; width: 100%; }
+  .hero-kicker { display: inline-block; font-weight: 600; font-size: .9rem; letter-spacing: .08em; text-transform: uppercase; color: #F3D3BC; margin-bottom: 14px; padding-left: 12px; border-left: 3px solid var(--c-sand); }
+  .hero h1 { max-width: 760px; }
+  .hero-lead { font-size: 1.15rem; max-width: 600px; color: #EEE8E1; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 34px 0 0; padding: 0; list-style: none; color: #EEE8E1; font-size: .95rem; }
+  .hero-facts li { display: flex; align-items: center; gap: 8px; }
+  .hero-facts .ico { width: 20px; height: 20px; color: var(--c-sand); }
+
+  section { padding: 88px 0; }
+  .sec-head { max-width: 680px; margin-bottom: 40px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .85rem; letter-spacing: .1em; text-transform: uppercase; color: var(--c-accent); margin-bottom: 10px; }
+  .step-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 2px; font-size: .85rem; color: #fff; letter-spacing: 0; }
+  .muted { color: var(--c-muted-fg); }
+
+  /* Шаг 1: проблема */
+  .problem { background: var(--c-card); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: start; }
+  .problem .step-num { background: var(--c-danger); }
+  .problem .eyebrow { color: var(--c-danger); }
+  .pain-list { list-style: none; margin: 0; padding: 0; border-top: 2px solid var(--c-fg); }
+  .pain-list li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 20px 0; border-bottom: 1px solid var(--c-border); }
+  .pain-list .ico { color: var(--c-danger); margin-top: 2px; }
+  .pain-list strong { display: block; margin-bottom: 2px; }
+  .pain-list span { color: var(--c-muted-fg); }
+  .mini-cta { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+
+  /* Шаг 2: дома и цены */
+  .houses .step-num { background: var(--c-accent); }
+  .houses .eyebrow { color: var(--c-accent-hover); }
+  .house-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .house { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); transition: border-color .2s; }
+  .house:hover { border-color: var(--c-secondary); }
+  .house.wide { grid-column: span 2; flex-direction: row; border-top: 4px solid var(--c-accent); }
+  .house.wide .ph { flex: 0 0 46%; aspect-ratio: auto; }
+  .ph { position: relative; aspect-ratio: 16/10; background-color: #E3DACF; background-image: linear-gradient(160deg, #ECE5DC 0%, #DDD1C3 60%, #CDBDAB 100%); display: grid; place-items: center; }
+  .ph svg { width: 46%; max-width: 180px; height: auto; }
+  .ph figcaption { position: absolute; left: 10px; bottom: 8px; font-size: .78rem; color: #2B2F33; background: rgba(255,255,255,.85); padding: 2px 8px; border-radius: 2px; }
+  .house-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .house-body h3 { margin: 0; }
+  .house-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; color: var(--c-muted-fg); margin: 0; padding: 0; list-style: none; }
+  .house-meta li { display: flex; align-items: center; gap: 6px; }
+  .house-meta .ico { width: 18px; height: 18px; color: var(--c-accent); }
+  .price { margin-top: auto; padding-top: 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .price b { font: 600 1.6rem var(--f-head); }
+  .price small { color: var(--c-muted-fg); font-size: .85rem; }
+  .price-link { font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+  .price-link:hover { text-decoration: underline; }
+
+  .extras { margin-top: 48px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
+  .price-table { width: 100%; border-collapse: collapse; background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; }
+  .price-table th, .price-table td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--c-border); }
+  .price-table th { background: var(--c-primary); font-size: .85rem; text-transform: uppercase; letter-spacing: .06em; color: #fff; }
+  .price-table td:last-child, .price-table th:last-child { text-align: right; white-space: nowrap; font-weight: 600; }
+  .price-table tr:last-child td { border-bottom: 0; }
+  .note { font-size: .88rem; color: var(--c-muted-fg); margin-top: 12px; }
+
+  /* Почему мы */
+  .why { background: var(--c-primary); color: #fff; background-image: linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.035) 1px, transparent 1px); background-size: 40px 40px; }
+  .why h2 { color: #fff; }
+  .why .eyebrow { color: #F3D3BC; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; }
+  .why-item { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,.2); }
+  .why-item .ico { width: 30px; height: 30px; color: var(--c-sand); }
+  .why-item h3 { color: #fff; margin-bottom: 4px; font-size: 1.2rem; }
+  .why-item p { color: #DCD5CD; margin: 0; }
+
+  /* Шаг 3: как проходит */
+  .steps .step-num { background: var(--c-solution); }
+  .steps .eyebrow { color: var(--c-solution); }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: s; position: relative; }
+  .timeline li { position: relative; padding: 0 24px 0 0; }
+  .timeline li::before {
+    counter-increment: s; content: counter(s, decimal-leading-zero);
+    display: block; font: 700 2.8rem/1 var(--f-head); color: var(--c-secondary); margin-bottom: 14px;
+  }
+  .timeline li::after { content: ""; position: absolute; top: 20px; left: 72px; right: 18px; height: 2px; background: var(--c-border); }
+  .timeline li:last-child::after { display: none; }
+  .timeline h3 { margin-bottom: 6px; }
+  .timeline p { color: var(--c-muted-fg); margin: 0; font-size: .97rem; }
+
+  /* Форма */
+  .booking { background: var(--c-bg-alt); }
+  .booking-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: start; }
+  .form { background: var(--c-card); border: 1px solid var(--c-border); border-top: 4px solid var(--c-accent); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-weight: 600; font-size: .95rem; }
+  .field input, .field select, .field textarea {
+    font: inherit; font-size: 1rem; padding: 12px 14px; border: 1.5px solid #8F857B; border-radius: var(--radius);
+    background: #fff; color: var(--c-fg); min-height: 48px; width: 100%;
+  }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 3px solid rgba(166,61,30,.3); border-color: var(--c-accent); }
+  .field .err { color: var(--c-danger); font-size: .87rem; min-height: 0; }
+  .field [aria-invalid="true"] { border-color: var(--c-danger); }
+  .consent { font-size: .85rem; color: var(--c-muted-fg); margin: 4px 0 18px; }
+  .form .btn { width: 100%; justify-content: center; }
+  .success { display: none; text-align: left; padding: 10px 0; }
+  .success.show { display: block; }
+  .success .ico { width: 44px; height: 44px; color: var(--c-solution); margin-bottom: 12px; }
+  .booking-aside ul { list-style: none; padding: 0; margin: 24px 0 0; }
+  .booking-aside li { display: flex; gap: 12px; padding: 10px 0; }
+  .booking-aside li .ico { color: var(--c-accent); flex: none; }
+
+  /* Контакты */
+  .contacts-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: stretch; }
+  .contact-list { list-style: none; margin: 0; padding: 0; }
+  .contact-list li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--c-border); }
+  .contact-list .ico { color: var(--c-accent); width: 26px; height: 26px; margin-top: 2px; }
+  .contact-list small { display: block; color: var(--c-muted-fg); font-size: .85rem; }
+  .contact-list a { font-weight: 600; }
+  .route { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .route ol { margin: 0; padding-left: 1.2em; color: var(--c-muted-fg); }
+  .route ol li { margin-bottom: 6px; }
+  .route .btn { align-self: flex-start; }
+
+  footer { background: #17191C; color: #D2CAC1; padding: 36px 0 26px; font-size: .92rem; border-top: 4px solid var(--c-accent); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 30px; align-items: center; }
+  footer a { color: #fff; }
+  .demo-mark { width: 100%; font-size: .75rem; color: #A9A096; margin-top: 10px; }
+
+  /* Мобильная панель */
+  .mobile-bar { display: none; }
+  @media (max-width: 1024px) {
+    .house-grid { grid-template-columns: 1fr 1fr; }
+    .house.wide { grid-column: span 2; }
+    .timeline { grid-template-columns: 1fr 1fr; gap: 36px 0; }
+    .timeline li:nth-child(2)::after { display: none; }
+  }
+  @media (max-width: 768px) {
+    body { font-size: 16px; padding-bottom: 72px; }
+    section { padding: 64px 0; }
+    .hero { min-height: 600px; }
+    .hero::after { background: linear-gradient(180deg, rgba(23,25,28,.55) 0%, rgba(23,25,28,.7) 45%, rgba(23,25,28,.92) 100%); }
+    .hero .wrap { padding-top: 110px; padding-bottom: 48px; }
+    .problem-grid, .extras, .why-grid, .booking-grid, .contacts-grid { grid-template-columns: 1fr; gap: 32px; }
+    .house-grid { grid-template-columns: 1fr; }
+    .house.wide { grid-column: auto; flex-direction: column; }
+    .house.wide .ph { flex: none; aspect-ratio: 16/10; }
+    .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+    .mobile-bar .btn { min-width: 0; }
+    .timeline { grid-template-columns: 1fr; gap: 28px; }
+    .timeline li::after { display: none; }
+    .form { padding: 22px; }
+    .form-row { grid-template-columns: 1fr; gap: 0; }
+    .top-phone { display: none; }
+    .mobile-bar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--c-border);
+    }
+    .mobile-bar .btn { justify-content: center; padding: 12px; }
+  }
+  @media (max-width: 400px) {
+    .hero-actions .btn { width: 100%; justify-content: center; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Набор SVG-иконок (линейные, толщина 1.75) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.4 1.3 2.8 2.5 2.8z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4 12 14l-3-3"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 9h8M8 13h6"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 22v-5M8 17h8l-3-4h2l-3-5h1.5L12 2 8.5 8H10l-3 5h2z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17H3v-5l2-5h14l2 5v5h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5M3 12h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+    <symbol id="i-brick" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="1"/><path d="M2 9.3h20M2 14.6h20M9 4v5.3M16 4v5.3M5.5 9.3v5.3M12.5 9.3v5.3M19 9.3v5.3M9 14.6V20M16 14.6V20"/></symbol>
+    <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-3.5 8-10V5l-8-3-8 3v7c0 6.5 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></symbol>
+    <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M3 3h7v18H3z"/><path d="M3 7h3M3 11h4M3 15h3M3 19h4"/><path d="M14 3h7v7h-7zM14 14h7v7h-7z"/></symbol>
+    <symbol id="i-percent" viewBox="0 0 24 24"><path d="M19 5 5 19"/><circle cx="6.5" cy="6.5" r="2.5"/><circle cx="17.5" cy="17.5" r="2.5"/></symbol>
+    <symbol id="i-office" viewBox="0 0 24 24"><path d="M4 22V3h11v19M15 9h5v13M2 22h20"/><path d="M8 7h3M8 11h3M8 15h3M18 13v.01M18 17v.01"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="ГрандСтрой (продажа коттеджей) — на главную">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 15 16 4l13 11" fill="none" stroke="#E9AE86" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v15h18V13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><path d="M7 18h18M7 23h18M12 13v5M20 13v5M16 18v5M12 23v5M20 23v5" fill="none" stroke="#fff" stroke-width="1.4"/></svg>
+      ГрандСтрой
+    </a>
+    <nav aria-label="Разделы">
+      <a href="#houses">Дома и цены</a>
+      <a href="#how">Как купить</a>
+      <a href="#booking">Заявка</a>
+      <a href="#contacts">Офис</a>
+    </nav>
+    <a class="top-phone" href="tel:+79036555050">+7 903 655-50-50</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true">
+      <!-- Иллюстрация: кирпичный дом в современном стиле на фоне сетки чертежа. Заменяется на реальное фото дома/проекта. -->
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#25292D"/><stop offset=".65" stop-color="#4A4542"/><stop offset="1" stop-color="#8A6A55"/></linearGradient>
+          <pattern id="grid" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#fff" stroke-opacity=".06" stroke-width="1"/></pattern>
+          <pattern id="brick" width="36" height="18" patternUnits="userSpaceOnUse"><rect width="36" height="18" fill="#9C4A2E"/><path d="M0 0.5h36M0 9.5h36M0 0v9M18 9v9" stroke="#6E3220" stroke-width="1.5"/></pattern>
+        </defs>
+        <rect width="1440" height="800" fill="url(#sky)"/>
+        <rect width="1440" height="800" fill="url(#grid)"/>
+        <!-- контур чертежа -->
+        <g fill="none" stroke="#E9AE86" stroke-opacity=".28" stroke-width="1.5" stroke-dasharray="6 6">
+          <path d="M760 180h560M760 180v-30M1320 180v-30"/>
+        </g>
+        <path d="M0 640 H1440 V800 H0Z" fill="#2A2724"/>
+        <g transform="translate(800 250)">
+          <!-- второй этаж -->
+          <rect x="210" y="40" width="300" height="140" fill="url(#brick)"/>
+          <rect x="196" y="28" width="328" height="14" fill="#1C1E21"/>
+          <rect x="250" y="80" width="110" height="70" fill="#F2D3A2" opacity=".9"/>
+          <rect x="390" y="80" width="80" height="70" fill="#F2D3A2" opacity=".75"/>
+          <!-- первый этаж -->
+          <rect x="0" y="180" width="560" height="210" fill="url(#brick)"/>
+          <rect x="-14" y="168" width="350" height="14" fill="#1C1E21"/>
+          <rect x="40" y="230" width="170" height="110" fill="#F2D3A2" opacity=".85"/>
+          <path d="M125 230v110" stroke="#1C1E21" stroke-width="4"/>
+          <rect x="260" y="250" width="64" height="140" fill="#1C1E21"/>
+          <rect x="370" y="230" width="150" height="110" fill="#F2D3A2" opacity=".7"/>
+          <rect x="-30" y="388" width="620" height="10" fill="#1C1E21"/>
+        </g>
+        <path d="M0 700 H1440 V800 H0Z" fill="#1E1C1A"/>
+      </svg>
+    </div>
+    <div class="wrap">
+      <span class="hero-kicker" data-hero>Кирпичные дома под ключ · Воронеж</span>
+      <h1 id="hero-title" data-hero>Кирпичный дом под ключ за 5 месяцев — от 5,7 млн ₽</h1>
+      <p class="hero-lead" data-hero>Выберите типовой проект — и оставьте одну заявку: расчёт стоимости, показ, консультация или ипотека. Менеджер перезвонит и ответит по вашему варианту, ничего не потеряется между формами и мессенджерами.</p>
+      <div class="hero-actions" data-hero>
+        <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-receipt"/></svg>Рассчитать стоимость</a>
+        <a class="btn btn-ghost" href="tel:+79036555050"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+      </div>
+      <ul class="hero-facts" data-hero>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>Гарантия 5 лет</li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Офис: улица Ворошилова, 1а, офис 5, БЦ Гран-При</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 1: проблема -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap problem-grid">
+      <div data-reveal>
+        <span class="eyebrow"><span class="step-num">1</span>Чего опасаются</span>
+        <h2 id="problem-title">Своё строительство пугает сроками, сметой и тем, что будет после</h2>
+        <p class="muted">Мы строим из кирпича по типовым проектам — поэтому на главные вопросы можно ответить ещё до договора.</p>
+        <div class="mini-cta">
+          <a class="btn btn-line" href="#houses">Смотреть дома и цены<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+      <ul class="pain-list" data-reveal-list>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Стройка растягивается на годы</strong><span>Дом под ключ строим за 5 месяцев.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Непонятно, сколько выйдет в итоге</strong><span>Начинаем с расчёта по выбранному проекту — стоимость видна до подписания договора.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Страшно остаться один на один с проблемами</strong><span>На дом даём гарантию 5 лет.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Не хватает своих денег</strong><span>Оставьте заявку на ипотеку — ответим на вопросы по оформлению.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 2: дома и цены -->
+  <section class="houses" id="houses" aria-labelledby="houses-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">2</span>Дома и цены</span>
+        <h2 id="houses-title">Кирпичный дом под ключ по типовому проекту</h2>
+        <p class="muted">Цена «от» — для кирпичного дома под ключ. Итог зависит от проекта: точную сумму назовём после расчёта.</p>
+      </div>
+
+      <!-- ВЛАДЕЛЕЦ: подставьте фото и названия своих проектов -->
+      <div class="house-grid">
+        <article class="house wide" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M10 34h100" fill="none" stroke="#2B2F33" stroke-width="3" stroke-linecap="round"/><path d="M16 34v50h88V34" fill="#fff" fill-opacity=".55" stroke="#2B2F33" stroke-width="3"/><path d="M16 50h88M16 66h88M40 34v16M80 34v16M60 50v16M40 66v18M80 66v18" stroke="#2B2F33" stroke-width="1.5" stroke-opacity=".5"/><rect x="26" y="44" width="22" height="18" fill="#fff" stroke="#2B2F33" stroke-width="3"/><rect x="72" y="44" width="22" height="18" fill="#fff" stroke="#2B2F33" stroke-width="3"/><path d="M52 84V64h16v20" fill="#fff" stroke="#2B2F33" stroke-width="3"/></svg>
+            <figcaption>Место для фото построенного дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Кирпичный дом под ключ</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-brick"/></svg>кирпич</li>
+              <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>за 5 месяцев</li>
+              <li><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg>гарантия 5 лет</li>
+            </ul>
+            <p class="muted" style="margin:0">Дом в современном стиле по типовому проекту — от расчёта до сдачи под ключ. Выберите проект, а стоимость мы рассчитаем под ваш вариант.</p>
+            <div class="price">
+              <div><b>от 5,7 млн ₽</b> <small>/ под ключ</small></div>
+              <a class="price-link" href="#booking" data-service="Кирпичный дом под ключ">Рассчитать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><rect x="16" y="10" width="88" height="70" fill="#fff" fill-opacity=".55" stroke="#2B2F33" stroke-width="3"/><path d="M16 46h50M66 10v70M66 34h38" fill="none" stroke="#2B2F33" stroke-width="3"/><path d="M30 46v-8M84 34v-6" stroke="#2B2F33" stroke-width="2"/></svg>
+            <figcaption>Место для планировки проекта</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Типовые проекты</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-ruler"/></svg>готовые планировки</li>
+            </ul>
+            <p class="muted" style="margin:0">Выберите проект с подходящей планировкой — рассчитаем стоимость дома под ключ.</p>
+            <div class="price">
+              <div><small>Цена по проекту — уточняйте</small></div>
+              <a class="price-link" href="#booking" data-service="Расчёт по проекту">Расчёт<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M14 30h92" fill="none" stroke="#2B2F33" stroke-width="3" stroke-linecap="round"/><path d="M22 30v54h76V30" fill="#fff" fill-opacity=".55" stroke="#2B2F33" stroke-width="3"/><path d="M50 84V58h20v26" fill="none" stroke="#2B2F33" stroke-width="3"/><circle cx="60" cy="44" r="5" fill="none" stroke="#2B2F33" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Показ дома</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>по записи</li>
+            </ul>
+            <p class="muted" style="margin:0">Посмотрите дом вживую до решения: выберите удобный день, время согласуем по телефону.</p>
+            <div class="price">
+              <div><small>Запись по заявке или звонку</small></div>
+              <a class="price-link" href="#booking" data-service="Показ дома">Записаться<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0;background-image:linear-gradient(160deg,#F1DFD2 0%,#E2C2AC 60%,#CFA286 100%)">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M14 30h92" fill="none" stroke="#5A2716" stroke-width="3" stroke-linecap="round"/><path d="M22 30v54h76V30" fill="#fff" fill-opacity=".5" stroke="#5A2716" stroke-width="3"/><path d="M72 44 48 72" stroke="#5A2716" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="47" r="5" fill="none" stroke="#5A2716" stroke-width="3"/><circle cx="70" cy="69" r="5" fill="none" stroke="#5A2716" stroke-width="3"/></svg>
+            <figcaption>Ипотека</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Дом в ипотеку</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-percent"/></svg>консультация</li>
+            </ul>
+            <p class="muted" style="margin:0">Хотите купить дом с ипотекой — оставьте заявку, ответим на вопросы по оформлению.</p>
+            <div class="price">
+              <div><small>Условия уточняйте</small></div>
+              <a class="price-link" href="#booking" data-service="Ипотека">Заявка<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="extras">
+        <div data-reveal>
+          <h3 style="font-size:1.5rem">Одна заявка вместо пяти форм</h3>
+          <p class="muted">Неважно, хотите вы расчёт, показ или просто задать вопрос, — выберите вариант в форме, и менеджер перезвонит именно по нему.</p>
+          <div class="mini-cta">
+            <a class="btn btn-primary" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+          </div>
+        </div>
+        <div data-reveal>
+          <table class="price-table">
+            <caption class="sr-only">Что можно запросить</caption>
+            <thead><tr><th scope="col">Что нужно</th><th scope="col">Заявка</th></tr></thead>
+            <tbody>
+              <tr><td>Узнать стоимость дома под ключ по проекту</td><td>Расчёт</td></tr>
+              <tr><td>Посмотреть дом вживую</td><td>Показ</td></tr>
+              <tr><td>Разобраться с проектами и сроками</td><td>Консультация</td></tr>
+              <tr><td>Купить дом с ипотекой</td><td>Ипотека</td></tr>
+              <tr><td>Написать в WhatsApp, Telegram, ВК или Viber</td><td>Вопрос</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Цена «от 5,7 млн ₽» — для кирпичного дома под ключ, не является публичной офертой. Точную стоимость называем после расчёта по проекту.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Почему мы -->
+  <section class="why" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">Почему ГрандСтрой</span>
+        <h2 id="why-title">Что вы получаете, покупая дом у «ГрандСтрой»</h2>
+      </div>
+      <div class="why-grid" data-reveal-list>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><div><h3>Под ключ за 5 месяцев</h3><p>От договора до готового дома — один сезон, а не годы стройки.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-shield"/></svg><div><h3>Гарантия 5 лет</h3><p>Если после сдачи что-то не так — обращайтесь к нам.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-brick"/></svg><div><h3>Кирпичные дома</h3><p>Строим из кирпича, в современном стиле.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-ruler"/></svg><div><h3>Типовые проекты</h3><p>Готовые планировки — проще сравнить варианты и быстрее получить расчёт.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-office"/></svg><div><h3>Офис в Воронеже</h3><p>БЦ Гран-При, улица Ворошилова, 1а, офис 5 — можно приехать и обсудить проект лично.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><div><h3>Удобный способ связи</h3><p>WhatsApp, Telegram, ВК, Viber или звонок на +7 903 655-50-50.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 3: как проходит -->
+  <section class="steps" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">3</span>Как купить дом</span>
+        <h2 id="how-title">Четыре шага от заявки до ключей</h2>
+      </div>
+      <ol class="timeline" data-reveal-list>
+        <li><h3>Расчёт</h3><p>Выбираете типовой проект — мы считаем стоимость дома под ключ.</p></li>
+        <li><h3>Показ</h3><p>Смотрите дом вживую и задаёте вопросы на месте.</p></li>
+        <li><h3>Договор</h3><p>Фиксируем проект и сроки. При необходимости — помогаем с вопросами по ипотеке.</p></li>
+        <li><h3>Стройка и ключи</h3><p>Строим дом под ключ за 5 месяцев. Гарантия — 5 лет.</p></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-receipt"/></svg>Начать с расчёта</a>
+        <span class="muted">или позвоните: <a href="tel:+79036555050">+7 903 655-50-50</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Форма записи -->
+  <section class="booking" id="booking" aria-labelledby="booking-title">
+    <div class="wrap booking-grid">
+      <div class="booking-aside" data-reveal>
+        <span class="eyebrow">Заявка</span>
+        <h2 id="booking-title">Расчёт, показ или ипотека — в одной заявке</h2>
+        <p class="muted">Выберите, что нужно, и укажите удобное время — менеджер перезвонит. Заявка ни к чему не обязывает.</p>
+        <ul>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Быстрее по телефону: <a href="tel:+79036555050">+7 903 655-50-50</a></span></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span>Часы работы офиса уточняйте по телефону</span></li>
+        </ul>
+      </div>
+
+      <div class="form" data-reveal>
+        <form id="bookingForm" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Ваше имя</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+              <span class="err" id="e-name" role="alert"></span>
+            </div>
+            <div class="field">
+              <label for="f-phone">Телефон</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 ___ ___-__-__" required aria-describedby="e-phone">
+              <span class="err" id="e-phone" role="alert"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-service">Что вас интересует</label>
+            <select id="f-service" name="service" required aria-describedby="e-service">
+              <option value="">Выберите вариант</option>
+              <option>Кирпичный дом под ключ</option>
+              <option>Расчёт по проекту</option>
+              <option>Показ дома</option>
+              <option>Ипотека</option>
+              <option>Консультация</option>
+              <option>Другой вопрос</option>
+            </select>
+            <span class="err" id="e-service" role="alert"></span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-date">Удобная дата показа</label>
+              <input id="f-date" name="date" type="date">
+            </div>
+            <div class="field">
+              <label for="f-guests">Сколько человек в семье</label>
+              <input id="f-guests" name="guests" type="number" min="1" max="50" inputmode="numeric" placeholder="Например, 4">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-time">Когда удобно принять звонок</label>
+            <select id="f-time" name="time">
+              <option>В любое время</option>
+              <option>Утром, 9:00–12:00</option>
+              <option>Днём, 12:00–17:00</option>
+              <option>Вечером, 17:00–21:00</option>
+            </select>
+          </div>
+          <p class="consent">Нажимая кнопку, вы соглашаетесь на обработку имени и телефона для обратного звонка.</p>
+          <button class="btn btn-accent" type="submit"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Отправить заявку</button>
+        </form>
+        <div class="success" id="formSuccess" role="status" aria-live="polite" tabindex="-1">
+          <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
+          <h3 style="font-size:1.5rem">Заявка принята, перезвоним</h3>
+          <p class="muted">Менеджер свяжется с вами в выбранное время. Если удобнее — позвоните сами: <a href="tel:+79036555050">+7 903 655-50-50</a>.</p>
+          <button class="btn btn-line" type="button" id="formAgain">Отправить ещё одну</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap contacts-grid">
+      <div data-reveal>
+        <span class="eyebrow">Офис продаж</span>
+        <h2 id="contacts-title">Где обсудить проект</h2>
+        <ul class="contact-list">
+          <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><div><small>Адрес офиса</small>Улица Ворошилова, 1а, офис 5, БЦ Гран-При, Воронеж</div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><div><small>Телефон</small><a href="tel:+79036555050">+7 903 655-50-50</a></div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><div><small>Часы работы</small>Уточняйте по телефону</div></li>
+        </ul>
+      </div>
+      <div class="route" data-reveal>
+        <h3>Как добраться до офиса</h3>
+        <ol>
+          <li>Офис — в бизнес-центре «Гран-При» на улице Ворошилова, 1а.</li>
+          <li>Нам нужен офис 5. Перед визитом позвоните, чтобы менеджер был на месте.</li>
+          <li>Обсудите с менеджером проект и расчёт стоимости.</li>
+        </ol>
+        <p class="muted" style="margin:0">Адрес для навигатора: Воронеж, улица Ворошилова, 1а</p>
+        <a class="btn btn-primary" href="https://yandex.ru/maps/?text=%D0%93%D1%80%D0%B0%D0%BD%D0%B4%D0%A1%D1%82%D1%80%D0%BE%D0%B9%20%28%D0%BF%D1%80%D0%BE%D0%B4%D0%B0%D0%B6%D0%B0%20%D0%BA%D0%BE%D1%82%D1%82%D0%B5%D0%B4%D0%B6%D0%B5%D0%B9%29%2C%20%D0%A3%D0%BB%D0%B8%D1%86%D0%B0%20%D0%92%D0%BE%D1%80%D0%BE%D1%88%D0%B8%D0%BB%D0%BE%D0%B2%D0%B0%2C%201%D0%B0%2C%20%D0%BE%D1%84%D0%B8%D1%81%205%2C%20%D0%91%D0%A6%20%D0%93%D1%80%D0%B0%D0%BD-%D0%9F%D1%80%D0%B8%2C%20%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%B5%D0%B6" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong style="color:#fff">ГрандСтрой (продажа коттеджей)</strong> · кирпичные дома под ключ, Воронеж</div>
+    <div><a href="tel:+79036555050">+7 903 655-50-50</a> · Улица Ворошилова, 1а, офис 5, БЦ Гран-При, Воронеж</div>
+    <div>© 2026 ГрандСтрой (продажа коттеджей)</div>
+    <div class="demo-mark">Демо-макет. Иллюстрации — заглушки: сюда встанут фото ваших домов и планировки проектов.</div>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-primary" href="tel:+79036555050"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-receipt"/></svg>Расчёт</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Форма ---------- */
+  var form = document.getElementById("bookingForm");
+  var success = document.getElementById("formSuccess");
+  var serviceSel = document.getElementById("f-service");
+
+  function setErr(input, errId, msg) {
+    var el = document.getElementById(errId);
+    el.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = form.elements.name, phone = form.elements.phone, service = form.elements.service;
+    var digits = phone.value.replace(/\D/g, "");
+    var ok = true;
+    ok = setErr(name, "e-name", name.value.trim().length < 2 ? "Укажите имя" : "") && ok;
+    ok = setErr(phone, "e-phone", digits.length < 10 ? "Укажите телефон — не меньше 10 цифр" : "") && ok;
+    ok = setErr(service, "e-service", !service.value ? "Выберите, что бронируете" : "") && ok;
+    if (!ok) {
+      var firstBad = form.querySelector('[aria-invalid="true"]');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+    // Демо: данные никуда не отправляются. Подключение к боту/CRM — на этапе внедрения.
+    form.style.display = "none";
+    success.classList.add("show");
+    success.focus();
+    if (window.Motion && !reduced) {
+      Motion.animate(success, { opacity: [0, 1], transform: ["translateY(12px)", "translateY(0)"] }, { duration: 0.4 });
+    }
+  });
+
+  document.getElementById("formAgain").addEventListener("click", function () {
+    form.reset();
+    success.classList.remove("show");
+    form.style.display = "";
+    form.elements.name.focus();
+  });
+
+  // Кнопки «Забронировать» в карточках подставляют выбранный дом в форму
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < serviceSel.options.length; i++) {
+        if (serviceSel.options[i].text === v) { serviceSel.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  // Минимальная дата заезда — сегодня
+  var dateInput = document.getElementById("f-date");
+  var t = new Date();
+  dateInput.min = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+
+  /* ---------- Анимации (Motion) ---------- */
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduced || typeof M.animate !== "function") return; // без библиотеки или при reduce — всё видно статично
+
+  var ease = [0.22, 1, 0.36, 1];
+
+  // Первый экран: элементы по очереди
+  var heroEls = document.querySelectorAll("[data-hero]");
+  heroEls.forEach(function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; });
+  M.animate(heroEls, { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0)"] },
+    { duration: 0.55, delay: M.stagger ? M.stagger(0.1) : 0, ease: ease });
+
+  // Параллакс фона первого экрана
+  var heroBg = document.querySelector(".hero-bg");
+  var hero = document.querySelector(".hero");
+  if (M.scroll && heroBg) {
+    M.scroll(M.animate(heroBg, { transform: ["translateY(0px)", "translateY(60px)"] }, { ease: "linear" }),
+      { target: hero, offset: ["start start", "end start"] });
+  }
+
+  // Появление блоков при прокрутке
+  function hide(el) { el.style.opacity = "0"; el.style.transform = "translateY(24px)"; }
+  function show(targets, stag) {
+    M.animate(targets, { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0)"] },
+      { duration: 0.5, delay: stag && M.stagger ? M.stagger(0.08) : 0, ease: ease });
+  }
+  if (M.inView) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) {
+      hide(el);
+      M.inView(el, function () { show(el, false); }, { amount: 0.2 });
+    });
+    document.querySelectorAll("[data-reveal-list]").forEach(function (list) {
+      var items = Array.prototype.slice.call(list.children);
+      items.forEach(hide);
+      M.inView(list, function () { show(items, true); }, { amount: 0.15 });
+    });
+    var cards = Array.prototype.slice.call(document.querySelectorAll("[data-card]"));
+    if (cards.length) {
+      cards.forEach(hide);
+      M.inView(".house-grid", function () { show(cards, true); }, { amount: 0.1 });
+    }
+  }
+
+  // Наведение и нажатие: кнопки и карточки
+  if (M.hover) {
+    M.hover(".btn", function (el) {
+      M.animate(el, { transform: "translateY(-2px)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.2 }); };
+    });
+    M.hover("[data-card]", function (el) {
+      M.animate(el, { transform: "translateY(-4px)" }, { duration: 0.25 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.25 }); };
+    });
+  }
+  if (M.press) {
+    M.press(".btn", function (el) {
+      M.animate(el, { transform: "scale(0.97)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "scale(1)" }, { duration: 0.2 }); };
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

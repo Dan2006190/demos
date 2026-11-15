@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Зеленый дворик (загородный клуб) — Новоусманский район, Воронеж</title>
+<meta name="description" content="Зеленый дворик — загородный клуб в Новоусманском районе Воронежской области. Свободные даты и цены — по телефону +74732928087 или через заявку на сайте.">
+<style>
+  /* Образ «Зелёный дворик»: летний двор за городом — оливковая листва, кирпич, тёплая известь, деревянная пергола */
+  :root {
+    --c-primary: #3F5B26;       /* оливково-зелёный, белый текст — контраст ≈ 7.6:1 */
+    --c-primary-hover: #30471C;
+    --c-secondary: #7A9A3E;     /* светлая листва — только декор */
+    --c-accent: #A13F22;        /* кирпич — CTA, белый текст ≈ 6.4:1 */
+    --c-accent-hover: #83321A;
+    --c-bg: #F7F4EC;            /* тёплая известь */
+    --c-bg-alt: #EEF0E0;        /* бледная листва */
+    --c-fg: #26301B;
+    --c-card: #FFFDF8;
+    --c-muted: #ECE7DA;
+    --c-muted-fg: #55584A;      /* на фоне --c-bg ≈ 6.6:1 */
+    --c-border: #D9D3BF;
+    --c-danger: #A3302A;
+    --c-wood: #7A5233;
+    --radius: 4px;
+    --shadow: 0 1px 0 rgba(38, 48, 27, .10), 0 2px 6px rgba(38, 48, 27, .06);
+    --f-head: "Palatino Linotype", "Book Antiqua", Palatino, "URW Palladio L", Georgia, serif;
+    --f-body: "Segoe UI", system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif;
+    --max: 1160px;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; overflow-x: hidden; }
+  body { overflow-x: hidden; }
+  .problem-grid > *, .extras > *, .why-grid > *, .booking-grid > *, .contacts-grid > *, .house-grid > *, .form-row > *, .timeline > li { min-width: 0; }
+  .field select, .field input { max-width: 100%; min-width: 0; text-overflow: ellipsis; }
+  h1, h2, h3 { overflow-wrap: break-word; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0; font-family: var(--f-body); font-size: 17px; line-height: 1.6;
+    color: var(--c-fg); background: var(--c-bg); -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3 { font-family: var(--f-head); line-height: 1.2; margin: 0 0 .5em; font-weight: 600; }
+  h1 { font-size: clamp(2.1rem, 5vw, 3.6rem); letter-spacing: -.01em; }
+  h2 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
+  h3 { font-size: 1.2rem; }
+  p { margin: 0 0 1em; }
+  a { color: var(--c-primary); }
+  img, svg { display: block; }
+  .wrap { max-width: var(--max); margin: 0 auto; padding: 0 20px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  :focus-visible { outline: 3px solid var(--c-accent); outline-offset: 3px; border-radius: 4px; }
+  .skip { position: absolute; left: -9999px; top: 8px; background: #fff; padding: 8px 14px; z-index: 100; }
+  .skip:focus { left: 8px; }
+
+  /* Кнопки */
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px; padding: 14px 24px;
+    border-radius: var(--radius); font: 600 1rem/1 var(--f-body); text-decoration: none;
+    border: 2px solid transparent; cursor: pointer; transition: background-color .2s, border-color .2s, color .2s;
+    min-height: 48px;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-accent { background: var(--c-accent); color: #fff; }
+  .btn-accent:hover { background: var(--c-accent-hover); }
+  .btn-primary { background: var(--c-primary); color: #fff; }
+  .btn-primary:hover { background: var(--c-primary-hover); }
+  .btn-ghost { background: transparent; color: #fff; border-color: rgba(255,255,255,.75); }
+  .btn-ghost:hover { background: rgba(255,255,255,.12); }
+  .btn-line { background: transparent; color: var(--c-primary); border-color: var(--c-primary); }
+  .btn-line:hover { background: var(--c-bg-alt); }
+
+  .ico { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* Шапка */
+  .top { position: absolute; top: 0; left: 0; right: 0; z-index: 10; color: #fff; }
+  .top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 18px; padding-bottom: 18px; }
+  .logo { display: flex; align-items: center; gap: 10px; font: 600 1.25rem var(--f-head); color: #fff; text-decoration: none; }
+  .logo svg { width: 30px; height: 30px; }
+  .logo svg path:first-child { stroke: #D8E3A8; }
+  .top nav { display: flex; gap: 22px; }
+  .top nav a { color: #fff; text-decoration: none; font-weight: 500; font-size: .95rem; }
+  .top nav a:hover { text-decoration: underline; text-underline-offset: 4px; }
+  .top-phone { color: #fff; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  @media (max-width: 860px) { .top nav { display: none; } }
+
+  /* Первый экран */
+  .hero { position: relative; overflow: hidden; color: #fff; background: #2B3A1C; min-height: 640px; display: flex; align-items: flex-end; }
+  .hero-bg { position: absolute; inset: -60px 0 -60px 0; will-change: transform; }
+  .hero-bg svg { width: 100%; height: 100%; }
+  .hero::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, rgba(30,38,18,.92) 0%, rgba(30,38,18,.72) 45%, rgba(30,38,18,.25) 100%), linear-gradient(180deg, rgba(30,38,18,0) 55%, rgba(30,38,18,.6) 100%); }
+  .hero .wrap { position: relative; z-index: 2; padding-top: 140px; padding-bottom: 72px; width: 100%; }
+  .hero-kicker { display: inline-block; font-weight: 600; font-size: .85rem; letter-spacing: .12em; text-transform: uppercase; color: #E4EBC4; margin-bottom: 16px; padding-left: 14px; border-left: 3px solid #C8754F; }
+  .hero h1 { max-width: 720px; font-weight: 700; }
+  .hero-lead { font-size: 1.15rem; max-width: 580px; color: #F1EFE3; }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
+  .hero-facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 34px 0 0; padding: 18px 0 0; list-style: none; color: #F1EFE3; font-size: .95rem; border-top: 1px solid rgba(255,255,255,.25); max-width: 720px; }
+  .hero-facts li { display: flex; align-items: center; gap: 8px; }
+  .hero-facts .ico { width: 20px; height: 20px; color: #D8E3A8; }
+
+  section { padding: 88px 0; }
+  .sec-head { max-width: 680px; margin-bottom: 40px; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-weight: 700; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; color: var(--c-primary); margin-bottom: 10px; }
+  .step-num { display: inline-grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; font-size: .85rem; color: #fff; letter-spacing: 0; }
+  .muted { color: var(--c-muted-fg); }
+
+  /* Шаг 1: проблема */
+  .problem { background: var(--c-card); }
+  .problem-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 56px; align-items: start; }
+  .problem .step-num { background: var(--c-danger); }
+  .problem .eyebrow { color: var(--c-danger); }
+  .pain-list { list-style: none; margin: 0; padding: 0; border-top: 1px solid var(--c-border); }
+  .pain-list li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; padding: 20px 0; border-bottom: 1px solid var(--c-border); }
+  .pain-list .ico { color: var(--c-danger); margin-top: 2px; }
+  .pain-list strong { display: block; margin-bottom: 2px; }
+  .pain-list span { color: var(--c-muted-fg); }
+  .mini-cta { margin-top: 28px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px; }
+
+  /* Шаг 2: дома и цены */
+  .houses .step-num { background: #A8581E; }
+  .houses .eyebrow { color: #8A4515; }
+  .house-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .house { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; display: flex; flex-direction: column; box-shadow: var(--shadow); transition: border-color .2s; }
+  .house:hover { border-color: var(--c-secondary); }
+  .house.wide { grid-column: span 2; flex-direction: row; }
+  .house.wide .ph { flex: 0 0 46%; aspect-ratio: auto; }
+  .ph { position: relative; aspect-ratio: 16/10; background-color: #DDE3C4; background-image: repeating-linear-gradient(45deg, rgba(63,91,38,.10) 0 2px, transparent 2px 14px), repeating-linear-gradient(-45deg, rgba(63,91,38,.10) 0 2px, transparent 2px 14px); display: grid; place-items: center; }
+  .ph svg { width: 46%; max-width: 180px; height: auto; }
+  .ph svg [stroke="#1F4D3D"] { stroke: #3F5B26; }
+  .ph figcaption { position: absolute; left: 10px; bottom: 8px; font-size: .78rem; color: #26301B; background: rgba(255,253,248,.9); padding: 2px 8px; border-radius: var(--radius); }
+  .house-body { padding: 22px 22px 24px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .house-body h3 { margin: 0; }
+  .house-meta { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .92rem; color: var(--c-muted-fg); margin: 0; padding: 0; list-style: none; }
+  .house-meta li { display: flex; align-items: center; gap: 6px; }
+  .house-meta .ico { width: 18px; height: 18px; color: var(--c-primary); }
+  .price { margin-top: auto; padding-top: 10px; display: flex; align-items: baseline; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+  .price b { font: 600 1.45rem var(--f-head); }
+  .price small { color: var(--c-muted-fg); font-size: .85rem; }
+  .price-link { font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; }
+  .price-link:hover { text-decoration: underline; }
+
+  .extras { margin-top: 48px; display: grid; grid-template-columns: 1fr 1.4fr; gap: 40px; align-items: start; }
+  .price-table { width: 100%; border-collapse: collapse; background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); overflow: hidden; }
+  .price-table th, .price-table td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--c-border); }
+  .price-table th { background: var(--c-bg-alt); font-size: .85rem; text-transform: uppercase; letter-spacing: .05em; color: var(--c-primary); }
+  .price-table td:last-child, .price-table th:last-child { text-align: right; white-space: nowrap; font-weight: 600; }
+  .price-table tr:last-child td { border-bottom: 0; }
+  .note { font-size: .88rem; color: var(--c-muted-fg); margin-top: 12px; }
+
+  /* Почему мы */
+  .why { background: var(--c-primary); color: #fff; }
+  .why h2 { color: #fff; }
+  .why .eyebrow { color: #E4EBC4; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 56px; }
+  .why-item { display: grid; grid-template-columns: 44px 1fr; gap: 16px; padding: 24px 0; border-top: 1px solid rgba(255,255,255,.22); }
+  .why-item .ico { width: 30px; height: 30px; color: #D8E3A8; }
+  .why-item h3 { color: #fff; margin-bottom: 4px; font-size: 1.15rem; }
+  .why-item p { color: #EEF0E0; margin: 0; }
+
+  /* Шаг 3: как проходит */
+  .steps .step-num { background: #4D6B2E; }
+  .steps .eyebrow { color: #3F5B26; }
+  .timeline { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; counter-reset: s; position: relative; }
+  .timeline li { position: relative; padding: 0 24px 0 0; }
+  .timeline li::before {
+    counter-increment: s; content: counter(s, decimal-leading-zero);
+    display: block; font: 700 2.6rem/1 var(--f-head); color: var(--c-accent); margin-bottom: 14px;
+  }
+  .timeline li::after { content: ""; position: absolute; top: 20px; left: 72px; right: 18px; height: 2px; background: var(--c-border); }
+  .timeline li:last-child::after { display: none; }
+  .timeline h3 { margin-bottom: 6px; }
+  .timeline p { color: var(--c-muted-fg); margin: 0; font-size: .97rem; }
+
+  /* Форма */
+  .booking { background: var(--c-bg-alt); }
+  .booking-grid { display: grid; grid-template-columns: 1fr 1.25fr; gap: 56px; align-items: start; }
+  .form { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 30px; box-shadow: var(--shadow); }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+  .field label { font-weight: 600; font-size: .95rem; }
+  .field input, .field select, .field textarea {
+    font: inherit; font-size: 1rem; padding: 12px 14px; border: 1.5px solid #8F9A74; border-radius: var(--radius);
+    background: #fff; color: var(--c-fg); min-height: 48px; width: 100%;
+  }
+  .field textarea { min-height: 90px; resize: vertical; }
+  .field input:focus, .field select:focus, .field textarea:focus { outline: 3px solid rgba(63,91,38,.35); border-color: var(--c-primary); }
+  .field .err { color: var(--c-danger); font-size: .87rem; min-height: 0; }
+  .field [aria-invalid="true"] { border-color: var(--c-danger); }
+  .consent { font-size: .85rem; color: var(--c-muted-fg); margin: 4px 0 18px; }
+  .form .btn { width: 100%; justify-content: center; }
+  .success { display: none; text-align: left; padding: 10px 0; }
+  .success.show { display: block; }
+  .success .ico { width: 44px; height: 44px; color: var(--c-primary); margin-bottom: 12px; }
+  .booking-aside ul { list-style: none; padding: 0; margin: 24px 0 0; }
+  .booking-aside li { display: flex; gap: 12px; padding: 10px 0; }
+  .booking-aside li .ico { color: var(--c-primary); flex: none; }
+
+  /* Контакты */
+  .contacts-grid { display: grid; grid-template-columns: 1.1fr 1fr; gap: 40px; align-items: stretch; }
+  .contact-list { list-style: none; margin: 0; padding: 0; }
+  .contact-list li { display: grid; grid-template-columns: 44px 1fr; gap: 14px; padding: 18px 0; border-bottom: 1px solid var(--c-border); }
+  .contact-list .ico { color: var(--c-primary); width: 26px; height: 26px; margin-top: 2px; }
+  .contact-list small { display: block; color: var(--c-muted-fg); font-size: .85rem; }
+  .contact-list a { font-weight: 600; }
+  .route { background: var(--c-card); border: 1px solid var(--c-border); border-radius: var(--radius); padding: 28px; display: flex; flex-direction: column; gap: 14px; }
+  .route ol { margin: 0; padding-left: 1.2em; color: var(--c-muted-fg); }
+  .route ol li { margin-bottom: 6px; }
+  .route .btn { align-self: flex-start; }
+
+  footer { background: #222B17; color: #DCDFC8; padding: 36px 0 26px; font-size: .92rem; border-top: 4px solid var(--c-accent); }
+  footer .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px 30px; align-items: center; }
+  footer a { color: #fff; }
+  .demo-mark { width: 100%; font-size: .75rem; color: #A9AE93; margin-top: 10px; }
+  .eyebrow { font-family: var(--f-body); }
+  .step-num { border-radius: var(--radius); }
+
+  /* Мобильная панель */
+  .mobile-bar { display: none; }
+  @media (max-width: 1024px) {
+    .house-grid { grid-template-columns: 1fr 1fr; }
+    .house.wide { grid-column: span 2; }
+    .timeline { grid-template-columns: 1fr 1fr; gap: 36px 0; }
+    .timeline li:nth-child(2)::after { display: none; }
+  }
+  @media (max-width: 768px) {
+    body { font-size: 16px; padding-bottom: 72px; }
+    section { padding: 64px 0; }
+    .hero { min-height: 600px; }
+    .hero .wrap { padding-top: 110px; padding-bottom: 48px; }
+    .problem-grid, .extras, .why-grid, .booking-grid, .contacts-grid { grid-template-columns: 1fr; gap: 32px; }
+    .house-grid { grid-template-columns: 1fr; }
+    .house.wide { grid-column: auto; flex-direction: column; }
+    .house.wide .ph { flex: none; aspect-ratio: 16/10; }
+    .hero h1 { font-size: clamp(1.8rem, 8vw, 2.4rem); }
+    .mobile-bar .btn { min-width: 0; }
+    .timeline { grid-template-columns: 1fr; gap: 28px; }
+    .timeline li::after { display: none; }
+    .form { padding: 22px; }
+    .form-row { grid-template-columns: 1fr; gap: 0; }
+    .top-phone { display: none; }
+    .mobile-bar {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px; position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom)); background: #fff; border-top: 1px solid var(--c-border);
+    }
+    .mobile-bar .btn { justify-content: center; padding: 12px; }
+  }
+  @media (max-width: 400px) {
+    .hero-actions .btn { width: 100%; justify-content: center; }
+  }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<a class="skip" href="#main">Перейти к содержимому</a>
+
+<!-- Набор SVG-иконок (линейные, толщина 1.75) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-phone" viewBox="0 0 24 24"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2z"/></symbol>
+    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-users" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></symbol>
+    <symbol id="i-bed" viewBox="0 0 24 24"><path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/></symbol>
+    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3.3.3 1.4 1.3 2.8 2.5 2.8z"/></symbol>
+    <symbol id="i-alert" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M22 11.1V12a10 10 0 1 1-5.9-9.1"/><path d="M22 4 12 14l-3-3"/></symbol>
+    <symbol id="i-key" viewBox="0 0 24 24"><circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/></symbol>
+    <symbol id="i-receipt" viewBox="0 0 24 24"><path d="M4 2v20l3-2 3 2 2-2 2 2 3-2 3 2V2l-3 2-3-2-2 2-2-2-3 2z"/><path d="M8 9h8M8 13h6"/></symbol>
+    <symbol id="i-tree" viewBox="0 0 24 24"><path d="M12 22v-5M8 17h8l-3-4h2l-3-5h1.5L12 2 8.5 8H10l-3 5h2z"/></symbol>
+    <symbol id="i-car" viewBox="0 0 24 24"><path d="M5 17H3v-5l2-5h14l2 5v5h-2"/><circle cx="7.5" cy="17" r="2"/><circle cx="16.5" cy="17" r="2"/><path d="M9.5 17h5M3 12h18"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-chat" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-9 8.4 8.6 8.6 0 0 1-3.8-.9L3 21l1.9-5.2A8.4 8.4 0 0 1 12 3a8.4 8.4 0 0 1 9 8.5z"/></symbol>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#top" aria-label="Зеленый дворик (загородный клуб) — на главную">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 15 16 4l13 11" fill="none" stroke="#6EE7B7" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 13v15h18V13" fill="none" stroke="#fff" stroke-width="2.2" stroke-linejoin="round"/><path d="M13 28v-8h6v8" fill="none" stroke="#fff" stroke-width="2.2"/></svg>
+      Зеленый дворик (загородный клуб)
+    </a>
+    <nav aria-label="Разделы">
+      <a href="#houses">Размещение</a>
+      <a href="#how">Как забронировать</a>
+      <a href="#booking">Заявка</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+    <a class="top-phone" href="tel:+74732928087">+74732928087</a>
+  </div>
+</header>
+
+<main id="main">
+  <!-- Первый экран -->
+  <section class="hero" id="top" aria-labelledby="hero-title">
+    <div class="hero-bg" aria-hidden="true">
+      <!-- Иллюстрация: летний двор — пергола с виноградом, кирпичная стена, мощение. Заменяется на реальное фото владельца. -->
+      <svg viewBox="0 0 1440 800" preserveAspectRatio="xMidYMid slice">
+        <defs>
+          <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#55703A"/><stop offset=".55" stop-color="#A9B87A"/><stop offset="1" stop-color="#E8D9AE"/></linearGradient>
+          <pattern id="brick" width="60" height="30" patternUnits="userSpaceOnUse">
+            <rect width="60" height="30" fill="#9C4A2C"/>
+            <path d="M0 15h60M0 30h60M30 0v15M0 15v15M60 15v15" stroke="#7A3720" stroke-width="2.5"/>
+          </pattern>
+          <pattern id="pave" width="80" height="40" patternUnits="userSpaceOnUse">
+            <rect width="80" height="40" fill="#8A8566"/>
+            <path d="M0 0h80M0 20h80M40 0v20M20 20v20M60 20v20" stroke="#6E6A50" stroke-width="2"/>
+          </pattern>
+        </defs>
+        <rect width="1440" height="800" fill="url(#sky)"/>
+        <!-- кроны деревьев за стеной -->
+        <g fill="#3F5B26">
+          <circle cx="760" cy="330" r="120"/><circle cx="900" cy="290" r="140"/><circle cx="1060" cy="320" r="120"/>
+          <circle cx="1210" cy="280" r="150"/><circle cx="1370" cy="320" r="120"/>
+        </g>
+        <g fill="#4D6B2E"><circle cx="830" cy="380" r="90"/><circle cx="1130" cy="370" r="100"/><circle cx="1300" cy="390" r="90"/></g>
+        <!-- кирпичная стена двора -->
+        <rect x="620" y="430" width="820" height="200" fill="url(#brick)"/>
+        <rect x="620" y="420" width="820" height="14" fill="#C8B78E"/>
+        <!-- калитка -->
+        <g transform="translate(960 470)">
+          <rect width="120" height="160" fill="#5B3A22"/>
+          <path d="M20 0v160M40 0v160M60 0v160M80 0v160M100 0v160" stroke="#47301B" stroke-width="3"/>
+        </g>
+        <!-- пергола -->
+        <g stroke="#6A4A2C" stroke-width="16" stroke-linecap="square">
+          <path d="M700 250v430M1380 250v430"/>
+        </g>
+        <path d="M660 250h760" stroke="#6A4A2C" stroke-width="20"/>
+        <g stroke="#6A4A2C" stroke-width="8"><path d="M720 230v40M820 230v40M920 230v40M1020 230v40M1120 230v40M1220 230v40M1320 230v40"/></g>
+        <!-- виноград по перголе -->
+        <g fill="#2F4A1C">
+          <circle cx="700" cy="250" r="44"/><circle cx="760" cy="238" r="34"/><circle cx="860" cy="252" r="30"/>
+          <circle cx="1000" cy="240" r="38"/><circle cx="1160" cy="252" r="32"/><circle cx="1290" cy="238" r="36"/><circle cx="1380" cy="252" r="46"/>
+          <circle cx="700" cy="330" r="26"/><circle cx="1380" cy="340" r="30"/><circle cx="700" cy="420" r="20"/>
+        </g>
+        <!-- гирлянда -->
+        <path d="M700 290 Q870 360 1040 290 T1380 290" fill="none" stroke="#2B2A1E" stroke-width="2"/>
+        <g fill="#F3D78A"><circle cx="760" cy="314" r="6"/><circle cx="850" cy="332" r="6"/><circle cx="950" cy="326" r="6"/><circle cx="1110" cy="314" r="6"/><circle cx="1210" cy="330" r="6"/><circle cx="1310" cy="316" r="6"/></g>
+        <!-- мощёный двор -->
+        <rect x="0" y="630" width="1440" height="170" fill="url(#pave)"/>
+        <!-- стол и скамьи -->
+        <g fill="#7A5233">
+          <rect x="800" y="600" width="300" height="16"/><rect x="820" y="616" width="12" height="70"/><rect x="1068" y="616" width="12" height="70"/>
+          <rect x="770" y="650" width="360" height="10"/>
+        </g>
+        <!-- куст слева -->
+        <g fill="#2F4A1C"><circle cx="560" cy="650" r="70"/><circle cx="480" cy="680" r="60"/></g>
+      </svg>
+    </div>
+    <div class="wrap">
+      <span class="hero-kicker" data-hero>Загородный клуб · Новоусманский район</span>
+      <h1 id="hero-title" data-hero>«Зеленый дворик» — загородный клуб под Воронежем, который теперь легко найти</h1>
+      <p class="hero-lead" data-hero>Свободные даты, варианты размещения и стоимость — одним звонком или заявкой с сайта. Перезвоним, ответим на вопросы и закрепим даты до предоплаты.</p>
+      <div class="hero-actions" data-hero>
+        <a class="btn btn-accent" href="tel:+74732928087"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+        <a class="btn btn-ghost" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Записаться</a>
+      </div>
+      <ul class="hero-facts" data-hero>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Новоусманский район, Воронежская область</li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>+74732928087</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 1: проблема -->
+  <section class="problem" aria-labelledby="problem-title">
+    <div class="wrap problem-grid">
+      <div data-reveal>
+        <span class="eyebrow"><span class="step-num">1</span>С чем сталкиваются</span>
+        <h2 id="problem-title">Про загородный клуб в интернете почти ничего — и гость уходит к соседям</h2>
+        <p class="muted">Кто ищет «Зеленый дворик», должен сразу понять: что здесь есть, как забронировать и куда ехать. Здесь всё это собрано на одной странице.</p>
+        <div class="mini-cta">
+          <a class="btn btn-line" href="#houses">Посмотреть дома<svg class="ico" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+      <ul class="pain-list" data-reveal-list>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Нашли только городской номер</strong><span>Без сайта непонятно, кому звонишь и что за место. Теперь рядом с номером — описание клуба и форма заявки.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Непонятно, что за место</strong><span>Отдых с ночёвкой, праздник, баня? Варианты размещения и стоимость расскажем по телефону.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Не дозвонился — забыл</strong><span>Заявку можно оставить в любое время: перезвоним сами и уточним даты.</span></div></li>
+        <li><svg class="ico" aria-hidden="true"><use href="#i-alert"/></svg><div><strong>Где это в Новоусманском районе</strong><span>Точку на карте и подсказку, как подъехать, пришлём перед заездом.</span></div></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- Шаг 2: дома и цены -->
+  <section class="houses" id="houses" aria-labelledby="houses-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">2</span>Размещение</span>
+        <h2 id="houses-title">Что можно забронировать в «Зеленом дворике»</h2>
+        <p class="muted">Ниже — места под описание вариантов клуба. Состав, вместимость и цены уточняйте по телефону — назовём точную сумму под ваши даты и число гостей.</p>
+      </div>
+
+      <!-- ВЛАДЕЛЕЦ: названия домов, вместимость и цены ниже — шаблонные, замените на свои -->
+      <div class="house-grid">
+        <article class="house wide" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M8 44 60 8l52 36" fill="none" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M18 38v46h84V38" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3"/><rect x="30" y="50" width="18" height="16" fill="none" stroke="#1F4D3D" stroke-width="3"/><rect x="72" y="50" width="18" height="16" fill="none" stroke="#1F4D3D" stroke-width="3"/><path d="M52 84V62h16v22" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Большой коттедж</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>для большой компании</li>
+              <li><svg class="ico" aria-hidden="true"><use href="#i-bed"/></svg>спальные места — уточняйте</li>
+            </ul>
+            <p class="muted" style="margin:0">Вариант для дней рождения и встреч нескольких семей. Описание и фото добавим со слов владельца.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b> <small>по телефону</small></div>
+              <a class="price-link" href="#booking" data-service="Большой коттедж">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M14 48 60 14l46 34" fill="none" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M24 42v42h72V42" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3"/><rect x="36" y="52" width="16" height="14" fill="none" stroke="#1F4D3D" stroke-width="3"/><path d="M64 84V60h16v24" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Семейный дом</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>для семьи</li>
+            </ul>
+            <p class="muted" style="margin:0">Для семьи с детьми или двух пар. Что внутри — расскажем по телефону.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Семейный дом">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M30 84 60 12l30 72z" fill="#fff" fill-opacity=".55" stroke="#1F4D3D" stroke-width="3" stroke-linejoin="round"/><path d="M52 84V62h16v22" fill="none" stroke="#1F4D3D" stroke-width="3"/><circle cx="60" cy="44" r="6" fill="none" stroke="#1F4D3D" stroke-width="3"/></svg>
+            <figcaption>Место для фото дома</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Домик на двоих</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-users"/></svg>для пары</li>
+            </ul>
+            <p class="muted" style="margin:0">Если есть вариант для двоих — здесь будет его описание и фото.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Домик на двоих">Забронировать<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+
+        <article class="house" data-card>
+          <figure class="ph" style="margin:0;background:linear-gradient(160deg,#F3E3CF 0%,#E3C29E 60%,#C99B6E 100%)">
+            <svg viewBox="0 0 120 90" aria-hidden="true"><path d="M20 40h80v44H20z" fill="#fff" fill-opacity=".5" stroke="#5B3A22" stroke-width="3"/><path d="M14 40 60 16l46 24" fill="none" stroke="#5B3A22" stroke-width="3" stroke-linejoin="round"/><path d="M44 30c0-6 6-6 6-12M60 30c0-6 6-6 6-12M76 30c0-6 6-6 6-12" fill="none" stroke="#5B3A22" stroke-width="2.5" stroke-linecap="round"/><path d="M20 54h80M20 68h80" stroke="#5B3A22" stroke-width="2"/></svg>
+            <figcaption>Место для фото бани</figcaption>
+          </figure>
+          <div class="house-body">
+            <h3>Баня</h3>
+            <ul class="house-meta">
+              <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg>наличие и время — уточняйте</li>
+            </ul>
+            <p class="muted" style="margin:0">Если в клубе есть баня — здесь будет, как её заказать вместе с размещением.</p>
+            <div class="price">
+              <div><b>Цены уточняйте</b></div>
+              <a class="price-link" href="#booking" data-service="Баня">Записаться<svg class="ico" style="width:18px;height:18px" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="extras">
+        <div data-reveal>
+          <h3 style="font-size:1.5rem">Что спросить при бронировании</h3>
+          <p class="muted">Чтобы на месте не было сюрпризов, уточните по телефону, что входит в стоимость, а что заказывается отдельно.</p>
+          <div class="mini-cta">
+            <a class="btn btn-primary" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Оставить заявку</a>
+          </div>
+        </div>
+        <div data-reveal>
+          <!-- ВЛАДЕЛЕЦ: перечень и цены — примеры, замените на свои -->
+          <table class="price-table">
+            <caption class="sr-only">Вопросы при бронировании</caption>
+            <thead><tr><th scope="col">Вопрос</th><th scope="col">Ответ</th></tr></thead>
+            <tbody>
+              <tr><td>Мангал, дрова и уголь</td><td>уточняйте</td></tr>
+              <tr><td>Дополнительное спальное место</td><td>уточняйте</td></tr>
+              <tr><td>Время заезда и выезда</td><td>уточняйте</td></tr>
+              <tr><td>Праздник или мероприятие во дворе</td><td>по запросу</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Перечень и цены заполним вместе с владельцем клуба. Точную стоимость подтверждаем при бронировании.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Почему мы -->
+  <section class="why" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow">Что даёт эта страница</span>
+        <h2 id="why-title">«Зеленый дворик» — понятно ещё до звонка</h2>
+      </div>
+      <div class="why-grid" data-reveal-list>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-tree"/></svg><div><h3>За городом, в Новоусманском районе</h3><p>Рядом с Воронежем — можно выехать на выходные без долгой дороги.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-receipt"/></svg><div><h3>Сумма известна до предоплаты</h3><p>Стоимость под ваши даты и число гостей называем заранее, по телефону.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg><div><h3>Заявка в любое время</h3><p>Форма работает и ночью — утром перезвоним и проверим даты.</p></div></div>
+        <div class="why-item"><svg class="ico" aria-hidden="true"><use href="#i-chat"/></svg><div><h3>Один номер для всех вопросов</h3><p>Бронь, дорога, что взять с собой — звоните по +74732928087.</p></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Шаг 3: как проходит -->
+  <section class="steps" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <div class="sec-head" data-reveal>
+        <span class="eyebrow"><span class="step-num">3</span>Как забронировать</span>
+        <h2 id="how-title">Четыре шага от заявки до заезда</h2>
+      </div>
+      <ol class="timeline" data-reveal-list>
+        <li><h3>Заявка или звонок</h3><p>Укажите, что хотите забронировать, даты и число гостей — в форме ниже или по телефону.</p></li>
+        <li><h3>Проверяем даты</h3><p>Перезваниваем, подтверждаем свободные дни и называем сумму.</p></li>
+        <li><h3>Подтверждение</h3><p>Договариваемся об оплате и условиях — даты закрепляются за вами.</p></li>
+        <li><h3>Заезд</h3><p>Присылаем точку на карте и встречаем в клубе.</p></li>
+      </ol>
+      <div class="mini-cta" data-reveal>
+        <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Начать с заявки</a>
+        <span class="muted">или позвоните: <a href="tel:+74732928087">+74732928087</a></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Форма записи -->
+  <section class="booking" id="booking" aria-labelledby="booking-title">
+    <div class="wrap booking-grid">
+      <div class="booking-aside" data-reveal>
+        <span class="eyebrow">Заявка на бронирование</span>
+        <h2 id="booking-title">Оставьте заявку — перезвоним и подтвердим даты</h2>
+        <p class="muted">Заявка ни к чему не обязывает. Предоплату вносите только после того, как мы подтвердим даты и сумму.</p>
+        <ul>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><span>Быстрее по телефону: <a href="tel:+74732928087">+74732928087</a></span></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><span>Часы приёма звонков уточняйте по телефону</span></li>
+        </ul>
+      </div>
+
+      <div class="form" data-reveal>
+        <form id="bookingForm" novalidate>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-name">Ваше имя</label>
+              <input id="f-name" name="name" type="text" autocomplete="name" required aria-describedby="e-name">
+              <span class="err" id="e-name" role="alert"></span>
+            </div>
+            <div class="field">
+              <label for="f-phone">Телефон</label>
+              <input id="f-phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" placeholder="+7 ___ ___-__-__" required aria-describedby="e-phone">
+              <span class="err" id="e-phone" role="alert"></span>
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-service">Что бронируете</label>
+            <select id="f-service" name="service" required aria-describedby="e-service">
+              <option value="">Выберите вариант</option>
+              <option>Большой коттедж</option>
+              <option>Семейный дом</option>
+              <option>Домик на двоих</option>
+              <option>Баня</option>
+              <option>Праздник / мероприятие</option>
+              <option>Пока не знаю, нужна консультация</option>
+            </select>
+            <span class="err" id="e-service" role="alert"></span>
+          </div>
+          <div class="form-row">
+            <div class="field">
+              <label for="f-date">Дата заезда</label>
+              <input id="f-date" name="date" type="date">
+            </div>
+            <div class="field">
+              <label for="f-guests">Гостей</label>
+              <input id="f-guests" name="guests" type="number" min="1" max="50" inputmode="numeric" placeholder="Например, 6">
+            </div>
+          </div>
+          <div class="field">
+            <label for="f-time">Когда удобно принять звонок</label>
+            <select id="f-time" name="time">
+              <option>В любое время</option>
+              <option>Утром, 9:00–12:00</option>
+              <option>Днём, 12:00–17:00</option>
+              <option>Вечером, 17:00–21:00</option>
+            </select>
+          </div>
+          <p class="consent">Нажимая кнопку, вы соглашаетесь на обработку имени и телефона для обратного звонка.</p>
+          <button class="btn btn-accent" type="submit"><svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>Отправить заявку</button>
+        </form>
+        <div class="success" id="formSuccess" role="status" aria-live="polite" tabindex="-1">
+          <svg class="ico" aria-hidden="true"><use href="#i-check"/></svg>
+          <h3 style="font-size:1.5rem">Заявка принята, перезвоним</h3>
+          <p class="muted">Проверим свободные даты и свяжемся с вами в выбранное время. Если удобнее — позвоните сами: <a href="tel:+74732928087">+74732928087</a>.</p>
+          <button class="btn btn-line" type="button" id="formAgain">Отправить ещё одну</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Контакты -->
+  <section id="contacts" aria-labelledby="contacts-title">
+    <div class="wrap contacts-grid">
+      <div data-reveal>
+        <span class="eyebrow">Контакты</span>
+        <h2 id="contacts-title">Как нас найти</h2>
+        <ul class="contact-list">
+          <li><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg><div><small>Адрес</small>Новоусманский район, Воронежская область</div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg><div><small>Телефон для бронирования</small><a href="tel:+74732928087">+74732928087</a></div></li>
+          <li><svg class="ico" aria-hidden="true"><use href="#i-clock"/></svg><div><small>Приём звонков</small>уточняйте по телефону</div></li>
+        </ul>
+      </div>
+      <div class="route" data-reveal>
+        <h3>Дорога в клуб</h3>
+        <ol>
+          <li>Клуб находится в Новоусманском районе Воронежской области.</li>
+          <li>Точный адрес и точку для навигатора пришлём при бронировании.</li>
+          <li>Перед выездом позвоните — подскажем, как подъехать и где оставить машину.</li>
+        </ol>
+        <a class="btn btn-primary" href="https://yandex.ru/maps/?text=%D0%97%D0%B5%D0%BB%D0%B5%D0%BD%D1%8B%D0%B9%20%D0%B4%D0%B2%D0%BE%D1%80%D0%B8%D0%BA%20%28%D0%B7%D0%B0%D0%B3%D0%BE%D1%80%D0%BE%D0%B4%D0%BD%D1%8B%D0%B9%20%D0%BA%D0%BB%D1%83%D0%B1%29%2C%20%D0%9D%D0%BE%D0%B2%D0%BE%D1%83%D1%81%D0%BC%D0%B0%D0%BD%D1%81%D0%BA%D0%B8%D0%B9%20%D1%80%D0%B0%D0%B9%D0%BE%D0%BD%2C%20%D0%92%D0%BE%D1%80%D0%BE%D0%BD%D0%B5%D0%B6%D1%81%D0%BA%D0%B0%D1%8F%20%D0%BE%D0%B1%D0%BB%D0%B0%D1%81%D1%82%D1%8C" target="_blank" rel="noopener"><svg class="ico" aria-hidden="true"><use href="#i-pin"/></svg>Открыть на карте</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div><strong style="color:#fff">Зеленый дворик (загородный клуб)</strong> · загородный клуб под Воронежем</div>
+    <div><a href="tel:+74732928087">+74732928087</a> · Новоусманский район, Воронежская область</div>
+    <div>© 2026 Зеленый дворик (загородный клуб)</div>
+    <div class="demo-mark">Демо-макет. Варианты размещения и иллюстрации — заготовки, заполним по данным владельца.</div>
+  </div>
+</footer>
+
+<div class="mobile-bar">
+  <a class="btn btn-primary" href="tel:+74732928087"><svg class="ico" aria-hidden="true"><use href="#i-phone"/></svg>Позвонить</a>
+  <a class="btn btn-accent" href="#booking"><svg class="ico" aria-hidden="true"><use href="#i-calendar"/></svg>Заявка</a>
+</div>
+
+<script src="motion.js"></script>
+<script>
+(function () {
+  "use strict";
+
+  /* ---------- Форма ---------- */
+  var form = document.getElementById("bookingForm");
+  var success = document.getElementById("formSuccess");
+  var serviceSel = document.getElementById("f-service");
+
+  function setErr(input, errId, msg) {
+    var el = document.getElementById(errId);
+    el.textContent = msg || "";
+    if (msg) input.setAttribute("aria-invalid", "true"); else input.removeAttribute("aria-invalid");
+    return !msg;
+  }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var name = form.elements.name, phone = form.elements.phone, service = form.elements.service;
+    var digits = phone.value.replace(/\D/g, "");
+    var ok = true;
+    ok = setErr(name, "e-name", name.value.trim().length < 2 ? "Укажите имя" : "") && ok;
+    ok = setErr(phone, "e-phone", digits.length < 10 ? "Укажите телефон — не меньше 10 цифр" : "") && ok;
+    ok = setErr(service, "e-service", !service.value ? "Выберите, что бронируете" : "") && ok;
+    if (!ok) {
+      var firstBad = form.querySelector('[aria-invalid="true"]');
+      if (firstBad) firstBad.focus();
+      return;
+    }
+    // Демо: данные никуда не отправляются. Подключение к боту/CRM — на этапе внедрения.
+    form.style.display = "none";
+    success.classList.add("show");
+    success.focus();
+    if (window.Motion && !reduced) {
+      Motion.animate(success, { opacity: [0, 1], transform: ["translateY(12px)", "translateY(0)"] }, { duration: 0.4 });
+    }
+  });
+
+  document.getElementById("formAgain").addEventListener("click", function () {
+    form.reset();
+    success.classList.remove("show");
+    form.style.display = "";
+    form.elements.name.focus();
+  });
+
+  // Кнопки «Забронировать» в карточках подставляют выбранный дом в форму
+  document.querySelectorAll("[data-service]").forEach(function (a) {
+    a.addEventListener("click", function () {
+      var v = a.getAttribute("data-service");
+      for (var i = 0; i < serviceSel.options.length; i++) {
+        if (serviceSel.options[i].text === v) { serviceSel.selectedIndex = i; break; }
+      }
+    });
+  });
+
+  // Минимальная дата заезда — сегодня
+  var dateInput = document.getElementById("f-date");
+  var t = new Date();
+  dateInput.min = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
+
+  /* ---------- Анимации (Motion) ---------- */
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var M = window.Motion;
+  if (!M || reduced || typeof M.animate !== "function") return; // без библиотеки или при reduce — всё видно статично
+
+  var ease = [0.22, 1, 0.36, 1];
+
+  // Первый экран: элементы по очереди
+  var heroEls = document.querySelectorAll("[data-hero]");
+  heroEls.forEach(function (el) { el.style.opacity = "0"; el.style.transform = "translateY(18px)"; });
+  M.animate(heroEls, { opacity: [0, 1], transform: ["translateY(18px)", "translateY(0)"] },
+    { duration: 0.55, delay: M.stagger ? M.stagger(0.1) : 0, ease: ease });
+
+  // Параллакс фона первого экрана
+  var heroBg = document.querySelector(".hero-bg");
+  var hero = document.querySelector(".hero");
+  if (M.scroll && heroBg) {
+    M.scroll(M.animate(heroBg, { transform: ["translateY(0px)", "translateY(60px)"] }, { ease: "linear" }),
+      { target: hero, offset: ["start start", "end start"] });
+  }
+
+  // Появление блоков при прокрутке
+  function hide(el) { el.style.opacity = "0"; el.style.transform = "translateY(24px)"; }
+  function show(targets, stag) {
+    M.animate(targets, { opacity: [0, 1], transform: ["translateY(24px)", "translateY(0)"] },
+      { duration: 0.5, delay: stag && M.stagger ? M.stagger(0.08) : 0, ease: ease });
+  }
+  if (M.inView) {
+    document.querySelectorAll("[data-reveal]").forEach(function (el) {
+      hide(el);
+      M.inView(el, function () { show(el, false); }, { amount: 0.2 });
+    });
+    document.querySelectorAll("[data-reveal-list]").forEach(function (list) {
+      var items = Array.prototype.slice.call(list.children);
+      items.forEach(hide);
+      M.inView(list, function () { show(items, true); }, { amount: 0.15 });
+    });
+    var cards = Array.prototype.slice.call(document.querySelectorAll("[data-card]"));
+    if (cards.length) {
+      cards.forEach(hide);
+      M.inView(".house-grid", function () { show(cards, true); }, { amount: 0.1 });
+    }
+  }
+
+  // Наведение и нажатие: кнопки и карточки
+  if (M.hover) {
+    M.hover(".btn", function (el) {
+      M.animate(el, { transform: "translateY(-2px)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.2 }); };
+    });
+    M.hover("[data-card]", function (el) {
+      M.animate(el, { transform: "translateY(-4px)" }, { duration: 0.25 });
+      return function () { M.animate(el, { transform: "translateY(0)" }, { duration: 0.25 }); };
+    });
+  }
+  if (M.press) {
+    M.press(".btn", function (el) {
+      M.animate(el, { transform: "scale(0.97)" }, { duration: 0.2 });
+      return function () { M.animate(el, { transform: "scale(1)" }, { duration: 0.2 }); };
+    });
+  }
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>

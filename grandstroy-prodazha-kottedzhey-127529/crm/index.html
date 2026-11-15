@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head><meta name="robots" content="noindex, nofollow">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ГрандСтрой (продажа коттеджей) — CRM бронирований</title>
+<style>
+  :root {
+    --primary: #065F46; --primary-h: #064E3B; --accent: #C2410C; --bg: #F4F8F5; --card: #fff;
+    --fg: #0B3B2E; --muted: #475569; --border: #CFE3D8; --danger: #B91C1C; --radius: 8px;
+    --f: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 15px/1.5 var(--f); color: var(--fg); background: var(--bg); }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  header { background: var(--primary); color: #fff; padding: 14px 20px; display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
+  header h1 { margin: 0; font-size: 1.2rem; }
+  header h1 small { font-weight: 400; opacity: .85; margin-left: 8px; font-size: .85rem; }
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs button { background: transparent; color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 7px 14px; border-radius: 6px; cursor: pointer; font: inherit; }
+  .tabs button[aria-selected="true"] { background: #fff; color: var(--primary); font-weight: 600; }
+  main { padding: 20px; max-width: 1400px; margin: 0 auto; }
+  .bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .bar input, .bar select { font: inherit; padding: 8px 10px; border: 1px solid #9CC9B4; border-radius: 6px; background: #fff; min-height: 38px; }
+  .bar input[type=search] { min-width: 240px; flex: 1; max-width: 420px; }
+  .btn { font: inherit; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--primary); background: var(--primary); color: #fff; cursor: pointer; min-height: 38px; }
+  .btn:hover { background: var(--primary-h); }
+  .btn.line { background: #fff; color: var(--primary); }
+  .btn.line:hover { background: #ECFDF5; }
+  .btn.danger { background: #fff; color: var(--danger); border-color: var(--danger); }
+  .btn.small { padding: 4px 10px; min-height: 30px; font-size: .88rem; }
+  .spacer { flex: 1; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; margin-bottom: 18px; }
+  .stat { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; }
+  .stat b { display: block; font-size: 1.4rem; }
+  .stat span { color: var(--muted); font-size: .85rem; }
+  table { width: 100%; border-collapse: separate; border-spacing: 0; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { background: #ECFDF5; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--primary); }
+  tr.click { cursor: pointer; }
+  tr.click:hover td { background: #F7FBF9; }
+  td.num { text-align: right; white-space: nowrap; }
+  .tw { overflow-x: auto; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: .8rem; font-weight: 600; white-space: nowrap; }
+  .demo { background: #FEF3C7; color: #78350F; font-size: .72rem; padding: 1px 6px; border-radius: 4px; margin-left: 6px; font-weight: 600; }
+  .s-new { background: #DBEAFE; color: #1E3A8A; }
+  .s-confirmed { background: #FEF3C7; color: #78350F; }
+  .s-prepaid { background: #E0E7FF; color: #3730A3; }
+  .s-checkedin { background: #D1FAE5; color: #065F46; }
+  .s-done { background: #E5E7EB; color: #1F2937; }
+  .s-cancelled { background: #FEE2E2; color: #991B1B; }
+  .kanban { display: grid; grid-template-columns: repeat(6, minmax(210px, 1fr)); gap: 12px; overflow-x: auto; padding-bottom: 8px; }
+  .col { background: #E8F1EC; border-radius: var(--radius); padding: 10px; min-height: 200px; }
+  .col h3 { margin: 0 0 10px; font-size: .9rem; display: flex; justify-content: space-between; }
+  .col.over { outline: 2px dashed var(--primary); }
+  .kcard { background: #fff; border: 1px solid var(--border); border-radius: 6px; padding: 9px 10px; margin-bottom: 8px; cursor: grab; font-size: .88rem; }
+  .kcard b { display: block; }
+  .kcard .m { color: var(--muted); }
+  .kcard select { margin-top: 6px; width: 100%; font: inherit; font-size: .82rem; padding: 3px; }
+  dialog { border: 0; border-radius: 10px; padding: 0; width: min(720px, 95vw); max-height: 90vh; box-shadow: 0 20px 60px rgba(0,0,0,.25); }
+  dialog::backdrop { background: rgba(6, 44, 34, .45); }
+  .dlg-h { padding: 14px 20px; background: #ECFDF5; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; }
+  .dlg-h h2 { margin: 0; font-size: 1.1rem; }
+  .dlg-b { padding: 18px 20px; }
+  .dlg-f { padding: 12px 20px 18px; display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .fld { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+  .fld label { font-weight: 600; font-size: .88rem; }
+  .fld input, .fld select, .fld textarea { font: inherit; padding: 8px 10px; border: 1px solid #9CC9B4; border-radius: 6px; width: 100%; }
+  .fld textarea { min-height: 70px; }
+  .x { background: none; border: 0; font-size: 1.5rem; cursor: pointer; line-height: 1; color: var(--fg); }
+  .empty { padding: 30px; text-align: center; color: var(--muted); background: #fff; border: 1px dashed var(--border); border-radius: var(--radius); }
+  .hist { list-style: none; padding: 0; margin: 0; }
+  .hist li { border-left: 3px solid var(--border); padding: 4px 0 8px 12px; margin-left: 4px; }
+  .hist li small { color: var(--muted); }
+  h4 { margin: 18px 0 8px; }
+  .note { color: var(--muted); font-size: .85rem; }
+  footer { text-align: center; color: var(--muted); font-size: .78rem; padding: 20px; }
+  @media (max-width: 640px) { .grid2 { grid-template-columns: 1fr; } main { padding: 12px; } }
+</style>
+<style id="jarvis-mobile">html,body{max-width:100%;overflow-x:hidden}*,*::before,*::after{box-sizing:border-box}img,video,iframe,canvas{max-width:100%;height:auto}table{display:block;max-width:100%;overflow-x:auto}h1,h2,h3,h4,p,a,li,span,button{overflow-wrap:anywhere}@media (max-width:640px){body *{max-width:100%}h1{font-size:clamp(26px,8vw,40px)!important;line-height:1.15}h2{font-size:clamp(22px,6.5vw,32px)!important}}</style></head>
+<body>
+<header>
+  <h1>ГрандСтрой (продажа коттеджей) <small>CRM бронирований</small></h1>
+  <div class="tabs" role="tablist" aria-label="Разделы">
+    <button role="tab" data-tab="orders" aria-selected="true">Брони</button>
+    <button role="tab" data-tab="kanban" aria-selected="false">Канбан</button>
+    <button role="tab" data-tab="clients" aria-selected="false">Клиенты</button>
+    <button role="tab" data-tab="objects" aria-selected="false">Дома и услуги</button>
+  </div>
+</header>
+
+<main>
+  <div class="stats" id="stats"></div>
+  <div class="bar">
+    <label class="sr-only" for="q" style="position:absolute;left:-9999px">Поиск</label>
+    <input type="search" id="q" placeholder="Поиск: имя, телефон, дом, комментарий">
+    <select id="fStatus" aria-label="Фильтр по статусу"></select>
+    <select id="fObject" aria-label="Фильтр по дому"></select>
+    <label>с <input type="date" id="fFrom" aria-label="Заезд с"></label>
+    <label>по <input type="date" id="fTo" aria-label="Заезд по"></label>
+    <span class="spacer"></span>
+    <button class="btn" id="addBtn">+ Бронь</button>
+    <button class="btn line" id="csvBtn">Экспорт CSV</button>
+    <button class="btn danger" id="clearDemo">Очистить демо-данные</button>
+  </div>
+  <section id="view"></section>
+</main>
+<footer>Данные хранятся только в этом браузере (localStorage). Демо-макет.</footer>
+
+<dialog id="dlg"><div id="dlgBody"></div></dialog>
+
+<script>
+(function () {
+  "use strict";
+  var KEY = "cottage_crm_v1";
+  var STATUSES = [
+    { id: "new", name: "Новая заявка" },
+    { id: "confirmed", name: "Даты подтверждены" },
+    { id: "prepaid", name: "Предоплата" },
+    { id: "checkedin", name: "Заселены" },
+    { id: "done", name: "Завершено" },
+    { id: "cancelled", name: "Отменено" }
+  ];
+  var OBJ_TYPES = ["Коттедж", "Баня", "Беседка", "Чан", "Другое"];
+  var SOURCES = ["Телефон", "Сайт", "Telegram-бот", "Авито", "Соцсети", "Повторный гость", "Другое"];
+
+  function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+  function iso(d) { return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+  function addDays(n) { var d = new Date(); d.setDate(d.getDate() + n); return iso(d); }
+  function nowStr() { var d = new Date(); return iso(d) + " " + String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0"); }
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+  function money(n) { return (Number(n) || 0).toLocaleString("ru-RU") + " ₽"; }
+  function fmtDate(s) { if (!s) return "—"; var p = s.split("-"); return p[2] + "." + p[1] + "." + p[0]; }
+  function nights(a, b) { if (!a || !b) return 0; var n = Math.round((new Date(b) - new Date(a)) / 86400000); return n > 0 ? n : 0; }
+  function stName(id) { for (var i = 0; i < STATUSES.length; i++) if (STATUSES[i].id === id) return STATUSES[i].name; return id; }
+  function badge(id) { return '<span class="badge s-' + esc(id) + '">' + esc(stName(id)) + "</span>"; }
+  function demoTag(x) { return x && x.demo ? '<span class="demo">ДЕМО</span>' : ""; }
+
+  /* ---------- Данные ---------- */
+  function demoData() {
+    // ДЕМО-ЗАПИСИ: вымышленные, для показа. Удаляются кнопкой «Очистить демо-данные».
+    var o1 = uid(), o2 = uid(), o3 = uid(), o4 = uid();
+    var c1 = uid(), c2 = uid(), c3 = uid(), c4 = uid();
+    return {
+      objects: [
+        { id: o1, demo: true, name: "Большой коттедж", type: "Коттедж", capacity: 12, rooms: 4, price: 15000, note: "Камин, терраса" },
+        { id: o2, demo: true, name: "Семейный дом", type: "Коттедж", capacity: 6, rooms: 2, price: 8000, note: "Веранда, беседка" },
+        { id: o3, demo: true, name: "Домик на двоих", type: "Коттедж", capacity: 3, rooms: 1, price: 5000, note: "" },
+        { id: o4, demo: true, name: "Баня на дровах", type: "Баня", capacity: 8, rooms: 0, price: 2500, note: "Цена за 2 часа" }
+      ],
+      clients: [
+        { id: c1, demo: true, name: "Демо: Анна Петрова", phone: "+7 900 000-00-01", email: "", source: "Сайт", note: "Отмечает день рождения", created: addDays(-20) },
+        { id: c2, demo: true, name: "Демо: Игорь Смирнов", phone: "+7 900 000-00-02", email: "", source: "Телефон", note: "Корпоратив, нужен счёт", created: addDays(-12) },
+        { id: c3, demo: true, name: "Демо: Мария Козлова", phone: "+7 900 000-00-03", email: "", source: "Telegram-бот", note: "С собакой", created: addDays(-5) },
+        { id: c4, demo: true, name: "Демо: Олег Волков", phone: "+7 900 000-00-04", email: "", source: "Повторный гость", note: "", created: addDays(-40) }
+      ],
+      orders: [
+        { id: uid(), demo: true, clientId: c1, objectId: o1, checkIn: addDays(6), checkOut: addDays(8), guests: 10, amount: 30000, prepaid: 0, status: "new", extras: "Баня, мангал", comment: "Перезвонить вечером", created: addDays(-1), history: [{ at: addDays(-1) + " 10:12", text: "Заявка с сайта" }] },
+        { id: uid(), demo: true, clientId: c2, objectId: o1, checkIn: addDays(13), checkOut: addDays(14), guests: 12, amount: 18000, prepaid: 0, status: "confirmed", extras: "Чан", comment: "", created: addDays(-4), history: [{ at: addDays(-4) + " 15:30", text: "Создана" }, { at: addDays(-3) + " 11:00", text: "Статус: Даты подтверждены" }] },
+        { id: uid(), demo: true, clientId: c3, objectId: o3, checkIn: addDays(2), checkOut: addDays(4), guests: 2, amount: 10000, prepaid: 3000, status: "prepaid", extras: "", comment: "Ранний заезд, если можно", created: addDays(-5), history: [{ at: addDays(-5) + " 09:40", text: "Заявка из бота" }, { at: addDays(-4) + " 18:05", text: "Статус: Предоплата" }] },
+        { id: uid(), demo: true, clientId: c4, objectId: o2, checkIn: addDays(-1), checkOut: addDays(1), guests: 5, amount: 16000, prepaid: 5000, status: "checkedin", extras: "Доп. место", comment: "", created: addDays(-10), history: [{ at: addDays(-10) + " 12:00", text: "Создана" }, { at: addDays(-1) + " 14:00", text: "Статус: Заселены" }] },
+        { id: uid(), demo: true, clientId: c4, objectId: o4, checkIn: addDays(-30), checkOut: addDays(-30), guests: 4, amount: 2500, prepaid: 2500, status: "done", extras: "", comment: "", created: addDays(-35), history: [{ at: addDays(-30) + " 20:00", text: "Статус: Завершено" }] },
+        { id: uid(), demo: true, clientId: c2, objectId: o2, checkIn: addDays(-15), checkOut: addDays(-14), guests: 6, amount: 8000, prepaid: 0, status: "cancelled", extras: "", comment: "Перенесли", created: addDays(-18), history: [{ at: addDays(-16) + " 13:20", text: "Статус: Отменено" }] }
+      ]
+    };
+  }
+
+  var db;
+  function load() {
+    try { db = JSON.parse(localStorage.getItem(KEY)); } catch (e) { db = null; }
+    if (!db || !db.orders) { db = demoData(); save(); }
+  }
+  function save() {
+    try { localStorage.setItem(KEY, JSON.stringify(db)); }
+    catch (e) { alert("Не удалось сохранить данные в браузере: " + e.message); }
+  }
+  function byId(list, id) { for (var i = 0; i < list.length; i++) if (list[i].id === id) return list[i]; return null; }
+  function clientName(id) { var c = byId(db.clients, id); return c ? c.name : "—"; }
+  function objName(id) { var o = byId(db.objects, id); return o ? o.name : "—"; }
+
+  /* ---------- Состояние UI ---------- */
+  var tab = "orders";
+  var $ = function (id) { return document.getElementById(id); };
+  var view = $("view"), dlg = $("dlg"), dlgBody = $("dlgBody");
+
+  function fillFilters() {
+    var fs = $("fStatus"), cur = fs.value;
+    fs.innerHTML = '<option value="">Все статусы</option>' + STATUSES.map(function (s) { return '<option value="' + s.id + '">' + esc(s.name) + "</option>"; }).join("");
+    fs.value = cur;
+    var fo = $("fObject"), curO = fo.value;
+    fo.innerHTML = '<option value="">Все дома и услуги</option>' + db.objects.map(function (o) { return '<option value="' + o.id + '">' + esc(o.name) + "</option>"; }).join("");
+    fo.value = byId(db.objects, curO) ? curO : "";
+  }
+
+  function filteredOrders() {
+    var q = $("q").value.trim().toLowerCase(), st = $("fStatus").value, ob = $("fObject").value, fr = $("fFrom").value, to = $("fTo").value;
+    return db.orders.filter(function (o) {
+      if (st && o.status !== st) return false;
+      if (ob && o.objectId !== ob) return false;
+      if (fr && (o.checkIn || "") < fr) return false;
+      if (to && (o.checkIn || "") > to) return false;
+      if (q) {
+        var c = byId(db.clients, o.clientId) || {};
+        var hay = [c.name, c.phone, objName(o.objectId), o.comment, o.extras, stName(o.status)].join(" ").toLowerCase();
+        if (hay.indexOf(q) < 0) return false;
+      }
+      return true;
+    }).sort(function (a, b) { return (a.checkIn || "").localeCompare(b.checkIn || ""); });
+  }
+
+  function renderStats() {
+    var today = iso(new Date());
+    var active = db.orders.filter(function (o) { return o.status !== "cancelled" && o.status !== "done"; });
+    var upcoming = db.orders.filter(function (o) { return (o.status === "confirmed" || o.status === "prepaid") && o.checkIn >= today; });
+    var month = today.slice(0, 7);
+    var monthSum = db.orders.filter(function (o) { return o.status !== "cancelled" && (o.checkIn || "").slice(0, 7) === month; }).reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    var newCount = db.orders.filter(function (o) { return o.status === "new"; }).length;
+    $("stats").innerHTML =
+      '<div class="stat"><b>' + newCount + '</b><span>новых заявок — перезвонить</span></div>' +
+      '<div class="stat"><b>' + upcoming.length + '</b><span>предстоящих заездов</span></div>' +
+      '<div class="stat"><b>' + active.length + '</b><span>активных броней</span></div>' +
+      '<div class="stat"><b>' + money(monthSum) + '</b><span>сумма броней с заездом в этом месяце</span></div>' +
+      '<div class="stat"><b>' + db.clients.length + '</b><span>клиентов в базе</span></div>';
+  }
+
+  function render() {
+    fillFilters(); renderStats();
+    document.querySelectorAll(".tabs button").forEach(function (b) { b.setAttribute("aria-selected", String(b.dataset.tab === tab)); });
+    $("addBtn").textContent = tab === "clients" ? "+ Клиент" : tab === "objects" ? "+ Дом / услуга" : "+ Бронь";
+    var hasDemo = db.orders.concat(db.clients, db.objects).some(function (x) { return x.demo; });
+    $("clearDemo").style.display = hasDemo ? "" : "none";
+    if (tab === "orders") renderOrders();
+    else if (tab === "kanban") renderKanban();
+    else if (tab === "clients") renderClients();
+    else renderObjects();
+  }
+
+  function renderOrders() {
+    var list = filteredOrders();
+    if (!list.length) { view.innerHTML = '<div class="empty">Броней не найдено. Измените фильтры или добавьте новую бронь.</div>'; return; }
+    view.innerHTML = '<div class="tw"><table><thead><tr><th>Заезд</th><th>Выезд</th><th>Клиент</th><th>Телефон</th><th>Дом / услуга</th><th>Гостей</th><th>Статус</th><th class="num">Сумма</th><th class="num">Оплачено</th></tr></thead><tbody>' +
+      list.map(function (o) {
+        var c = byId(db.clients, o.clientId) || {};
+        return '<tr class="click" tabindex="0" data-order="' + o.id + '"><td>' + fmtDate(o.checkIn) + "</td><td>" + fmtDate(o.checkOut) + "</td><td>" + esc(c.name || "—") + demoTag(o) + "</td><td>" + esc(c.phone || "") + "</td><td>" + esc(objName(o.objectId)) + "</td><td>" + esc(o.guests || "") + "</td><td>" + badge(o.status) + '</td><td class="num">' + money(o.amount) + '</td><td class="num">' + money(o.prepaid) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+
+  function renderKanban() {
+    var list = filteredOrders();
+    view.innerHTML = '<div class="kanban">' + STATUSES.map(function (s) {
+      var items = list.filter(function (o) { return o.status === s.id; });
+      var sum = items.reduce(function (a, o) { return a + (Number(o.amount) || 0); }, 0);
+      return '<div class="col" data-col="' + s.id + '"><h3><span>' + esc(s.name) + " (" + items.length + ')</span><span class="note">' + money(sum) + "</span></h3>" +
+        items.map(function (o) {
+          return '<div class="kcard" draggable="true" data-kid="' + o.id + '"><b>' + esc(clientName(o.clientId)) + demoTag(o) + '</b><div class="m">' + esc(objName(o.objectId)) + "</div><div>" + fmtDate(o.checkIn) + " – " + fmtDate(o.checkOut) + " · " + money(o.amount) + "</div>" +
+            '<label class="sr-only" style="position:absolute;left:-9999px" for="ks-' + o.id + '">Статус</label><select id="ks-' + o.id + '" data-kstatus="' + o.id + '">' +
+            STATUSES.map(function (x) { return '<option value="' + x.id + '"' + (x.id === o.status ? " selected" : "") + ">" + esc(x.name) + "</option>"; }).join("") + "</select></div>";
+        }).join("") + "</div>";
+    }).join("") + '</div><p class="note">Перетащите карточку в другую колонку или смените статус в списке на карточке.</p>';
+  }
+
+  function renderClients() {
+    var q = $("q").value.trim().toLowerCase();
+    var list = db.clients.filter(function (c) { return !q || [c.name, c.phone, c.email, c.note, c.source].join(" ").toLowerCase().indexOf(q) >= 0; })
+      .sort(function (a, b) { return a.name.localeCompare(b.name, "ru"); });
+    if (!list.length) { view.innerHTML = '<div class="empty">Клиентов не найдено.</div>'; return; }
+    view.innerHTML = '<div class="tw"><table><thead><tr><th>Имя</th><th>Телефон</th><th>Источник</th><th>Броней</th><th class="num">Сумма (без отмен)</th><th>Последний заезд</th></tr></thead><tbody>' +
+      list.map(function (c) {
+        var os = db.orders.filter(function (o) { return o.clientId === c.id; });
+        var sum = os.filter(function (o) { return o.status !== "cancelled"; }).reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+        var last = os.map(function (o) { return o.checkIn || ""; }).sort().pop();
+        return '<tr class="click" tabindex="0" data-client="' + c.id + '"><td>' + esc(c.name) + demoTag(c) + "</td><td>" + esc(c.phone) + "</td><td>" + esc(c.source || "") + "</td><td>" + os.length + '</td><td class="num">' + money(sum) + "</td><td>" + fmtDate(last) + "</td></tr>";
+      }).join("") + "</tbody></table></div>";
+  }
+
+  function renderObjects() {
+    if (!db.objects.length) { view.innerHTML = '<div class="empty">Добавьте дома и услуги, которые вы сдаёте.</div>'; return; }
+    view.innerHTML = '<div class="tw"><table><thead><tr><th>Название</th><th>Тип</th><th>Вместимость</th><th>Спален</th><th class="num">Базовая цена</th><th>Броней</th><th>Заметка</th></tr></thead><tbody>' +
+      db.objects.map(function (o) {
+        var n = db.orders.filter(function (x) { return x.objectId === o.id; }).length;
+        return '<tr class="click" tabindex="0" data-object="' + o.id + '"><td>' + esc(o.name) + demoTag(o) + "</td><td>" + esc(o.type) + "</td><td>" + esc(o.capacity || "") + "</td><td>" + esc(o.rooms || "") + '</td><td class="num">' + money(o.price) + "</td><td>" + n + "</td><td>" + esc(o.note || "") + "</td></tr>";
+      }).join("") + '</tbody></table></div><p class="note">Базовая цена подставляется в новую бронь: цена × ночи (для коттеджей) — сумму можно поправить вручную.</p>';
+  }
+
+  /* ---------- Диалоги ---------- */
+  function openDlg(html) { dlgBody.innerHTML = html; if (!dlg.open) dlg.showModal(); var f = dlgBody.querySelector("input,select,textarea,button:not(.x)"); if (f) f.focus(); }
+  function closeDlg() { if (dlg.open) dlg.close(); }
+  function head(t) { return '<div class="dlg-h"><h2>' + t + '</h2><button class="x" type="button" data-close aria-label="Закрыть">×</button></div>'; }
+  function opt(list, val, getV, getT) { return list.map(function (x) { var v = getV(x); return '<option value="' + esc(v) + '"' + (v === val ? " selected" : "") + ">" + esc(getT(x)) + "</option>"; }).join(""); }
+  function fld(id, label, html) { return '<div class="fld"><label for="' + id + '">' + label + "</label>" + html + "</div>"; }
+
+  function orderForm(o) {
+    var isNew = !o;
+    o = o || { clientId: "", objectId: db.objects[0] ? db.objects[0].id : "", checkIn: addDays(1), checkOut: addDays(2), guests: 2, amount: "", prepaid: 0, status: "new", extras: "", comment: "" };
+    var clientOpts = '<option value="__new">+ Новый клиент</option>' + opt(db.clients.slice().sort(function (a, b) { return a.name.localeCompare(b.name, "ru"); }), o.clientId, function (c) { return c.id; }, function (c) { return c.name + " · " + c.phone; });
+    openDlg(head(isNew ? "Новая бронь" : "Бронь: " + esc(clientName(o.clientId))) +
+      '<form id="oForm"><div class="dlg-b">' +
+      fld("oClient", "Клиент", '<select id="oClient">' + clientOpts + "</select>") +
+      '<div id="newClientBox" class="grid2" style="display:none">' +
+        fld("ncName", "Имя нового клиента", '<input id="ncName">') + fld("ncPhone", "Телефон", '<input id="ncPhone" type="tel">') +
+      "</div>" +
+      '<div class="grid2">' +
+        fld("oObject", "Дом / услуга", '<select id="oObject">' + opt(db.objects, o.objectId, function (x) { return x.id; }, function (x) { return x.name; }) + "</select>") +
+        fld("oStatus", "Статус", '<select id="oStatus">' + opt(STATUSES, o.status, function (x) { return x.id; }, function (x) { return x.name; }) + "</select>") +
+        fld("oIn", "Заезд", '<input id="oIn" type="date" value="' + esc(o.checkIn) + '">') +
+        fld("oOut", "Выезд", '<input id="oOut" type="date" value="' + esc(o.checkOut) + '">') +
+        fld("oGuests", "Гостей", '<input id="oGuests" type="number" min="1" value="' + esc(o.guests) + '">') +
+        fld("oExtras", "Доп. услуги", '<input id="oExtras" value="' + esc(o.extras) + '" placeholder="Баня, чан, мангал…">') +
+        fld("oAmount", "Сумма, ₽", '<input id="oAmount" type="number" min="0" step="100" value="' + esc(o.amount) + '">') +
+        fld("oPrepaid", "Оплачено, ₽", '<input id="oPrepaid" type="number" min="0" step="100" value="' + esc(o.prepaid) + '">') +
+      "</div>" +
+      fld("oComment", "Комментарий", '<textarea id="oComment">' + esc(o.comment) + "</textarea>") +
+      '<p class="note" id="oCalc"></p><p class="note" id="oConflict" style="color:#B91C1C"></p>' +
+      (isNew ? "" : "<h4>История</h4>" + historyHtml(o)) +
+      '</div><div class="dlg-f">' +
+      (isNew ? "" : '<button type="button" class="btn danger" id="oDel">Удалить</button><span class="spacer"></span>') +
+      '<button type="button" class="btn line" data-close>Отмена</button><button type="submit" class="btn">Сохранить</button></div></form>');
+
+    var cSel = $("oClient");
+    function toggleNC() { $("newClientBox").style.display = cSel.value === "__new" ? "grid" : "none"; }
+    if (isNew && !db.clients.length) cSel.value = "__new";
+    if (isNew && db.clients.length && !o.clientId) cSel.value = "__new";
+    toggleNC(); cSel.addEventListener("change", toggleNC);
+
+    function recalc() {
+      var ob = byId(db.objects, $("oObject").value), n = nights($("oIn").value, $("oOut").value);
+      var hint = ob ? "Базовая цена: " + money(ob.price) + (ob.type === "Коттедж" ? " × " + n + " ноч. = " + money(ob.price * n) : "") : "";
+      $("oCalc").textContent = hint;
+      var conflict = checkConflict(o.id, $("oObject").value, $("oIn").value, $("oOut").value);
+      $("oConflict").textContent = conflict ? "Внимание: пересечение дат с бронью «" + clientName(conflict.clientId) + "» (" + fmtDate(conflict.checkIn) + "–" + fmtDate(conflict.checkOut) + ")" : "";
+      if (isNew && ob && !$("oAmount").dataset.touched) $("oAmount").value = ob.type === "Коттедж" ? ob.price * Math.max(n, 1) : ob.price;
+    }
+    ["oObject", "oIn", "oOut"].forEach(function (id) { $(id).addEventListener("change", recalc); });
+    $("oAmount").addEventListener("input", function () { this.dataset.touched = "1"; });
+    recalc();
+
+    if (!isNew) $("oDel").addEventListener("click", function () {
+      if (!confirm("Удалить бронь?")) return;
+      db.orders = db.orders.filter(function (x) { return x.id !== o.id; }); save(); closeDlg(); render();
+    });
+
+    $("oForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var cid = cSel.value;
+      if (cid === "__new") {
+        var nm = $("ncName").value.trim(), ph = $("ncPhone").value.trim();
+        if (!nm) { alert("Укажите имя клиента"); $("ncName").focus(); return; }
+        var nc = { id: uid(), name: nm, phone: ph, email: "", source: "Телефон", note: "", created: iso(new Date()) };
+        db.clients.push(nc); cid = nc.id;
+      }
+      if (!$("oObject").value) { alert("Сначала добавьте дом или услугу во вкладке «Дома и услуги»"); return; }
+      if ($("oIn").value && $("oOut").value && $("oOut").value < $("oIn").value) { alert("Дата выезда раньше даты заезда"); return; }
+      var data = {
+        clientId: cid, objectId: $("oObject").value, status: $("oStatus").value, checkIn: $("oIn").value, checkOut: $("oOut").value,
+        guests: Number($("oGuests").value) || "", extras: $("oExtras").value.trim(), amount: Number($("oAmount").value) || 0,
+        prepaid: Number($("oPrepaid").value) || 0, comment: $("oComment").value.trim()
+      };
+      if (isNew) {
+        data.id = uid(); data.created = iso(new Date()); data.history = [{ at: nowStr(), text: "Создана, статус: " + stName(data.status) }];
+        db.orders.push(data);
+      } else {
+        var changes = [];
+        if (o.status !== data.status) changes.push("Статус: " + stName(data.status));
+        if (o.checkIn !== data.checkIn || o.checkOut !== data.checkOut) changes.push("Даты: " + fmtDate(data.checkIn) + "–" + fmtDate(data.checkOut));
+        if (Number(o.amount) !== data.amount) changes.push("Сумма: " + money(data.amount));
+        if (Number(o.prepaid) !== data.prepaid) changes.push("Оплачено: " + money(data.prepaid));
+        if (o.objectId !== data.objectId) changes.push("Дом: " + objName(data.objectId));
+        Object.keys(data).forEach(function (k) { o[k] = data[k]; });
+        o.history = o.history || [];
+        if (changes.length) o.history.push({ at: nowStr(), text: changes.join("; ") });
+      }
+      save(); closeDlg(); render();
+    });
+  }
+
+  function checkConflict(selfId, objectId, a, b) {
+    if (!objectId || !a) return null;
+    var end = b || a;
+    for (var i = 0; i < db.orders.length; i++) {
+      var x = db.orders[i];
+      if (x.id === selfId || x.objectId !== objectId || x.status === "cancelled" || !x.checkIn) continue;
+      var xe = x.checkOut || x.checkIn;
+      // ночь выезда одного = день заезда другого — не конфликт
+      if (a < xe && x.checkIn < end) return x;
+      if (a === x.checkIn) return x;
+    }
+    return null;
+  }
+
+  function historyHtml(o) {
+    var h = (o.history || []).slice().reverse();
+    if (!h.length) return '<p class="note">Пока пусто.</p>';
+    return '<ul class="hist">' + h.map(function (x) { return "<li><small>" + esc(x.at) + "</small><br>" + esc(x.text) + "</li>"; }).join("") + "</ul>";
+  }
+
+  function clientCard(c) {
+    var isNew = !c;
+    c = c || { name: "", phone: "", email: "", source: "Телефон", note: "" };
+    var os = isNew ? [] : db.orders.filter(function (o) { return o.clientId === c.id; }).sort(function (a, b) { return (b.checkIn || "").localeCompare(a.checkIn || ""); });
+    var paid = os.filter(function (o) { return o.status !== "cancelled"; }).reduce(function (s, o) { return s + (Number(o.amount) || 0); }, 0);
+    openDlg(head(isNew ? "Новый клиент" : "Клиент: " + esc(c.name) + demoTag(c)) +
+      '<form id="cForm"><div class="dlg-b"><div class="grid2">' +
+        fld("cName", "Имя", '<input id="cName" required value="' + esc(c.name) + '">') +
+        fld("cPhone", "Телефон", '<input id="cPhone" type="tel" value="' + esc(c.phone) + '">') +
+        fld("cEmail", "E-mail", '<input id="cEmail" type="email" value="' + esc(c.email) + '">') +
+        fld("cSource", "Откуда узнал", '<select id="cSource">' + opt(SOURCES, c.source, function (x) { return x; }, function (x) { return x; }) + "</select>") +
+      "</div>" + fld("cNote", "Заметки (пожелания, животные, повод)", '<textarea id="cNote">' + esc(c.note) + "</textarea>") +
+      (isNew ? "" :
+        "<h4>История броней — " + os.length + " шт., " + money(paid) + "</h4>" +
+        (os.length ? '<div class="tw"><table><thead><tr><th>Заезд</th><th>Дом</th><th>Статус</th><th class="num">Сумма</th></tr></thead><tbody>' +
+          os.map(function (o) { return '<tr class="click" data-order="' + o.id + '"><td>' + fmtDate(o.checkIn) + "</td><td>" + esc(objName(o.objectId)) + "</td><td>" + badge(o.status) + '</td><td class="num">' + money(o.amount) + "</td></tr>"; }).join("") +
+          "</tbody></table></div>" : '<p class="note">Броней пока нет.</p>') +
+        "<h4>Журнал</h4>" + (function () {
+          var ev = [];
+          os.forEach(function (o) { (o.history || []).forEach(function (h) { ev.push({ at: h.at, text: objName(o.objectId) + ": " + h.text }); }); });
+          ev.sort(function (a, b) { return b.at.localeCompare(a.at); });
+          return ev.length ? '<ul class="hist">' + ev.map(function (x) { return "<li><small>" + esc(x.at) + "</small><br>" + esc(x.text) + "</li>"; }).join("") + "</ul>" : '<p class="note">Пусто.</p>';
+        })()) +
+      '</div><div class="dlg-f">' +
+      (isNew ? "" : '<button type="button" class="btn danger" id="cDel">Удалить</button><button type="button" class="btn line" id="cNewOrder">+ Бронь</button><span class="spacer"></span>') +
+      '<button type="button" class="btn line" data-close>Закрыть</button><button type="submit" class="btn">Сохранить</button></div></form>');
+
+    if (!isNew) {
+      $("cDel").addEventListener("click", function () {
+        var n = db.orders.filter(function (o) { return o.clientId === c.id; }).length;
+        if (!confirm(n ? "У клиента " + n + " брон(и). Удалить клиента вместе с ними?" : "Удалить клиента?")) return;
+        db.orders = db.orders.filter(function (o) { return o.clientId !== c.id; });
+        db.clients = db.clients.filter(function (x) { return x.id !== c.id; }); save(); closeDlg(); render();
+      });
+      $("cNewOrder").addEventListener("click", function () { orderForm(null); $("oClient").value = c.id; $("oClient").dispatchEvent(new Event("change")); });
+    }
+    $("cForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nm = $("cName").value.trim(); if (!nm) { $("cName").focus(); return; }
+      var data = { name: nm, phone: $("cPhone").value.trim(), email: $("cEmail").value.trim(), source: $("cSource").value, note: $("cNote").value.trim() };
+      if (isNew) { data.id = uid(); data.created = iso(new Date()); db.clients.push(data); }
+      else Object.keys(data).forEach(function (k) { c[k] = data[k]; });
+      save(); closeDlg(); render();
+    });
+  }
+
+  function objectForm(o) {
+    var isNew = !o;
+    o = o || { name: "", type: "Коттедж", capacity: "", rooms: "", price: "", note: "" };
+    openDlg(head(isNew ? "Новый дом / услуга" : esc(o.name)) +
+      '<form id="obForm"><div class="dlg-b"><div class="grid2">' +
+        fld("obName", "Название", '<input id="obName" required value="' + esc(o.name) + '">') +
+        fld("obType", "Тип", '<select id="obType">' + opt(OBJ_TYPES, o.type, function (x) { return x; }, function (x) { return x; }) + "</select>") +
+        fld("obCap", "Вместимость, гостей", '<input id="obCap" type="number" min="0" value="' + esc(o.capacity) + '">') +
+        fld("obRooms", "Спален", '<input id="obRooms" type="number" min="0" value="' + esc(o.rooms) + '">') +
+        fld("obPrice", "Базовая цена, ₽ (сутки / сеанс)", '<input id="obPrice" type="number" min="0" step="100" value="' + esc(o.price) + '">') +
+        fld("obNote", "Заметка", '<input id="obNote" value="' + esc(o.note) + '">') +
+      "</div></div><div class=\"dlg-f\">" +
+      (isNew ? "" : '<button type="button" class="btn danger" id="obDel">Удалить</button><span class="spacer"></span>') +
+      '<button type="button" class="btn line" data-close>Отмена</button><button type="submit" class="btn">Сохранить</button></div></form>');
+    if (!isNew) $("obDel").addEventListener("click", function () {
+      if (db.orders.some(function (x) { return x.objectId === o.id; })) { alert("По этому дому есть брони — сначала удалите или перенесите их."); return; }
+      if (!confirm("Удалить?")) return;
+      db.objects = db.objects.filter(function (x) { return x.id !== o.id; }); save(); closeDlg(); render();
+    });
+    $("obForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+      var nm = $("obName").value.trim(); if (!nm) { $("obName").focus(); return; }
+      var data = { name: nm, type: $("obType").value, capacity: Number($("obCap").value) || "", rooms: Number($("obRooms").value) || "", price: Number($("obPrice").value) || 0, note: $("obNote").value.trim() };
+      if (isNew) { data.id = uid(); db.objects.push(data); } else Object.keys(data).forEach(function (k) { o[k] = data[k]; });
+      save(); closeDlg(); render();
+    });
+  }
+
+  function setStatus(id, st) {
+    var o = byId(db.orders, id); if (!o || o.status === st) return;
+    o.status = st; o.history = o.history || []; o.history.push({ at: nowStr(), text: "Статус: " + stName(st) });
+    save(); render();
+  }
+
+  /* ---------- CSV ---------- */
+  function csvCell(v) { v = String(v == null ? "" : v); return /[";\n\r]/.test(v) ? '"' + v.replace(/"/g, '""') + '"' : v; }
+  function download(name, rows) {
+    var text = "﻿" + rows.map(function (r) { return r.map(csvCell).join(";"); }).join("\r\n"); // BOM + «;» — для Excel
+    var blob = new Blob([text], { type: "text/csv;charset=utf-8" });
+    var a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+    document.body.appendChild(a); a.click(); setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  }
+  function exportCsv() {
+    var d = iso(new Date());
+    if (tab === "clients") {
+      download("klienty-" + d + ".csv", [["Имя", "Телефон", "E-mail", "Источник", "Заметки", "Броней", "Добавлен", "Демо"]].concat(
+        db.clients.map(function (c) { return [c.name, c.phone, c.email, c.source, c.note, db.orders.filter(function (o) { return o.clientId === c.id; }).length, c.created, c.demo ? "да" : ""]; })));
+    } else if (tab === "objects") {
+      download("doma-" + d + ".csv", [["Название", "Тип", "Вместимость", "Спален", "Базовая цена", "Заметка", "Демо"]].concat(
+        db.objects.map(function (o) { return [o.name, o.type, o.capacity, o.rooms, o.price, o.note, o.demo ? "да" : ""]; })));
+    } else {
+      download("broni-" + d + ".csv", [["Заезд", "Выезд", "Ночей", "Клиент", "Телефон", "Дом / услуга", "Гостей", "Доп. услуги", "Статус", "Сумма", "Оплачено", "Остаток", "Комментарий", "Создана", "Демо"]].concat(
+        filteredOrders().map(function (o) {
+          var c = byId(db.clients, o.clientId) || {};
+          return [fmtDate(o.checkIn), fmtDate(o.checkOut), nights(o.checkIn, o.checkOut), c.name, c.phone, objName(o.objectId), o.guests, o.extras, stName(o.status), o.amount, o.prepaid, (Number(o.amount) || 0) - (Number(o.prepaid) || 0), o.comment, o.created, o.demo ? "да" : ""];
+        })));
+    }
+  }
+
+  /* ---------- События ---------- */
+  document.querySelector(".tabs").addEventListener("click", function (e) { var b = e.target.closest("button[data-tab]"); if (b) { tab = b.dataset.tab; render(); } });
+  ["q", "fStatus", "fObject", "fFrom", "fTo"].forEach(function (id) { $(id).addEventListener("input", render); });
+  $("addBtn").addEventListener("click", function () { if (tab === "clients") clientCard(null); else if (tab === "objects") objectForm(null); else orderForm(null); });
+  $("csvBtn").addEventListener("click", exportCsv);
+  $("clearDemo").addEventListener("click", function () {
+    if (!confirm("Удалить все демо-записи? Ваши собственные записи останутся.")) return;
+    var demoClients = {}; db.clients.forEach(function (c) { if (c.demo) demoClients[c.id] = 1; });
+    var demoObjects = {}; db.objects.forEach(function (o) { if (o.demo) demoObjects[o.id] = 1; });
+    var keptOrders = db.orders.filter(function (o) { return !o.demo; });
+    // демо-клиентов и демо-дома оставляем, если на них ссылаются ваши брони
+    db.clients = db.clients.filter(function (c) { return !c.demo || keptOrders.some(function (o) { return o.clientId === c.id; }); });
+    db.objects = db.objects.filter(function (o) { return !o.demo || keptOrders.some(function (x) { return x.objectId === o.id; }); });
+    db.clients.forEach(function (c) { delete c.demo; }); db.objects.forEach(function (o) { delete o.demo; });
+    db.orders = keptOrders; save(); render();
+  });
+
+  function openRow(t) {
+    var r = t.closest("[data-order],[data-client],[data-object]"); if (!r) return false;
+    if (r.dataset.order) orderForm(byId(db.orders, r.dataset.order));
+    else if (r.dataset.client) clientCard(byId(db.clients, r.dataset.client));
+    else objectForm(byId(db.objects, r.dataset.object));
+    return true;
+  }
+  view.addEventListener("click", function (e) { if (e.target.closest("select")) return; if (e.target.closest(".kcard")) { orderForm(byId(db.orders, e.target.closest(".kcard").dataset.kid)); return; } openRow(e.target); });
+  view.addEventListener("keydown", function (e) { if (e.key === "Enter" && e.target.matches("tr.click")) openRow(e.target); });
+  view.addEventListener("change", function (e) { if (e.target.dataset.kstatus) setStatus(e.target.dataset.kstatus, e.target.value); });
+  dlgBody.addEventListener("click", function (e) {
+    if (e.target.closest("[data-close]")) { closeDlg(); return; }
+    var r = e.target.closest("tr[data-order]"); if (r) orderForm(byId(db.orders, r.dataset.order));
+  });
+
+  // Канбан: drag & drop
+  var dragId = null;
+  view.addEventListener("dragstart", function (e) { var k = e.target.closest(".kcard"); if (k) { dragId = k.dataset.kid; e.dataTransfer.setData("text/plain", dragId); } });
+  view.addEventListener("dragover", function (e) { var c = e.target.closest(".col"); if (c && dragId) { e.preventDefault(); c.classList.add("over"); } });
+  view.addEventListener("dragleave", function (e) { var c = e.target.closest(".col"); if (c && !c.contains(e.relatedTarget)) c.classList.remove("over"); });
+  view.addEventListener("drop", function (e) { var c = e.target.closest(".col"); if (c && dragId) { e.preventDefault(); var id = dragId; dragId = null; setStatus(id, c.dataset.col); } });
+  view.addEventListener("dragend", function () { dragId = null; });
+
+  load(); render();
+})();
+</script>
+<div style="position:fixed;left:12px;bottom:12px;z-index:2147483647;background:rgba(15,39,71,.92);color:#fff;font:12px/1.4 system-ui,sans-serif;padding:6px 10px;border-radius:8px;pointer-events:none">Демо-макет · данные из открытых источников</div></body>
+</html>
