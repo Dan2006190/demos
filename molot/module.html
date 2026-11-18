@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Модуль — ЦВСП «Молот»</title>
+<meta name="theme-color" content="#0c0c0d">
+<link rel="preload" href="fonts/oswald-cyrillic-700-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/content.js" defer></script>
+<script src="js/app.js" defer></script>
+</head>
+<body data-page="module">
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="index.html" aria-label="ЦВСП «Молот» — на главную">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><rect x="14" y="12" width="4" height="18" fill="#b8bec7"/><rect x="5" y="3" width="22" height="11" rx="1" fill="#ece8e1"/><rect x="5" y="6" width="22" height="2" fill="#0c0c0d"/><rect x="5" y="10" width="22" height="2" fill="#0c0c0d"/></svg>
+      <div><b>МОЛОТ</b><span>Гражданская медицина</span></div>
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a class="keep" href="index.html#course">Все модули</a>
+      <a href="index.html#contacts">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="mod-head">
+    <div class="wrap">
+      <p class="crumbs"><a href="index.html">Главная</a> / <a href="index.html#course">Курс</a> / <span id="m-crumb"></span></p>
+      <h1 class="h-display"><small id="m-num"></small><span id="m-title"></span></h1>
+      <p class="lead" id="m-lead"></p>
+    </div>
+  </section>
+  <section class="mod-body">
+    <div class="wrap" id="m-body">
+      <noscript><p class="note">Для схем и тренажёров включите JavaScript.</p></noscript>
+    </div>
+  </section>
+</main>
+
+<footer id="contacts">
+  <div class="wrap">
+    <div>
+      <p style="margin:0 0 6px;color:var(--fg);font:700 20px/1 var(--display);letter-spacing:.06em">ЦВСП «МОЛОТ»</p>
+      <p class="warn" style="margin:0 0 6px">При угрозе жизни звоните 103 или 112.</p>
+      <p style="margin:0">Материалы сайта не заменяют очное обучение. Тексты — по материалам канала «Гражданская медицина».</p>
+    </div>
+    <div class="row" id="contacts-list"></div>
+  </div>
+</footer>
+</body>
+</html>
