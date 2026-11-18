@@ -95,6 +95,60 @@
     return widget('Как отличить', 'по цвету и струе', svg(art));
   }
 
+
+  /* ---------- 1б. Карта артерий: пальцевое прижатие ---------- */
+  function arteries() {
+    const A = window.ARTERIES || [];
+    const P = { carotid: [141, 104], subclavian: [116, 129], axillary: [97, 160], brachial: [85, 205], femoral: [131, 330] };
+    const HL = {
+      carotid: 'M150 138 L143 118 L141 84',
+      subclavian: 'M150 138 L117 131 L99 142',
+      axillary: 'M99 142 L93 170',
+      brachial: 'M93 170 L81 214 L72 262 L62 322',
+      femoral: 'M150 300 L136 314 L130 340 L126 440 L121 548',
+    };
+    const tree = 'M150 138 V300 M150 300 L164 314 L170 340 L174 440 L179 548 M150 138 L157 118 L159 84 M150 138 L183 131 L201 142 L207 170 L219 214 L228 262 L238 322';
+    const art = `
+<svg viewBox="0 0 300 580" class="amap-body" role="img" aria-label="Силуэт человека с точками прижатия артерий">
+  <g fill="#2a2a2f" stroke="#2a2a2f" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="150" cy="58" r="36" stroke="none"/>
+    <rect x="135" y="88" width="30" height="40" rx="8" stroke="none"/>
+    <path d="M94 128 Q150 114 206 128 L214 146 L204 322 Q150 336 96 322 L86 146 Z" stroke-width="2"/>
+    <polyline points="98,142 81,214 62,322" fill="none" stroke-width="28"/>
+    <polyline points="202,142 219,214 238,322" fill="none" stroke-width="28"/>
+    <circle cx="58" cy="344" r="17" stroke="none"/><circle cx="242" cy="344" r="17" stroke="none"/>
+    <polyline points="126,318 124,440 120,552" fill="none" stroke-width="44"/>
+    <polyline points="174,318 176,440 180,552" fill="none" stroke-width="44"/>
+  </g>
+  <path d="${tree} ${Object.values(HL).join(' ')}" fill="none" stroke="#7d1b1b" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity=".75"/>
+  ${Object.entries(HL).map(([k, d]) => `<path class="hl" data-k="${k}" d="${d}" fill="none" stroke="#ff4040" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>`).join('')}
+  ${A.map(a => { const [x, y] = P[a.k] || [0, 0]; return `<g class="pt" data-k="${a.k}" tabindex="0" role="button" aria-label="${a.name}"><circle class="ring" cx="${x}" cy="${y}" r="10"/><circle class="dot" cx="${x}" cy="${y}" r="9"/><circle cx="${x}" cy="${y}" r="22" fill="transparent"/></g>`; }).join('')}
+</svg>`;
+    const body = svg(art, 'amap-fig');
+    const s = body.querySelector('svg');
+    const title = h('h4', {}), zone = h('p', { class: 'amap-zone' });
+    const rows = h('dl', {});
+    const chips = h('div', { class: 'amap-chips' }, A.map(a => h('button', { class: 'chip', type: 'button', 'data-k': a.k, onclick: () => pick(a.k) }, a.name.replace(' артерия', ''))));
+    function pick(k) {
+      const a = A.find(x => x.k === k); if (!a) return;
+      s.querySelectorAll('.pt,.hl').forEach(el => el.classList.toggle('on', el.dataset.k === k));
+      chips.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.k === k)));
+      title.textContent = a.name; zone.textContent = a.zone;
+      rows.replaceChildren(
+        h('dt', {}, 'Где'), h('dd', { html: a.where }),
+        h('dt', {}, 'Как'), h('dd', { html: a.how }),
+        h('dt', {}, 'Дальше'), h('dd', { html: a.next }));
+    }
+    s.querySelectorAll('.pt').forEach(g => {
+      g.addEventListener('click', () => pick(g.dataset.k));
+      g.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(g.dataset.k); } });
+    });
+    const info = h('div', { class: 'amap-info', 'aria-live': 'polite' }, chips, title, zone, rows,
+      h('p', { class: 'amap-note' }, 'Пальцевое прижатие — это первые секунды: кровь останавливается сразу, пока готовят жгут или повязку. Давите между раной и сердцем.'));
+    pick((A.find(a => a.k === 'femoral') || A[0] || {}).k);
+    return widget('Куда давить', 'нажмите на точку', h('div', { class: 'amap' }, body, info));
+  }
+
   /* ---------- 2. Жгут по шагам ---------- */
   function tourniquet() {
     const steps = ['Наложить выше раны, ближе к туловищу', 'Затянуть до остановки кровотечения', 'Записать время наложения', 'Вызвать скорую, жгут не снимать'];
@@ -315,7 +369,7 @@
       h('p', { class: 'muted', style: 'margin:14px 0 0;font-size:13px' }, 'Это тренажёр темпа, а не замена практике на манекене.'));
   }
 
-  const WIDGETS = { vessels, tourniquet, xray: xrayCarousel, burns, cpr };
+  const WIDGETS = { vessels, arteries, tourniquet, xray: xrayCarousel, burns, cpr };
 
   document.addEventListener('DOMContentLoaded', () => {
     if (document.body.dataset.page === 'module') renderModule(); else renderIndex();

@@ -225,6 +225,36 @@ footer .warn { color: #ffb0b0; font-weight: 600; }
 .tq-steps li[aria-current="step"] { border-color: var(--red); color: var(--fg); }
 @media (max-width: 640px) { .tq-steps { grid-template-columns: 1fr 1fr; } }
 
+
+/* карта артерий */
+.amap { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 28px; align-items: start; }
+.amap-fig svg { max-width: 300px; margin: 0 auto; }
+.amap .hl { opacity: 0; stroke-dasharray: 600; stroke-dashoffset: 600; transition: opacity .2s; }
+.amap .hl.on { opacity: 1; animation: flow 1.2s ease-out forwards; filter: drop-shadow(0 0 6px rgba(255,64,64,.7)); }
+@keyframes flow { to { stroke-dashoffset: 0; } }
+.amap .pt { cursor: pointer; outline: none; }
+.amap .pt .dot { fill: var(--red); stroke: var(--bg); stroke-width: 3; transition: r .2s, fill .2s; }
+.amap .pt .ring { fill: none; stroke: var(--red); stroke-width: 2; transform-box: fill-box; transform-origin: center; animation: ring 1.8s ease-out infinite; }
+@keyframes ring { from { transform: scale(1); opacity: .9; } to { transform: scale(2.6); opacity: 0; } }
+.amap .pt:hover .dot, .amap .pt:focus-visible .dot { fill: #ff5a5a; }
+.amap .pt.on .dot { fill: var(--fg); stroke: var(--red); stroke-width: 4; }
+.amap .pt:focus-visible .dot { stroke: var(--fg); }
+.amap-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 18px; }
+.amap-chips .chip { font: 500 13px var(--body); color: var(--muted); background: var(--panel); border: 1px solid var(--line); padding: 7px 11px; cursor: pointer; }
+.amap-chips .chip[aria-pressed="true"] { color: var(--fg); border-color: var(--red); }
+.amap-info h4 { font: 700 28px/1.1 var(--display); text-transform: uppercase; margin: 0 0 4px; }
+.amap-zone { color: #ff8b8b; margin: 0 0 16px; font-weight: 600; }
+.amap-info dl { display: grid; grid-template-columns: auto 1fr; gap: 10px 16px; margin: 0 0 16px; }
+.amap-info dt { font: 700 13px/1.6 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
+.amap-info dd { margin: 0; }
+.amap-note { font-size: 13px; color: var(--muted); border-left: 2px solid var(--red); padding-left: 12px; margin: 0; }
+@media (max-width: 720px) {
+  .amap { grid-template-columns: 1fr; gap: 16px; }
+  .amap-fig svg { max-width: 230px; }
+  .amap-info dl { grid-template-columns: 1fr; gap: 2px; }
+  .amap-info dd { margin-bottom: 10px; }
+}
+
 /* ожоги */
 .burn .depth { transition: height .6s cubic-bezier(.3,.8,.3,1); }
 .burn-text { min-height: 72px; margin: 12px 0 0; color: #d4cfc7; }
@@ -245,6 +275,7 @@ footer .warn { color: #ffb0b0; font-weight: 600; }
 .tempo.ok { color: var(--ok); } .tempo.bad { color: #ffb36b; }
 @media (max-width: 720px) { .cpr { grid-template-columns: 1fr; text-align: center; } .cpr .row { justify-content: center; } }
 @media (prefers-reduced-motion: reduce) {
-  .vessel-art *, .tq .drops circle, .chest .beat.on { animation: none !important; }
-  .tq .band, .burn .depth, .chest .hands { transition: none; }
+  .vessel-art *, .amap .ring, .tq .drops circle, .chest .beat.on { animation: none !important; }
+  .amap .hl, .tq .band, .burn .depth, .chest .hands { transition: none; }
+  .amap .hl.on { animation: none; stroke-dashoffset: 0; }
 }
