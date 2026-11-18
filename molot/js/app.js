@@ -26,6 +26,8 @@
         h('h3', {}, m.title), h('p', {}, m.short),
         h('div', { class: 'tags' }, (m.tags || []).map((t, i) => h('span', { class: 'tag' + (i === 0 && !m.soon ? ' red' : '') }, t)))));
     }
+    const pr = document.getElementById('practice-widgets');
+    if (pr) { if (window.MYTHS) pr.append(WIDGETS.myths()); if (window.TRIAGE) pr.append(WIDGETS.triage()); }
     const ev = document.getElementById('events');
     if (ev) for (const e of EVENTS) ev.append(h('article', { class: 'event' }, h('time', {}, e.date), h('h3', {}, e.title), h('p', {}, e.text)));
     fillContacts();
@@ -369,7 +371,155 @@
       h('p', { class: 'muted', style: 'margin:14px 0 0;font-size:13px' }, 'Это тренажёр темпа, а не замена практике на манекене.'));
   }
 
-  const WIDGETS = { vessels, arteries, tourniquet, xray: xrayCarousel, burns, cpr };
+
+  /* ---------- 6. Миф или правда ---------- */
+  function myths() {
+    const M = window.MYTHS || [];
+    let i = 0, score = 0, answered = false;
+    const card = h('div', { class: 'myth-card', tabindex: '0' });
+    const q = h('p', { class: 'myth-q' }), verdict = h('p', { class: 'myth-v' }), expl = h('p', { class: 'myth-a' });
+    const counter = h('span', { class: 'myth-n' });
+    card.append(counter, q, verdict, expl);
+    const no = h('button', { class: 'btn', type: 'button', onclick: () => answer(false) }, '← Миф');
+    const yes = h('button', { class: 'btn', type: 'button', onclick: () => answer(true) }, 'Правда →');
+    const next = h('button', { class: 'btn red', type: 'button', onclick: () => show(i + 1) }, 'Дальше');
+    const ctr = h('div', { class: 'row myth-btns' }, no, yes, next);
+    function show(n) {
+      i = n; answered = false; card.className = 'myth-card'; card.style.transform = '';
+      if (i >= M.length) {
+        counter.textContent = 'Итог'; q.textContent = score + ' из ' + M.length;
+        verdict.textContent = score >= M.length - 1 ? 'Отлично — мифы вас не проведут.' : score >= M.length / 2 ? 'Неплохо, но пара мифов вас подловила.' : 'Мифы пока сильнее — пройдите модули курса.';
+        expl.textContent = ''; no.hidden = yes.hidden = true; next.hidden = false; next.textContent = 'Ещё раз';
+        next.onclick = () => { score = 0; next.onclick = () => show(i + 1); show(0); };
+        return;
+      }
+      counter.textContent = (i + 1) + ' / ' + M.length; q.textContent = M[i].q; verdict.textContent = ''; expl.textContent = '';
+      no.hidden = yes.hidden = false; next.hidden = true; next.textContent = 'Дальше';
+    }
+    function answer(t) {
+      if (answered || i >= M.length) return; answered = true;
+      const ok = t === M[i].truth; if (ok) score++;
+      card.classList.add(ok ? 'ok' : 'bad', t ? 'went-r' : 'went-l');
+      verdict.textContent = (ok ? 'Верно! ' : 'Нет. ') + (M[i].truth ? 'Это правда.' : 'Это миф.');
+      expl.textContent = M[i].a; no.hidden = yes.hidden = true; next.hidden = false;
+    }
+    let x0 = null;
+    card.addEventListener('pointerdown', e => { if (answered) return; x0 = e.clientX; card.setPointerCapture(e.pointerId); card.classList.add('drag'); });
+    card.addEventListener('pointermove', e => { if (x0 == null) return; const dx = e.clientX - x0; card.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`; card.dataset.lean = dx > 40 ? 'r' : dx < -40 ? 'l' : ''; });
+    const end = e => { if (x0 == null) return; const dx = e.clientX - x0; x0 = null; card.classList.remove('drag'); card.style.transform = ''; card.dataset.lean = '';
+      if (Math.abs(dx) > 90) answer(dx > 0); };
+    card.addEventListener('pointerup', end); card.addEventListener('pointercancel', end);
+    card.addEventListener('keydown', e => { if (e.key === 'ArrowLeft') answer(false); if (e.key === 'ArrowRight') answer(true); if (e.key === 'Enter' && answered) show(i + 1); });
+    show(0);
+    return widget('Миф или правда', 'смахните карточку или нажмите кнопку', h('div', { class: 'myths' }, card, ctr));
+  }
+
+  /* ---------- 7. Собери аптечку ---------- */
+  function kitbuilder() {
+    const K = window.KIT_ITEMS || [];
+    const need = K.filter(k => k.ok).length;
+    let got = 0, miss = 0;
+    const bagList = h('div', { class: 'kit-in' });
+    const bag = h('div', { class: 'kit-bag', 'aria-label': 'Аптечка' }, h('div', { class: 'kit-bag-head' }, h('b', {}, 'Аптечка'), h('span', { class: 'kit-count' }, '0 / ' + need)), bagList,
+      h('p', { class: 'kit-drop' }, 'Перетащите сюда или нажмите на вещь'));
+    const fb = h('p', { class: 'kit-fb', 'aria-live': 'polite' }, 'Соберите аптечку: всё нужное — внутрь, лишнее оставьте на полке.');
+    const shelf = h('div', { class: 'kit-shelf' });
+    const order = K.map((_, n) => n).sort(() => Math.random() - .5);
+    function put(n, btn) {
+      const it = K[n]; if (btn.disabled) return;
+      if (it.ok) {
+        btn.disabled = true; btn.classList.add('used'); got++;
+        bagList.append(h('span', { class: 'kit-chip' }, it.icon + ' ' + it.name));
+        fb.className = 'kit-fb ok'; fb.textContent = '✓ ' + it.name + ': ' + it.why;
+      } else {
+        miss++; btn.classList.remove('shake'); void btn.offsetWidth; btn.classList.add('shake', 'wrong');
+        fb.className = 'kit-fb bad'; fb.textContent = '✗ ' + it.name + ': ' + it.why;
+      }
+      bag.querySelector('.kit-count').textContent = got + ' / ' + need;
+      if (got === need) { bag.classList.add('done'); fb.className = 'kit-fb ok';
+        fb.textContent = 'Аптечка собрана! ' + (miss ? 'Ошибок: ' + miss + ' — перечитайте, почему эти вещи лишние.' : 'Без единой ошибки.'); }
+    }
+    for (const n of order) {
+      const it = K[n];
+      const b = h('button', { class: 'kit-item', type: 'button', draggable: 'true' }, h('span', { class: 'kit-ic', 'aria-hidden': 'true' }, it.icon), it.name);
+      b.addEventListener('click', () => put(n, b));
+      b.addEventListener('dragstart', e => e.dataTransfer.setData('text/plain', String(n)));
+      shelf.append(b);
+    }
+    bag.addEventListener('dragover', e => { e.preventDefault(); bag.classList.add('over'); });
+    bag.addEventListener('dragleave', () => bag.classList.remove('over'));
+    bag.addEventListener('drop', e => { e.preventDefault(); bag.classList.remove('over'); const n = +e.dataTransfer.getData('text/plain'); put(n, shelf.children[order.indexOf(n)]); });
+    const again = h('button', { class: 'btn', type: 'button', onclick: () => { const w = kitbuilder(); root.replaceWith(w); } }, '↺ Заново');
+    const root = widget('Собери аптечку', 'что положите, а что оставите?', h('div', { class: 'kit' }, shelf, bag), fb, h('div', { class: 'row' }, again));
+    return root;
+  }
+
+  /* ---------- 8. Сколько крови теряется ---------- */
+  function bloodloss() {
+    const B = window.BLOODLOSS; const SPEED = 6; // 1 секунда на экране = 6 секунд
+    let type = B.types[0], lost = 0, simT = 0, timer = null, last = 0;
+    const fill = h('div', { class: 'bl-fill' }), mark = h('div', { class: 'bl-marks' },
+      B.stages.map(st => h('i', { style: `bottom:${(1 - st.at / B.total) * 100}%` }, '−' + st.at + ' л')));
+    const tank = h('div', { class: 'bl-tank', role: 'img', 'aria-label': 'Объём крови в организме' }, fill, mark);
+    const big = h('div', { class: 'bl-big' }), sub = h('div', { class: 'bl-sub' });
+    const stages = h('ol', { class: 'bl-stages' }, B.stages.map(st => h('li', {}, h('b', {}, '−' + st.at + ' л'), ' ', st.text)));
+    const types = h('div', { class: 'row bl-types' }, B.types.map(t => h('button', { class: 'btn', type: 'button', 'aria-pressed': String(t === type), onclick: e => { type = t; types.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b === e.currentTarget))); reset(); } }, t.name)));
+    const go = h('button', { class: 'btn red', type: 'button' }, '▶ Началось кровотечение');
+    const fmt = t => Math.floor(t / 60) + ':' + String(Math.floor(t % 60)).padStart(2, '0');
+    function draw() {
+      const left = Math.max(0, B.total - lost);
+      fill.style.height = (left / B.total * 100) + '%'; fill.style.background = type.color;
+      big.textContent = left.toFixed(2).replace('.', ',') + ' л';
+      sub.textContent = 'Прошло ' + fmt(simT) + ' · потеряно ' + lost.toFixed(2).replace('.', ',') + ' л';
+      [...stages.children].forEach((li, k) => li.classList.toggle('on', lost >= B.stages[k].at));
+    }
+    function tick(now) {
+      const dt = (now - last) / 1000 * SPEED; last = now; simT += dt; lost = Math.min(B.total, lost + type.rate * dt / 60); draw();
+      if (lost >= B.stages[B.stages.length - 1].at) { stop('Без помощи — критическая кровопотеря через ' + fmt(simT) + '.'); return; }
+      timer = requestAnimationFrame(tick);
+    }
+    function stop(msg) { cancelAnimationFrame(timer); timer = null; go.textContent = '↺ Сначала'; tank.classList.remove('run'); sub.textContent = msg; }
+    function reset() { cancelAnimationFrame(timer); timer = null; lost = 0; simT = 0; tank.classList.remove('run'); go.textContent = '▶ Началось кровотечение'; draw(); }
+    go.addEventListener('click', () => {
+      if (timer) { stop('Остановили за ' + fmt(simT) + '. Потеряно ' + lost.toFixed(2).replace('.', ',') + ' л.'); return; }
+      if (lost > 0) { reset(); return; }
+      go.textContent = '■ Кровь остановлена (жгут)'; tank.classList.add('run'); last = performance.now(); timer = requestAnimationFrame(tick);
+    });
+    reset();
+    return widget('Сколько крови теряется', 'время ускорено ×' + SPEED,
+      types, h('div', { class: 'bl' }, tank, h('div', {}, big, sub, stages, h('div', { class: 'row' }, go))),
+      h('p', { class: 'muted', style: 'margin:14px 0 0;font-size:13px' }, 'В теле взрослого около 5 литров крови. Нажмите старт, а потом — «остановлена», как будто наложили жгут. Скорости условные, для наглядности.'));
+  }
+
+  /* ---------- 9. Сортировка пострадавших ---------- */
+  function triage() {
+    const T = window.TRIAGE; const P = T.people.slice().sort(() => Math.random() - .5);
+    let picks = [];
+    const cards = h('div', { class: 'tri' });
+    const res = h('p', { class: 'tri-res', 'aria-live': 'polite' });
+    const check = h('button', { class: 'btn red', type: 'button', disabled: true }, 'Проверить');
+    const again = h('button', { class: 'btn', type: 'button', onclick: () => { picks = []; res.textContent = ''; render(); } }, '↺ Заново');
+    function render(done) {
+      cards.replaceChildren(...P.map(p => {
+        const n = picks.indexOf(p.id) + 1;
+        const c = h('button', { class: 'tri-card' + (n ? ' picked' : '') + (done ? (p.order === n ? ' ok' : ' bad') : ''), type: 'button', disabled: done || null },
+          h('span', { class: 'tri-n' }, n || '·'), h('b', {}, p.name), h('p', {}, p.state),
+          done ? h('p', { class: 'tri-why' }, (p.order === n ? '✓ ' : '✗ Правильно: ' + p.order + '. ') + p.why) : null);
+        c.addEventListener('click', () => { picks = n ? picks.filter(x => x !== p.id) : picks.concat(p.id); render(); });
+        return c;
+      }));
+      check.disabled = done || picks.length !== P.length;
+    }
+    check.addEventListener('click', () => {
+      const right = P.filter(p => picks.indexOf(p.id) + 1 === p.order).length;
+      res.textContent = right === P.length ? 'Всё верно — вы действовали бы как спасатель.' : 'Верно ' + right + ' из ' + P.length + '. Смотрите разбор на карточках.';
+      render(true);
+    });
+    render();
+    return widget('Кому помогать первым', 'нажимайте по порядку', h('p', { class: 'tri-intro' }, T.intro), cards, res, h('div', { class: 'row' }, check, again));
+  }
+
+  const WIDGETS = { vessels, arteries, tourniquet, myths, kitbuilder, bloodloss, triage, xray: xrayCarousel, burns, cpr };
 
   document.addEventListener('DOMContentLoaded', () => {
     if (document.body.dataset.page === 'module') renderModule(); else renderIndex();
