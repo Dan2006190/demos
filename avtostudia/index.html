@@ -594,8 +594,8 @@ try {
       if (!o.isMesh) return;
       const n = (o.material && o.material.name) || '', on = o.name || '', pn = (o.parent && o.parent.name) || '';
       const nm = on + ' ' + pn;
-      if (/windshield/i.test(nm)) o.material = front;
-      else if (/doorglass|sideglass|backlight/i.test(nm)) o.material = glass;
+      if (/windshield|doorglass/i.test(nm)) o.material = front;      // лобовое и передние боковые — по закону не темнее 70%
+      else if (/sideglass|backlight/i.test(nm)) o.material = glass;  // задняя полусфера — любая
       else if (n === 'ARm4_main' && !/wheel|interior|enginebay/i.test(nm)) o.material = paint;
     });
     // привести к размеру ~4.6 м по длине, центр в нуле, колёса на земле
