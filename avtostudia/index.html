@@ -572,10 +572,13 @@ try {
   const camera = new THREE.PerspectiveCamera(30, 16 / 10, 0.1, 100);
 
   // материалы: чёрный глянец с лаком, хром, тонированное стекло
-  const paint = new THREE.MeshPhysicalMaterial({ color: 0x1b2633, metalness: 0.9, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.03 });
+  const paint = new THREE.MeshPhysicalMaterial({ color: 0xe9ecef, metalness: 0.9, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.03 });
   const chrome = new THREE.MeshStandardMaterial({ color: 0x5c636e, metalness: 1, roughness: 0.28 });
-  const glass = new THREE.MeshPhysicalMaterial({ color: 0x9aa7b8, metalness: 0.1, roughness: 0, transparent: true, opacity: 0.35 });
-  window.setTint = t => { const k = 1 - t / 100; glass.opacity = 0.3 + k * 0.68; glass.envMapIntensity = 1 - k * 0.75; glass.color.setRGB(0.6 - k * 0.57, 0.65 - k * 0.61, 0.72 - k * 0.67); };
+  const glass = new THREE.MeshStandardMaterial({ color: 0x8a96a6, metalness: 0, roughness: 0.15, transparent: true, opacity: 0.4, depthWrite: false });
+  const front = glass.clone();
+  window.setTint = t => { const k = Math.pow(1 - t / 100, 0.6); glass.opacity = 0.4 + k * 0.6; glass.envMapIntensity = 1 - k * 0.6; const c = 0.55 * (1 - k) + 0.01; glass.color.setRGB(c, c * 1.04, c * 1.1); glass.needsUpdate = true;
+    const kf = Math.pow(1 - Math.max(t, 70) / 100, 0.6); front.opacity = 0.4 + kf * 0.6; const cf = 0.55 * (1 - kf) + 0.01; front.color.setRGB(cf, cf * 1.04, cf * 1.1); };
+  window.setTint(100);
 
   // свет: холодная полоса, которая проходит по кузову, и вспышка молнии
   const streak = new THREE.SpotLight(0xcfe6ff, 0, 30, 0.35, 0.6);
@@ -591,7 +594,8 @@ try {
       if (!o.isMesh) return;
       const n = (o.material && o.material.name) || '', on = o.name || '', pn = (o.parent && o.parent.name) || '';
       const nm = on + ' ' + pn;
-      if (/doorglass|windshield|sideglass|backlight/i.test(nm)) o.material = glass;
+      if (/windshield/i.test(nm)) o.material = front;
+      else if (/doorglass|sideglass|backlight/i.test(nm)) o.material = glass;
       else if (n === 'ARm4_main' && !/wheel|interior|enginebay/i.test(nm)) o.material = paint;
     });
     // привести к размеру ~4.6 м по длине, центр в нуле, колёса на земле
@@ -600,7 +604,7 @@ try {
     const b2 = new THREE.Box3().setFromObject(m), c = b2.getCenter(new THREE.Vector3());
     m.position.set(-c.x, -b2.min.y, -c.z);
     if (sz.x > sz.z) m.rotation.y = Math.PI / 2;   // длинной осью вдоль Z, как у прежней модели
-    const wrap = new THREE.Group(); wrap.add(m); car.add(wrap);
+    const wrap = new THREE.Group(); wrap.add(m); wrap.rotation.y = Math.PI; car.add(wrap);
     stage.classList.add('has3d'); resize(); loop(performance.now());
   }, undefined, () => stage.classList.remove('has3d'));
 
