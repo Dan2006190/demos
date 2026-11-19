@@ -430,7 +430,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </main>
 
 <footer>
-  <div class="wrap"><div><b style="color:var(--fg)">АВТОСТУДИЯ</b> · тонировка, стёкла и плёнки в Тамбове</div><div>Демо-сайт · цены и отзывы — примеры · 3D-модель: 2022 BMW M5 CS by <a href="https://sketchfab.com/3d-models/dc34c3fd9056460da48317ce0ff6b998" target="_blank" rel="noopener">ddiaz-design</a> (CC BY-NC-SA)</div></div>
+  <div class="wrap"><div><b style="color:var(--fg)">АВТОСТУДИЯ</b> · тонировка, стёкла и плёнки в Тамбове</div><div>Демо-сайт · цены и отзывы — примеры · 3D-модель: BMW M4 F82 by <a href="https://sketchfab.com/3d-models/8e87379f40fd40dcac0a751e22c1a188" target="_blank" rel="noopener">BlackSnow02</a> (CC BY 4.0)</div></div>
 </footer>
 <div class="fab"><a class="btn acc" href="#calc">Рассчитать стоимость</a></div>
 
@@ -589,9 +589,10 @@ try {
     const m = gltf.scene;
     m.traverse(o => {
       if (!o.isMesh) return;
-      const n = (o.material && o.material.name) || '';
-      if (/Paint_Material/.test(n)) o.material = paint;
-      else if (/Window_Material/.test(n)) o.material = glass;
+      const n = (o.material && o.material.name) || '', on = o.name || '', pn = (o.parent && o.parent.name) || '';
+      const nm = on + ' ' + pn;
+      if (/doorglass|windshield|sideglass|backlight/i.test(nm)) o.material = glass;
+      else if (n === 'ARm4_main' && !/wheel|interior|enginebay/i.test(nm)) o.material = paint;
     });
     // привести к размеру ~4.6 м по длине, центр в нуле, колёса на земле
     const b = new THREE.Box3().setFromObject(m), sz = b.getSize(new THREE.Vector3());
