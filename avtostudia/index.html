@@ -430,7 +430,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 </main>
 
 <footer>
-  <div class="wrap"><div><b style="color:var(--fg)">АВТОСТУДИЯ</b> · тонировка, стёкла и плёнки в Тамбове</div><div>Демо-сайт · цены и отзывы — примеры · 3D-модель: Ferrari 458 Italia by <a href="https://sketchfab.com/models/57bf6cc56931426e87494f554df1dab6" target="_blank" rel="noopener">vicent091036</a></div></div>
+  <div class="wrap"><div><b style="color:var(--fg)">АВТОСТУДИЯ</b> · тонировка, стёкла и плёнки в Тамбове</div><div>Демо-сайт · цены и отзывы — примеры · 3D-модель: 2022 BMW M5 CS by <a href="https://sketchfab.com/3d-models/dc34c3fd9056460da48317ce0ff6b998" target="_blank" rel="noopener">ddiaz-design</a> (CC BY-NC-SA)</div></div>
 </footer>
 <div class="fab"><a class="btn acc" href="#calc">Рассчитать стоимость</a></div>
 
@@ -572,7 +572,7 @@ try {
   const camera = new THREE.PerspectiveCamera(30, 16 / 10, 0.1, 100);
 
   // материалы: чёрный глянец с лаком, хром, тонированное стекло
-  const paint = new THREE.MeshPhysicalMaterial({ color: 0x6b6f76, metalness: 0.9, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.03 });
+  const paint = new THREE.MeshPhysicalMaterial({ color: 0x1b2633, metalness: 0.9, roughness: 0.32, clearcoat: 1, clearcoatRoughness: 0.03 });
   const chrome = new THREE.MeshStandardMaterial({ color: 0x5c636e, metalness: 1, roughness: 0.28 });
   const glass = new THREE.MeshPhysicalMaterial({ color: 0x9aa7b8, metalness: 0.1, roughness: 0, transparent: true, opacity: 0.35 });
   window.setTint = t => { const k = 1 - t / 100; glass.opacity = 0.3 + k * 0.68; glass.envMapIntensity = 1 - k * 0.75; glass.color.setRGB(0.6 - k * 0.57, 0.65 - k * 0.61, 0.72 - k * 0.67); };
@@ -586,11 +586,20 @@ try {
   const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
   const car = new THREE.Group(); scene.add(car);
   loader.load('./car.glb', gltf => {
-    const m = gltf.scene.children[0];
-    m.getObjectByName('body').material = paint;
-    for (const n of ['rim_fl', 'rim_fr', 'rim_rr', 'rim_rl', 'trim']) { const o = m.getObjectByName(n); if (o) o.material = chrome; }
-    const g = m.getObjectByName('glass'); if (g) g.material = glass;
-    car.add(m);
+    const m = gltf.scene;
+    m.traverse(o => {
+      if (!o.isMesh) return;
+      const n = (o.material && o.material.name) || '';
+      if (/Paint_Material/.test(n)) o.material = paint;
+      else if (/Window_Material/.test(n)) o.material = glass;
+    });
+    // привести к размеру ~4.6 м по длине, центр в нуле, колёса на земле
+    const b = new THREE.Box3().setFromObject(m), sz = b.getSize(new THREE.Vector3());
+    const k = 4.6 / Math.max(sz.x, sz.z); m.scale.setScalar(k);
+    const b2 = new THREE.Box3().setFromObject(m), c = b2.getCenter(new THREE.Vector3());
+    m.position.set(-c.x, -b2.min.y, -c.z);
+    if (sz.x > sz.z) m.rotation.y = Math.PI / 2;   // длинной осью вдоль Z, как у прежней модели
+    const wrap = new THREE.Group(); wrap.add(m); car.add(wrap);
     stage.classList.add('has3d'); resize(); loop(performance.now());
   }, undefined, () => stage.classList.remove('has3d'));
 
