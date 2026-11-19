@@ -588,7 +588,7 @@ try {
   const draco = new DRACOLoader(); draco.setDecoderPath('./vendor/draco/');
   const loader = new GLTFLoader(); loader.setDRACOLoader(draco);
   const car = new THREE.Group(); scene.add(car);
-  loader.load('./car.glb', gltf => {
+  loader.load('./car-m4.glb', gltf => {
     const m = gltf.scene;
     m.traverse(o => {
       if (!o.isMesh) return;
