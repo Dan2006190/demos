@@ -39,8 +39,8 @@ OBJECTS = {
         name='3-к квартира, ул. Чичерина, 64', floor=4,           # этаж квартиры — для маски
         floors=9, floor_h=3.0, plinth=0.6,                        # жилые этажи, высота этажа, цоколь
         # корпус — главный фасад на улицу (оранжевый), от цилиндра вправо; глубина = длина торца
-        wing_a=dict(length=38.0, depth=16.0, cols=8),
-        cyl=dict(d=11.0, extra_floors=1, glaze_posts=56),         # цилиндр на углу: диаметр, на этаж выше корпуса
+        wing_a=dict(length=38.0, depth=16.0, cols=8, segments=4, bend=24.0),   # bend — изгиб в плане (°), дальний конец уходит от улицы
+        cyl=dict(d=11.0, extra_floors=1, glaze_posts=38, loggia=1.3),   # круглые лоджии на углу: диаметр, глубина лоджии         # цилиндр на углу: диаметр, на этаж выше корпуса
         tower=dict(w=6.0, d=4.0, above_roof=6.5),                 # белая башня лестницы и лифта (выше цилиндра)
         cafe=dict(h=4.5, w=6.0, along_a=5.0),                    # кафе вдоль торца (фото 14): ширина от торца, огибает цилиндр, на главный фасад — 5 м
         colors=dict(
@@ -226,6 +226,22 @@ def glass(name='стекло', bright=1.0):
     L.new(pw.outputs[0], st.inputs[0])
     st2 = nt.nodes.new('ShaderNodeMath'); st2.operation = 'MULTIPLY'; L.new(st.outputs[0], st2.inputs[0]); L.new(gr.outputs['Result'], st2.inputs[1])
     L.new(st2.outputs[0], b.inputs['Emission Strength'])
+    return m
+
+
+def loggia_glass():
+    """остекление лоджий: прозрачное (видно лоджию и стену дома за ней) + отражение неба по краям (Френель)"""
+    if 'стекло_лоджии' in MATS:
+        return MATS['стекло_лоджии']
+    m = bpy.data.materials.new('стекло_лоджии'); m.use_nodes = True
+    nt, L = m.node_tree, m.node_tree.links; nt.nodes.clear()
+    tr = nt.nodes.new('ShaderNodeBsdfTransparent'); gl = nt.nodes.new('ShaderNodeBsdfGlossy'); gl.inputs['Roughness'].default_value = 0.03
+    lw = nt.nodes.new('ShaderNodeLayerWeight'); lw.inputs['Blend'].default_value = 0.25
+    k = nt.nodes.new('ShaderNodeMapRange'); L.new(lw.outputs['Fresnel'], k.inputs['Value']); k.inputs['To Min'].default_value = 0.12; k.inputs['To Max'].default_value = 0.9
+    mx = nt.nodes.new('ShaderNodeMixShader'); L.new(k.outputs['Result'], mx.inputs['Fac']); L.new(tr.outputs[0], mx.inputs[1]); L.new(gl.outputs[0], mx.inputs[2])
+    out = nt.nodes.new('ShaderNodeOutputMaterial'); L.new(mx.outputs[0], out.inputs['Surface'])
+    if hasattr(m, 'surface_render_method'): m.surface_render_method = 'DITHERED'
+    MATS['стекло_лоджии'] = m
     return m
 
 
@@ -474,20 +490,35 @@ def build_object_1():
     B = Builder()
     front = brick('кирпич_фасад', C['brick_front'])
     roof = principled('кровля', C['roof'])
-    # --- корпус
-    B.box(front, (L / 2, D / 2, top / 2), (L, D, top))
-    B.box(roof, (L / 2, D / 2, top + 0.6), (L + 0.3, D + 0.3, 1.2))  # парапет
-    facade(B, 0, 0, L, 0.0, nf, fh, pl, a['cols'], 'front', top)                    # главный фасад
-    facade(B, L, D, L, math.pi, nf, fh, pl, a['cols'], 'back', top)                 # задний
-    facade(B, L, 0, D, math.pi / 2, nf, fh, pl, 3, 'front', top)                    # дальний торец
-    # ближний торец x=0: узкая оранжевая стена между башней и цилиндром
+    # --- корпус: изогнут в плане (спутник, фото 16) — N прямых секций, каждая повёрнута на bend/(N−1)° от предыдущей;
+    # дальний конец уходит от улицы (bend > 0) — главный фасад выпуклый. Пилястры приходятся на изломы.
+    N, bend = a.get('segments', 4), math.radians(a.get('bend', 0.0))
+    dl = bend / (N - 1) if N > 1 else 0.0
+    sl = L / N
+    V, angs = [Vector((0, 0, 0))], []                       # вершины линии главного фасада и углы секций
+    for k in range(N):
+        t = k * dl; angs.append(t)
+        V.append(V[-1] + Vector((math.cos(t), math.sin(t), 0)) * sl)
+    nin = lambda t: Vector((-math.sin(t), math.cos(t), 0))  # внутрь корпуса (во двор)
+    trim = D * math.tan(dl / 2)                              # на вогнутой задней стороне секции короче
+    for k in range(N):
+        t, d_ = angs[k], Vector((math.cos(angs[k]), math.sin(angs[k]), 0))
+        mid = (V[k] + V[k + 1]) / 2 + nin(t) * (D / 2)
+        B.box(front, (mid.x, mid.y, top / 2), (sl, D, top), t)
+        B.box(roof, (mid.x, mid.y, top + 0.6), (sl + 0.3, D + 0.3, 1.2), t)                    # парапет
+        facade(B, V[k].x, V[k].y, sl, t, nf, fh, pl, a['cols'] // N, 'front', top)             # главный фасад
+        t0 = trim if k > 0 else 0.0; t1 = trim if k < N - 1 else 0.0
+        e = V[k + 1] + nin(t) * D - d_ * t1                                                    # задний — в обратную сторону
+        facade(B, e.x, e.y, sl - t0 - t1, t + math.pi, nf, fh, pl, a['cols'] // N, 'back', top)
+        if k in (0, 1, 3):                                                                      # подъезды во двор
+            q = e - d_ * ((sl - t0 - t1) / 2) + nin(t) * 0.22
+            entrance(B, (q.x, q.y, 0), t + math.pi, steps=0.45, z_can=2.55)
+    tN = angs[-1]
+    facade(B, V[-1].x, V[-1].y, D, tN + math.pi / 2, nf, fh, pl, 3, 'front', top)              # дальний торец
+    # ближний торец x=0: узкая оранжевая стена между башней и лоджиями
     wall = D - tw['w'] - rC
     if wall > 1.5:
         facade(B, 0, D - tw['w'], wall, -math.pi / 2, nf, fh, pl, max(1, round(wall / 4.5)), 'front', top)
-    # подъезды во двор (задний фасад): в простенках между окнами, с крыльцом над цоколем
-    stp = L / a['cols']
-    for c in (1, 3, 5):
-        entrance(B, (L - c * stp, D + 0.22, 0), math.pi, steps=0.45, z_can=2.55)
     # --- башня лестницы и лифта: белая, на дальнем углу торца, выступает из торца, выше цилиндра
     th = top + tw['above_roof']
     tx, ty = -tw['d'] / 2 + 1.5, D - tw['w'] / 2
@@ -497,30 +528,38 @@ def build_object_1():
         B.box(glass(), (tx - tw['d'] / 2 - 0.03, ty, pl + f * fh + fh * 0.6), (0.06, 0.9, 1.1), lit=0.0 if R.random() < .3 else 0.55)
     for k in range(3):  # вентрешётки наверху
         B.box(principled('решётка', (0.25, 0.25, 0.25)), (tx - tw['d'] / 2 - 0.03, ty - 1.5 + k * 1.5, th - 1.0), (0.06, 0.7, 0.6))
-    # --- цилиндр на углу: ленты остекления по кругу, под ними коричневый пояс, верх светло-серый
+    # --- круглые лоджии на углу (фото 13–15): коричневый кирпичный парапет → остекление лоджии в белых рамах →
+    # светлый кирпич; за прозрачным стеклом — глубина лоджии и жёлтая стена дома с окном и балконной дверью
     ch = top + cy['extra_floors'] * fh
     c0 = (0.0, 0.0)
-    # этаж цилиндра по фото 15: коричневый кирпич под окнами → лента отдельных окон в белых рамах → светлый кирпич над окнами
     cb = brick('цилиндр_пояс', C['cyl_band'])
     cl = brick('цилиндр_светлый', C['cyl_light'])
     fr = principled('рама', C['frame'], rough=0.4)
+    lg = loggia_glass()
+    rI = rC - cy.get('loggia', 1.3)                          # стена дома в глубине лоджии
     B.ring(front, c0, 0, rC - 0.05, 0, pl, seg=96)
-    zb_, zw_ = 0.85, 1.5                                     # высота коричневого пояса и окна
+    zb_, zw_ = 1.05, 1.55                                    # парапет и остекление (фото 13: коричневый пояс почти как остекление)
+    n = cy['glaze_posts']
     for f in range(nf + cy['extra_floors']):
         z = pl + f * fh
         last = f >= nf
-        B.ring(cl if last else cb, c0, 0, rC, z, z + zb_, seg=96)                               # под окнами
-        B.ring(cl, c0, 0, rC, z + zb_ + zw_, z + fh, seg=96)                                    # над окнами — светлый кирпич
-        n = cy['glaze_posts']
-        for q in range(6):  # шесть комнат по кругу: часть горит
-            B.ring(glass('стекло_цилиндр', 0.55), c0, 0, rC - 0.2, z + zb_ + 0.06, z + zb_ + zw_ - 0.06, q * 60, q * 60 + 60, seg=96, lit=lit_value(0.4))
-        B.ring(fr, c0, rC - 0.2, rC - 0.08, z + zb_, z + zb_ + 0.07, seg=96)                     # нижний и верхний профиль рамы
-        B.ring(fr, c0, rC - 0.2, rC - 0.08, z + zb_ + zw_ - 0.07, z + zb_ + zw_, seg=96)
+        B.ring(cl if last else cb, c0, 0, rC, z, z + zb_, seg=96)                               # парапет (и пол лоджии)
+        B.ring(cl, c0, 0, rC, z + zb_ + zw_, z + fh, seg=96)                                    # над остеклением — светлый кирпич
+        B.ring(lg, c0, rC - 0.14, rC - 0.12, z + zb_, z + zb_ + zw_, seg=96)                    # стекло лоджии (прозрачное)
+        B.ring(front, c0, 0, rI, z + zb_, z + zb_ + zw_, seg=96)                                 # стена дома за лоджией
+        for q in range(6):                                                                       # окно и балконная дверь в каждой комнате
+            lv = lit_value(0.45)
+            B.ring(glass(), c0, rI, rI + 0.03, z + zb_ + 0.1, z + zb_ + zw_ - 0.02, q * 60 + 8, q * 60 + 26, seg=96, lit=lv)
+            B.ring(glass(), c0, rI, rI + 0.03, z + zb_ - 0.6, z + zb_ + zw_ - 0.02, q * 60 + 33, q * 60 + 44, seg=96, lit=lv * 0.8)
+            B.ring(curtain(), c0, rI + 0.03, rI + 0.05, z + zb_ + 0.1, z + zb_ + zw_ - 0.02, q * 60 + 8, q * 60 + 12, seg=96, lit=lv * 0.8)
+        B.ring(fr, c0, rC - 0.18, rC - 0.06, z + zb_, z + zb_ + 0.08, seg=96)                    # нижний и верхний профиль рамы
+        B.ring(fr, c0, rC - 0.18, rC - 0.06, z + zb_ + zw_ - 0.08, z + zb_ + zw_, seg=96)
+        B.ring(fr, c0, rC - 0.18, rC - 0.06, z + zb_ + zw_ * 0.68, z + zb_ + zw_ * 0.68 + 0.06, seg=96)  # фрамуги
         B.ring(principled('подоконник', (0.85, 0.85, 0.83), rough=0.6), c0, rC - 0.05, rC + 0.07, z + zb_ - 0.05, z + zb_, seg=96)  # отлив
-        for i in range(n):  # белые импосты — окна отдельными створками, как на фото
-            ang = 2 * math.pi * i / n
-            B.box(fr, (c0[0] + (rC - 0.14) * math.cos(ang), c0[1] + (rC - 0.14) * math.sin(ang), z + zb_ + zw_ / 2),
-                  (0.09, 0.12 if i % 2 else 0.16, zw_), ang + math.pi / 2)
+        for i in range(n):  # белые импосты — створки ~0,9 м
+            a_ = 2 * math.pi * i / n
+            B.box(fr, (c0[0] + (rC - 0.12) * math.cos(a_), c0[1] + (rC - 0.12) * math.sin(a_), z + zb_ + zw_ / 2),
+                  (0.11, 0.12, zw_), a_ + math.pi / 2)
     B.ring(principled('цилиндр_верх', C['cyl_top']), c0, 0, rC + 0.15, ch, ch + 0.9, seg=96)       # парапет
     # --- кафе: прямоугольник вдоль торца (x −w..0, y 0..D), четверть кольца вокруг цилиндра, короткий хвост вдоль главного фасада
     cm = principled('кафе', C['cafe'], rough=0.6)
@@ -590,12 +629,15 @@ def build_object_1():
     f = o['floor'] - 1; z0, z1 = pl + f * fh, pl + (f + 1) * fh
     M = Builder()
     mk = principled('маска', (1, 1, 1))
-    M.box(mk, (L / 2, D / 2, (z0 + z1) / 2), (L + 0.5, D + 0.5, z1 - z0))
+    for k in range(N):
+        mid = (V[k] + V[k + 1]) / 2 + nin(angs[k]) * (D / 2)
+        M.box(mk, (mid.x, mid.y, (z0 + z1) / 2), (sl + 0.5, D + 0.5, z1 - z0), angs[k])
     M.ring(mk, c0, 0, rC + 0.3, z0, z1, seg=96)
     mask = M.build('маска_этажа')
     for m in mask:
         m.hide_render = True
-    center = Vector((L / 2 - 4, D / 2, top / 2))
+    c_ = (V[0] + V[-1]) / 2 + nin(angs[N // 2]) * (D / 2)
+    center = Vector((c_.x - 4, c_.y, top / 2))
     return objs, mask, center, ch
 
 
@@ -682,9 +724,9 @@ def environment(center):
     # тротуары и площадка у дома — плитка; бордюр вдоль дорог
     B.box(pav, (30, -20, 0.06), (180, 6, 0.12))                   # тротуар вдоль главного фасада
     B.box(pav, (-30, 40, 0.06), (6, 180, 0.12))                   # тротуар вдоль торца
-    B.box(pav, (11.5, 1.0, 0.05), (77, 37, 0.1))                  # площадка вокруг дома: x −27..50, y −17,5..19,5
-    B.box(asph, (22, 25.5, 0.04), (52, 12, 0.08))                  # двор: проезд и парковка за домом
-    B.box(curb, (22, 31.55, 0.1), (52, 0.12, 0.2))
+    B.box(pav, (11.5, 5.25, 0.05), (77, 45.5, 0.1))               # площадка вокруг дома: x −27..50, y −17,5..28
+    B.box(asph, (20, 34.5, 0.04), (56, 12, 0.08))                  # двор: проезд и парковка за домом
+    B.box(curb, (20, 40.55, 0.1), (56, 0.12, 0.2))
     B.box(grass, (28, -16.3, 0.12), (44, 1.6, 0.24))              # газон-полоса под живой изгородью
     B.box(curb, (28, -17.15, 0.15), (44, 0.12, 0.3))
     for (x0, x1, y0, y1) in ((-26, -12, -16, -8), (9, 48, -11.5, -7.5)):   # газоны с деревьями на площадке
@@ -712,7 +754,7 @@ def environment(center):
     # фонари: опора, консоль, светильник + настоящий свет вниз (пятна на мокром асфальте)
     pole = principled('опора', (0.10, 0.10, 0.11), rough=0.45, metal=0.7)
     lampm = principled('фонарь', (1, 1, 1), emit=((1.0, 0.72, 0.42), 30.0))
-    lamps = [((x, -23.6), 0.0) for x in range(-24, 150, 18)] + [((-33.6, y), -math.pi / 2) for y in range(-6, 150, 18)] + [((x, 19.2), math.pi) for x in (6, 22, 38)]
+    lamps = [((x, -23.6), 0.0) for x in range(-24, 150, 18)] + [((-33.6, y), -math.pi / 2) for y in range(-6, 150, 18)] + [((x, 28.2), math.pi) for x in (4, 20, 36)]
     for (lx, ly), a in lamps:
         dx, dy = -math.sin(a), -math.cos(a)                      # к дороге
         B.box(pole, (lx, ly, 4.5), (0.2, 0.2, 9.0)); B.box(pole, (lx, ly, 0.4), (0.36, 0.36, 0.8))
@@ -800,9 +842,9 @@ def trees_and_cars():
             if R.random() < 0.6:
                 car(-34.9, y, math.pi / 2 if R.random() < .5 else -math.pi / 2)
             y += R.uniform(5.6, 7.5)
-        for x in range(2, 44, 3):  # двор: парковка перпендикулярно
+        for x in range(-4, 44, 3):  # двор: парковка перпендикулярно
             if R.random() < 0.6:
-                car(x, 28.6, math.pi / 2 if R.random() < .5 else -math.pi / 2)
+                car(x, 37.6, math.pi / 2 if R.random() < .5 else -math.pi / 2)
         for (cx, cy_, r) in ((30, -32.6, math.pi), (78, -27.2, 0.0), (-42.3, 30, math.pi / 2)):  # едут по улице
             car(cx, cy_, r)
         log('машины: %d' % len(col.objects))
