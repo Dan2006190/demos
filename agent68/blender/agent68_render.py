@@ -38,13 +38,11 @@ OBJECTS = {
     1: dict(
         name='3-к квартира, ул. Чичерина, 64', floor=4,           # этаж квартиры — для маски
         floors=9, floor_h=3.0, plinth=0.6,                        # жилые этажи, высота этажа, цоколь
-        # крыло А — главный фасад на улицу (оранжевый), от цилиндра вправо
-        wing_a=dict(length=38.0, depth=14.0, cols=8),
-        # крыло Б — уходит назад от башни (L-образный план по фото 4–5); 0 — без крыла
-        behind_tower=dict(extra=4.0, cols=2),                   # корпус уходит за башню и на 4 м левее неё (фото 13: оранжевая стена слева от башни)
+        # корпус — главный фасад на улицу (оранжевый), от цилиндра вправо; глубина = длина торца
+        wing_a=dict(length=38.0, depth=16.0, cols=8),
         cyl=dict(d=11.0, extra_floors=1, glaze_posts=40),         # цилиндр на углу: диаметр, на этаж выше корпуса
         tower=dict(w=6.0, d=4.0, above_roof=6.5),                 # белая башня лестницы и лифта (выше цилиндра)
-        cafe=dict(h=4.5, ring=6.0, arc=(150, 345), along_a=5.0, under_tower=True),  # кафе у края: огибает цилиндр, заходит под башню, вправо — немного
+        cafe=dict(h=4.5, w=6.0, along_a=5.0),                    # кафе вдоль торца (фото 14): ширина от торца, огибает цилиндр, на главный фасад — 5 м
         colors=dict(
             brick_front=(0.92, 0.42, 0.035),  # жёлто-оранжевый кирпич главного фасада
             brick_back=(0.86, 0.84, 0.80),    # белый кирпич заднего фасада
@@ -81,7 +79,7 @@ ap.add_argument('--quality', default='final', choices=['draft', 'final'])
 ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки)')
 ap.add_argument('--frame', type=int, default=0, help='для --what still')
 ap.add_argument('--sky', default='', help='проба неба: slug HDRI Poly Haven или nishita; :поворот, :сила, :экспозиция')
-ap.add_argument('--view', default='orbit', choices=['orbit', 'street'], help='для --what still: street — с улицы, как фото фасада')
+ap.add_argument('--view', default='orbit', choices=['orbit', 'street', 'side'], help='для --what still: street — с улицы, как фото фасада; side — на торец, как фото 14')
 ap.add_argument('--out', default=os.path.join(HERE, 'renders'))
 ap.add_argument('--assets', default=os.path.join(HERE, 'assets'), help='папка для деревьев Poly Haven')
 ap.add_argument('--percent', type=int, default=0, help='масштаб разрешения, %% (для проверки)')
@@ -364,33 +362,36 @@ def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
 
 
 def build_object_1():
+    """план по фото 12–14: корпус x 0..L, главный фасад y=0 (на улицу), торец x=0.
+    Цилиндр — на углу главного фасада и торца; белая башня — на дальнем углу торца; между ними узкая оранжевая стена.
+    Кафе — прямоугольный павильон вдоль всего торца, огибает цилиндр и чуть заходит на главный фасад."""
     o = O; fh, nf, pl = o['floor_h'], o['floors'], o['plinth']
     top = pl + nf * fh                               # верх жилых этажей
-    a, bt, cy, tw, cafe = o['wing_a'], o['behind_tower'], o['cyl'], o['tower'], o['cafe']
+    a, cy, tw, cafe = o['wing_a'], o['cyl'], o['tower'], o['cafe']
+    L, D = a['length'], a['depth']
     rC = cy['d'] / 2
     B = Builder()
-    front = brick('кирпич_фасад', C['brick_front']); back = brick('кирпич_сзади', C['brick_back'])
+    front = brick('кирпич_фасад', C['brick_front'])
     roof = principled('кровля', C['roof'])
-    # --- крыло А: от x=0 (ось цилиндра) вправо; передний фасад — y=0
-    B.box(front, (a['length'] / 2, a['depth'] / 2, top / 2), (a['length'], a['depth'], top))
-    B.box(roof, (a['length'] / 2, a['depth'] / 2, top + 0.6), (a['length'] + 0.3, a['depth'] + 0.3, 1.2))  # парапет
-    facade(B, 0, 0, a['length'], 0.0, nf, fh, pl, a['cols'], 'front', top)
-    facade(B, a['length'], a['depth'], a['length'], math.pi, nf, fh, pl, a['cols'], 'back', top)
-    facade(B, a['length'], 0, a['depth'], math.pi / 2, nf, fh, pl, 3, 'front', top)       # торец
-    # --- корпус за башней: тот же дом, уходит за башню и чуть левее неё (оранжевая стена слева от башни на фото 13)
-    xL = -rC - 0.5 - tw['w'] - bt['extra']; yB = tw['d'] + 1.2
-    B.box(front, ((xL + 0.5) / 2, (yB + a['depth']) / 2, top / 2), (0.5 - xL, a['depth'] - yB, top))
-    B.box(roof, ((xL + 0.5) / 2, (yB + a['depth']) / 2, top + 0.6), (0.8 - xL, a['depth'] - yB + 0.3, 1.2))
-    facade(B, xL, yB, bt['extra'] + 0.6, 0.0, nf, fh, pl, bt['cols'], 'front', top)                 # кусок фасада левее башни
-    facade(B, xL, a['depth'], a['depth'] - yB, -math.pi / 2, nf, fh, pl, 3, 'front', top)          # левый торец
-    # --- башня лестницы и лифта: белая, рядом с цилиндром, выше крыши
+    # --- корпус
+    B.box(front, (L / 2, D / 2, top / 2), (L, D, top))
+    B.box(roof, (L / 2, D / 2, top + 0.6), (L + 0.3, D + 0.3, 1.2))  # парапет
+    facade(B, 0, 0, L, 0.0, nf, fh, pl, a['cols'], 'front', top)                    # главный фасад
+    facade(B, L, D, L, math.pi, nf, fh, pl, a['cols'], 'back', top)                 # задний
+    facade(B, L, 0, D, math.pi / 2, nf, fh, pl, 3, 'front', top)                    # дальний торец
+    # ближний торец x=0: узкая оранжевая стена между башней и цилиндром
+    wall = D - tw['w'] - rC
+    if wall > 1.5:
+        facade(B, 0, D - tw['w'], wall, -math.pi / 2, nf, fh, pl, max(1, round(wall / 4.5)), 'front', top)
+    # --- башня лестницы и лифта: белая, на дальнем углу торца, выступает из торца, выше цилиндра
     th = top + tw['above_roof']
-    tx, ty = -rC - 0.5 - tw['w'] / 2, tw['d'] / 2 + 0.6
-    B.box(principled('башня', C['tower'], rough=0.85), (tx, ty, th / 2), (tw['w'], tw['d'], th))
-    for f in range(nf + 1):
-        B.box(glass(), (tx, ty - tw['d'] / 2 - 0.03, pl + f * fh + fh * 0.6), (0.9, 0.06, 1.1), lit=0.0 if R.random() < .3 else 0.55)
+    tx, ty = -tw['d'] / 2 + 1.5, D - tw['w'] / 2
+    tm = principled('башня', C['tower'], rough=0.85)
+    B.box(tm, (tx, ty, th / 2), (tw['d'], tw['w'], th))
+    for f in range(nf + 1):  # колонка окон лестницы — на торец
+        B.box(glass(), (tx - tw['d'] / 2 - 0.03, ty, pl + f * fh + fh * 0.6), (0.06, 0.9, 1.1), lit=0.0 if R.random() < .3 else 0.55)
     for k in range(3):  # вентрешётки наверху
-        B.box(principled('решётка', (0.25, 0.25, 0.25)), (tx - 1.5 + k * 1.5, ty - tw['d'] / 2 - 0.03, th - 1.0), (0.7, 0.06, 0.6))
+        B.box(principled('решётка', (0.25, 0.25, 0.25)), (tx - tw['d'] / 2 - 0.03, ty - 1.5 + k * 1.5, th - 1.0), (0.06, 0.7, 0.6))
     # --- цилиндр на углу: ленты остекления по кругу, под ними коричневый пояс, верх светло-серый
     ch = top + cy['extra_floors'] * fh
     c0 = (0.0, 0.0)
@@ -409,51 +410,67 @@ def build_object_1():
             B.box(principled('рама', C['frame']), (c0[0] + (rC - 0.06) * math.cos(ang), c0[1] + (rC - 0.06) * math.sin(ang), z + 1.0 + (fh - 1.15) / 2),
                   (0.08, 0.14, fh - 1.15), ang)
     B.ring(principled('цилиндр_верх', C['cyl_top']), c0, 0, rC + 0.15, ch, ch + 0.9, seg=96)       # парапет
-    # --- кафе: одноэтажный павильон по дуге вокруг цилиндра + хвост вдоль фасада, витражи, терраса на крыше
+    # --- кафе: прямоугольник вдоль торца (x −w..0, y 0..D), четверть кольца вокруг цилиндра, короткий хвост вдоль главного фасада
     cm = principled('кафе', C['cafe'], rough=0.6)
-    R0, R1, (a0, a1) = rC - 0.3, rC + cafe['ring'], cafe['arc']
-    B.ring(cm, c0, R0, R1, 0, cafe['h'] - 0.6, a0, a1, seg=96)
-    B.ring(cm, c0, R0, R1 + 0.2, cafe['h'] - 0.6, cafe['h'], a0, a1, seg=96)               # фриз под вывеску
-    B.ring(principled('настил', (0.30, 0.28, 0.26), rough=0.9), c0, R0, R1 - 0.2, cafe['h'], cafe['h'] + 0.04, a0, a1, seg=96)  # пол террасы
-    B.ring(glass('витраж', 0.4), c0, R1 - 0.02, R1 + 0.03, 0.4, cafe['h'] - 0.9, a0 + 4, a1 - 4, seg=96, lit=0.9)  # витражи — светятся
-    for k in range(int(abs(a1 - a0) / 9)):
-        ang = math.radians(a0 + 4 + k * 9)
-        B.box(principled('рама_тёмная', (0.12, 0.10, 0.10)), (c0[0] + (R1 + 0.05) * math.cos(ang), c0[1] + (R1 + 0.05) * math.sin(ang), (cafe['h'] - 0.5) / 2),
-              (0.12, 0.12, cafe['h'] - 0.5), ang)
-    ext = cafe['along_a']
-    if cafe.get('under_tower'):  # под башней: прямоугольный кусок павильона, витраж на улицу
-        xc0, xc1 = -rC - 0.5 - tw['w'] - 1.5, -rC * 0.6
-        B.box(cm, ((xc0 + xc1) / 2, -cafe['ring'] / 2 + 0.6, cafe['h'] / 2), (xc1 - xc0, cafe['ring'] + 1.2, cafe['h']))
-        B.box(glass('витраж', 0.4), ((xc0 + xc1) / 2, -cafe['ring'] - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (xc1 - xc0 - 1, 0.05, cafe['h'] - 1.4), lit=0.9)
-        B.box(principled('ограждение', (0.95, 0.95, 0.95), rough=0.4), ((xc0 + xc1) / 2, -cafe['ring'] + 0.1, cafe['h'] + 1.08), (xc1 - xc0, 0.08, 0.08))
-    if ext > 0:
-        B.box(cm, (ext / 2 + rC / 2, -cafe['ring'] / 2 - rC / 2, cafe['h'] / 2), (ext + rC, cafe['ring'] + rC, cafe['h']))
-        B.box(glass('витраж', 0.4), (ext / 2 + rC / 2, -cafe['ring'] - rC - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (ext + rC - 1, 0.05, cafe['h'] - 1.4), lit=0.9)
+    vit = glass('витраж', 0.4)
+    dark = principled('рама_тёмная', (0.12, 0.10, 0.10))
     rail = principled('ограждение', (0.95, 0.95, 0.95), rough=0.4)
-    for k in range(int(abs(a1 - a0) / 3)):  # белое ограждение террасы по дуге
-        ang = math.radians(a0 + k * 3)
-        B.box(rail, (c0[0] + (R1 - 0.1) * math.cos(ang), c0[1] + (R1 - 0.1) * math.sin(ang), cafe['h'] + 0.55), (0.05, 0.05, 1.1), ang)
-    B.ring(rail, c0, R1 - 0.15, R1 - 0.05, cafe['h'] + 1.05, cafe['h'] + 1.12, a0, a1, seg=96)
+    deck = principled('настил', (0.30, 0.28, 0.26), rough=0.9)
+    w, h, ext = cafe['w'], cafe['h'], cafe['along_a']
+    R0, R1 = rC - 0.3, w
+    gz0, gz1 = 0.4, h - 0.9
+    # торцевая часть
+    B.box(cm, (-w / 2, D / 2, h / 2), (w, D, h))
+    B.box(cm, (-w / 2 - 0.1, D / 2, h - 0.3), (w + 0.2, D, 0.6))                        # фриз
+    B.box(deck, (-w / 2, D / 2, h + 0.02), (w - 0.3, D, 0.04))
+    B.box(vit, (-w - 0.02, D / 2 - 0.5, (gz0 + gz1) / 2), (0.05, D - 2.0, gz1 - gz0), lit=0.9)
+    for k in range(int((D - 2) / 1.6) + 1):
+        B.box(dark, (-w - 0.05, 0.5 + k * 1.6, (h - 0.5) / 2), (0.12, 0.12, h - 0.5))
+    # угол вокруг цилиндра
+    B.ring(cm, c0, R0, R1, 0, h - 0.6, 180, 270, seg=96)
+    B.ring(cm, c0, R0, R1 + 0.1, h - 0.6, h, 180, 270, seg=96)
+    B.ring(deck, c0, R0, R1 - 0.15, h, h + 0.04, 180, 270, seg=96)
+    B.ring(vit, c0, R1 - 0.02, R1 + 0.03, gz0, gz1, 182, 268, seg=96, lit=0.9)
+    for k in range(10):
+        ang = math.radians(182 + k * 9.5)
+        B.box(dark, (R1 * math.cos(ang), R1 * math.sin(ang), (h - 0.5) / 2), (0.12, 0.12, h - 0.5), ang)
+    # хвост вдоль главного фасада
     if ext > 0:
-        B.box(rail, (ext / 2 + rC / 2, -cafe['ring'] - rC + 0.1, cafe['h'] + 1.08), (ext + rC, 0.08, 0.08))
-        for k in range(int((ext + rC) / 1.2)):
-            B.box(rail, (k * 1.2, -cafe['ring'] - rC + 0.1, cafe['h'] + 0.55), (0.05, 0.05, 1.1))
-    for k in range(5):  # зонтики у кафе
-        ux, uy = rC + ext + 3 + k * 3.2, -6.0
-        B.box(rail, (ux, uy, 1.2), (0.06, 0.06, 2.4))
-        bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=1.4, depth=0.6, location=(ux, uy, 2.5))
+        B.box(cm, (ext / 2, -w / 2, h / 2), (ext, w, h))
+        B.box(cm, (ext / 2, -w / 2 - 0.1, h - 0.3), (ext, w + 0.2, 0.6))
+        B.box(deck, (ext / 2, -w / 2, h + 0.02), (ext, w - 0.3, 0.04))
+        B.box(vit, (ext / 2, -w - 0.02, (gz0 + gz1) / 2), (ext - 0.8, 0.05, gz1 - gz0), lit=0.9)
+        B.box(cm, (ext + 0.15, -w / 2, h / 2), (0.3, w, h))                              # глухой край
+    # белое ограждение террасы по всему контуру
+    rz = h + 1.08
+    B.box(rail, (-w + 0.1, D / 2, rz), (0.08, D, 0.08))
+    for k in range(int(D / 1.2) + 1):
+        B.box(rail, (-w + 0.1, k * 1.2, h + 0.55), (0.05, 0.05, 1.1))
+    B.ring(rail, c0, R1 - 0.15, R1 - 0.05, rz - 0.03, rz + 0.04, 180, 270, seg=96)
+    for k in range(31):
+        ang = math.radians(180 + k * 3)
+        B.box(rail, ((R1 - 0.1) * math.cos(ang), (R1 - 0.1) * math.sin(ang), h + 0.55), (0.05, 0.05, 1.1), ang)
+    if ext > 0:
+        B.box(rail, (ext / 2, -w + 0.1, rz), (ext, 0.08, 0.08))
+        for k in range(int(ext / 1.2) + 1):
+            B.box(rail, (k * 1.2, -w + 0.1, h + 0.55), (0.05, 0.05, 1.1))
+    # зонтики на террасе
+    for k in range(4):
+        ux, uy = -w / 2, 2.5 + k * (D - 7) / 3
+        B.box(rail, (ux, uy, h + 1.1), (0.06, 0.06, 2.2))
+        bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=1.4, depth=0.6, location=(ux, uy, h + 2.3))
         u = bpy.context.active_object; u.data.materials.append(principled('зонт', (0.92, 0.90, 0.85)))
     objs = B.build('чичерина64')
-    # маска этажа: оболочка этажа квартиры чуть шире стен (корпус А и цилиндр), только для --what mask
+    # маска этажа: оболочка этажа квартиры чуть шире стен (корпус и цилиндр), только для --what mask
     f = o['floor'] - 1; z0, z1 = pl + f * fh, pl + (f + 1) * fh
     M = Builder()
     mk = principled('маска', (1, 1, 1))
-    M.box(mk, (a['length'] / 2, a['depth'] / 2, (z0 + z1) / 2), (a['length'] + 0.5, a['depth'] + 0.5, z1 - z0))
+    M.box(mk, (L / 2, D / 2, (z0 + z1) / 2), (L + 0.5, D + 0.5, z1 - z0))
     M.ring(mk, c0, 0, rC + 0.3, z0, z1, seg=96)
     mask = M.build('маска_этажа')
     for m in mask:
         m.hide_render = True
-    center = Vector((a['length'] / 2 - 4, a['depth'] / 2, top / 2))
+    center = Vector((L / 2 - 4, D / 2, top / 2))
     return objs, mask, center, ch
 
 
@@ -718,6 +735,8 @@ if A.what == 'still':
     p, t = orbit_pose(A.frame)
     if A.view == 'street':  # с тротуара напротив, спереди-слева, как панорама Яндекса (фото 4–5)
         p, t = Vector((-22.0, -52.0, 1.7)), Vector((2.0, 0.0, 14.0))
+    if A.view == 'side':    # на торец с цилиндром и башней (фото 14)
+        p, t = Vector((-58.0, -14.0, 1.7)), Vector((0.0, 4.0, 15.0))
     cam.location, aim.location = p, t
     sc.render.filepath = os.path.join(OUT, 'still_%s_%03d.png' % (A.view, A.frame)); sc.render.image_settings.file_format = 'PNG'
     tt = time.time(); bpy.ops.render.render(write_still=True)
