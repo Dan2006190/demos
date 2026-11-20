@@ -2,18 +2,21 @@
 «Агент 68» — кадры «псевдо-3D» для демо-сайта агентства недвижимости (Тамбов). Образец — Арден (estate/blender).
 
 Сцены в браузере нет: каждый объект строится процедурно здесь, по параметрам ниже (размеры, этажи, цвета).
-Внешние ассеты — только деревья и кусты Poly Haven (CC0), скачиваются сами.
+Внешние ассеты: деревья, кусты, фактуры и небо Poly Haven (CC0) — скачиваются сами; машины Sketchfab (CC BY 4.0,
+авторы — estate/assets/CREDITS.md) — в assets/cars, в пакет для клуба кладутся готовыми.
 
   blender -b -P agent68_render.py -- --what test   --object 1 [--quality draft|final] [--cpu]
   blender -b -P agent68_render.py -- --what all    --object 1
 
 --what   test      по 2 кадра каждого вида: время кадра и прогноз на всё
          orbit     облёт: 144 кадра через 2,5° (Cycles + шумодав)
-         approach  подлёт: 84 кадра (3,5 с при 24 к/с), последний = кадр 0 облёта (EEVEE)
+         approach  подлёт: 84 кадра (3,5 с при 24 к/с), последний = кадр 0 облёта (Cycles 64 выборки — стык с облётом
+                   без скачка света; --eevee — быстрее, но свет другой)
          mask      маска этажа: тот же путь камеры, этаж белый, всё остальное чёрное, без света (секунды на кадр)
-         still     один черновой кадр облёта (--frame N), для сверки с фото
-         manifest  manifest.json для сайта (метки объекта по кадрам облёта)
-         all       облёт → подлёт → маска → manifest
+         still     один кадр (--view orbit --frame N | street | side | hero), для сверки с фото
+         stills    главные кадры в полном качестве: hero, street, side → stills/{sm,md,hd}/<вид>.webp и .png
+         manifest  manifest.json для сайта: кадры, папки, точка квартиры на экране по кадрам облёта и подлёта
+         all       облёт → подлёт → главные кадры → маска → manifest
 Готовые кадры пропускаются: прерванный рендер продолжается той же командой.
 Кадры — WebP трёх размеров sm/md/hd (640/1280/1920), как в Ардене: renders/obj1/orbit/{sm,md,hd}/000.webp …
 """
@@ -74,13 +77,14 @@ OBJECTS = {
 # ============================================================================ ПАРАМЕТРЫ ЗАПУСКА
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 ap = argparse.ArgumentParser(prog='agent68_render.py')
-ap.add_argument('--what', default='test', choices=['test', 'orbit', 'approach', 'mask', 'still', 'manifest', 'all'])
+ap.add_argument('--what', default='test', choices=['test', 'orbit', 'approach', 'mask', 'still', 'stills', 'manifest', 'all'])
 ap.add_argument('--object', type=int, default=1)
 ap.add_argument('--quality', default='final', choices=['draft', 'final'])
 ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки)')
+ap.add_argument('--eevee', action='store_true', help='подлёт в EEVEE (быстрее, но свет чуть иной — на стыке с облётом заметен скачок)')
 ap.add_argument('--frame', type=int, default=0, help='для --what still')
 ap.add_argument('--sky', default='', help='проба неба: slug HDRI Poly Haven или nishita; :поворот, :сила, :экспозиция')
-ap.add_argument('--view', default='orbit', choices=['orbit', 'street', 'side'], help='для --what still: street — с улицы, как фото фасада; side — на торец, как фото 14')
+ap.add_argument('--view', default='orbit', choices=['orbit', 'street', 'side', 'hero'], help='для --what still: street — с улицы, как фото фасада; side — на торец, как фото 14; hero — главный кадр')
 ap.add_argument('--out', default=os.path.join(HERE, 'renders'))
 ap.add_argument('--assets', default=os.path.join(HERE, 'assets'), help='папка для деревьев Poly Haven')
 ap.add_argument('--percent', type=int, default=0, help='масштаб разрешения, %% (для проверки)')
@@ -631,12 +635,13 @@ def build_object_1():
     mk = principled('маска', (1, 1, 1))
     for k in range(N):
         mid = (V[k] + V[k + 1]) / 2 + nin(angs[k]) * (D / 2)
-        M.box(mk, (mid.x, mid.y, (z0 + z1) / 2), (sl + 0.5, D + 0.5, z1 - z0), angs[k])
-    M.ring(mk, c0, 0, rC + 0.3, z0, z1, seg=96)
+        M.box(mk, (mid.x, mid.y, (z0 + z1) / 2), (sl + 1.4, D + 1.4, z1 - z0), angs[k])   # шире пилястр и отливов
+    M.ring(mk, c0, 0, rC + 0.4, z0, z1, seg=96)
     mask = M.build('маска_этажа')
     for m in mask:
         m.hide_render = True
     c_ = (V[0] + V[-1]) / 2 + nin(angs[N // 2]) * (D / 2)
+    O['_anchor'] = (V[N // 2].x, V[N // 2].y)               # середина главного фасада — метка квартиры на сайте
     center = Vector((c_.x - 4, c_.y, top / 2))
     return objs, mask, center, ch
 
@@ -774,7 +779,8 @@ def environment(center):
 
 def trees_and_cars():
     """деревья и кусты Poly Haven (CC0) и машины Ардена (Sketchfab, CC BY 4.0 — авторы в estate/blender assets/CREDITS.md)"""
-    sys.path.insert(0, os.path.join(HERE, '..', '..', 'estate', 'blender'))
+    for d_ in (os.path.join(HERE, '..', '..', 'estate', 'blender'), HERE):  # в репозитории — из Ардена; в пакете — рядом
+        sys.path.insert(0, d_)
     try:
         import arden_assets
         protos = []
@@ -810,6 +816,9 @@ def trees_and_cars():
             put(0, x, y, R.uniform(1.15, 1.35), 'дерево_двор')
         for x in range(10, 47, 2):
             put(R.choice((1, 2)), x + R.uniform(-.4, .4), -8.3, R.uniform(0.9, 1.2), 'куст')
+        for k in range(150):  # пояс деревьев за кругом облёта и у дальнего города: низ далёких домов не «висит» над пустой землёй
+            a_ = R.uniform(0, 2 * math.pi); d_ = R.uniform(150, 215) if k < 100 else R.uniform(300, 340)
+            put(0, 12 + d_ * math.sin(a_), 6 + d_ * math.cos(a_), R.uniform(1.9, 2.8), 'дерево_даль')
         for x in range(-15, 140, 18):  # деревья вдоль тротуара — между фонарями, не перед кафе
             if -20 < x < 12: continue
             put(0, x + 9, -21.2, R.uniform(1.3, 1.6), 'дерево_улица')
@@ -823,7 +832,9 @@ def trees_and_cars():
         log('деревья не загрузились:', e)
     try:
         import arden_v2
-        S2 = arden_v2.Scene2(A.assets, {}, log)
+        # машины Ардена ищутся в <root>/assets/cars: в репозитории root = --assets, в пакете cars лежат прямо в assets/
+        root = A.assets if os.path.isdir(os.path.join(A.assets, 'assets', 'cars')) else os.path.dirname(os.path.abspath(A.assets))
+        S2 = arden_v2.Scene2(root, {}, log)
         cars = S2.load_cars()
         if not cars:
             raise RuntimeError('нет папки assets/cars в ' + A.assets)
@@ -1019,14 +1030,18 @@ def mask_mode(on, objs, mask):
     """маска этажа: этаж — белое излучение, всё остальное — чёрное (holdout не нужен), без неба и света"""
     if on:
         sc.use_nodes = False
-        sc.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0
-        blk = principled('чёрный', (0, 0, 0), emit=((0, 0, 0), 0))
+        wn = sc.world.node_tree; bk = wn.nodes.new('ShaderNodeBackground'); bk.inputs['Strength'].default_value = 0
+        wn.links.new(bk.outputs[0], wn.nodes['World Output'].inputs['Surface'])          # небо чёрное и для камеры (облака HDRI — тоже)
+        blk = bpy.data.materials.new('чёрный'); blk.use_nodes = True; bn = blk.node_tree; bn.nodes.clear()   # только излучение 0: без бликов от белого этажа
+        e0 = bn.nodes.new('ShaderNodeEmission'); e0.inputs[1].default_value = 0
+        bn.links.new(e0.outputs[0], bn.nodes.new('ShaderNodeOutputMaterial').inputs[0])
         wht = bpy.data.materials.new('белый'); wht.use_nodes = True; nt = wht.node_tree; nt.nodes.clear()
         em = nt.nodes.new('ShaderNodeEmission'); em.inputs[0].default_value = (1, 1, 1, 1); em.inputs[1].default_value = 1
         out = nt.nodes.new('ShaderNodeOutputMaterial'); nt.links.new(em.outputs[0], out.inputs[0])
         for o in sc.objects:
             if o.type == 'MESH':
                 o.data.materials.clear(); o.data.materials.append(wht if o in mask else blk)
+                for sl_ in o.material_slots: sl_.link = 'DATA'                      # материалы на объекте (glTF) — тоже чёрные
             if o.type == 'LIGHT':
                 o.hide_render = True
         for m in mask:
@@ -1048,28 +1063,128 @@ cam, aim = camera(center)
 log('сцена собрана за %.0f с' % (time.time() - t0))
 
 orbit_dir, appr_dir, mask_dir = (os.path.join(OUT, x) for x in ('orbit', 'approach', 'mask'))
+VIEWS = {  # постоянные ракурсы: камера, цель, вертикальный угол обзора (°)
+    'street': ((-22.0, -52.0, 1.7), (2.0, 0.0, 14.0), FOV),      # с тротуара напротив, как панорама Яндекса (фото 4–5)
+    'side':   ((-58.0, -14.0, 1.7), (0.0, 4.0, 15.0), FOV),      # на торец с лоджиями и башней (фото 14)
+    'hero':   ((-46.0, -96.0, 4.0), (8.0, 2.0, 15.5), 21.0, 158.0),  # главный кадр: снизу, длинный фокус; облака HDRI развёрнуты — закат за домом
+}
+
+
+def sky_turn(deg=0.0):
+    """повернуть облака фона (только то, что видит камера; свет сцены не меняется)"""
+    for nd in sc.world.node_tree.nodes:
+        if nd.type == 'MAPPING':
+            nd.inputs['Rotation'].default_value[2] = math.radians(O['sky'].get('backdrop_rotate', O['sky']['rotate']) + deg)
+
+
+def view_pose(v):
+    p, t, fov = VIEWS[v][:3]
+    cam.data.angle_y = math.radians(fov)
+    sky_turn(VIEWS[v][3] if len(VIEWS[v]) > 3 else 0.0)
+    return Vector(p), Vector(t)
+
+
 if A.what == 'still':
     setup_engine('cycles')
-    p, t = orbit_pose(A.frame)
-    if A.view == 'street':  # с тротуара напротив, спереди-слева, как панорама Яндекса (фото 4–5)
-        p, t = Vector((-22.0, -52.0, 1.7)), Vector((2.0, 0.0, 14.0))
-    if A.view == 'side':    # на торец с цилиндром и башней (фото 14)
-        p, t = Vector((-58.0, -14.0, 1.7)), Vector((0.0, 4.0, 15.0))
+    p, t = orbit_pose(A.frame) if A.view == 'orbit' else view_pose(A.view)
     cam.location, aim.location = p, t
     sc.render.filepath = os.path.join(OUT, 'still_%s_%03d.png' % (A.view, A.frame)); sc.render.image_settings.file_format = 'PNG'
     tt = time.time(); bpy.ops.render.render(write_still=True)
-    log('черновой кадр %d: %.0f с → %s' % (A.frame, time.time() - tt, sc.render.filepath))
+    log('кадр %s %d: %.0f с → %s' % (A.view, A.frame, time.time() - tt, sc.render.filepath))
     raise SystemExit(0)
+
+
+def manifest():
+    """manifest.json для сайта: кадры, размеры, папки и точка квартиры на экране по кадрам облёта и подлёта (доли кадра)"""
+    f = O['floor'] - 1; zf = O['plinth'] + (f + 0.5) * O['floor_h']
+    anchor = Vector((*O['_anchor'], zf))   # середина главного фасада на этаже квартиры
+
+    def track(n, pose):
+        out = []
+        for k in range(n):
+            cam.location, aim.location = pose(k); bpy.context.view_layer.update()
+            v = world_to_camera_view(sc, cam, anchor)
+            out.append([round(v.x, 4), round(1 - v.y, 4)] if v.z > 0 and 0 <= v.x <= 1 and 0 <= v.y <= 1 else None)
+        return out
+    cam.data.angle_y = math.radians(FOV)
+    have = lambda d: os.path.isdir(os.path.join(OUT, d, 'hd'))
+    m = {
+        'object': A.object, 'name': O['name'], 'floor': O['floor'], 'floors': O['floors'],
+        'sizes': {k: v[0] for k, v in SIZES.items()}, 'aspect': [W, H],
+        'orbit': {'dir': 'orbit/{size}/%03d.webp', 'frames': ORBIT_N, 'step': ORBIT_STEP, 'start': O['orbit']['start'], 'ready': have('orbit'),
+                  'label': track(ORBIT_N, orbit_pose)},
+        'approach': {'dir': 'approach/{size}/%03d.webp', 'frames': APPROACH_N, 'fps': APPROACH_FPS, 'ends_at_orbit': 0, 'ready': have('approach'),
+                     'label': track(APPROACH_N, approach_pose)},
+        'mask': {'dir': 'mask/{size}/%03d.webp', 'frames': ORBIT_N, 'same_as': 'orbit', 'ready': have('mask')},
+        'stills': {v: 'stills/{size}/%s.webp' % v for v in VIEWS},
+        'quality': A.quality,
+    }
+    with open(os.path.join(OUT, 'manifest.json'), 'w', encoding='utf-8') as fh_:
+        json.dump(m, fh_, ensure_ascii=False, indent=1)
+    log('manifest.json готов:', os.path.join(OUT, 'manifest.json'))
+
+
+def stills():
+    """постоянные ракурсы (главный кадр, с улицы, сбоку) в полном качестве → stills/{sm,md,hd}/<вид>.webp"""
+    setup_engine('cycles')
+    if not DRAFT:
+        sc.cycles.samples = 512; sc.cycles.adaptive_threshold = 0.006   # главные кадры — без шума даже в лоджиях
+    folder = os.path.join(OUT, 'stills')
+    STATUS.update(stage='главные кадры', total=len(VIEWS), done=0)
+    for v in VIEWS:
+        if os.path.exists(os.path.join(folder, 'hd', v + '.webp')):
+            STATUS['done'] += 1; continue
+        cam.location, aim.location = view_pose(v)
+        tmp = os.path.join(folder, '_tmp_%s.png' % v); os.makedirs(folder, exist_ok=True)
+        sc.render.filepath = tmp; sc.render.image_settings.file_format = 'PNG'
+        t = time.time(); bpy.ops.render.render(write_still=True); dt = time.time() - t
+        sc.render.filepath = os.path.join(folder, v + '.png')
+        import shutil; shutil.copy(tmp, os.path.join(folder, v + '.png'))   # PNG без потерь — для печати и соцсетей
+        save_webp(tmp, folder, 0)
+        for size in SIZES:
+            os.replace(os.path.join(folder, size, '000.webp'), os.path.join(folder, size, v + '.webp'))
+        STATUS['done'] += 1; STATUS['times'].append(dt); log('главный кадр %s: %.0f с' % (v, dt)); write_status()
+    cam.data.angle_y = math.radians(FOV); sky_turn(0.0)
+
+
+if A.what == 'manifest':
+    manifest(); raise SystemExit(0)
+if A.what == 'stills':
+    stills(); manifest(); raise SystemExit(0)
 if A.what == 'test':
-    res = []
-    setup_engine('cycles'); run('тест: облёт', os.path.join(OUT, '_test', 'orbit'), [0, 36], orbit_pose); res.append(('облёт', ORBIT_N))
-    setup_engine('cycles' if A.cpu else 'eevee'); run('тест: подлёт', os.path.join(OUT, '_test', 'approach'), [0, 60], approach_pose); res.append(('подлёт', APPROACH_N))
-    mask_mode(True, objs, mask); setup_engine('mask'); run('тест: маска', os.path.join(OUT, '_test', 'mask'), [0, 36], orbit_pose); res.append(('маска', ORBIT_N))
-    log('прогноз — см. status.txt'); raise SystemExit(0)
+    import shutil
+    tdir = os.path.join(OUT, '_test'); shutil.rmtree(tdir, ignore_errors=True)   # тест всегда считает заново
+    plan = []
+    for name, eng, frames, pose, n in (('облёт', 'cycles', [0, 36], orbit_pose, ORBIT_N),
+                                        ('подлёт', 'eevee' if A.eevee and not A.cpu else 'cycles', [0, 60], approach_pose, APPROACH_N),
+                                        ('маска', 'mask', [0, 36], orbit_pose, ORBIT_N)):
+        if name == 'маска':
+            mask_mode(True, objs, mask)
+        setup_engine(eng); STATUS['times'] = []
+        if name == 'подлёт' and eng == 'cycles' and not DRAFT:
+            sc.cycles.samples = 64
+        run('тест: ' + name, os.path.join(tdir, name), frames, pose)
+        # первый кадр дольше (сборка сцены на видеокарте) — в прогноз берём второй
+        plan.append((name, n, STATUS['times'][-1]))
+    t_st = plan[0][2] * 4 * len(VIEWS) * (1 if DRAFT else 4)       # главные кадры: 512 выборок вместо 128
+    total = sum(n * t for _, n, t in plan) + t_st
+    lines = ['%-8s %3d кадров × %5.1f с = %5.0f мин' % (nm, n, t, n * t / 60) for nm, n, t in plan]
+    lines.append('главные кадры (%d) ≈ %.0f мин' % (len(VIEWS), t_st / 60))
+    lines.append('ВСЕГО ≈ %.1f ч (качество %s)' % (total / 3600, A.quality))
+    for l_ in lines: log(l_)
+    STATUS.update(stage='тест готов', done=0, total=0, times=[]); write_status('\n'.join(lines))
+    raise SystemExit(0)
 if A.what in ('orbit', 'all'):
     setup_engine('cycles'); run('облёт', orbit_dir, list(range(ORBIT_N)), orbit_pose)
 if A.what in ('approach', 'all'):
-    setup_engine('cycles' if A.cpu else 'eevee'); run('подлёт', appr_dir, list(range(APPROACH_N)), approach_pose)
+    setup_engine('eevee' if A.eevee and not A.cpu else 'cycles')
+    if sc.render.engine == 'CYCLES' and not DRAFT:
+        sc.cycles.samples = 64                   # подлёт короткий и в движении — 64 выборки + шумодав, свет тот же, что в облёте
+    run('подлёт', appr_dir, list(range(APPROACH_N)), approach_pose)
+if A.what == 'all':
+    stills()
 if A.what in ('mask', 'all'):
     mask_mode(True, objs, mask); setup_engine('mask'); run('маска этажа', mask_dir, list(range(ORBIT_N)), orbit_pose)
+if A.what == 'all':
+    manifest()
 log('готово:', OUT)
