@@ -43,6 +43,10 @@ nav a{text-decoration:none;color:var(--mut)} nav a:hover{color:var(--ink)}
 body.winter .hero{background:linear-gradient(180deg,#e6edf4 0%,#f1f4f7 55%,#e3e9ef 100%)}
   .hero > .wrap{width:100%}
 #yard{position:absolute;inset:0;width:100%;height:100%;display:block}
+#yard3d{position:absolute;inset:0;display:none;touch-action:pan-y}
+#yard3d canvas{width:100%!important;height:100%!important;display:block}
+body.has3d #yard3d{display:block} body.has3d #yard{display:none}
+body.has3d .hero-card{background:rgba(255,255,255,.82)}
 .hero-card{position:relative;z-index:2;max-width:500px;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:28px;box-shadow:0 20px 50px rgba(20,35,25,.12)}
 .hero-card h1{font-size:clamp(30px,4.2vw,50px);font-weight:800;margin-bottom:12px}
 .hero-card h1 em{font-style:normal;color:var(--acc)}
@@ -143,6 +147,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <main>
 <section class="hero">
   <canvas id="yard" aria-hidden="true"></canvas>
+  <div id="yard3d" aria-hidden="true"></div>
   <div class="season" role="group" aria-label="Сезон">
     <button type="button" data-s="autumn">🍂 Осень</button><button type="button" data-s="winter">❄ Зима</button>
   </div>
@@ -150,11 +155,11 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
     <div class="hero-card">
       <span class="eyebrow" data-c="region">Тамбов и область</span>
       <h1 id="heroTitle">Уберём участок&nbsp;—<br><em>вы отдыхайте</em></h1>
-      <p id="heroText">Листва, трава, мусор — приедем, уберём и вывезем. Покос от 2 000 ₽, вывоз мусора от 1 000 ₽.</p>
+      <p id="heroText">Листва, трава, мусор — приедем, уберём и вывезем. Цену покажем сразу — в калькуляторе ниже.</p>
       <div class="row"><a class="btn dark" href="#calc">Рассчитать стоимость</a><a class="btn" data-c="phone-link" href="#">Позвонить</a></div>
     </div>
   </div>
-  <div class="hint">Проведите по двору — расчистите сами</div>
+  <div class="hint">Ведите мышкой по двору — расчистите сами</div>
 </section>
 
 <section id="services">
@@ -246,11 +251,13 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 <script>
 /* ===== Настройки: меняются здесь ===== */
 const CFG = { brand: 'ЧИСТЫЙ ДВОР', phone: '+7 (900) 000-00-00', region: 'Тамбов и область' };
-const PRICE = {          // за участок до 6 соток, дальше за каждую сотку сверху
-  leaves: { name: 'Уборка листвы', base: 1000, per: 150 },
-  grass:  { name: 'Покос травы',   base: 2000, per: 250 },
-  snow:   { name: 'Снег и наледь', base: 2000, per: 200 },
-  trash:  { name: 'Вывоз мусора',  base: 1000, perM3: 700 },
+/* Цены из модели «Чистый_двор_экономика.xlsx» (лист «Цены»). Поменяли там — перепишите сюда. */
+const PRICE = {
+  trip:   1900,                                   // выезд бригады, один раз на заказ
+  leaves: { name: 'Уборка листвы', per: 470, unit: 'сот.' },
+  grass:  { name: 'Покос травы',   per: 380, unit: 'сот.' },
+  snow:   { name: 'Снег и наледь', per: 900, unit: 'сот.' },
+  trash:  { name: 'Вывоз мусора',  per: 1350, unit: 'м³' },
 };
 
 const $ = s => document.querySelector(s);
@@ -269,9 +276,10 @@ function calc() {
   let sum = 0; const rows = [];
   for (const s of sel) {
     const p = PRICE[s];
-    const v = s === 'trash' ? p.base + Math.max(0, trash - 1) * p.perM3 : p.base + Math.max(0, area - 6) * p.per;
-    sum += v; rows.push(`<li><span>${p.name}</span><span>${fmt(v)} ₽</span></li>`);
+    const v = s === 'trash' ? p.per * trash : p.per * (s === 'snow' ? Math.max(1, Math.round(area / 3)) : area);
+    sum += v; rows.push(`<li><span>${p.name}${s === 'snow' ? ' (дорожки и въезд ≈ ' + Math.max(1, Math.round(area / 3)) + ' сот.)' : ''}</span><span>${fmt(v)} ₽</span></li>`);
   }
+  if (sum) { sum += PRICE.trip; rows.push(`<li><span>Выезд бригады</span><span>${fmt(PRICE.trip)} ₽</span></li>`); }
   if (k < 1 && sum) rows.push(`<li><span>Скидка за регулярность</span><span>−15%</span></li>`);
   sum *= k;
   $('#total').innerHTML = (sum ? 'от ' + fmt(sum) : '0') + ' <small>₽</small>';
@@ -280,6 +288,12 @@ function calc() {
 }
 document.querySelectorAll('#calc input').forEach(i => i.addEventListener('input', calc));
 calc();
+document.querySelectorAll('.svc article .price').forEach((el, i) => {
+  const v = [PRICE.trip + PRICE.trash.per, PRICE.trip + PRICE.leaves.per, PRICE.trip + PRICE.grass.per * 2, PRICE.trip + PRICE.snow.per][i];
+  el.textContent = 'от\u00a0' + fmt(v) + '\u00a0₽';
+});
+const minP = Math.min(PRICE.trip + PRICE.trash.per, PRICE.trip + PRICE.leaves.per);
+document.querySelectorAll('[data-c="min"]').forEach(e => e.textContent = fmt(minP));
 
 /* ---------- двор с воздуходувом ---------- */
 const cv = $('#yard'), ctx = cv.getContext('2d');
@@ -303,10 +317,10 @@ function setSeason(s) {
   season = s; document.body.classList.toggle('winter', s === 'winter');
   document.querySelectorAll('.season button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
   $('#heroTitle').innerHTML = s === 'winter' ? 'Расчистим двор&nbsp;—<br><em>от снега и наледи</em>' : 'Уберём участок&nbsp;—<br><em>вы отдыхайте</em>';
-  $('#heroText').textContent = s === 'winter' ? 'Снег, наледь, мусор — приедем, расчистим и вывезем. Уборка снега от 2 000 ₽, вывоз мусора от 1 000 ₽.' : 'Листва, трава, мусор — приедем, уберём и вывезем. Покос от 2 000 ₽, вывоз мусора от 1 000 ₽.';
+  $('#heroText').textContent = s === 'winter' ? 'Снег, наледь, мусор — приедем, расчистим и вывезем. Цену покажем сразу — в калькуляторе ниже.' : 'Листва, трава, мусор — приедем, уберём и вывезем. Цену покажем сразу — в калькуляторе ниже.';
   spawn(Math.round(Math.min(W, 1400) / (s === 'winter' ? 2.2 : 4.5)));
 }
-document.querySelectorAll('.season button').forEach(b => b.addEventListener('click', () => setSeason(b.dataset.s)));
+document.querySelectorAll('.season button').forEach(b => b.addEventListener('click', () => { setSeason(b.dataset.s); window.yard3d && window.yard3d.setSeason(b.dataset.s); }));
 
 function drawBg() {
   // земля: трава или снег
@@ -387,6 +401,15 @@ requestAnimationFrame(loop);
 $('#form').addEventListener('submit', e => { e.preventDefault(); const p = e.target.phone; if (p.value.replace(/\D/g, '').length < 10) { p.focus(); p.style.outline = '2px solid #ffb4a8'; return; } p.style.outline = ''; $('#ok').style.display = 'block'; e.target.querySelector('button').disabled = true; });
 const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+<script type="module">
+import { startYard } from './yard3d.js';
+try {
+  document.body.classList.add('has3d');
+  const y = startYard(document.getElementById('yard3d'));
+  window.yard3d = y; y.setSeason(document.body.classList.contains('winter') ? 'winter' : 'autumn');
+} catch (e) { document.body.classList.remove('has3d'); }
 </script>
 </body>
 </html>
