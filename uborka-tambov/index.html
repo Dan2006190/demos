@@ -97,6 +97,8 @@ body.winter .lead{background:#2c4a6b}
 body.winter .lead .eyebrow{color:#cfe0f2}
 .lead p{color:#dcebd8}
 form{display:grid;gap:10px}
+form .send{display:grid;grid-template-columns:1.6fr 1fr;gap:8px}
+form .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
 form input,form select,form textarea{font:16px var(--f);padding:14px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;width:100%}
 form input::placeholder,form textarea::placeholder{color:rgba(255,255,255,.7)}
 form select option{color:#000}
@@ -236,21 +238,26 @@ footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
         <input name="phone" type="tel" placeholder="Телефон" autocomplete="tel">
         <input name="addr" placeholder="Адрес или район">
         <input name="calc" id="calcField" placeholder="Что сделать" readonly>
-        <button class="btn" type="submit">Отправить заявку</button>
-        <div class="ok" id="ok">Заявка принята! Перезвоним в течение 15 минут.</div>
-        <p style="font-size:12px;margin:0;opacity:.75">Демо-версия: форма показывает, как будет выглядеть заявка.</p>
+        <div class="send">
+          <button class="btn" type="submit" data-to="tg">✈ Отправить в Telegram</button>
+          <button class="btn ghost" type="submit" data-to="wa">WhatsApp</button>
+        </div>
+        <div class="ok" id="ok">Откроется чат с готовым сообщением — осталось нажать «Отправить».</div>
       </form>
     </div>
   </div>
 </section>
 </main>
 
-<footer><div class="wrap"><div><b style="color:var(--ink)" data-c="brand">ЧИСТЫЙ ДВОР</b> · уборка участков в Тамбове</div><div>Демо-сайт</div></div></footer>
+<footer><div class="wrap"><div><b style="color:var(--ink)" data-c="brand">ЧИСТЫЙ ДВОР</b> · уборка участков в Тамбове</div><div>Тамбов · ежедневно</div></div></footer>
 <div class="fab"><a class="btn dark" href="#calc">Рассчитать уборку</a></div>
 
 <script>
 /* ===== Настройки: меняются здесь ===== */
-const CFG = { brand: 'ЧИСТЫЙ ДВОР', phone: '+7 (902) 724-72-53', region: 'Тамбов и область' };
+const CFG = { brand: 'ЧИСТЫЙ ДВОР', phone: '+7 (902) 724-72-53', region: 'Тамбов и область',
+  telegram: '',            // username в Telegram без @, например chistyi_dvor68
+  whatsapp: '79027247253'  // номер для WhatsApp
+};
 /* Цены из модели «Чистый_двор_экономика.xlsx» (лист «Цены»). Поменяли там — перепишите сюда. */
 const PRICE = {
   trip:   1900,                                   // выезд бригады, один раз на заказ
@@ -398,7 +405,21 @@ blower.x = W * .1; blower.y = H * .7;
 requestAnimationFrame(loop);
 
 /* ---------- прочее ---------- */
-$('#form').addEventListener('submit', e => { e.preventDefault(); const p = e.target.phone; if (p.value.replace(/\D/g, '').length < 10) { p.focus(); p.style.outline = '2px solid #ffb4a8'; return; } p.style.outline = ''; $('#ok').style.display = 'block'; e.target.querySelector('button').disabled = true; });
+/* заявка уходит готовым сообщением в Telegram или WhatsApp — человеку остаётся нажать «Отправить» */
+if (!CFG.telegram) document.querySelector('[data-to="tg"]').remove();
+$('#form').addEventListener('submit', e => {
+  e.preventDefault();
+  const f = e.target, to = (e.submitter && e.submitter.dataset.to) || (CFG.telegram ? 'tg' : 'wa');
+  const msg = ['Здравствуйте! Заявка с сайта «' + CFG.brand + '»',
+    f.name.value && 'Имя: ' + f.name.value,
+    f.phone.value && 'Телефон: ' + f.phone.value,
+    f.addr.value && 'Адрес: ' + f.addr.value,
+    f.calc.value && 'Нужно: ' + f.calc.value].filter(Boolean).join('\n');
+  const url = to === 'tg' ? 'https://t.me/' + CFG.telegram + '?text=' + encodeURIComponent(msg)
+                          : 'https://wa.me/' + CFG.whatsapp + '?text=' + encodeURIComponent(msg);
+  $('#ok').style.display = 'block';
+  window.open(url, '_blank', 'noopener');
+});
 const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
 document.querySelectorAll('.rv').forEach(el => io.observe(el));
 </script>
