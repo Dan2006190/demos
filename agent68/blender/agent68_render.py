@@ -1,0 +1,569 @@
+"""
+«Агент 68» — кадры «псевдо-3D» для демо-сайта агентства недвижимости (Тамбов). Образец — Арден (estate/blender).
+
+Сцены в браузере нет: каждый объект строится процедурно здесь, по параметрам ниже (размеры, этажи, цвета).
+Внешние ассеты — только деревья и кусты Poly Haven (CC0), скачиваются сами.
+
+  blender -b -P agent68_render.py -- --what test   --object 1 [--quality draft|final] [--cpu]
+  blender -b -P agent68_render.py -- --what all    --object 1
+
+--what   test      по 2 кадра каждого вида: время кадра и прогноз на всё
+         orbit     облёт: 144 кадра через 2,5° (Cycles + шумодав)
+         approach  подлёт: 84 кадра (3,5 с при 24 к/с), последний = кадр 0 облёта (EEVEE)
+         mask      маска этажа: тот же путь камеры, этаж белый, всё остальное чёрное, без света (секунды на кадр)
+         still     один черновой кадр облёта (--frame N), для сверки с фото
+         manifest  manifest.json для сайта (метки объекта по кадрам облёта)
+         all       облёт → подлёт → маска → manifest
+Готовые кадры пропускаются: прерванный рендер продолжается той же командой.
+Кадры — WebP трёх размеров sm/md/hd (640/1280/1920), как в Ардене: renders/obj1/orbit/{sm,md,hd}/000.webp …
+"""
+import argparse
+import json
+import math
+import os
+import random
+import sys
+import time
+
+import bpy
+import bmesh
+from bpy_extras.object_utils import world_to_camera_view
+from mathutils import Euler, Matrix, Vector
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+
+# ============================================================================ ОБЪЕКТЫ
+# Все размеры в метрах. План: X — вдоль главного фасада (вправо), Y — от улицы вглубь (назад), Z — вверх.
+OBJECTS = {
+    1: dict(
+        name='3-к квартира, ул. Чичерина, 64', floor=4,           # этаж квартиры — для маски
+        floors=9, floor_h=3.0, plinth=0.6,                        # жилые этажи, высота этажа, цоколь
+        # крыло А — главный фасад на улицу (оранжевый), от цилиндра вправо
+        wing_a=dict(length=38.0, depth=14.0, cols=8),
+        # крыло Б — уходит назад от башни (L-образный план по фото 4–5); 0 — без крыла
+        wing_b=dict(length=26.0, depth=14.0, cols=5),
+        cyl=dict(d=11.0, extra_floors=1, glaze_posts=40),         # цилиндр на углу: диаметр, на этаж выше корпуса
+        tower=dict(w=6.0, d=4.0, above_roof=6.5),                 # белая башня лестницы и лифта (выше цилиндра)
+        cafe=dict(h=4.5, ring=6.0, arc=(150, 345), along_a=11.0), # павильон кафе: высота, ширина по дуге, градусы дуги (−90 — к улице), хвост вдоль фасада
+        colors=dict(
+            brick_front=(0.92, 0.42, 0.035),  # жёлто-оранжевый кирпич главного фасада
+            brick_back=(0.86, 0.84, 0.80),    # белый кирпич заднего фасада
+            insert_back=(0.84, 0.52, 0.18),   # оранжевые вставки и пояса сзади
+            pilaster=(0.90, 0.89, 0.86),      # белые пилястры
+            band=(0.25, 0.13, 0.08),          # тёмно-коричневые пояса на перекрытиях
+            cyl_band=(0.30, 0.17, 0.11),      # коричневый кирпич под лентой окон цилиндра
+            cyl_top=(0.78, 0.78, 0.76),       # светло-серый верх цилиндра
+            tower=(0.92, 0.91, 0.88),         # белая башня
+            cafe=(0.20, 0.07, 0.07),          # бордово-коричневый павильон
+            frame=(0.93, 0.93, 0.92),         # белые рамы
+            roof=(0.42, 0.42, 0.42),
+        ),
+        neighbors=[  # окружение: высотки 14–16 этажей, простые коробки (x, y, длина, глубина, этажей, поворот°, цвет)
+            (78, 22, 34, 14, 16, 90, (0.80, 0.56, 0.24)),
+            (34, 70, 48, 14, 14, 0, (0.78, 0.72, 0.60)),
+            (-62, 52, 40, 14, 15, 90, (0.76, 0.52, 0.26)),
+            (92, 82, 30, 14, 16, 0, (0.78, 0.70, 0.56)),
+        ],
+        # камера облёта: центр, радиус, высота, начальный азимут (0 — с улицы, спереди-слева, как фото 3)
+        orbit=dict(center=(12.0, 6.0, 13.0), radius=80.0, height=34.0, start=212.0),
+    ),
+}
+
+# ============================================================================ ПАРАМЕТРЫ ЗАПУСКА
+argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
+ap = argparse.ArgumentParser(prog='agent68_render.py')
+ap.add_argument('--what', default='test', choices=['test', 'orbit', 'approach', 'mask', 'still', 'manifest', 'all'])
+ap.add_argument('--object', type=int, default=1)
+ap.add_argument('--quality', default='final', choices=['draft', 'final'])
+ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки)')
+ap.add_argument('--frame', type=int, default=0, help='для --what still')
+ap.add_argument('--view', default='orbit', choices=['orbit', 'street'], help='для --what still: street — с улицы, как фото фасада')
+ap.add_argument('--out', default=os.path.join(HERE, 'renders'))
+ap.add_argument('--assets', default=os.path.join(HERE, 'assets'), help='папка для деревьев Poly Haven')
+ap.add_argument('--percent', type=int, default=0, help='масштаб разрешения, %% (для проверки)')
+A = ap.parse_args(argv)
+O = OBJECTS[A.object]
+C = O['colors']
+DRAFT = A.quality == 'draft'
+W, H, FOV = 1920, 1080, 40.0
+ORBIT_N, ORBIT_STEP = 144, 2.5
+APPROACH_FPS, APPROACH_N = 24, 84
+SIZES = {'sm': (640, 60), 'md': (1280, 74), 'hd': (1920, 72)}  # ширина, качество WebP (как в Ардене)
+OUT = os.path.join(os.path.abspath(A.out), 'obj%d' % A.object)
+os.makedirs(OUT, exist_ok=True)
+STATUS = {'stage': '', 'done': 0, 'total': 0, 'times': []}
+R = random.Random(68 + A.object)
+
+
+def log(*a):
+    print('[agent68]', *a, flush=True)
+
+
+def write_status(extra=''):
+    t = STATUS['times'][-20:]; avg = sum(t) / len(t) if t else 0
+    lines = ['Агент 68 — объект %d (%s), %s' % (A.object, O['name'], time.strftime('%d.%m %H:%M')),
+             'Сейчас: %s — %d из %d' % (STATUS['stage'], STATUS['done'], STATUS['total'])]
+    if avg:
+        lines.append('Кадр в среднем %.1f с, этапу осталось ≈ %.0f мин' % (avg, avg * (STATUS['total'] - STATUS['done']) / 60))
+    if extra:
+        lines.append(extra)
+    with open(os.path.join(OUT, 'status.txt'), 'w', encoding='utf-8') as f:
+        f.write('\n'.join(lines) + '\n')
+
+
+# ============================================================================ МАТЕРИАЛЫ
+bpy.ops.wm.read_factory_settings(use_empty=True)
+sc = bpy.context.scene
+MATS = {}
+
+
+def principled(name, color, rough=0.8, metal=0.0, spec=0.3, emit=None):
+    if name in MATS:
+        return MATS[name]
+    m = bpy.data.materials.new(name); m.use_nodes = True
+    b = m.node_tree.nodes['Principled BSDF']
+    b.inputs['Base Color'].default_value = (*color, 1)
+    b.inputs['Roughness'].default_value = rough; b.inputs['Metallic'].default_value = metal
+    b.inputs['Specular IOR Level'].default_value = spec
+    if emit:
+        b.inputs['Emission Color'].default_value = (*emit[0], 1); b.inputs['Emission Strength'].default_value = emit[1]
+    MATS[name] = m
+    return m
+
+
+def brick(name, color, mortar=None, row=0.075, width=0.25, var=0.10):
+    """кирпич: процедурная кладка в метрах; координата вдоль стены — x или y по нормали (кладка не «плывёт» на торцах)"""
+    if name in MATS:
+        return MATS[name]
+    mortar = mortar or tuple(min(1, x * 0.8 + 0.08) for x in color)
+    m = principled(name, color, rough=0.85)
+    nt, L = m.node_tree, m.node_tree.links
+    geo = nt.nodes.new('ShaderNodeNewGeometry')
+    sp = nt.nodes.new('ShaderNodeSeparateXYZ'); sn = nt.nodes.new('ShaderNodeSeparateXYZ')
+    L.new(geo.outputs['Position'], sp.inputs[0]); L.new(geo.outputs['Normal'], sn.inputs[0])
+    ax = nt.nodes.new('ShaderNodeMath'); ax.operation = 'ABSOLUTE'; L.new(sn.outputs['X'], ax.inputs[0])
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'FLOAT'
+    L.new(ax.outputs[0], mix.inputs['Factor']); L.new(sp.outputs['X'], mix.inputs['A']); L.new(sp.outputs['Y'], mix.inputs['B'])
+    uv = nt.nodes.new('ShaderNodeCombineXYZ'); L.new(mix.outputs['Result'], uv.inputs['X']); L.new(sp.outputs['Z'], uv.inputs['Y'])
+    bt = nt.nodes.new('ShaderNodeTexBrick')
+    bt.inputs['Scale'].default_value = 1.0; bt.inputs['Mortar Size'].default_value = 0.006
+    bt.inputs['Brick Width'].default_value = width; bt.inputs['Row Height'].default_value = row
+    c1 = [min(1, x * (1 + var)) for x in color]; c2 = [x * (1 - var) for x in color]
+    bt.inputs['Color1'].default_value = (*c1, 1); bt.inputs['Color2'].default_value = (*c2, 1)
+    bt.inputs['Mortar'].default_value = (*mortar, 1)
+    L.new(uv.outputs[0], bt.inputs['Vector'])
+    b = nt.nodes['Principled BSDF']; L.new(bt.outputs['Color'], b.inputs['Base Color'])
+    return m
+
+
+def glass():
+    return principled('стекло', (0.05, 0.07, 0.09), rough=0.04, spec=0.9)
+
+
+def windows_texture(name, wall, win=(0.05, 0.06, 0.08), cell=(3.2, 2.9), size=(1.5, 1.5)):
+    """соседние высотки: окна — сетка по координатам стены (окно, где доли ячейки по x и z меньше size/cell)"""
+    if name in MATS:
+        return MATS[name]
+    m = principled(name, wall, rough=0.85)
+    nt, L = m.node_tree, m.node_tree.links
+    geo = nt.nodes.new('ShaderNodeNewGeometry')
+    sp = nt.nodes.new('ShaderNodeSeparateXYZ'); sn = nt.nodes.new('ShaderNodeSeparateXYZ')
+    L.new(geo.outputs['Position'], sp.inputs[0]); L.new(geo.outputs['Normal'], sn.inputs[0])
+    ax = nt.nodes.new('ShaderNodeMath'); ax.operation = 'ABSOLUTE'; L.new(sn.outputs['X'], ax.inputs[0])
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'FLOAT'
+    L.new(ax.outputs[0], mix.inputs['Factor']); L.new(sp.outputs['X'], mix.inputs['A']); L.new(sp.outputs['Y'], mix.inputs['B'])
+    def cellmask(src, c, s_):
+        d = nt.nodes.new('ShaderNodeMath'); d.operation = 'DIVIDE'; L.new(src, d.inputs[0]); d.inputs[1].default_value = c
+        fr = nt.nodes.new('ShaderNodeMath'); fr.operation = 'FRACT'; L.new(d.outputs[0], fr.inputs[0])
+        lt = nt.nodes.new('ShaderNodeMath'); lt.operation = 'LESS_THAN'; L.new(fr.outputs[0], lt.inputs[0]); lt.inputs[1].default_value = s_ / c
+        return lt.outputs[0]
+    mul = nt.nodes.new('ShaderNodeMath'); mul.operation = 'MULTIPLY'
+    L.new(cellmask(mix.outputs['Result'], cell[0], size[0]), mul.inputs[0]); L.new(cellmask(sp.outputs['Z'], cell[1], size[1]), mul.inputs[1])
+    # цоколь без окон и верх-парапет: окна только выше 3 м
+    up = nt.nodes.new('ShaderNodeMath'); up.operation = 'GREATER_THAN'; L.new(sp.outputs['Z'], up.inputs[0]); up.inputs[1].default_value = 3.0
+    m2 = nt.nodes.new('ShaderNodeMath'); m2.operation = 'MULTIPLY'; L.new(mul.outputs[0], m2.inputs[0]); L.new(up.outputs[0], m2.inputs[1])
+    cm = nt.nodes.new('ShaderNodeMix'); cm.data_type = 'RGBA'; L.new(m2.outputs[0], cm.inputs['Factor'])
+    cm.inputs['A'].default_value = (*wall, 1); cm.inputs['B'].default_value = (*win, 1)
+    b = nt.nodes['Principled BSDF']; L.new(cm.outputs['Result'], b.inputs['Base Color'])
+    rg = nt.nodes.new('ShaderNodeMapRange'); L.new(m2.outputs[0], rg.inputs['Value']); rg.inputs['To Min'].default_value = 0.85; rg.inputs['To Max'].default_value = 0.08
+    L.new(rg.outputs['Result'], b.inputs['Roughness'])
+    return m
+
+
+# ============================================================================ ГЕОМЕТРИЯ
+class Builder:
+    """коробки и кольца собираются в один меш на материал — сотни окон без сотен объектов"""
+
+    def __init__(self):
+        self.bms = {}
+
+    def bm(self, mat):
+        if mat not in self.bms:
+            self.bms[mat] = bmesh.new()
+        return self.bms[mat]
+
+    def box(self, mat, c, s, rz=0.0):
+        """коробка: центр c, размер s (x, y, z), поворот вокруг Z (рад)"""
+        M = Matrix.Translation(Vector(c)) @ Matrix.Rotation(rz, 4, 'Z') @ Matrix.Diagonal((*s, 1))
+        bmesh.ops.create_cube(self.bm(mat), size=1.0, matrix=M)
+
+    def ring(self, mat, c, r_in, r_out, z0, z1, a0=0.0, a1=360.0, seg=72):
+        """кольцо (сектор) от r_in до r_out, высота z0..z1; углы в градусах"""
+        b = self.bm(mat); n = max(3, int(seg * (a1 - a0) / 360)); full = abs(a1 - a0) >= 359.9
+        rows = []
+        for i in range(n + (0 if full else 1)):
+            a = math.radians(a0 + (a1 - a0) * i / n)
+            ca, sa = math.cos(a), math.sin(a)
+            rows.append([b.verts.new((c[0] + r * ca, c[1] + r * sa, z)) for r, z in ((r_in, z0), (r_out, z0), (r_out, z1), (r_in, z1))])
+        k = len(rows)
+        for i in range(k if full else k - 1):
+            p, q = rows[i], rows[(i + 1) % k]
+            for j in range(4):
+                b.faces.new((p[j], q[j], q[(j + 1) % 4], p[(j + 1) % 4]))
+        if not full:
+            b.faces.new(rows[0][::-1]); b.faces.new(rows[-1])
+
+    def build(self, name, smooth=False):
+        objs = []
+        for mat, b in self.bms.items():
+            me = bpy.data.meshes.new(name + '_' + mat.name); b.normal_update(); b.to_mesh(me); b.free()
+            me.materials.append(mat)
+            if smooth:
+                for p in me.polygons: p.use_smooth = True
+            o = bpy.data.objects.new(name + '_' + mat.name, me); sc.collection.objects.link(o); objs.append(o)
+        self.bms = {}
+        return objs
+
+
+def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
+    """фасад вдоль линии от (x0, y0) длиной length под углом rz (рад; наружу — правая нормаль).
+    style: 'front' — оранжевый кирпич, белые пилястры между парами окон, коричневые пояса на перекрытиях;
+           'back'  — белый кирпич, оранжевые вертикальные вставки и пояса."""
+    d = Vector((math.cos(rz), math.sin(rz), 0)); nrm = Vector((d.y, -d.x, 0))  # наружу — вправо от направления
+    at = lambda u, off, z: Vector((x0, y0, 0)) + d * u + nrm * off + Vector((0, 0, z))
+    step = length / cols
+    fr, gl = principled('рама', C['frame'], rough=0.4), glass()
+    band = principled('пояс', C['band'], rough=0.8)
+    pil = principled('пилястра', C['pilaster'], rough=0.8)
+    ins = brick('вставка_сзади', C['insert_back'])
+    for f in range(floors):
+        z = plinth + f * fh
+        # пояс на уровне перекрытия
+        B.box(band if style == 'front' else ins, at(length / 2, 0.06, z + 0.15), (length + 0.12, 0.12, 0.3 if style == 'front' else 0.45), rz)
+        for c in range(cols):
+            u = (c + 0.5) * step
+            wz = z + fh * 0.55
+            B.box(fr, at(u, 0.05, wz), (1.62, 0.1, 1.62), rz)          # рама
+            B.box(gl, at(u, 0.09, wz), (1.42, 0.04, 1.42), rz)         # стекло чуть впереди рамы
+            B.box(fr, at(u, 0.12, wz), (0.07, 0.03, 1.42), rz)         # импост
+            if R.random() < 0.18:                                       # кондиционер
+                B.box(principled('кондиционер', (0.88, 0.88, 0.86), rough=0.5), at(u + 1.15, 0.3, z + fh * 0.32), (0.8, 0.3, 0.55), rz)
+    # вертикали: пилястры между парами окон (спереди) или оранжевые вставки (сзади)
+    h = z_top
+    for c in range(0, cols + 1, 2):
+        u = c * step
+        if style == 'front':
+            B.box(pil, at(u, 0.09, h / 2), (0.55, 0.18, h), rz)
+        else:
+            B.box(ins, at(u, 0.04, h / 2), (0.9, 0.08, h), rz)
+
+
+def build_object_1():
+    o = O; fh, nf, pl = o['floor_h'], o['floors'], o['plinth']
+    top = pl + nf * fh                               # верх жилых этажей
+    a, bw, cy, tw, cafe = o['wing_a'], o['wing_b'], o['cyl'], o['tower'], o['cafe']
+    rC = cy['d'] / 2
+    B = Builder()
+    front = brick('кирпич_фасад', C['brick_front']); back = brick('кирпич_сзади', C['brick_back'])
+    roof = principled('кровля', C['roof'])
+    # --- крыло А: от x=0 (ось цилиндра) вправо; передний фасад — y=0
+    B.box(front, (a['length'] / 2, a['depth'] / 2, top / 2), (a['length'], a['depth'], top))
+    B.box(roof, (a['length'] / 2, a['depth'] / 2, top + 0.6), (a['length'] + 0.3, a['depth'] + 0.3, 1.2))  # парапет
+    facade(B, 0, 0, a['length'], 0.0, nf, fh, pl, a['cols'], 'front', top)
+    facade(B, a['length'], a['depth'], a['length'], math.pi, nf, fh, pl, a['cols'], 'back', top)
+    facade(B, a['length'], 0, a['depth'], math.pi / 2, nf, fh, pl, 3, 'front', top)       # торец
+    # --- крыло Б: назад от угла (за башней), фасады — белые
+    if bw['length'] > 0:
+        x0 = -rC - 0.5 - tw['w'] - bw['depth']
+        y0 = 0.0
+        B.box(front, (x0 + bw['depth'] / 2, y0 + bw['length'] / 2, top / 2), (bw['depth'], bw['length'], top))  # оранжевый, как на фото 4–5
+        B.box(roof, (x0 + bw['depth'] / 2, y0 + bw['length'] / 2, top + 0.6), (bw['depth'] + 0.3, bw['length'] + 0.3, 1.2))
+        facade(B, x0, y0 + bw['length'], bw['length'], -math.pi / 2, nf, fh, pl, bw['cols'], 'front', top)  # левый (внешний)
+        facade(B, x0, y0, bw['depth'], 0.0, nf, fh, pl, 3, 'front', top)                                   # торец к улице
+    # --- башня лестницы и лифта: белая, рядом с цилиндром, выше крыши
+    th = top + tw['above_roof']
+    tx, ty = -rC - 0.5 - tw['w'] / 2, tw['d'] / 2 + 0.6
+    B.box(principled('башня', C['tower'], rough=0.85), (tx, ty, th / 2), (tw['w'], tw['d'], th))
+    for f in range(nf + 1):
+        B.box(glass(), (tx, ty - tw['d'] / 2 - 0.03, pl + f * fh + fh * 0.6), (0.9, 0.06, 1.1))
+    for k in range(3):  # вентрешётки наверху
+        B.box(principled('решётка', (0.25, 0.25, 0.25)), (tx - 1.5 + k * 1.5, ty - tw['d'] / 2 - 0.03, th - 1.0), (0.7, 0.06, 0.6))
+    # --- цилиндр на углу: ленты остекления по кругу, под ними коричневый пояс, верх светло-серый
+    ch = top + cy['extra_floors'] * fh
+    c0 = (0.0, 0.0)
+    cb = brick('цилиндр_пояс', C['cyl_band'])
+    B.ring(front, c0, 0, rC - 0.05, 0, pl, seg=96)
+    for f in range(nf + cy['extra_floors']):
+        z = pl + f * fh
+        last = f >= nf
+        B.ring(principled('цилиндр_верх', C['cyl_top']) if last else cb, c0, 0, rC, z, z + 1.0, seg=96)
+        B.ring(glass(), c0, 0, rC - 0.12, z + 1.0, z + fh - 0.15, seg=96)
+        B.ring(principled('рама', C['frame']), c0, 0, rC + 0.02, z + fh - 0.15, z + fh, seg=96)   # белый ригель над лентой
+        n = cy['glaze_posts']
+        for i in range(n):  # частые импосты
+            ang = 2 * math.pi * i / n
+            B.box(principled('рама', C['frame']), (c0[0] + (rC - 0.06) * math.cos(ang), c0[1] + (rC - 0.06) * math.sin(ang), z + 1.0 + (fh - 1.15) / 2),
+                  (0.08, 0.14, fh - 1.15), ang)
+    B.ring(principled('цилиндр_верх', C['cyl_top']), c0, 0, rC + 0.15, ch, ch + 0.9, seg=96)       # парапет
+    # --- кафе: одноэтажный павильон по дуге вокруг цилиндра + хвост вдоль фасада, витражи, терраса на крыше
+    cm = principled('кафе', C['cafe'], rough=0.6)
+    R0, R1, (a0, a1) = rC - 0.3, rC + cafe['ring'], cafe['arc']
+    B.ring(cm, c0, R0, R1, 0, cafe['h'] - 0.6, a0, a1, seg=96)
+    B.ring(cm, c0, R0, R1 + 0.2, cafe['h'] - 0.6, cafe['h'], a0, a1, seg=96)               # фриз под вывеску
+    B.ring(principled('настил', (0.30, 0.28, 0.26), rough=0.9), c0, R0, R1 - 0.2, cafe['h'], cafe['h'] + 0.04, a0, a1, seg=96)  # пол террасы
+    B.ring(glass(), c0, R1 - 0.02, R1 + 0.03, 0.4, cafe['h'] - 0.9, a0 + 4, a1 - 4, seg=96)  # витражи
+    for k in range(int(abs(a1 - a0) / 9)):
+        ang = math.radians(a0 + 4 + k * 9)
+        B.box(principled('рама_тёмная', (0.12, 0.10, 0.10)), (c0[0] + (R1 + 0.05) * math.cos(ang), c0[1] + (R1 + 0.05) * math.sin(ang), (cafe['h'] - 0.5) / 2),
+              (0.12, 0.12, cafe['h'] - 0.5), ang)
+    ext = cafe['along_a']
+    if ext > 0:
+        B.box(cm, (ext / 2 + rC / 2, -cafe['ring'] / 2 - rC / 2, cafe['h'] / 2), (ext + rC, cafe['ring'] + rC, cafe['h']))
+        B.box(glass(), (ext / 2 + rC / 2, -cafe['ring'] - rC - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (ext + rC - 1, 0.05, cafe['h'] - 1.4))
+    rail = principled('ограждение', (0.95, 0.95, 0.95), rough=0.4)
+    for k in range(int(abs(a1 - a0) / 3)):  # белое ограждение террасы по дуге
+        ang = math.radians(a0 + k * 3)
+        B.box(rail, (c0[0] + (R1 - 0.1) * math.cos(ang), c0[1] + (R1 - 0.1) * math.sin(ang), cafe['h'] + 0.55), (0.05, 0.05, 1.1), ang)
+    B.ring(rail, c0, R1 - 0.15, R1 - 0.05, cafe['h'] + 1.05, cafe['h'] + 1.12, a0, a1, seg=96)
+    if ext > 0:
+        B.box(rail, (ext / 2 + rC / 2, -cafe['ring'] - rC + 0.1, cafe['h'] + 1.08), (ext + rC, 0.08, 0.08))
+        for k in range(int((ext + rC) / 1.2)):
+            B.box(rail, (k * 1.2, -cafe['ring'] - rC + 0.1, cafe['h'] + 0.55), (0.05, 0.05, 1.1))
+    for k in range(5):  # зонтики у кафе
+        ux, uy = rC + ext + 3 + k * 3.2, -6.0
+        B.box(rail, (ux, uy, 1.2), (0.06, 0.06, 2.4))
+        bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=1.4, depth=0.6, location=(ux, uy, 2.5))
+        u = bpy.context.active_object; u.data.materials.append(principled('зонт', (0.92, 0.90, 0.85)))
+    objs = B.build('чичерина64')
+    # маска этажа: оболочка этажа квартиры чуть шире стен (корпус А и цилиндр), только для --what mask
+    f = o['floor'] - 1; z0, z1 = pl + f * fh, pl + (f + 1) * fh
+    M = Builder()
+    mk = principled('маска', (1, 1, 1))
+    M.box(mk, (a['length'] / 2, a['depth'] / 2, (z0 + z1) / 2), (a['length'] + 0.5, a['depth'] + 0.5, z1 - z0))
+    M.ring(mk, c0, 0, rC + 0.3, z0, z1, seg=96)
+    mask = M.build('маска_этажа')
+    for m in mask:
+        m.hide_render = True
+    center = Vector((a['length'] / 2 - 4, a['depth'] / 2, top / 2))
+    return objs, mask, center, ch
+
+
+def environment(center):
+    """земля, газон, тротуары, дорога, соседние высотки, деревья и кусты"""
+    B = Builder()
+    grass = principled('газон', (0.10, 0.20, 0.05), rough=0.95)
+    walk = principled('тротуар', (0.42, 0.40, 0.38), rough=0.9)
+    road = principled('асфальт', (0.06, 0.06, 0.065), rough=0.9)
+    B.box(grass, (20, 20, -0.05), (500, 500, 0.1))
+    B.box(road, (20, -30, 0.01), (500, 14, 0.02))           # улица перед главным фасадом
+    B.box(road, (-40, 40, 0.01), (14, 500, 0.02))           # улица слева
+    B.box(walk, (20, -20, 0.03), (160, 5, 0.05))            # тротуар вдоль фасада
+    B.box(walk, (-30, 40, 0.03), (4, 160, 0.05))
+    for x in range(-30, 140, 12):                            # разметка
+        B.box(principled('разметка', (0.85, 0.85, 0.82)), (x, -30, 0.025), (5, 0.15, 0.01))
+    for i, (x, y, L, D, nf, rot, col) in enumerate(O['neighbors']):
+        h = nf * 2.9 + 0.6
+        mat = windows_texture('соседи_%d' % i, col)
+        B.box(mat, (x, y, h / 2), (L, D, h), math.radians(rot))
+        B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.2, D + 0.2, 1.0) if rot == 0 else (L + 0.2, D + 0.2, 1.0), math.radians(rot))
+    objs = B.build('окружение')
+    # деревья и кусты Poly Haven (CC0): берём из ассетов Ардена, если есть; иначе — скачиваем
+    try:
+        sys.path.insert(0, os.path.join(HERE, '..', '..', 'estate', 'blender'))
+        import arden_assets
+        protos = []
+        for slug in ('tree_small_02', 'shrub_02', 'shrub_04'):
+            path = arden_assets.fetch_model(A.assets, slug)
+            before = set(bpy.data.objects)
+            bpy.ops.import_scene.gltf(filepath=path)
+            new = [x for x in bpy.data.objects if x not in before]
+            meshes = [x for x in new if x.type == 'MESH']
+            bpy.context.view_layer.update()
+            for x in meshes:
+                x.data = x.data.copy(); x.data.transform(x.matrix_world); x.parent = None; x.matrix_basis = Matrix.Identity(4)
+            for x in new:
+                if x not in meshes: bpy.data.objects.remove(x)
+            for x in meshes:
+                x.hide_render = True; x.location = (0, 0, -500)
+            protos.append((slug, meshes))
+        spots = [(-44, -12), (-46, 10), (48, -14), (58, -12), (64, 6), (60, 30), (20, 44), (-42, 44), (-12, 50), (40, 46)]
+        for (x, y) in spots + [(R.uniform(-80, 140), R.uniform(-60, 120)) for _ in range(30)]:
+            if -40 < x < 55 and -24 < y < 40:
+                continue  # не на дом
+            slug, ms = protos[0] if R.random() < .6 else R.choice(protos[1:])
+            s = R.uniform(1.6, 2.4) if slug.startswith('tree') else R.uniform(1.0, 1.6)
+            for m in ms:
+                e = bpy.data.objects.new(slug, m.data); sc.collection.objects.link(e)
+                e.location = (x, y, 0); e.scale = (s, s, s); e.rotation_euler = (0, 0, R.uniform(0, 6.28))
+        for x in range(-6, 50, 3):  # живая изгородь вдоль кафе и фасада
+            m = protos[1][1][0]
+            e = bpy.data.objects.new('изгородь', m.data); sc.collection.objects.link(e)
+            e.location = (x, -16.5, 0); e.scale = (1.3, 1.3, 1.0)
+    except Exception as e:  # без интернета и ассетов — без деревьев, сцена всё равно рендерится
+        log('деревья не загрузились:', e)
+    return objs
+
+
+# ============================================================================ СВЕТ, КАМЕРА, РЕНДЕР
+def light():
+    world = bpy.data.worlds.new('Небо'); sc.world = world; world.use_nodes = True
+    wn, wl = world.node_tree.nodes, world.node_tree.links
+    bg = wn['Background']
+    sky = wn.new('ShaderNodeTexSky'); sky.sky_type = 'NISHITA'; sky.sun_disc = False
+    el, az = math.radians(28), math.radians(-150)       # закат, солнце слева-спереди: главный фасад в свету
+    sky.sun_elevation = el; sky.sun_rotation = az; sky.dust_density = 2.0
+    wl.new(sky.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 0.12
+    sd = bpy.data.lights.new('Солнце', 'SUN'); sd.energy = 4.2; sd.color = (1.0, 0.78, 0.58); sd.angle = math.radians(1.0)
+    sun = bpy.data.objects.new('Солнце', sd); sc.collection.objects.link(sun)
+    v = Vector((math.cos(el) * math.sin(az), math.cos(el) * math.cos(az), math.sin(el)))
+    sun.rotation_euler = v.to_track_quat('Z', 'Y').to_euler()
+    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Punchy'; sc.view_settings.exposure = -0.1
+    return world
+
+
+def camera(center):
+    cd = bpy.data.cameras.new('Камера'); cd.sensor_fit = 'VERTICAL'; cd.angle_y = math.radians(FOV); cd.clip_end = 3000
+    cam = bpy.data.objects.new('Камера', cd); sc.collection.objects.link(cam); sc.camera = cam
+    aim = bpy.data.objects.new('Цель', None); sc.collection.objects.link(aim)
+    t = cam.constraints.new('TRACK_TO'); t.target = aim; t.track_axis = 'TRACK_NEGATIVE_Z'; t.up_axis = 'UP_Y'
+    return cam, aim
+
+
+def orbit_pose(k):
+    ob = O['orbit']; c = Vector(ob['center'])
+    a = math.radians(ob['start'] + k * ORBIT_STEP)
+    return Vector((c.x + ob['radius'] * math.sin(a), c.y + ob['radius'] * math.cos(a), ob['height'])), c
+
+
+def approach_pose(f):
+    """подлёт: с высоты над городом — к кадру 0 облёта (последний кадр подлёта = кадр 0 облёта)"""
+    p1, t1 = orbit_pose(0)
+    d = (p1 - t1); d.z = 0; d.normalize()
+    p0 = t1 + d * 320 + Vector((0, 0, 210)); t0 = t1 + Vector((0, 0, -10))
+    s = f / (APPROACH_N - 1); e = s * s * (3 - 2 * s)
+    return p0.lerp(p1, e), t0.lerp(t1, e)
+
+
+def setup_engine(kind):
+    r = sc.render
+    r.resolution_x, r.resolution_y = W, H; r.resolution_percentage = A.percent or (50 if DRAFT else 100)
+    r.film_transparent = False
+    if kind == 'cycles':
+        r.engine = 'CYCLES'; cy = sc.cycles
+        if not A.cpu:
+            prefs = bpy.context.preferences.addons['cycles'].preferences
+            for dev in ('OPTIX', 'CUDA'):
+                try:
+                    prefs.compute_device_type = dev; prefs.get_devices()
+                    if any(d.type == dev for d in prefs.devices):
+                        for d in prefs.devices: d.use = d.type == dev
+                        cy.device = 'GPU'; log('видеокарта:', dev); break
+                except TypeError:
+                    continue
+        cy.samples = 32 if DRAFT else 128; cy.adaptive_threshold = 0.03 if DRAFT else 0.015
+        cy.use_denoising = True; cy.max_bounces = 4 if DRAFT else 6; cy.caustics_reflective = cy.caustics_refractive = False
+        r.use_persistent_data = True
+    elif kind == 'eevee':
+        r.engine = 'BLENDER_EEVEE_NEXT' if hasattr(bpy.types, 'SceneEEVEE') else 'BLENDER_EEVEE'
+        sc.eevee.taa_render_samples = 16 if DRAFT else 48
+    elif kind == 'mask':  # без света и отражений: Cycles, 1 выборка, только излучение — секунды на кадр
+        r.engine = 'CYCLES'; cy = sc.cycles; cy.samples = 1; cy.use_denoising = False; cy.max_bounces = 0
+        r.filter_size = 0.01
+        sc.view_settings.view_transform = 'Standard'; sc.view_settings.look = 'None'; sc.view_settings.exposure = 0
+
+
+def save_webp(tmp_png, folder, k):
+    """PNG рендера → WebP sm/md/hd (как в Ардене)"""
+    img = bpy.data.images.load(tmp_png)
+    for size, (w, q) in SIZES.items():
+        d = os.path.join(folder, size); os.makedirs(d, exist_ok=True)
+        dst = os.path.join(d, '%03d.webp' % k)
+        im = img.copy(); im.scale(w, round(w * img.size[1] / img.size[0]))
+        im.filepath_raw = dst; im.file_format = 'WEBP'
+        sc.render.image_settings.quality = q
+        im.save_render(dst, scene=sc) if hasattr(im, 'save_render') else im.save()
+        bpy.data.images.remove(im)
+    bpy.data.images.remove(img); os.remove(tmp_png)
+
+
+def shot(folder, k, pose):
+    """кадр k: готовый (есть hd) — пропускаем; иначе рендер → WebP трёх размеров. Возвращает секунды или None"""
+    if os.path.exists(os.path.join(folder, 'hd', '%03d.webp' % k)):
+        return None
+    cam.location, aim.location = pose
+    tmp = os.path.join(folder, '_tmp_%03d.png' % k); os.makedirs(folder, exist_ok=True)
+    sc.render.filepath = tmp; sc.render.image_settings.file_format = 'PNG'
+    t = time.time(); bpy.ops.render.render(write_still=True); dt = time.time() - t
+    save_webp(tmp, folder, k)
+    return dt
+
+
+def run(stage, folder, frames, pose_fn):
+    STATUS.update(stage=stage, total=len(frames), done=sum(os.path.exists(os.path.join(folder, 'hd', '%03d.webp' % k)) for k in frames))
+    for k in frames:
+        dt = shot(folder, k, pose_fn(k))
+        if dt is not None:
+            STATUS['done'] += 1; STATUS['times'].append(dt); log('%s: кадр %d (%d/%d), %.1f с' % (stage, k, STATUS['done'], STATUS['total'], dt))
+            write_status()
+
+
+# ============================================================================ МАСКА
+def mask_mode(on, objs, mask):
+    """маска этажа: этаж — белое излучение, всё остальное — чёрное (holdout не нужен), без неба и света"""
+    if on:
+        sc.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0
+        blk = principled('чёрный', (0, 0, 0), emit=((0, 0, 0), 0))
+        wht = bpy.data.materials.new('белый'); wht.use_nodes = True; nt = wht.node_tree; nt.nodes.clear()
+        em = nt.nodes.new('ShaderNodeEmission'); em.inputs[0].default_value = (1, 1, 1, 1); em.inputs[1].default_value = 1
+        out = nt.nodes.new('ShaderNodeOutputMaterial'); nt.links.new(em.outputs[0], out.inputs[0])
+        for o in sc.objects:
+            if o.type == 'MESH':
+                o.data.materials.clear(); o.data.materials.append(wht if o in mask else blk)
+            if o.type == 'LIGHT':
+                o.hide_render = True
+        for m in mask:
+            m.hide_render = False
+
+
+# ============================================================================ ЗАПУСК
+t0 = time.time()
+objs, mask, center, top = build_object_1()
+environment(center)
+light()
+cam, aim = camera(center)
+log('сцена собрана за %.0f с' % (time.time() - t0))
+
+orbit_dir, appr_dir, mask_dir = (os.path.join(OUT, x) for x in ('orbit', 'approach', 'mask'))
+if A.what == 'still':
+    setup_engine('cycles')
+    p, t = orbit_pose(A.frame)
+    if A.view == 'street':  # с тротуара напротив, спереди-слева, как панорама Яндекса (фото 4–5)
+        p, t = Vector((-22.0, -52.0, 1.7)), Vector((2.0, 0.0, 14.0))
+    cam.location, aim.location = p, t
+    sc.render.filepath = os.path.join(OUT, 'still_%s_%03d.png' % (A.view, A.frame)); sc.render.image_settings.file_format = 'PNG'
+    tt = time.time(); bpy.ops.render.render(write_still=True)
+    log('черновой кадр %d: %.0f с → %s' % (A.frame, time.time() - tt, sc.render.filepath))
+    raise SystemExit(0)
+if A.what == 'test':
+    res = []
+    setup_engine('cycles'); run('тест: облёт', os.path.join(OUT, '_test', 'orbit'), [0, 36], orbit_pose); res.append(('облёт', ORBIT_N))
+    setup_engine('cycles' if A.cpu else 'eevee'); run('тест: подлёт', os.path.join(OUT, '_test', 'approach'), [0, 60], approach_pose); res.append(('подлёт', APPROACH_N))
+    mask_mode(True, objs, mask); setup_engine('mask'); run('тест: маска', os.path.join(OUT, '_test', 'mask'), [0, 36], orbit_pose); res.append(('маска', ORBIT_N))
+    log('прогноз — см. status.txt'); raise SystemExit(0)
+if A.what in ('orbit', 'all'):
+    setup_engine('cycles'); run('облёт', orbit_dir, list(range(ORBIT_N)), orbit_pose)
+if A.what in ('approach', 'all'):
+    setup_engine('cycles' if A.cpu else 'eevee'); run('подлёт', appr_dir, list(range(APPROACH_N)), approach_pose)
+if A.what in ('mask', 'all'):
+    mask_mode(True, objs, mask); setup_engine('mask'); run('маска этажа', mask_dir, list(range(ORBIT_N)), orbit_pose)
+log('готово:', OUT)
