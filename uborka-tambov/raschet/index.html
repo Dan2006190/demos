@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Расчёт заказа — Чистый двор</title>
+<style>
+:root{--g:#2f6b3a;--g2:#e7f0e8;--a:#e8a33d;--r:#c0392b;--bg:#f3f4f1;--card:#fff;--t:#17201a;--m:#5d6a61;--line:#dfe4dc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t);font:16px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.wrap{max-width:520px;margin:0 auto;padding:16px 16px 60px}
+h1{font-size:22px;margin:6px 0 2px}
+.sub{color:var(--m);font-size:14px;margin-bottom:14px}
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 1px 0 var(--line)}
+.lbl{font-weight:700;margin:0 0 8px;font-size:15px}
+.hint{color:var(--m);font-size:13px;margin-top:6px}
+.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.seg button{border:2px solid var(--line);background:#fff;border-radius:12px;padding:12px 6px;font:600 15px system-ui;color:var(--t)}
+.seg button.on{border-color:var(--g);background:var(--g2);color:var(--g)}
+.row{display:flex;gap:10px;align-items:center}
+.row>*{flex:1}
+input[type=number]{width:100%;font:600 22px system-ui;padding:12px;border:2px solid var(--line);border-radius:12px;background:#fff;color:var(--t)}
+input[type=number]:focus{outline:none;border-color:var(--g)}
+.x{flex:0 0 auto;font-size:22px;color:var(--m)}
+.res{font-size:15px;color:var(--g);font-weight:700;margin-top:8px}
+.steps{display:flex;align-items:center;gap:10px}
+.steps button{width:52px;height:52px;border-radius:12px;border:2px solid var(--line);background:#fff;font:700 24px system-ui;color:var(--t)}
+.steps input{text-align:center}
+.big{background:var(--g);color:#fff}
+.big .k{opacity:.8;font-size:14px}
+.big .v{font-size:40px;font-weight:800;letter-spacing:-.01em}
+.big .d{font-size:14px;opacity:.85;margin-top:2px}
+.line{display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px dashed var(--line);gap:12px}
+.line:last-child{border-bottom:0}
+.line b{white-space:nowrap}
+.me{background:#fff7e8;border:2px solid var(--a)}
+.me .v{font-size:30px;font-weight:800}
+.warn{background:#fdecea;color:var(--r);border-radius:12px;padding:10px 12px;font-size:14px;font-weight:600;margin-bottom:12px;display:none}
+.btn{width:100%;border:0;border-radius:14px;padding:15px;font:700 16px system-ui;background:var(--t);color:#fff}
+.btn.ghost{background:#fff;color:var(--t);border:2px solid var(--line);margin-top:8px}
+details summary{font-weight:700;cursor:pointer;list-style:none}
+details summary::-webkit-details-marker{display:none}
+.set{display:grid;grid-template-columns:1fr 96px;gap:8px 10px;align-items:center;margin-top:12px;font-size:14px}
+.set input{font-size:16px;padding:8px}
+.set h4{grid-column:1/-1;margin:10px 0 0;font-size:14px;color:var(--g)}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--t);color:#fff;padding:10px 16px;border-radius:12px;font-size:14px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Расчёт заказа</h1>
+  <div class="sub">Вводи цифры — всё посчитается само.</div>
+
+  <div class="card">
+    <div class="lbl">1. Что делаем</div>
+    <div class="seg" id="work">
+      <button data-w="snow" class="on">❄️ Снег</button>
+      <button data-w="leaf">🍂 Листва</button>
+      <button data-w="mow">🌱 Покос</button>
+      <button data-w="weed">🌾 Бурьян</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">2. Сколько убирать</div>
+    <div class="seg" id="mode" style="margin-bottom:12px">
+      <button data-m="steps" class="on">Мерю шагами</button>
+      <button data-m="sot">Знаю сотки</button>
+    </div>
+    <div id="bySteps">
+      <div class="row">
+        <input type="number" id="len" inputmode="decimal" placeholder="вдоль" min="0">
+        <span class="x">×</span>
+        <input type="number" id="wid" inputmode="decimal" placeholder="поперёк" min="0">
+      </div>
+      <div class="hint">Шаги <b>вдоль</b> и шаги <b>поперёк</b> того, что чистим. Не обходить вокруг! Широкий шаг ≈ 1 метр.</div>
+    </div>
+    <div id="bySot" hidden>
+      <input type="number" id="sot" inputmode="decimal" placeholder="соток" min="0">
+      <div class="hint">Сотка = 10 × 10 метров. Только то, что чистим, а не весь участок.</div>
+    </div>
+    <div class="res" id="sotRes"></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">3. Мусор вывозим?</div>
+    <div class="steps"><button data-t="m3" data-d="-1">−</button><input type="number" id="m3" value="0" min="0" inputmode="decimal"><button data-t="m3" data-d="1">+</button></div>
+    <div class="hint">Кубометры. 1 куб ≈ 10 больших мешков. Нет мусора — оставь 0.</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">4. Сколько человек едет</div>
+    <div class="steps"><button data-t="ppl" data-d="-1">−</button><input type="number" id="ppl" value="2" min="1" max="4" inputmode="numeric"><button data-t="ppl" data-d="1">+</button></div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">5. Откуда заказ</div>
+    <div class="seg" id="src">
+      <button data-s="1" class="on">Сайт / Авито / Карты</button>
+      <button data-s="0">Сарафан, свои</button>
+    </div>
+    <div class="hint">Если в сообщении клиента есть «Откуда: …» — это первое.</div>
+  </div>
+
+  <div class="warn" id="warn"></div>
+
+  <div class="card big">
+    <div class="k">Говоришь клиенту</div>
+    <div class="v" id="total">0 ₽</div>
+    <div class="d" id="totalD"></div>
+  </div>
+
+  <div class="card me">
+    <div class="k">Тебе чистыми</div>
+    <div class="v" id="profit">0 ₽</div>
+  </div>
+
+  <div class="card">
+    <div class="lbl">Кому сколько</div>
+    <div id="lines"></div>
+  </div>
+
+  <button class="btn" id="copy">Скопировать сообщение клиенту</button>
+  <button class="btn ghost" id="reset">Новый заказ</button>
+
+  <div class="card" style="margin-top:12px">
+    <details>
+      <summary>⚙️ Цены и ставки (менять редко)</summary>
+      <div class="set" id="set"></div>
+      <button class="btn ghost" id="def">Вернуть как было</button>
+    </details>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const DEF={
+  price_snow:470,price_leaf:310,price_mow:250,price_weed:440,price_m3:1060,price_trip:1500,
+  pay_snow:250,pay_leaf:100,pay_mow:80,pay_weed:160,pay_m3:80,pay_out:100,
+  mat_snow:20,mat_leaf:75,mat_mow:60,mat_weed:90,
+  trailer_m3:2.5,trailer_run:450,gaz_hour:1500,gaz_hours:2,gaz_m3:9,dump_m3:350,
+  overhead:12,dan:10
+};
+const LABELS=[
+  ['Цены клиенту',null],['price_snow','Снег, ₽ за сотку'],['price_leaf','Листва, ₽ за сотку'],['price_mow','Покос, ₽ за сотку'],['price_weed','Бурьян, ₽ за сотку'],['price_m3','Вывоз, ₽ за куб'],['price_trip','Выезд, ₽ на заказ'],
+  ['Работникам',null],['pay_snow','Снег, ₽ за сотку'],['pay_leaf','Листва, ₽ за сотку'],['pay_mow','Покос, ₽ за сотку'],['pay_weed','Бурьян, ₽ за сотку'],['pay_m3','Погрузка, ₽ за куб'],['pay_out','Выход, ₽ каждому'],
+  ['Расходники',null],['mat_snow','Снег, ₽ на сотку'],['mat_leaf','Листва, ₽ на сотку'],['mat_mow','Покос, ₽ на сотку'],['mat_weed','Бурьян, ₽ на сотку'],
+  ['Вывоз',null],['trailer_m3','Прицеп, кубов'],['trailer_run','Прицеп, ₽ за рейс'],['gaz_hour','Газель, ₽ в час'],['gaz_hours','Газель, часов на рейс'],['gaz_m3','Газель, кубов'],['dump_m3','Полигон, ₽ за куб'],
+  ['Проценты',null],['overhead','Налог, связь, реклама, %'],['dan','Даниилу, %']
+];
+const NAMES={snow:'Уборка снега',leaf:'Уборка листвы',mow:'Покос травы',weed:'Покос бурьяна'};
+let C={...DEF};
+try{const s=JSON.parse(localStorage.getItem('cd_rates')||'null'); if(s) C={...DEF,...s};}catch(e){}
+const st={w:'snow',m:'steps',src:1};
+const $=id=>document.getElementById(id);
+const rub=n=>Math.round(n).toLocaleString('ru-RU')+' ₽';
+const num=id=>{const v=parseFloat(String($(id).value).replace(',','.'));return isFinite(v)&&v>0?v:0};
+const sotStr=s=>(Math.round(s*10)/10).toLocaleString('ru-RU');
+
+function seg(id,key,attr){
+  $(id).addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;
+    [...$(id).children].forEach(x=>x.classList.toggle('on',x===b));
+    st[key]=attr==='s'?+b.dataset.s:b.dataset[attr]; if(key==='m'){$('bySteps').hidden=st.m!=='steps';$('bySot').hidden=st.m==='steps'} calc();});
+}
+seg('work','w','w');seg('mode','m','m');seg('src','src','s');
+document.querySelectorAll('.steps button').forEach(b=>b.addEventListener('click',()=>{
+  const i=$(b.dataset.t);let v=(parseFloat(i.value)||0)+ +b.dataset.d;
+  if(b.dataset.t==='ppl')v=Math.min(4,Math.max(1,v));else v=Math.max(0,v);i.value=v;calc();}));
+document.querySelectorAll('input').forEach(i=>i.addEventListener('input',calc));
+
+function calc(){
+  const w=st.w;
+  let sot=0;
+  if(st.m==='steps'){const L=num('len'),W=num('wid');sot=L*W/100;
+    $('sotRes').textContent=L&&W?`${L} × ${W} шагов = ${Math.round(L*W)} м² = ${sotStr(sot)} сот.`:'';}
+  else{sot=num('sot');$('sotRes').textContent='';}
+  const m3=num('m3'),ppl=Math.max(1,Math.round(num('ppl'))||1);
+  const work=sot*C['price_'+w], vyv=m3*C.price_m3, trip=(sot||m3)?C.price_trip:0;
+  const total=work+vyv+trip;
+  const payWork=sot*C['pay_'+w]+m3*C.pay_m3, payOut=ppl*C.pay_out, pay=payWork+payOut;
+  const mat=sot*C['mat_'+w];
+  const tr=m3?Math.ceil(m3/C.trailer_m3)*C.trailer_run:0, gz=m3?Math.ceil(m3/C.gaz_m3)*C.gaz_hour*C.gaz_hours:0;
+  const useTr=tr<=gz, trans=m3?Math.min(tr,gz):0, dump=m3*C.dump_m3;
+  const over=total*C.overhead/100, dan=st.src?total*C.dan/100:0;
+  const profit=total-pay-mat-trans-dump-over-dan;
+
+  $('total').textContent=rub(total);
+  const parts=[];if(sot)parts.push(`${NAMES[w].toLowerCase()} ${sotStr(sot)} сот. — ${rub(work)}`);if(m3)parts.push(`вывоз ${m3} куб. — ${rub(vyv)}`);if(trip)parts.push(`выезд — ${rub(trip)}`);
+  $('totalD').textContent=parts.join(' · ');
+  $('profit').textContent=rub(profit);
+  const L=[
+    ['Каждому работнику',rub(pay/ppl)+(ppl>1?` × ${ppl}`:'')],
+    ['Расходники (бензин, мешки, песок)',rub(mat)],
+  ];
+  if(m3)L.push([`Вывоз: ${useTr?'прицепом, рейсов '+Math.ceil(m3/C.trailer_m3):'Газелью, рейсов '+Math.ceil(m3/C.gaz_m3)}`,rub(trans)],['Полигон',rub(dump)]);
+  L.push(['Налог, связь, реклама',rub(over)]);
+  if(st.src)L.push(['Даниилу',rub(dan)]);
+  L.push(['Тебе','<span style="color:var(--g)">'+rub(profit)+'</span>']);
+  $('lines').innerHTML=L.map(([k,v])=>`<div class="line"><span>${k}</span><b>${v}</b></div>`).join('');
+
+  const warn=[];
+  if(sot>30)warn.push(`${sotStr(sot)} соток — это ${sot>=100?'целый гектар, футбольное поле':'очень большой двор'}. Точно шаги вдоль × поперёк, а не вокруг?`);
+  if(total&&profit<0)warn.push('Заказ в минус — подними цену или возьми меньше людей.');
+  if(ppl>2&&sot&&sot<3)warn.push('На такую площадь хватит двоих.');
+  $('warn').style.display=warn.length?'block':'none';$('warn').innerHTML=warn.join('<br>');
+  window._msg=total?`Здравствуйте! Посчитали:\n${parts.map(p=>'— '+p).join('\n')}\nИтого: ${rub(total)}.\nКогда вам удобно, чтобы мы приехали?`:'';
+}
+
+function buildSet(){
+  $('set').innerHTML=LABELS.map(([k,l])=>l===null?`<h4>${k}</h4>`:`<label for="s_${k}">${l}</label><input type="number" id="s_${k}" value="${C[k]}" step="any">`).join('');
+  LABELS.forEach(([k,l])=>{if(l===null)return;$('s_'+k).addEventListener('input',e=>{const v=parseFloat(e.target.value);if(isFinite(v)){C[k]=v;try{localStorage.setItem('cd_rates',JSON.stringify(C))}catch(_){}}calc();});});
+}
+buildSet();
+$('def').onclick=()=>{C={...DEF};try{localStorage.removeItem('cd_rates')}catch(_){}buildSet();calc();toast('Ставки вернул');};
+$('reset').onclick=()=>{['len','wid','sot'].forEach(i=>$(i).value='');$('m3').value=0;$('ppl').value=2;calc();scrollTo({top:0,behavior:'smooth'});};
+function toast(t){$('toast').textContent=t;$('toast').classList.add('on');setTimeout(()=>$('toast').classList.remove('on'),1600);}
+$('copy').onclick=async()=>{if(!window._msg)return toast('Сначала введи площадь');
+  try{await navigator.clipboard.writeText(window._msg);toast('Скопировано — вставь клиенту');}
+  catch(e){const t=document.createElement('textarea');t.value=window._msg;document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('Скопировано');}};
+calc();
+</script>
+</body>
+</html>
