@@ -41,7 +41,7 @@ OBJECTS = {
         # крыло А — главный фасад на улицу (оранжевый), от цилиндра вправо
         wing_a=dict(length=38.0, depth=14.0, cols=8),
         # крыло Б — уходит назад от башни (L-образный план по фото 4–5); 0 — без крыла
-        wing_b=dict(length=26.0, depth=14.0, cols=5),
+        wing_b=dict(length=10.0, depth=14.0, cols=2),           # по спутнику: короткая ступенька слева от башни
         cyl=dict(d=11.0, extra_floors=1, glaze_posts=40),         # цилиндр на углу: диаметр, на этаж выше корпуса
         tower=dict(w=6.0, d=4.0, above_roof=6.5),                 # белая башня лестницы и лифта (выше цилиндра)
         cafe=dict(h=4.5, ring=6.0, arc=(150, 345), along_a=11.0), # павильон кафе: высота, ширина по дуге, градусы дуги (−90 — к улице), хвост вдоль фасада
@@ -65,7 +65,10 @@ OBJECTS = {
             (92, 82, 30, 14, 16, 0, (0.78, 0.70, 0.56)),
         ],
         # камера облёта: центр, радиус, высота, начальный азимут (0 — с улицы, спереди-слева, как фото 3)
-        orbit=dict(center=(12.0, 6.0, 13.0), radius=80.0, height=34.0, start=212.0),
+        orbit=dict(center=(12.0, 6.0, 15.0), radius=108.0, height=22.0, start=212.0),
+        # синий час: свет — процедурное небо (солнце на 2° под горизонтом за домом), в кадре — цветные облака HDRI
+        sky=dict(hdri='nishita', rotate=47.0, strength=1.0, exposure=1.2,
+                 backdrop='industrial_sunset_puresky', backdrop_rotate=101.0, backdrop_strength=1.0),
     ),
 }
 
@@ -77,6 +80,7 @@ ap.add_argument('--object', type=int, default=1)
 ap.add_argument('--quality', default='final', choices=['draft', 'final'])
 ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки)')
 ap.add_argument('--frame', type=int, default=0, help='для --what still')
+ap.add_argument('--sky', default='', help='проба неба: slug HDRI Poly Haven или nishita; :поворот, :сила, :экспозиция')
 ap.add_argument('--view', default='orbit', choices=['orbit', 'street'], help='для --what still: street — с улицы, как фото фасада')
 ap.add_argument('--out', default=os.path.join(HERE, 'renders'))
 ap.add_argument('--assets', default=os.path.join(HERE, 'assets'), help='папка для деревьев Poly Haven')
@@ -85,7 +89,7 @@ A = ap.parse_args(argv)
 O = OBJECTS[A.object]
 C = O['colors']
 DRAFT = A.quality == 'draft'
-W, H, FOV = 1920, 1080, 40.0
+W, H, FOV = 1920, 1080, 30.0   # длиннее фокус, чем у Ардена: дом крупно, без «дрона»
 ORBIT_N, ORBIT_STEP = 144, 2.5
 APPROACH_FPS, APPROACH_N = 24, 84
 SIZES = {'sm': (640, 60), 'md': (1280, 74), 'hd': (1920, 72)}  # ширина, качество WebP (как в Ардене)
@@ -111,6 +115,41 @@ def write_status(extra=''):
         f.write('\n'.join(lines) + '\n')
 
 
+# ============================================================================ АССЕТЫ POLY HAVEN (CC0)
+import urllib.request
+UA = {'User-Agent': 'Mozilla/5.0 (render-script)'}  # без него Poly Haven отвечает 403
+
+
+def ph_get(url, dst):
+    if os.path.exists(dst) and os.path.getsize(dst) > 1000:
+        return dst
+    os.makedirs(os.path.dirname(dst), exist_ok=True)
+    for k in range(5):
+        try:
+            with urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=120) as r, open(dst + '.part', 'wb') as f:
+                while True:
+                    b = r.read(1 << 20)
+                    if not b: break
+                    f.write(b)
+            os.replace(dst + '.part', dst); return dst
+        except Exception as e:
+            log('повтор загрузки (%s): %s' % (e, url)); time.sleep(3 * (k + 1))
+    raise RuntimeError('не скачалось: ' + url)
+
+
+def ph_texture(slug, res='2k'):
+    d = json.load(urllib.request.urlopen(urllib.request.Request('https://api.polyhaven.com/files/' + slug, headers=UA), timeout=60))
+    out = {}
+    for kind, ext in (('Diffuse', 'jpg'), ('nor_gl', 'jpg'), ('Rough', 'jpg')):
+        out[kind] = ph_get(d[kind][res][ext]['url'], os.path.join(A.assets, 'textures', slug, '%s_%s_%s.%s' % (slug, kind, res, ext)))
+    return out
+
+
+def ph_hdri(slug, res):
+    d = json.load(urllib.request.urlopen(urllib.request.Request('https://api.polyhaven.com/files/' + slug, headers=UA), timeout=60))
+    return ph_get(d['hdri'][res]['hdr']['url'], os.path.join(A.assets, 'hdri', '%s_%s.hdr' % (slug, res)))
+
+
 # ============================================================================ МАТЕРИАЛЫ
 bpy.ops.wm.read_factory_settings(use_empty=True)
 sc = bpy.context.scene
@@ -131,33 +170,68 @@ def principled(name, color, rough=0.8, metal=0.0, spec=0.3, emit=None):
     return m
 
 
-def brick(name, color, mortar=None, row=0.075, width=0.25, var=0.10):
-    """кирпич: процедурная кладка в метрах; координата вдоль стены — x или y по нормали (кладка не «плывёт» на торцах)"""
+def brick(name, color, scale=1.6):
+    """кирпич: фото-фактура white_bricks (Poly Haven, CC0) — яркость и рельеф из фото, цвет — фасада;
+    проекция «коробкой» по координатам объекта (стены любой ориентации без швов)"""
     if name in MATS:
         return MATS[name]
-    mortar = mortar or tuple(min(1, x * 0.8 + 0.08) for x in color)
     m = principled(name, color, rough=0.85)
+    try:
+        T = BRICK_TEX
+    except NameError:
+        return m
     nt, L = m.node_tree, m.node_tree.links
-    geo = nt.nodes.new('ShaderNodeNewGeometry')
-    sp = nt.nodes.new('ShaderNodeSeparateXYZ'); sn = nt.nodes.new('ShaderNodeSeparateXYZ')
-    L.new(geo.outputs['Position'], sp.inputs[0]); L.new(geo.outputs['Normal'], sn.inputs[0])
-    ax = nt.nodes.new('ShaderNodeMath'); ax.operation = 'ABSOLUTE'; L.new(sn.outputs['X'], ax.inputs[0])
-    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'FLOAT'
-    L.new(ax.outputs[0], mix.inputs['Factor']); L.new(sp.outputs['X'], mix.inputs['A']); L.new(sp.outputs['Y'], mix.inputs['B'])
-    uv = nt.nodes.new('ShaderNodeCombineXYZ'); L.new(mix.outputs['Result'], uv.inputs['X']); L.new(sp.outputs['Z'], uv.inputs['Y'])
-    bt = nt.nodes.new('ShaderNodeTexBrick')
-    bt.inputs['Scale'].default_value = 1.0; bt.inputs['Mortar Size'].default_value = 0.006
-    bt.inputs['Brick Width'].default_value = width; bt.inputs['Row Height'].default_value = row
-    c1 = [min(1, x * (1 + var)) for x in color]; c2 = [x * (1 - var) for x in color]
-    bt.inputs['Color1'].default_value = (*c1, 1); bt.inputs['Color2'].default_value = (*c2, 1)
-    bt.inputs['Mortar'].default_value = (*mortar, 1)
-    L.new(uv.outputs[0], bt.inputs['Vector'])
-    b = nt.nodes['Principled BSDF']; L.new(bt.outputs['Color'], b.inputs['Base Color'])
+    tc = nt.nodes.new('ShaderNodeTexCoord'); mp = nt.nodes.new('ShaderNodeMapping')
+    mp.inputs['Scale'].default_value = (1 / scale,) * 3; L.new(tc.outputs['Object'], mp.inputs['Vector'])
+
+    def img(path, color_space):
+        t = nt.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(path, check_existing=True)
+        t.image.colorspace_settings.name = color_space; t.projection = 'BOX'; t.projection_blend = 0.15
+        L.new(mp.outputs['Vector'], t.inputs['Vector']); return t
+    b = nt.nodes['Principled BSDF']
+    bw = nt.nodes.new('ShaderNodeRGBToBW'); L.new(img(T['Diffuse'], 'sRGB').outputs['Color'], bw.inputs['Color'])
+    soft = nt.nodes.new('ShaderNodeMix'); soft.data_type = 'FLOAT'; soft.inputs['Factor'].default_value = 0.72
+    L.new(bw.outputs['Val'], soft.inputs['A']); soft.inputs['B'].default_value = BRICK_MEAN       # разброс фактуры ×0,28 — без «песка» издали
+    k = nt.nodes.new('ShaderNodeMath'); k.operation = 'MULTIPLY'; k.inputs[1].default_value = 1.0 / BRICK_MEAN; L.new(soft.outputs['Result'], k.inputs[0])
+    sc_ = nt.nodes.new('ShaderNodeVectorMath'); sc_.operation = 'SCALE'; sc_.inputs[0].default_value = color
+    L.new(k.outputs[0], sc_.inputs['Scale']); L.new(sc_.outputs['Vector'], b.inputs['Base Color'])
+    L.new(img(T['Rough'], 'Non-Color').outputs['Color'], b.inputs['Roughness'])
+    nm = nt.nodes.new('ShaderNodeNormalMap'); nm.inputs['Strength'].default_value = 0.8
+    L.new(img(T['nor_gl'], 'Non-Color').outputs['Color'], nm.inputs['Color']); L.new(nm.outputs['Normal'], b.inputs['Normal'])
     return m
 
 
-def glass():
-    return principled('стекло', (0.05, 0.07, 0.09), rough=0.04, spec=0.9)
+def glass(name='стекло', bright=1.0):
+    """окно: отражение неба + свет комнаты за стеклом. lit (атрибут грани) — 0 тёмная комната, 0,3…1 — светится;
+    оттенок от тёплого (лампы) до нейтрального (шторы) — по той же случайной величине"""
+    if name in MATS:
+        return MATS[name]
+    m = principled(name, (0.015, 0.018, 0.022), rough=0.03, spec=1.0)
+    nt, L = m.node_tree, m.node_tree.links; b = nt.nodes['Principled BSDF']
+    at = nt.nodes.new('ShaderNodeAttribute'); at.attribute_type = 'GEOMETRY'; at.attribute_name = 'lit'
+    tone = nt.nodes.new('ShaderNodeMath'); tone.operation = 'FRACT'
+    t7 = nt.nodes.new('ShaderNodeMath'); t7.operation = 'MULTIPLY'; t7.inputs[1].default_value = 7.31
+    L.new(at.outputs['Fac'], t7.inputs[0]); L.new(t7.outputs[0], tone.inputs[0])
+    ramp = nt.nodes.new('ShaderNodeValToRGB'); L.new(tone.outputs[0], ramp.inputs['Fac'])
+    ramp.color_ramp.elements[0].color = (1.0, 0.34, 0.09, 1); ramp.color_ramp.elements[1].color = (1.0, 0.55, 0.24, 1)
+    L.new(ramp.outputs['Color'], b.inputs['Emission Color'])
+    pw = nt.nodes.new('ShaderNodeMath'); pw.operation = 'POWER'; pw.inputs[1].default_value = 1.6; L.new(at.outputs['Fac'], pw.inputs[0])
+    # внутри окна: ярче к потолку (светильник), мягче к подоконнику — по высоте внутри этажа (3 м)
+    geo = nt.nodes.new('ShaderNodeNewGeometry'); sz = nt.nodes.new('ShaderNodeSeparateXYZ'); L.new(geo.outputs['Position'], sz.inputs[0])
+    zf = nt.nodes.new('ShaderNodeMath'); zf.operation = 'WRAP'; zf.inputs[1].default_value = 0.0; zf.inputs[2].default_value = 3.0
+    zs = nt.nodes.new('ShaderNodeMath'); zs.operation = 'SUBTRACT'; zs.inputs[1].default_value = 0.6
+    L.new(sz.outputs['Z'], zs.inputs[0]); L.new(zs.outputs[0], zf.inputs[0])
+    gr = nt.nodes.new('ShaderNodeMapRange'); L.new(zf.outputs[0], gr.inputs['Value'])
+    gr.inputs['From Min'].default_value = 0.9; gr.inputs['From Max'].default_value = 2.8; gr.inputs['To Min'].default_value = 0.35; gr.inputs['To Max'].default_value = 1.3
+    st = nt.nodes.new('ShaderNodeMath'); st.operation = 'MULTIPLY'; st.inputs[1].default_value = 2.6 * bright
+    L.new(pw.outputs[0], st.inputs[0])
+    st2 = nt.nodes.new('ShaderNodeMath'); st2.operation = 'MULTIPLY'; L.new(st.outputs[0], st2.inputs[0]); L.new(gr.outputs['Result'], st2.inputs[1])
+    L.new(st2.outputs[0], b.inputs['Emission Strength'])
+    return m
+
+
+def lit_value(p_dark=0.45):
+    return 0.0 if R.random() < p_dark else R.uniform(0.35, 1.0)
 
 
 def windows_texture(name, wall, win=(0.05, 0.06, 0.08), cell=(3.2, 2.9), size=(1.5, 1.5)):
@@ -182,6 +256,16 @@ def windows_texture(name, wall, win=(0.05, 0.06, 0.08), cell=(3.2, 2.9), size=(1
     # цоколь без окон и верх-парапет: окна только выше 3 м
     up = nt.nodes.new('ShaderNodeMath'); up.operation = 'GREATER_THAN'; L.new(sp.outputs['Z'], up.inputs[0]); up.inputs[1].default_value = 3.0
     m2 = nt.nodes.new('ShaderNodeMath'); m2.operation = 'MULTIPLY'; L.new(mul.outputs[0], m2.inputs[0]); L.new(up.outputs[0], m2.inputs[1])
+    # свет в окнах: шум по номеру ячейки окна (одно окно — одно значение), горит ~35 %
+    def cellidx(src, c):
+        d = nt.nodes.new('ShaderNodeMath'); d.operation = 'DIVIDE'; L.new(src, d.inputs[0]); d.inputs[1].default_value = c
+        f = nt.nodes.new('ShaderNodeMath'); f.operation = 'FLOOR'; L.new(d.outputs[0], f.inputs[0]); return f.outputs[0]
+    ci = nt.nodes.new('ShaderNodeCombineXYZ'); L.new(cellidx(mix.outputs['Result'], cell[0]), ci.inputs['X']); L.new(cellidx(sp.outputs['Z'], cell[1]), ci.inputs['Y'])
+    wn = nt.nodes.new('ShaderNodeTexWhiteNoise'); wn.noise_dimensions = '3D'; L.new(ci.outputs[0], wn.inputs['Vector'])
+    on = nt.nodes.new('ShaderNodeMath'); on.operation = 'GREATER_THAN'; L.new(wn.outputs['Value'], on.inputs[0]); on.inputs[1].default_value = 0.72
+    em = nt.nodes.new('ShaderNodeMath'); em.operation = 'MULTIPLY'; L.new(on.outputs[0], em.inputs[0]); L.new(m2.outputs[0], em.inputs[1])
+    ems = nt.nodes.new('ShaderNodeMath'); ems.operation = 'MULTIPLY'; ems.inputs[1].default_value = 1.0; L.new(em.outputs[0], ems.inputs[0])
+    bb = nt.nodes['Principled BSDF']; bb.inputs['Emission Color'].default_value = (1.0, 0.66, 0.38, 1); L.new(ems.outputs[0], bb.inputs['Emission Strength'])
     cm = nt.nodes.new('ShaderNodeMix'); cm.data_type = 'RGBA'; L.new(m2.outputs[0], cm.inputs['Factor'])
     cm.inputs['A'].default_value = (*wall, 1); cm.inputs['B'].default_value = (*win, 1)
     b = nt.nodes['Principled BSDF']; L.new(cm.outputs['Result'], b.inputs['Base Color'])
@@ -199,17 +283,21 @@ class Builder:
 
     def bm(self, mat):
         if mat not in self.bms:
-            self.bms[mat] = bmesh.new()
+            self.bms[mat] = bmesh.new(); self.bms[mat].faces.layers.float.new('lit')
         return self.bms[mat]
 
-    def box(self, mat, c, s, rz=0.0):
-        """коробка: центр c, размер s (x, y, z), поворот вокруг Z (рад)"""
+    def box(self, mat, c, s, rz=0.0, lit=0.0):
+        """коробка: центр c, размер s (x, y, z), поворот вокруг Z (рад); lit — свет комнаты за окном"""
         M = Matrix.Translation(Vector(c)) @ Matrix.Rotation(rz, 4, 'Z') @ Matrix.Diagonal((*s, 1))
-        bmesh.ops.create_cube(self.bm(mat), size=1.0, matrix=M)
+        b = self.bm(mat); res = bmesh.ops.create_cube(b, size=1.0, matrix=M)
+        if lit:
+            lay = b.faces.layers.float['lit']
+            for f in {f for v in res['verts'] for f in v.link_faces}: f[lay] = lit
 
-    def ring(self, mat, c, r_in, r_out, z0, z1, a0=0.0, a1=360.0, seg=72):
+    def ring(self, mat, c, r_in, r_out, z0, z1, a0=0.0, a1=360.0, seg=72, lit=0.0):
         """кольцо (сектор) от r_in до r_out, высота z0..z1; углы в градусах"""
         b = self.bm(mat); n = max(3, int(seg * (a1 - a0) / 360)); full = abs(a1 - a0) >= 359.9
+        nf0 = len(b.faces)
         rows = []
         for i in range(n + (0 if full else 1)):
             a = math.radians(a0 + (a1 - a0) * i / n)
@@ -222,6 +310,9 @@ class Builder:
                 b.faces.new((p[j], q[j], q[(j + 1) % 4], p[(j + 1) % 4]))
         if not full:
             b.faces.new(rows[0][::-1]); b.faces.new(rows[-1])
+        if lit:
+            lay = b.faces.layers.float['lit']; b.faces.ensure_lookup_table()
+            for f in list(b.faces)[nf0:]: f[lay] = lit
 
     def build(self, name, smooth=False):
         objs = []
@@ -253,8 +344,10 @@ def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
         for c in range(cols):
             u = (c + 0.5) * step
             wz = z + fh * 0.55
+            B.box(principled('откос', (0.10, 0.09, 0.085), rough=0.9), at(u, 0.015, wz), (1.86, 0.03, 1.86), rz)  # тень откоса
             B.box(fr, at(u, 0.05, wz), (1.62, 0.1, 1.62), rz)          # рама
-            B.box(gl, at(u, 0.09, wz), (1.42, 0.04, 1.42), rz)         # стекло чуть впереди рамы
+            B.box(principled('подоконник', (0.85, 0.85, 0.83), rough=0.6), at(u, 0.14, wz - 0.86), (1.9, 0.28, 0.07), rz)  # отлив
+            B.box(gl, at(u, 0.09, wz), (1.42, 0.04, 1.42), rz, lit=lit_value())  # стекло; за ним комната
             B.box(fr, at(u, 0.12, wz), (0.07, 0.03, 1.42), rz)         # импост
             if R.random() < 0.18:                                       # кондиционер
                 B.box(principled('кондиционер', (0.88, 0.88, 0.86), rough=0.5), at(u + 1.15, 0.3, z + fh * 0.32), (0.8, 0.3, 0.55), rz)
@@ -295,7 +388,7 @@ def build_object_1():
     tx, ty = -rC - 0.5 - tw['w'] / 2, tw['d'] / 2 + 0.6
     B.box(principled('башня', C['tower'], rough=0.85), (tx, ty, th / 2), (tw['w'], tw['d'], th))
     for f in range(nf + 1):
-        B.box(glass(), (tx, ty - tw['d'] / 2 - 0.03, pl + f * fh + fh * 0.6), (0.9, 0.06, 1.1))
+        B.box(glass(), (tx, ty - tw['d'] / 2 - 0.03, pl + f * fh + fh * 0.6), (0.9, 0.06, 1.1), lit=0.0 if R.random() < .3 else 0.55)
     for k in range(3):  # вентрешётки наверху
         B.box(principled('решётка', (0.25, 0.25, 0.25)), (tx - 1.5 + k * 1.5, ty - tw['d'] / 2 - 0.03, th - 1.0), (0.7, 0.06, 0.6))
     # --- цилиндр на углу: ленты остекления по кругу, под ними коричневый пояс, верх светло-серый
@@ -307,7 +400,8 @@ def build_object_1():
         z = pl + f * fh
         last = f >= nf
         B.ring(principled('цилиндр_верх', C['cyl_top']) if last else cb, c0, 0, rC, z, z + 1.0, seg=96)
-        B.ring(glass(), c0, 0, rC - 0.12, z + 1.0, z + fh - 0.15, seg=96)
+        for q in range(6):  # шесть комнат по кругу: часть горит
+            B.ring(glass('стекло_цилиндр', 0.55), c0, 0, rC - 0.12, z + 1.0, z + fh - 0.15, q * 60, q * 60 + 60, seg=96, lit=lit_value(0.4))
         B.ring(principled('рама', C['frame']), c0, 0, rC + 0.02, z + fh - 0.15, z + fh, seg=96)   # белый ригель над лентой
         n = cy['glaze_posts']
         for i in range(n):  # частые импосты
@@ -321,7 +415,7 @@ def build_object_1():
     B.ring(cm, c0, R0, R1, 0, cafe['h'] - 0.6, a0, a1, seg=96)
     B.ring(cm, c0, R0, R1 + 0.2, cafe['h'] - 0.6, cafe['h'], a0, a1, seg=96)               # фриз под вывеску
     B.ring(principled('настил', (0.30, 0.28, 0.26), rough=0.9), c0, R0, R1 - 0.2, cafe['h'], cafe['h'] + 0.04, a0, a1, seg=96)  # пол террасы
-    B.ring(glass(), c0, R1 - 0.02, R1 + 0.03, 0.4, cafe['h'] - 0.9, a0 + 4, a1 - 4, seg=96)  # витражи
+    B.ring(glass('витраж', 0.4), c0, R1 - 0.02, R1 + 0.03, 0.4, cafe['h'] - 0.9, a0 + 4, a1 - 4, seg=96, lit=0.9)  # витражи — светятся
     for k in range(int(abs(a1 - a0) / 9)):
         ang = math.radians(a0 + 4 + k * 9)
         B.box(principled('рама_тёмная', (0.12, 0.10, 0.10)), (c0[0] + (R1 + 0.05) * math.cos(ang), c0[1] + (R1 + 0.05) * math.sin(ang), (cafe['h'] - 0.5) / 2),
@@ -329,7 +423,7 @@ def build_object_1():
     ext = cafe['along_a']
     if ext > 0:
         B.box(cm, (ext / 2 + rC / 2, -cafe['ring'] / 2 - rC / 2, cafe['h'] / 2), (ext + rC, cafe['ring'] + rC, cafe['h']))
-        B.box(glass(), (ext / 2 + rC / 2, -cafe['ring'] - rC - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (ext + rC - 1, 0.05, cafe['h'] - 1.4))
+        B.box(glass('витраж', 0.4), (ext / 2 + rC / 2, -cafe['ring'] - rC - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (ext + rC - 1, 0.05, cafe['h'] - 1.4), lit=0.9)
     rail = principled('ограждение', (0.95, 0.95, 0.95), rough=0.4)
     for k in range(int(abs(a1 - a0) / 3)):  # белое ограждение террасы по дуге
         ang = math.radians(a0 + k * 3)
@@ -361,7 +455,7 @@ def build_object_1():
 def environment(center):
     """земля, газон, тротуары, дорога, соседние высотки, деревья и кусты"""
     B = Builder()
-    grass = principled('газон', (0.10, 0.20, 0.05), rough=0.95)
+    grass = principled('газон', (0.035, 0.07, 0.02), rough=0.95)
     walk = principled('тротуар', (0.42, 0.40, 0.38), rough=0.9)
     road = principled('асфальт', (0.06, 0.06, 0.065), rough=0.9)
     B.box(grass, (20, 20, -0.05), (500, 500, 0.1))
@@ -376,6 +470,11 @@ def environment(center):
         mat = windows_texture('соседи_%d' % i, col)
         B.box(mat, (x, y, h / 2), (L, D, h), math.radians(rot))
         B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.2, D + 0.2, 1.0) if rot == 0 else (L + 0.2, D + 0.2, 1.0), math.radians(rot))
+    pole = principled('опора', (0.12, 0.12, 0.13), rough=0.5, metal=0.6)
+    lamp = principled('фонарь', (1, 1, 1), emit=((1.0, 0.72, 0.42), 30.0))
+    for x in range(-40, 150, 16):
+        B.box(pole, (x, -23.2, 4.5), (0.18, 0.18, 9.0)); B.box(pole, (x, -24.2, 8.9), (0.12, 2.0, 0.12))
+        B.box(lamp, (x, -25.0, 8.8), (0.5, 0.7, 0.12))
     objs = B.build('окружение')
     # деревья и кусты Poly Haven (CC0): берём из ассетов Ардена, если есть; иначе — скачиваем
     try:
@@ -416,19 +515,77 @@ def environment(center):
 
 # ============================================================================ СВЕТ, КАМЕРА, РЕНДЕР
 def light():
+    """небо и свет: HDRI Poly Haven (синий час, облака) — фон и освещение; тёплый горизонт за домом"""
     world = bpy.data.worlds.new('Небо'); sc.world = world; world.use_nodes = True
-    wn, wl = world.node_tree.nodes, world.node_tree.links
-    bg = wn['Background']
-    sky = wn.new('ShaderNodeTexSky'); sky.sky_type = 'NISHITA'; sky.sun_disc = False
-    el, az = math.radians(28), math.radians(-150)       # закат, солнце слева-спереди: главный фасад в свету
-    sky.sun_elevation = el; sky.sun_rotation = az; sky.dust_density = 2.0
-    wl.new(sky.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 0.12
-    sd = bpy.data.lights.new('Солнце', 'SUN'); sd.energy = 4.2; sd.color = (1.0, 0.78, 0.58); sd.angle = math.radians(1.0)
-    sun = bpy.data.objects.new('Солнце', sd); sc.collection.objects.link(sun)
-    v = Vector((math.cos(el) * math.sin(az), math.cos(el) * math.cos(az), math.sin(el)))
-    sun.rotation_euler = v.to_track_quat('Z', 'Y').to_euler()
-    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Punchy'; sc.view_settings.exposure = -0.1
+    wn, wl = world.node_tree.nodes, world.node_tree.links; bg = wn['Background']
+    S = dict(O['sky'])
+    if A.sky:  # --sky slug:поворот:сила:экспозиция
+        parts = A.sky.split(':'); S['hdri'] = parts[0]
+        if len(parts) > 1: S['rotate'] = float(parts[1])
+        if len(parts) > 2: S['strength'] = float(parts[2])
+        if len(parts) > 3: S['exposure'] = float(parts[3])
+    sc.view_settings.view_transform = 'AgX'; sc.view_settings.look = 'AgX - Punchy'; sc.view_settings.exposure = S.get('exposure', 0.4)
+    if S['hdri'] == 'nishita':  # синий час: солнце на 2° под горизонтом за домом — тёплая полоса, синее небо, фасад в тени
+        sky = wn.new('ShaderNodeTexSky'); sky.sky_type = 'NISHITA'; sky.sun_disc = False
+        sky.sun_elevation = math.radians(-2.0); sky.sun_rotation = math.radians(S['rotate']); sky.dust_density = 3.0; sky.air_density = 1.6
+        wl.new(sky.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = S['strength']
+        if S.get('backdrop'):  # камера видит облака HDRI, а свет сцены — от процедурного неба
+            try:
+                path = ph_hdri(S['backdrop'], '2k' if DRAFT else '4k')
+                env = wn.new('ShaderNodeTexEnvironment'); env.image = bpy.data.images.load(path)
+                tc = wn.new('ShaderNodeTexCoord'); mp = wn.new('ShaderNodeMapping'); mp.inputs['Rotation'].default_value = (0, 0, math.radians(S['backdrop_rotate']))
+                wl.new(tc.outputs['Generated'], mp.inputs['Vector']); wl.new(mp.outputs['Vector'], env.inputs['Vector'])
+                bg2 = wn.new('ShaderNodeBackground'); wl.new(env.outputs['Color'], bg2.inputs['Color']); bg2.inputs['Strength'].default_value = S['backdrop_strength']
+                lp = wn.new('ShaderNodeLightPath'); mx = wn.new('ShaderNodeMixShader')
+                wl.new(lp.outputs['Is Camera Ray'], mx.inputs['Fac']); wl.new(bg.outputs['Background'], mx.inputs[1]); wl.new(bg2.outputs['Background'], mx.inputs[2])
+                wl.new(mx.outputs['Shader'], wn['World Output'].inputs['Surface'])
+            except Exception as e:
+                log('облака HDRI не загрузились (%s) — фон процедурный' % e)
+        return world
+    try:
+        path = ph_hdri(S['hdri'], '2k' if DRAFT else '4k')
+        env = wn.new('ShaderNodeTexEnvironment'); env.image = bpy.data.images.load(path)
+        tc = wn.new('ShaderNodeTexCoord'); mp = wn.new('ShaderNodeMapping'); mp.inputs['Rotation'].default_value = (0, 0, math.radians(S['rotate']))
+        wl.new(tc.outputs['Generated'], mp.inputs['Vector']); wl.new(mp.outputs['Vector'], env.inputs['Vector'])
+        wl.new(env.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = S['strength']
+    except Exception as e:  # без интернета — небо Nishita
+        log('HDRI не загрузилось (%s), небо Nishita' % e)
+        sky = wn.new('ShaderNodeTexSky'); sky.sky_type = 'NISHITA'; sky.sun_disc = False; sky.sun_elevation = math.radians(2)
+        wl.new(sky.outputs['Color'], bg.inputs['Color']); bg.inputs['Strength'].default_value = 0.3
     return world
+
+
+def post():
+    """кадр как в рекламе: свечение огней, лёгкая дымка у горизонта, тёплые света / холодные тени, виньетка"""
+    sc.use_nodes = True; t = sc.node_tree; t.nodes.clear(); n, l = t.nodes, t.links
+    rl = n.new('CompositorNodeRLayers'); out = n.new('CompositorNodeComposite')
+    def put(node, name, v, kind=None):
+        for i in node.inputs:
+            if i.name == name and (kind is None or i.type == kind) and hasattr(i, 'default_value'):
+                i.default_value = v; return
+        if hasattr(node, name.lower()): setattr(node, name.lower(), v)
+    sc.view_layers[0].use_pass_mist = True
+    sc.world.mist_settings.start = 90; sc.world.mist_settings.depth = 520; sc.world.mist_settings.falloff = 'QUADRATIC'
+    fog = n.new('CompositorNodeMixRGB'); fog.blend_type = 'MIX'
+    l.new(rl.outputs['Mist'], fog.inputs[0]); l.new(rl.outputs['Image'], fog.inputs[1]); fog.inputs[2].default_value = (0.30, 0.33, 0.42, 1)
+    fk = n.new('CompositorNodeMath'); fk.operation = 'MULTIPLY'; fk.inputs[1].default_value = 0.55
+    l.new(rl.outputs['Mist'], fk.inputs[0]); l.new(fk.outputs[0], fog.inputs[0])
+    gl = n.new('CompositorNodeGlare'); gl.glare_type = 'FOG_GLOW'
+    put(gl, 'Threshold', 1.0); put(gl, 'Strength', 0.35); put(gl, 'Size', 0.6)
+    l.new(fog.outputs[0], gl.inputs['Image'])
+    cb = n.new('CompositorNodeColorBalance')
+    for name_, v in (('Lift', (0.97, 0.99, 1.04)), ('Gamma', (1.0, 1.0, 1.0)), ('Gain', (1.05, 1.0, 0.94))):
+        if any(i.name == name_ for i in cb.inputs): put(cb, name_, (*v, 1), 'RGBA')
+        else: setattr(cb, name_.lower(), v)
+    l.new(gl.outputs['Image'], cb.inputs['Image'])
+    em = n.new('CompositorNodeEllipseMask'); put(em, 'Size', (1.05, 0.62))
+    bl = n.new('CompositorNodeBlur'); bl.filter_type = 'GAUSS'
+    px = W * (A.percent or (50 if DRAFT else 100)) / 100 * .18
+    if any(i.name == 'Size' for i in bl.inputs): bl.use_relative = False; put(bl, 'Size', (px, px))
+    vg = n.new('CompositorNodeMapRange'); vg.inputs['To Min'].default_value = .72; vg.inputs['To Max'].default_value = 1.0
+    l.new(em.outputs[0], bl.inputs[0]); l.new(bl.outputs[0], vg.inputs[0])
+    mul = n.new('CompositorNodeMixRGB'); mul.blend_type = 'MULTIPLY'; mul.inputs[0].default_value = 1
+    l.new(cb.outputs[0], mul.inputs[1]); l.new(vg.outputs[0], mul.inputs[2]); l.new(mul.outputs[0], out.inputs[0])
 
 
 def camera(center):
@@ -521,6 +678,7 @@ def run(stage, folder, frames, pose_fn):
 def mask_mode(on, objs, mask):
     """маска этажа: этаж — белое излучение, всё остальное — чёрное (holdout не нужен), без неба и света"""
     if on:
+        sc.use_nodes = False
         sc.world.node_tree.nodes['Background'].inputs['Strength'].default_value = 0
         blk = principled('чёрный', (0, 0, 0), emit=((0, 0, 0), 0))
         wht = bpy.data.materials.new('белый'); wht.use_nodes = True; nt = wht.node_tree; nt.nodes.clear()
@@ -537,9 +695,15 @@ def mask_mode(on, objs, mask):
 
 # ============================================================================ ЗАПУСК
 t0 = time.time()
+try:
+    BRICK_TEX = ph_texture('white_bricks')
+    BRICK_MEAN = 0.26  # средняя линейная яркость white_bricks (замер) — перекраска даёт точный цвет фасада
+except Exception as e:
+    log('фактура кирпича не загрузилась (%s) — однотонный кирпич' % e)
 objs, mask, center, top = build_object_1()
 environment(center)
 light()
+post()
 cam, aim = camera(center)
 log('сцена собрана за %.0f с' % (time.time() - t0))
 
