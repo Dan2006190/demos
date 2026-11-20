@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>КВАРТАЛ — недвижимость на 3D-карте города</title>
+<meta name="description" content="Квартиры и дома в Тамбове на 3D-карте города: подлёт к дому, 3D-планировка, ипотечный калькулятор. Пример сайта агентства недвижимости.">
+<meta name="theme-color" content="#eef0f2">
+<link rel="stylesheet" href="vendor/maplibre-gl.css">
+<style>
+:root{
+  --bg:#f3f4f6; --card:#ffffff; --ink:#15181d; --mut:#6b7380; --line:#e1e4e8; --steel:#8a939f;
+  --acc:#1e2a38; --acc2:#3d5a80; --hi:#c9a227;
+  --f:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --d:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--f);-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+h1,h2,h3{margin:0 0 12px;line-height:1.08;letter-spacing:-.02em}
+h2{font:800 clamp(28px,4.4vw,46px)/1.05 var(--d)}
+.eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--acc2);margin-bottom:12px}
+.mut{color:var(--mut)}
+section{padding:90px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 22px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 15px var(--f);cursor:pointer;text-decoration:none;transition:.2s;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.dark{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.dark:hover{background:#2b3b4f}
+.btn.sm{min-height:40px;padding:0 16px;font-size:14px}
+
+/* шапка */
+.top{position:fixed;inset:0 0 auto;z-index:30;background:rgba(243,244,246,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:30px;height:34px}
+.logo b{font:800 20px var(--d);letter-spacing:.04em}
+.logo small{display:block;font-size:9px;letter-spacing:.32em;color:var(--mut);font-weight:700;text-transform:uppercase}
+nav{display:flex;gap:24px;font-size:14px;font-weight:600}
+nav a{text-decoration:none;color:var(--mut)} nav a:hover{color:var(--ink)}
+
+/* карта */
+.hero{position:relative;height:100vh;height:100svh;min-height:560px}
+#map{position:absolute;inset:0}
+.hero-card{position:absolute;left:20px;top:90px;z-index:5;max-width:430px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.9);border-radius:22px;padding:26px;box-shadow:0 20px 50px rgba(20,30,45,.14)}
+.hero-card h1{font:800 clamp(28px,3.6vw,42px)/1.05 var(--d);margin-bottom:12px}
+.hero-card p{margin:0 0 18px;color:var(--mut)}
+.hero-card .row{display:flex;gap:10px;flex-wrap:wrap}
+.hero-card{transition:opacity .5s,transform .5s}.hero-card.off{opacity:0;transform:translateX(-30px);pointer-events:none}
+.hint{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);z-index:5;background:rgba(21,24,29,.82);color:#fff;font-size:13px;padding:9px 16px;border-radius:999px;backdrop-filter:blur(8px);white-space:nowrap}
+.back{position:absolute;right:20px;top:86px;z-index:6;display:none}
+.back.on{display:inline-flex}
+
+/* метки */
+.pin{transform:translateY(-6px);cursor:pointer;display:flex;flex-direction:column;align-items:center}
+.pin .tag{background:var(--acc);color:#fff;font:700 13px var(--f);padding:7px 11px;border-radius:10px;box-shadow:0 8px 20px rgba(20,30,45,.25);white-space:nowrap;transition:.2s}
+.pin .tag small{display:block;font-weight:500;font-size:11px;opacity:.75}
+.pin:after{content:"";width:10px;height:10px;border-radius:50%;background:var(--acc);border:3px solid #fff;margin-top:5px;box-shadow:0 0 0 6px rgba(30,42,56,.18)}
+.pin:hover .tag,.pin.on .tag{background:var(--hi);color:var(--ink)}
+.pin.office .tag{background:#fff;color:var(--ink);border:1px solid var(--line)}
+.pin.office:after{background:var(--hi)}
+
+/* панель объекта */
+.panel{position:absolute;right:20px;top:136px;bottom:20px;z-index:6;width:min(400px,calc(100% - 40px));background:#fff;border-radius:22px;box-shadow:0 24px 60px rgba(20,30,45,.2);overflow:auto;transform:translateX(120%);transition:transform .5s cubic-bezier(.2,.7,.2,1)}
+.panel.on{transform:none}
+.ph{height:190px;position:relative;background:linear-gradient(135deg,#cfd6df,#eef1f4);display:grid;place-items:center;overflow:hidden}
+.ph svg{width:70%;opacity:.55}
+.ph .price{position:absolute;left:14px;bottom:14px;background:rgba(21,24,29,.85);color:#fff;font-weight:800;padding:8px 13px;border-radius:10px;backdrop-filter:blur(6px)}
+.ph .x{position:absolute;right:12px;top:12px;width:36px;height:36px;border-radius:50%;border:0;background:rgba(255,255,255,.9);font-size:18px;cursor:pointer}
+.pb{padding:20px 22px 24px}
+.pb h3{font-size:20px;margin-bottom:4px}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0}
+.facts div{background:var(--bg);border-radius:12px;padding:10px;text-align:center}
+.facts b{display:block;font-size:17px}
+.facts span{font-size:12px;color:var(--mut)}
+.near{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 16px}
+.near span{font-size:12px;background:var(--bg);border-radius:999px;padding:5px 10px;color:var(--mut)}
+.mini{background:var(--bg);border-radius:14px;padding:14px;margin-bottom:14px}
+.mini b{font-size:22px}
+.pb .btn{width:100%;margin-top:8px}
+
+/* блоки */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:30px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:20px;overflow:hidden;cursor:pointer;transition:.25s}
+.card:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(20,30,45,.1)}
+.card .ph{height:170px}
+.card .in{padding:16px 18px 18px}
+.card h3{font-size:17px;margin-bottom:4px}
+.card p{margin:0;font-size:14px;color:var(--mut)}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-top:22px}
+.filters button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 15px;font:600 14px var(--f);cursor:pointer;color:var(--mut)}
+.filters button[aria-pressed="true"]{background:var(--acc);border-color:var(--acc);color:#fff}
+
+.calc{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;margin-top:30px;align-items:start}
+.box{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px}
+.field{margin-bottom:20px}
+.field label{display:flex;justify-content:space-between;font-size:14px;color:var(--mut);margin-bottom:8px}
+.field label b{color:var(--ink);font-size:16px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{flex:1;border:1px solid var(--line);background:#fff;border-radius:12px;padding:11px 8px;font:700 14px var(--f);cursor:pointer}
+.seg button[aria-pressed="true"]{border-color:var(--acc);background:var(--acc);color:#fff}
+.pay{font:800 clamp(40px,6vw,60px)/1 var(--d);margin:6px 0}
+.pay small{font-size:.38em;color:var(--mut)}
+.sub{color:var(--mut);font-size:14px;margin:0 0 16px}
+
+.lead{display:grid;grid-template-columns:1fr 1fr;gap:36px;background:var(--acc);color:#fff;border-radius:28px;padding:44px}
+.lead .eyebrow{color:#a9c1df}
+.lead p{color:#c7d0dc}
+form{display:grid;gap:10px}
+form input,form select{font:16px var(--f);padding:14px 15px;border-radius:12px;border:1px solid #33475e;background:#22344a;color:#fff;width:100%}
+form input::placeholder{color:#93a3b7}
+.ok{display:none;padding:13px 15px;border-radius:12px;background:#2f4a33;color:#d6f0d9}
+
+.bot{display:flex;gap:24px;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:22px;padding:28px;margin-top:20px;flex-wrap:wrap}
+.bot .msg{background:var(--bg);border-radius:16px 16px 16px 4px;padding:12px 16px;font-size:14px;max-width:420px}
+
+footer{padding:34px 0 50px;color:var(--mut);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+
+/* 3D-квартира */
+.tour{position:fixed;inset:0;z-index:50;background:rgba(15,19,25,.92);display:none}
+.tour.on{display:block}
+.tour canvas{display:block;width:100%;height:100%}
+.tour .bar{position:absolute;left:20px;right:20px;top:18px;display:flex;justify-content:space-between;align-items:center;color:#fff;gap:12px;flex-wrap:wrap}
+.tour .bar h3{margin:0;font-size:18px}
+.tour .rooms{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:6px;flex-wrap:wrap;justify-content:center;width:calc(100% - 40px)}
+.tour .rooms button{border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;border-radius:999px;padding:9px 14px;font:600 13px var(--f);cursor:pointer;backdrop-filter:blur(8px)}
+.tour .rooms button[aria-pressed="true"]{background:#fff;color:var(--ink)}
+.tour .lbl{position:absolute;pointer-events:none;color:#fff;font:700 12px var(--f);background:rgba(21,24,29,.7);padding:4px 8px;border-radius:8px;transform:translate(-50%,-50%);white-space:nowrap}
+
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:900px){
+  nav{display:none}
+  .grid{grid-template-columns:1fr 1fr}
+  .calc,.lead{grid-template-columns:1fr}
+  .lead{padding:28px}
+  .hero-card{left:16px;right:16px;top:80px;max-width:none;padding:18px}
+  .hero-card p{display:none}
+  .panel{left:12px;right:12px;width:auto;top:auto;bottom:12px;max-height:62%;transform:translateY(120%)}
+  .back{top:auto;bottom:calc(62% + 22px);right:16px}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  section{padding:64px 0}
+  .grid{grid-template-columns:1fr}
+  .top .btn{display:none}
+  .hint{bottom:14px;font-size:12px;white-space:normal;text-align:center;width:calc(100% - 32px)}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 30 34" aria-hidden="true"><path d="M4 32V12l9-6v26zM15 32V2l11 7v23z" fill="#1e2a38"/><path d="M17 8h2M17 12h2M17 16h2M17 20h2M21 10h2M21 14h2M21 18h2M21 22h2M7 16h2M7 20h2M7 24h2" stroke="#fff" stroke-width="1.6"/></svg>
+      <span><b>КВАРТАЛ</b><small>Недвижимость</small></span>
+    </a>
+    <nav><a href="#map-sec">Карта</a><a href="#catalog">Объекты</a><a href="#mortgage">Ипотека</a><a href="#contacts">Контакты</a></nav>
+    <a class="btn dark sm" href="#contacts">Подобрать квартиру</a>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="map-sec" style="padding:0">
+  <div id="map" aria-label="3D-карта Тамбова с объектами"></div>
+  <div class="hero-card">
+    <span class="eyebrow">Тамбов · 3D-карта</span>
+    <h1>Выберите дом,<br>а не объявление</h1>
+    <p>Нажмите на объект — подлетим к дому, покажем двор и что рядом, а потом пройдёмся по квартире в 3D.</p>
+    <div class="row"><a class="btn dark" href="#catalog">Все объекты</a><a class="btn" href="#mortgage">Посчитать ипотеку</a></div>
+  </div>
+  <button class="btn back" id="back" type="button">← Весь город</button>
+  <aside class="panel" id="panel" aria-live="polite"></aside>
+  <div class="hint" id="hint">Нажмите на метку · перетаскивайте карту, чтобы облететь город</div>
+</section>
+
+<section id="catalog">
+  <div class="wrap">
+    <span class="eyebrow rv">Объекты</span>
+    <h2 class="rv">Квартиры и дома</h2>
+    <p class="mut rv">Это примеры объектов для демонстрации. Здесь будут ваши реальные предложения — агент добавляет их сам.</p>
+    <div class="filters rv" id="filters"></div>
+    <div class="grid" id="grid"></div>
+  </div>
+</section>
+
+<section id="mortgage" style="padding-top:20px">
+  <div class="wrap">
+    <span class="eyebrow rv">Ипотека</span>
+    <h2 class="rv">Сколько в месяц</h2>
+    <div class="calc">
+      <div class="box rv">
+        <div class="field"><label>Стоимость квартиры <b id="vPrice"></b></label><input type="range" id="price" min="2000000" max="15000000" step="100000" value="5400000"></div>
+        <div class="field"><label>Первоначальный взнос <b id="vDown"></b></label><input type="range" id="down" min="10" max="80" step="1" value="20"></div>
+        <div class="field"><label>Срок <b id="vTerm"></b></label><input type="range" id="term" min="5" max="30" step="1" value="20"></div>
+        <div class="field"><label>Программа</label>
+          <div class="seg" id="prog"><button type="button" data-r="6" aria-pressed="true">Семейная 6%</button><button type="button" data-r="20">Рыночная ~20%</button><button type="button" data-r="2">Дальневост. 2%</button></div>
+        </div>
+      </div>
+      <div class="box rv">
+        <span class="eyebrow">Ежемесячный платёж</span>
+        <div class="pay" id="pay"></div>
+        <p class="sub" id="paySub"></p>
+        <p class="sub">Ставки — ориентир. Точные условия банков подберёт агент бесплатно.</p>
+        <a class="btn dark" href="#contacts" style="width:100%">Подобрать с этим платежом</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="contacts" style="padding-top:20px">
+  <div class="wrap">
+    <div class="lead rv">
+      <div>
+        <span class="eyebrow">Заявка</span>
+        <h2>Подберём за 3 дня</h2>
+        <p>Ответьте на три вопроса — агент сразу пришлёт подходящие варианты и расскажет про ипотеку.</p>
+        <p style="margin-top:22px">Здесь будут адрес офиса, телефон и рейтинг вашего агентства.</p>
+      </div>
+      <form id="form" novalidate>
+        <input name="name" placeholder="Имя" autocomplete="name">
+        <input name="phone" type="tel" placeholder="Телефон" autocomplete="tel">
+        <select name="budget"><option>Бюджет до 4 млн</option><option>4–7 млн</option><option>7–10 млн</option><option>Больше 10 млн</option></select>
+        <select name="pay"><option>Ипотека</option><option>Наличные</option><option>Материнский капитал + ипотека</option><option>Продаю свою и покупаю</option></select>
+        <select name="when"><option>Купить в течение месяца</option><option>В течение 3 месяцев</option><option>Пока присматриваюсь</option></select>
+        <button class="btn" type="submit">Отправить заявку</button>
+        <div class="ok" id="ok">Готово! Агент свяжется с вами в течение часа.</div>
+        <p style="font-size:12px;margin:0;color:#93a3b7">Демо-версия: форма показывает, как будет выглядеть заявка.</p>
+      </form>
+    </div>
+    <div class="bot rv">
+      <div><span class="eyebrow">Телеграм-бот</span><h3 style="font-size:22px">Новые объекты — сразу вам</h3><p class="mut" style="margin:0">Задайте фильтр — бот пришлёт квартиру раньше, чем она появится на Авито.</p></div>
+      <div class="msg">🏠 Новая 2-комнатная · Северный · 4,9 млн<br><span class="mut">58 м², 7/10 эт., ремонт. Смотреть в 3D →</span></div>
+      <a class="btn dark" href="#" onclick="return false">Подписаться в Telegram</a>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><div><b style="color:var(--ink)">КВАРТАЛ</b> · пример сайта агентства недвижимости</div><div>Демо-сайт · объекты и цены — примеры · карта © OpenStreetMap, OpenFreeMap</div></div></footer>
+
+<div class="tour" id="tour" role="dialog" aria-label="3D-планировка квартиры">
+  <div class="bar"><h3 id="tourTitle">3D-планировка</h3><button class="btn sm" id="tourClose" type="button">Закрыть ✕</button></div>
+  <div class="rooms" id="tourRooms"></div>
+</div>
+
+<script src="vendor/maplibre-gl.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
