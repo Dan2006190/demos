@@ -41,10 +41,10 @@ OBJECTS = {
         # крыло А — главный фасад на улицу (оранжевый), от цилиндра вправо
         wing_a=dict(length=38.0, depth=14.0, cols=8),
         # крыло Б — уходит назад от башни (L-образный план по фото 4–5); 0 — без крыла
-        wing_b=dict(length=10.0, depth=14.0, cols=2),           # по спутнику: короткая ступенька слева от башни
+        behind_tower=dict(extra=4.0, cols=2),                   # корпус уходит за башню и на 4 м левее неё (фото 13: оранжевая стена слева от башни)
         cyl=dict(d=11.0, extra_floors=1, glaze_posts=40),         # цилиндр на углу: диаметр, на этаж выше корпуса
         tower=dict(w=6.0, d=4.0, above_roof=6.5),                 # белая башня лестницы и лифта (выше цилиндра)
-        cafe=dict(h=4.5, ring=6.0, arc=(150, 345), along_a=11.0), # павильон кафе: высота, ширина по дуге, градусы дуги (−90 — к улице), хвост вдоль фасада
+        cafe=dict(h=4.5, ring=6.0, arc=(150, 345), along_a=5.0, under_tower=True),  # кафе у края: огибает цилиндр, заходит под башню, вправо — немного
         colors=dict(
             brick_front=(0.92, 0.42, 0.035),  # жёлто-оранжевый кирпич главного фасада
             brick_back=(0.86, 0.84, 0.80),    # белый кирпич заднего фасада
@@ -339,8 +339,10 @@ def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
     ins = brick('вставка_сзади', C['insert_back'])
     for f in range(floors):
         z = plinth + f * fh
-        # пояс на уровне перекрытия
+        # пояс на уровне перекрытия; спереди — ещё светло-серая полоса под окнами (фото 12)
         B.box(band if style == 'front' else ins, at(length / 2, 0.06, z + 0.15), (length + 0.12, 0.12, 0.3 if style == 'front' else 0.45), rz)
+        if style == 'front':
+            B.box(principled('пояс_светлый', (0.72, 0.71, 0.68), rough=0.85), at(length / 2, 0.05, z + fh * 0.55 - 1.05), (length + 0.1, 0.1, 0.5), rz)
         for c in range(cols):
             u = (c + 0.5) * step
             wz = z + fh * 0.55
@@ -364,7 +366,7 @@ def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
 def build_object_1():
     o = O; fh, nf, pl = o['floor_h'], o['floors'], o['plinth']
     top = pl + nf * fh                               # верх жилых этажей
-    a, bw, cy, tw, cafe = o['wing_a'], o['wing_b'], o['cyl'], o['tower'], o['cafe']
+    a, bt, cy, tw, cafe = o['wing_a'], o['behind_tower'], o['cyl'], o['tower'], o['cafe']
     rC = cy['d'] / 2
     B = Builder()
     front = brick('кирпич_фасад', C['brick_front']); back = brick('кирпич_сзади', C['brick_back'])
@@ -375,14 +377,12 @@ def build_object_1():
     facade(B, 0, 0, a['length'], 0.0, nf, fh, pl, a['cols'], 'front', top)
     facade(B, a['length'], a['depth'], a['length'], math.pi, nf, fh, pl, a['cols'], 'back', top)
     facade(B, a['length'], 0, a['depth'], math.pi / 2, nf, fh, pl, 3, 'front', top)       # торец
-    # --- крыло Б: назад от угла (за башней), фасады — белые
-    if bw['length'] > 0:
-        x0 = -rC - 0.5 - tw['w'] - bw['depth']
-        y0 = 0.0
-        B.box(front, (x0 + bw['depth'] / 2, y0 + bw['length'] / 2, top / 2), (bw['depth'], bw['length'], top))  # оранжевый, как на фото 4–5
-        B.box(roof, (x0 + bw['depth'] / 2, y0 + bw['length'] / 2, top + 0.6), (bw['depth'] + 0.3, bw['length'] + 0.3, 1.2))
-        facade(B, x0, y0 + bw['length'], bw['length'], -math.pi / 2, nf, fh, pl, bw['cols'], 'front', top)  # левый (внешний)
-        facade(B, x0, y0, bw['depth'], 0.0, nf, fh, pl, 3, 'front', top)                                   # торец к улице
+    # --- корпус за башней: тот же дом, уходит за башню и чуть левее неё (оранжевая стена слева от башни на фото 13)
+    xL = -rC - 0.5 - tw['w'] - bt['extra']; yB = tw['d'] + 1.2
+    B.box(front, ((xL + 0.5) / 2, (yB + a['depth']) / 2, top / 2), (0.5 - xL, a['depth'] - yB, top))
+    B.box(roof, ((xL + 0.5) / 2, (yB + a['depth']) / 2, top + 0.6), (0.8 - xL, a['depth'] - yB + 0.3, 1.2))
+    facade(B, xL, yB, bt['extra'] + 0.6, 0.0, nf, fh, pl, bt['cols'], 'front', top)                 # кусок фасада левее башни
+    facade(B, xL, a['depth'], a['depth'] - yB, -math.pi / 2, nf, fh, pl, 3, 'front', top)          # левый торец
     # --- башня лестницы и лифта: белая, рядом с цилиндром, выше крыши
     th = top + tw['above_roof']
     tx, ty = -rC - 0.5 - tw['w'] / 2, tw['d'] / 2 + 0.6
@@ -421,6 +421,11 @@ def build_object_1():
         B.box(principled('рама_тёмная', (0.12, 0.10, 0.10)), (c0[0] + (R1 + 0.05) * math.cos(ang), c0[1] + (R1 + 0.05) * math.sin(ang), (cafe['h'] - 0.5) / 2),
               (0.12, 0.12, cafe['h'] - 0.5), ang)
     ext = cafe['along_a']
+    if cafe.get('under_tower'):  # под башней: прямоугольный кусок павильона, витраж на улицу
+        xc0, xc1 = -rC - 0.5 - tw['w'] - 1.5, -rC * 0.6
+        B.box(cm, ((xc0 + xc1) / 2, -cafe['ring'] / 2 + 0.6, cafe['h'] / 2), (xc1 - xc0, cafe['ring'] + 1.2, cafe['h']))
+        B.box(glass('витраж', 0.4), ((xc0 + xc1) / 2, -cafe['ring'] - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (xc1 - xc0 - 1, 0.05, cafe['h'] - 1.4), lit=0.9)
+        B.box(principled('ограждение', (0.95, 0.95, 0.95), rough=0.4), ((xc0 + xc1) / 2, -cafe['ring'] + 0.1, cafe['h'] + 1.08), (xc1 - xc0, 0.08, 0.08))
     if ext > 0:
         B.box(cm, (ext / 2 + rC / 2, -cafe['ring'] / 2 - rC / 2, cafe['h'] / 2), (ext + rC, cafe['ring'] + rC, cafe['h']))
         B.box(glass('витраж', 0.4), (ext / 2 + rC / 2, -cafe['ring'] - rC - 0.02, (cafe['h'] - 0.6) / 2 + 0.2), (ext + rC - 1, 0.05, cafe['h'] - 1.4), lit=0.9)
