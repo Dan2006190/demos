@@ -216,7 +216,9 @@ def glass(name='стекло', bright=1.0):
     t7 = nt.nodes.new('ShaderNodeMath'); t7.operation = 'MULTIPLY'; t7.inputs[1].default_value = 7.31
     L.new(at.outputs['Fac'], t7.inputs[0]); L.new(t7.outputs[0], tone.inputs[0])
     ramp = nt.nodes.new('ShaderNodeValToRGB'); L.new(tone.outputs[0], ramp.inputs['Fac'])
-    ramp.color_ramp.elements[0].color = (1.0, 0.34, 0.09, 1); ramp.color_ramp.elements[1].color = (1.0, 0.55, 0.24, 1)
+    ramp.color_ramp.elements[0].color = (1.0, 0.34, 0.09, 1); ramp.color_ramp.elements[1].color = (0.62, 0.74, 1.0, 1)
+    e_ = ramp.color_ramp.elements.new(0.86); e_.color = (1.0, 0.55, 0.24, 1)   # ~12 % окон — холодный свет (телевизор, LED)
+    e_ = ramp.color_ramp.elements.new(0.88); e_.color = (0.62, 0.74, 1.0, 1)
     L.new(ramp.outputs['Color'], b.inputs['Emission Color'])
     pw = nt.nodes.new('ShaderNodeMath'); pw.operation = 'POWER'; pw.inputs[1].default_value = 1.6; L.new(at.outputs['Fac'], pw.inputs[0])
     # внутри окна: ярче к потолку (светильник), мягче к подоконнику — по высоте внутри этажа (3 м)
@@ -920,7 +922,14 @@ def post():
     fog = n.new('CompositorNodeMixRGB'); fog.blend_type = 'MIX'
     l.new(rl.outputs['Mist'], fog.inputs[0]); l.new(rl.outputs['Image'], fog.inputs[1]); fog.inputs[2].default_value = (0.30, 0.33, 0.42, 1)
     fk = n.new('CompositorNodeMath'); fk.operation = 'MULTIPLY'; fk.inputs[1].default_value = 0.55
-    l.new(rl.outputs['Mist'], fk.inputs[0]); l.new(fk.outputs[0], fog.inputs[0])
+    sc.view_layers[0].use_pass_z = True
+    zo = rl.outputs.get('Depth') or rl.outputs.get('Z')
+    geo = n.new('CompositorNodeMath'); geo.operation = 'LESS_THAN'; geo.inputs[1].default_value = 2500.0   # небо — без дымки: цвет HDRI не выбеляется
+    l.new(zo, geo.inputs[0])
+    geo2 = n.new('CompositorNodeMapRange'); geo2.inputs['To Min'].default_value = 0.45; geo2.inputs['To Max'].default_value = 1.0   # небу — половина дымки: горизонт без шва
+    l.new(geo.outputs[0], geo2.inputs['Value']); geo = geo2
+    fk2 = n.new('CompositorNodeMath'); fk2.operation = 'MULTIPLY'
+    l.new(rl.outputs['Mist'], fk.inputs[0]); l.new(fk.outputs[0], fk2.inputs[0]); l.new(geo.outputs['Result'] if hasattr(geo.outputs, 'get') and geo.outputs.get('Result') else geo.outputs[0], fk2.inputs[1]); l.new(fk2.outputs[0], fog.inputs[0])
     gl = n.new('CompositorNodeGlare'); gl.glare_type = 'FOG_GLOW'
     put(gl, 'Threshold', 1.0); put(gl, 'Strength', 0.35); put(gl, 'Size', 0.6)
     l.new(fog.outputs[0], gl.inputs['Image'])
@@ -936,7 +945,9 @@ def post():
     vg = n.new('CompositorNodeMapRange'); vg.inputs['To Min'].default_value = .72; vg.inputs['To Max'].default_value = 1.0
     l.new(em.outputs[0], bl.inputs[0]); l.new(bl.outputs[0], vg.inputs[0])
     mul = n.new('CompositorNodeMixRGB'); mul.blend_type = 'MULTIPLY'; mul.inputs[0].default_value = 1
-    l.new(cb.outputs[0], mul.inputs[1]); l.new(vg.outputs[0], mul.inputs[2]); l.new(mul.outputs[0], out.inputs[0])
+    l.new(cb.outputs[0], mul.inputs[1]); l.new(vg.outputs[0], mul.inputs[2])
+    ld = n.new('CompositorNodeLensdist'); put(ld, 'Dispersion', 0.012); put(ld, 'Distortion', 0.0)   # хроматическая аберрация по краям, как у объектива
+    l.new(mul.outputs[0], ld.inputs['Image']); l.new(ld.outputs['Image'], out.inputs[0])
 
 
 def camera(center):
@@ -1063,24 +1074,69 @@ cam, aim = camera(center)
 log('сцена собрана за %.0f с' % (time.time() - t0))
 
 orbit_dir, appr_dir, mask_dir = (os.path.join(OUT, x) for x in ('orbit', 'approach', 'mask'))
+CINEMA = {}
+
+
+def cinema(on, view=''):
+    """для главных кадров: световые следы машин (длинная выдержка, только hero) и лёгкая дымка в воздухе (конусы фонарей)"""
+    if 'haze' not in CINEMA:
+        B = Builder()
+        head = principled('след_фары', (1, 1, 1), emit=((1.0, 0.90, 0.75), 6.0))
+        tail = principled('след_стопы', (1, 0, 0), emit=((1.0, 0.04, 0.015), 6.0))
+
+        def lane(p0, p1, z, mat, gaps=0.45):
+            p0, p1 = Vector(p0), Vector(p1); d = (p1 - p0); L_ = d.length; d.normalize(); n_ = Vector((-d.y, d.x, 0))
+            t = 0.0
+            while t < L_:
+                ln = R.uniform(8, 40); ln = min(ln, L_ - t)
+                if R.random() > gaps:
+                    for side in (-0.72, 0.72):                       # две фары / два стопа
+                        c_ = p0 + d * (t + ln / 2) + n_ * side
+                        B.box(mat, (c_.x, c_.y, z + R.uniform(-0.04, 0.04)), (ln, 0.045, 0.045), math.atan2(d.y, d.x))
+                t += ln + R.uniform(2, 12)
+        for k_ in range(2):   # главная улица: ближняя полоса — стопы, дальняя — фары; по несколько машин на выдержку
+            lane((-150, -32.2 - k_ * 0.25, 0), (170, -32.2 - k_ * 0.25, 0), 0.82, tail)
+            lane((170, -27.6 + k_ * 0.25, 0), (-150, -27.6 + k_ * 0.25, 0), 0.66, head)
+            lane((-42.3 + k_ * 0.25, -60, 0), (-42.3 + k_ * 0.25, 230, 0), 0.82, tail)
+            lane((-37.7 - k_ * 0.25, 230, 0), (-37.7 - k_ * 0.25, -60, 0), 0.66, head)
+        CINEMA['trails'] = B.build('световые_следы')
+        vol = bpy.data.materials.new('дымка'); vol.use_nodes = True; vn = vol.node_tree; vn.nodes.clear()
+        pv = vn.nodes.new('ShaderNodeVolumePrincipled'); pv.inputs['Density'].default_value = 0.00035; pv.inputs['Anisotropy'].default_value = 0.55
+        pv.inputs['Color'].default_value = (0.85, 0.88, 1.0, 1)
+        vn.links.new(pv.outputs[0], vn.nodes.new('ShaderNodeOutputMaterial').inputs['Volume'])
+        H_ = Builder(); H_.box(vol, (12, 6, 9), (420, 420, 18)); CINEMA['haze'] = H_.build('дымка')   # дымка у земли: конусы фонарей, дом над ней чистый
+    for o in CINEMA['trails']: o.hide_render = not (on and view == 'hero')
+    for o in CINEMA['haze']: o.hide_render = True   # дымка объёмом выбеляет кадр и втрое дороже — выключена, оставлена для проб
+    if hasattr(sc.cycles, 'volume_step_rate'): sc.cycles.volume_step_rate = 4.0; sc.cycles.volume_max_steps = 256
+
+
 VIEWS = {  # постоянные ракурсы: камера, цель, вертикальный угол обзора (°)
     'street': ((-22.0, -52.0, 1.7), (2.0, 0.0, 14.0), FOV),      # с тротуара напротив, как панорама Яндекса (фото 4–5)
     'side':   ((-58.0, -14.0, 1.7), (0.0, 4.0, 15.0), FOV),      # на торец с лоджиями и башней (фото 14)
-    'hero':   ((-46.0, -96.0, 4.0), (8.0, 2.0, 15.5), 21.0, 158.0),  # главный кадр: снизу, длинный фокус; облака HDRI развёрнуты — закат за домом
+    'hero':   ((-46.0, -96.0, 4.0), (8.0, 2.0, 15.5), 21.0, 158.0, ('rosendal_park_sunset_puresky', 292.0, 0.12)),  # главный кадр: снизу, длинный фокус; облака HDRI развёрнуты — закат за домом
 }
 
 
-def sky_turn(deg=0.0):
-    """повернуть облака фона (только то, что видит камера; свет сцены не меняется)"""
+def sky_turn(deg=0.0, sky=None):
+    """фон для камеры (свет сцены не меняется): поворот облаков на deg от обычного или своё небо sky = (slug HDRI, поворот°)"""
+    S_ = O['sky']
+    slug, rot, k = (tuple(sky) + (1.0,))[:3] if sky else (S_.get('backdrop'), S_.get('backdrop_rotate', S_['rotate']) + deg, 1.0)
     for nd in sc.world.node_tree.nodes:
         if nd.type == 'MAPPING':
-            nd.inputs['Rotation'].default_value[2] = math.radians(O['sky'].get('backdrop_rotate', O['sky']['rotate']) + deg)
+            nd.inputs['Rotation'].default_value[2] = math.radians(rot)
+        if nd.type == 'BACKGROUND' and nd.inputs['Color'].is_linked and nd.inputs['Color'].links[0].from_node.type == 'TEX_ENVIRONMENT':
+            nd.inputs['Strength'].default_value = S_.get('backdrop_strength', 1.0) * k
+        if nd.type == 'TEX_ENVIRONMENT' and slug:
+            try:
+                nd.image = bpy.data.images.load(ph_hdri(slug, '2k' if DRAFT else '4k'), check_existing=True)
+            except Exception as e:
+                log('небо %s не загрузилось (%s)' % (slug, e))
 
 
 def view_pose(v):
     p, t, fov = VIEWS[v][:3]
     cam.data.angle_y = math.radians(fov)
-    sky_turn(VIEWS[v][3] if len(VIEWS[v]) > 3 else 0.0)
+    sky_turn(VIEWS[v][3] if len(VIEWS[v]) > 3 else 0.0, VIEWS[v][4] if len(VIEWS[v]) > 4 else None)
     return Vector(p), Vector(t)
 
 
@@ -1088,6 +1144,8 @@ if A.what == 'still':
     setup_engine('cycles')
     p, t = orbit_pose(A.frame) if A.view == 'orbit' else view_pose(A.view)
     cam.location, aim.location = p, t
+    if A.view != 'orbit':
+        cinema(True, A.view)
     sc.render.filepath = os.path.join(OUT, 'still_%s_%03d.png' % (A.view, A.frame)); sc.render.image_settings.file_format = 'PNG'
     tt = time.time(); bpy.ops.render.render(write_still=True)
     log('кадр %s %d: %.0f с → %s' % (A.view, A.frame, time.time() - tt, sc.render.filepath))
@@ -1134,7 +1192,7 @@ def stills():
     for v in VIEWS:
         if os.path.exists(os.path.join(folder, 'hd', v + '.webp')):
             STATUS['done'] += 1; continue
-        cam.location, aim.location = view_pose(v)
+        cam.location, aim.location = view_pose(v); cinema(True, v)
         tmp = os.path.join(folder, '_tmp_%s.png' % v); os.makedirs(folder, exist_ok=True)
         sc.render.filepath = tmp; sc.render.image_settings.file_format = 'PNG'
         t = time.time(); bpy.ops.render.render(write_still=True); dt = time.time() - t
@@ -1145,6 +1203,7 @@ def stills():
             os.replace(os.path.join(folder, size, '000.webp'), os.path.join(folder, size, v + '.webp'))
         STATUS['done'] += 1; STATUS['times'].append(dt); log('главный кадр %s: %.0f с' % (v, dt)); write_status()
     cam.data.angle_y = math.radians(FOV); sky_turn(0.0)
+    if CINEMA: cinema(False)
 
 
 if A.what == 'manifest':
