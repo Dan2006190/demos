@@ -56,11 +56,11 @@ OBJECTS = {
             frame=(0.93, 0.93, 0.92),         # белые рамы
             roof=(0.42, 0.42, 0.42),
         ),
-        neighbors=[  # окружение: высотки 14–16 этажей, простые коробки (x, y, длина, глубина, этажей, поворот°, цвет)
-            (78, 22, 34, 14, 16, 90, (0.80, 0.56, 0.24)),
-            (34, 70, 48, 14, 14, 0, (0.78, 0.72, 0.60)),
-            (-62, 52, 40, 14, 15, 90, (0.76, 0.52, 0.26)),
-            (92, 82, 30, 14, 16, 0, (0.78, 0.70, 0.56)),
+        neighbors=[  # окружение: высотки 14–16 этажей за кругом облёта (≥160 м от центра — камера не упирается в стену) (x, y, длина, глубина, этажей, поворот°, цвет)
+            (167, 44, 34, 14, 16, 90, (0.80, 0.56, 0.24)),
+            (64, 157, 48, 14, 14, 0, (0.78, 0.72, 0.60)),
+            (-124, 90, 40, 14, 15, 90, (0.76, 0.52, 0.26)),
+            (128, 116, 30, 14, 16, 0, (0.78, 0.70, 0.56)),
         ],
         # камера облёта: центр, радиус, высота, начальный азимут (0 — с улицы, спереди-слева, как фото 3)
         orbit=dict(center=(12.0, 6.0, 15.0), radius=108.0, height=22.0, start=212.0),
@@ -324,41 +324,141 @@ class Builder:
         return objs
 
 
-def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top):
+def curtain():
+    """шторы и тюль: ткань, светится от комнаты (атрибут lit той же грани — тот же свет, что у окна)"""
+    if 'штора' in MATS:
+        return MATS['штора']
+    m = principled('штора', (0.42, 0.38, 0.32), rough=0.95)
+    nt, L = m.node_tree, m.node_tree.links; b = nt.nodes['Principled BSDF']
+    at = nt.nodes.new('ShaderNodeAttribute'); at.attribute_type = 'GEOMETRY'; at.attribute_name = 'lit'
+    k = nt.nodes.new('ShaderNodeMath'); k.operation = 'MULTIPLY'; k.inputs[1].default_value = 1.1; L.new(at.outputs['Fac'], k.inputs[0])
+    b.inputs['Emission Color'].default_value = (1.0, 0.62, 0.34, 1); L.new(k.outputs[0], b.inputs['Emission Strength'])
+    return m
+
+
+def window(B, at, rz, u, wz, ww, wh, frame, lit=None, skin=0.22):
+    """окно в проёме стены: рама, стекло с комнатой за ним, импост, шторы (случайно), отлив на уровне стены"""
+    lit = lit_value() if lit is None else lit
+    B.box(frame, at(u, 0.03, wz), (ww, 0.06, wh), rz)                                 # коробка рамы
+    B.box(glass(), at(u, 0.07, wz), (ww - 0.2, 0.02, wh - 0.2), rz, lit=lit)           # стекло
+    B.box(frame, at(u, 0.085, wz), (0.07, 0.03, wh - 0.2), rz)                         # импост
+    r = R.random(); cw = curtain()
+    if r < 0.42:                                                                       # шторы по краям
+        s = R.uniform(0.18, 0.34) * ww
+        for side in (-1, 1):
+            B.box(cw, at(u + side * (ww - 0.2 - s) / 2, 0.06, wz), (s, 0.012, wh - 0.22), rz, lit=lit * 0.8)
+    elif r < 0.55:                                                                     # тюль на половину окна
+        B.box(cw, at(u - (ww - 0.2) / 4, 0.06, wz), ((ww - 0.2) / 2, 0.012, wh - 0.22), rz, lit=lit * 0.6)
+    elif r < 0.62:                                                                     # жалюзи до середины
+        B.box(cw, at(u, 0.06, wz + (wh - 0.2) / 4), (ww - 0.2, 0.012, (wh - 0.2) / 2), rz, lit=lit * 0.5)
+    B.box(principled('подоконник', (0.85, 0.85, 0.83), rough=0.6), at(u, skin + 0.05, wz - wh / 2 - 0.03), (ww + 0.2, 0.2, 0.06), rz)  # отлив
+
+
+def facade(B, x0, y0, length, rz, floors, fh, plinth, cols, style, z_top, wall=None, skin=0.22, win=(1.62, 1.62), band=None):
     """фасад вдоль линии от (x0, y0) длиной length под углом rz (рад; наружу — правая нормаль).
+    Стена — «шкура» толщиной skin из простенков и перемычек: окна в настоящих проёмах с откосами.
     style: 'front' — оранжевый кирпич, белые пилястры между парами окон, коричневые пояса на перекрытиях;
-           'back'  — белый кирпич, оранжевые вертикальные вставки и пояса."""
+           'back'  — белый кирпич, оранжевые вертикальные вставки и пояса;
+           'panel' — соседний дом: стена wall, светлые пояса перекрытий, лоджии через колонку."""
     d = Vector((math.cos(rz), math.sin(rz), 0)); nrm = Vector((d.y, -d.x, 0))  # наружу — вправо от направления
     at = lambda u, off, z: Vector((x0, y0, 0)) + d * u + nrm * off + Vector((0, 0, z))
     step = length / cols
-    fr, gl = principled('рама', C['frame'], rough=0.4), glass()
-    band = principled('пояс', C['band'], rough=0.8)
+    ww, wh = win
+    wall = wall or brick('кирпич_фасад', C['brick_front']) if style == 'front' else wall or brick('кирпич_сзади', C['brick_back'])
+    fr = principled('рама', C['frame'], rough=0.4)
+    band = band or principled('пояс', C['band'], rough=0.8)
     pil = principled('пилястра', C['pilaster'], rough=0.8)
     ins = brick('вставка_сзади', C['insert_back'])
+    sk = lambda u0, u1, z0, z1: B.box(wall, at((u0 + u1) / 2, skin / 2, (z0 + z1) / 2), (u1 - u0, skin, z1 - z0), rz) if u1 > u0 and z1 > z0 else None
     for f in range(floors):
         z = plinth + f * fh
-        # пояс на уровне перекрытия; спереди — ещё светло-серая полоса под окнами (фото 12)
-        B.box(band if style == 'front' else ins, at(length / 2, 0.06, z + 0.15), (length + 0.12, 0.12, 0.3 if style == 'front' else 0.45), rz)
+        wz = z + fh * 0.55
+        zb, zt = wz - wh / 2, wz + wh / 2
+        sk(-skin, length + skin, z, zb); sk(-skin, length + skin, zt, z + fh)      # перемычки под и над окнами
+        loggia = style == 'panel' and f > 0
+        for c in range(cols + 1):                                                     # простенки
+            u0 = (c - 0.5) * step + ww / 2 if c > 0 else -skin
+            u1 = (c + 0.5) * step - ww / 2 if c < cols else length + skin
+            sk(u0, u1, zb, zt)
+        # пояса перекрытий
+        if style == 'panel':
+            B.box(band, at(length / 2, skin + 0.06, z + 0.12), (length + 2 * skin + 0.1, 0.12, 0.24), rz)
+        else:
+            B.box(band if style == 'front' else ins, at(length / 2, skin + 0.06, z + 0.15), (length + 2 * skin + 0.12, 0.12, 0.3 if style == 'front' else 0.45), rz)
         if style == 'front':
-            B.box(principled('пояс_светлый', (0.72, 0.71, 0.68), rough=0.85), at(length / 2, 0.05, z + fh * 0.55 - 1.05), (length + 0.1, 0.1, 0.5), rz)
+            B.box(principled('пояс_светлый', (0.72, 0.71, 0.68), rough=0.85), at(length / 2, skin + 0.05, zb - 0.3), (length + 2 * skin + 0.1, 0.1, 0.4), rz)
         for c in range(cols):
             u = (c + 0.5) * step
-            wz = z + fh * 0.55
-            B.box(principled('откос', (0.10, 0.09, 0.085), rough=0.9), at(u, 0.015, wz), (1.86, 0.03, 1.86), rz)  # тень откоса
-            B.box(fr, at(u, 0.05, wz), (1.62, 0.1, 1.62), rz)          # рама
-            B.box(principled('подоконник', (0.85, 0.85, 0.83), rough=0.6), at(u, 0.14, wz - 0.86), (1.9, 0.28, 0.07), rz)  # отлив
-            B.box(gl, at(u, 0.09, wz), (1.42, 0.04, 1.42), rz, lit=lit_value())  # стекло; за ним комната
-            B.box(fr, at(u, 0.12, wz), (0.07, 0.03, 1.42), rz)         # импост
-            if R.random() < 0.18:                                       # кондиционер
-                B.box(principled('кондиционер', (0.88, 0.88, 0.86), rough=0.5), at(u + 1.15, 0.3, z + fh * 0.32), (0.8, 0.3, 0.55), rz)
-    # вертикали: пилястры между парами окон (спереди) или оранжевые вставки (сзади)
+            window(B, at, rz, u, wz, ww, wh, fr, skin=skin)
+            if style == 'panel' and c % 3 == 1 and f > 0 and (f + c) % 2 == 0:       # остеклённая лоджия
+                lw = min(step * 0.9, 3.0)
+                B.box(band, at(u, skin + 0.6, z + 0.08), (lw, 1.2, 0.16), rz)
+                B.box(wall, at(u, skin + 1.17, z + 0.55), (lw, 0.06, 0.9), rz)
+                B.box(glass(), at(u, skin + 1.18, z + 1.0 + (fh - 1.1) / 2), (lw - 0.1, 0.03, fh - 1.2), rz, lit=lit_value(0.6) * 0.6)
+                for sd in (-1, 1):
+                    B.box(wall, at(u + sd * lw / 2, skin + 0.6, z + fh / 2), (0.1, 1.2, fh), rz)
+            elif style != 'panel' and R.random() < 0.18:                               # кондиционер
+                B.box(principled('кондиционер', (0.88, 0.88, 0.86), rough=0.5), at(u + 1.15, skin + 0.3, z + fh * 0.32), (0.8, 0.3, 0.55), rz)
+    if style == 'panel':
+        return
     h = z_top
     for c in range(0, cols + 1, 2):
         u = c * step
         if style == 'front':
-            B.box(pil, at(u, 0.09, h / 2), (0.55, 0.18, h), rz)
+            B.box(pil, at(u, skin + 0.09, h / 2), (0.55, 0.18, h), rz)
         else:
-            B.box(ins, at(u, 0.04, h / 2), (0.9, 0.08, h), rz)
+            B.box(ins, at(u, skin + 0.04, h / 2), (0.9, 0.08, h), rz)
+
+
+def entrance(B, p, rz, w=1.5, door_h=2.3, canopy=(2.4, 1.5), z_can=2.75, steps=0.0, bright=0.9, lamp=True):
+    """вход: портал, остеклённая дверь со светом тамбура, козырёк, ступени, светильник над дверью.
+    p — точка на стене у земли, rz — направление стены (наружу — правая нормаль)"""
+    d = Vector((math.cos(rz), math.sin(rz), 0)); nrm = Vector((d.y, -d.x, 0))
+    at = lambda u, off, z: Vector(p) + d * u + nrm * off + Vector((0, 0, z))
+    dark = principled('рама_тёмная', (0.12, 0.10, 0.10))
+    conc = principled('козырёк', (0.55, 0.54, 0.52), rough=0.8)
+    z0 = steps
+    B.box(dark, at(0, 0.1, z0 + (door_h + 0.15) / 2), (w + 0.3, 0.2, door_h + 0.15), rz)          # портал
+    B.box(glass('стекло_дверь', 0.8), at(0, 0.21, z0 + door_h / 2), (w - 0.1, 0.02, door_h - 0.1), rz, lit=bright)
+    B.box(dark, at(0, 0.225, z0 + door_h / 2), (0.06, 0.02, door_h - 0.1), rz)
+    B.box(dark, at(w * 0.3, 0.24, z0 + 1.05), (0.04, 0.05, 0.5), rz)                              # ручка
+    B.box(conc, at(0, canopy[1] / 2, z_can + z0), (canopy[0], canopy[1], 0.16), rz)               # козырёк
+    for sd in (-1, 1):                                                                               # тяги козырька
+        B.box(dark, at(sd * (canopy[0] / 2 - 0.1), canopy[1] * 0.45, z_can + z0 + 0.5), (0.04, canopy[1] * 0.9, 0.04), rz)
+    k = 0
+    while steps > 0 and k * 0.15 < steps:                                                           # ступени
+        B.box(conc, at(0, 0.6 + (int(steps / 0.15) - k) * 0.3 / 2, k * 0.15 + 0.075), (w + 1.0, 0.6 + (int(steps / 0.15) - k) * 0.3, 0.15), rz); k += 1
+    if lamp:
+        B.box(principled('плафон', (1, 1, 1), emit=((1.0, 0.75, 0.48), 12.0)), at(0, canopy[1] * 0.5, z_can + z0 - 0.1), (0.3, 0.3, 0.04), rz)
+        lamp_light('свет_входа', tuple(at(0, canopy[1] * 0.5, z_can + z0 - 0.2)), 'POINT', 40.0, (1.0, 0.72, 0.45), 0.15)
+
+
+def neighbor(B, i, x, y, L, D, nf, rot, col):
+    """соседний дом: тёмный цоколь с магазинами, этажи с настоящими окнами, лоджии, пояса, подъезды, техника на крыше"""
+    fh, base = 2.9, 3.2
+    rz = math.radians(rot); c_, s_ = math.cos(rz), math.sin(rz)
+    P = lambda u, v: (x + u * c_ - v * s_, y + u * s_ + v * c_)
+    floors = nf - 1; h = base + floors * fh + 0.4
+    wall = principled('стена_соседи_%d' % i, col, rough=0.85)
+    B.box(wall, (x, y, h / 2), (L, D, h), rz)
+    B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.6, D + 0.6, 1.0), rz)
+    band = principled('пояс_соседи_%d' % i, tuple(min(1.0, c * 1.3 + 0.04) for c in col), rough=0.8)
+    sides = ((-L / 2, -D / 2, 0.0, L), (L / 2, -D / 2, math.pi / 2, D), (L / 2, D / 2, math.pi, L), (-L / 2, D / 2, -math.pi / 2, D))
+    for (u, v, a, ln) in sides:
+        px, py = P(u, v)
+        facade(B, px, py, ln, rz + a, floors, fh, base, max(2, round(ln / 3.2)), 'panel', h, wall=wall, skin=0.18, win=(1.45, 1.5), band=band)
+    stone = principled('цоколь_соседи', (0.10, 0.095, 0.09), rough=0.7)
+    B.box(stone, (x, y, base / 2), (L + 0.5, D + 0.5, base), rz)
+    for u in (-L * 0.3, 0.0, L * 0.3):                                                     # магазины со стороны улицы
+        px, py = P(u, -D / 2 - 0.26)
+        B.box(glass('витрина_соседи', 0.35), (px, py, 1.5), (L * 0.22, 0.04, 1.9), rz, lit=lit_value(0.35))
+    px, py = P(0, -D / 2 - 0.25); B.box(stone, (px, py - 0 * 0, 3.3), (L + 0.8, 1.2, 0.2), rz)  # козырёк над витринами
+    for u in (-L * 0.3, L * 0.3):                                                          # подъезды во двор
+        px, py = P(u, D / 2 + 0.25)
+        entrance(B, (px, py, 0), rz + math.pi, lamp=R.random() < 0.7)
+    unit = principled('крышная_техника', (0.35, 0.35, 0.36), rough=0.6, metal=0.3)
+    for (u, v, sx, sy, sz) in ((-L * 0.3, 0, 3, 2.4, 2.2), (L * 0.15, -D * 0.2, 2, 2, 1.4), (L * 0.32, D * 0.15, 4, 2.5, 3.0)):
+        B.box(unit, (*P(u, v), h + 1.0 + sz / 2), (sx, sy, sz), rz)
 
 
 def build_object_1():
@@ -383,6 +483,10 @@ def build_object_1():
     wall = D - tw['w'] - rC
     if wall > 1.5:
         facade(B, 0, D - tw['w'], wall, -math.pi / 2, nf, fh, pl, max(1, round(wall / 4.5)), 'front', top)
+    # подъезды во двор (задний фасад): в простенках между окнами, с крыльцом над цоколем
+    stp = L / a['cols']
+    for c in (1, 3, 5):
+        entrance(B, (L - c * stp, D + 0.22, 0), math.pi, steps=0.45, z_can=2.55)
     # --- башня лестницы и лифта: белая, на дальнем углу торца, выступает из торца, выше цилиндра
     th = top + tw['above_roof']
     tx, ty = -tw['d'] / 2 + 1.5, D - tw['w'] / 2
@@ -441,6 +545,8 @@ def build_object_1():
         B.box(deck, (ext / 2, -w / 2, h + 0.02), (ext, w - 0.3, 0.04))
         B.box(vit, (ext / 2, -w - 0.02, (gz0 + gz1) / 2), (ext - 0.8, 0.05, gz1 - gz0), lit=0.9)
         B.box(cm, (ext + 0.15, -w / 2, h / 2), (0.3, w, h))                              # глухой край
+    # вход в кафе с торца: портал, дверь, козырёк
+    entrance(B, (-w - 0.03, D * 0.62, 0), -math.pi / 2, w=1.8, door_h=2.5, canopy=(3.2, 1.4), z_can=2.85, bright=1.0)
     # белое ограждение террасы по всему контуру
     rz = h + 1.08
     B.box(rail, (-w + 0.1, D / 2, rz), (0.08, D, 0.08))
@@ -557,11 +663,11 @@ def environment(center):
     """мокрый асфальт, бордюры, плитка, газоны, фонари со светом, машины, деревья у тротуара, соседние дома с деталями"""
     B = Builder()
     grass = principled('газон', (0.035, 0.07, 0.02), rough=0.95)
-    asph = photo_mat('асфальт', 'asphalt_02', 3.0, tint=(0.55, 0.55, 0.58), rough=(0.25, 0.6), wet=0.7)
+    asph = photo_mat('асфальт', 'asphalt_02', 3.0, tint=(0.55, 0.55, 0.58), rough=(0.25, 0.6), wet=0.45)
     pav = photo_mat('плитка', 'concrete_pavers_02', 2.0, tint=(0.75, 0.73, 0.70), rough=(0.3, 0.7))
     curb = photo_mat('бордюр', 'brushed_concrete_03', 1.5, tint=(0.8, 0.8, 0.78), rough=(0.5, 0.9), box=True)
     mark = principled('разметка', (0.85, 0.85, 0.82), rough=0.5)
-    B.box(grass, (20, 20, -0.05), (500, 500, 0.1))
+    B.box(grass, (20, 20, -0.05), (1400, 1400, 0.1))                # до дальнего города и за ним — без «парящих» домов
     # улицы: перед главным фасадом (вдоль X) и слева у торца с кафе (вдоль Y)
     B.box(asph, (20, -30, 0.01), (500, 14, 0.02))
     B.box(asph, (-40, 40, 0.01), (14, 500, 0.02))
@@ -569,6 +675,8 @@ def environment(center):
     B.box(pav, (30, -20, 0.06), (180, 6, 0.12))                   # тротуар вдоль главного фасада
     B.box(pav, (-30, 40, 0.06), (6, 180, 0.12))                   # тротуар вдоль торца
     B.box(pav, (11.5, 1.0, 0.05), (77, 37, 0.1))                  # площадка вокруг дома: x −27..50, y −17,5..19,5
+    B.box(asph, (22, 25.5, 0.04), (52, 12, 0.08))                  # двор: проезд и парковка за домом
+    B.box(curb, (22, 31.55, 0.1), (52, 0.12, 0.2))
     B.box(grass, (28, -16.3, 0.12), (44, 1.6, 0.24))              # газон-полоса под живой изгородью
     B.box(curb, (28, -17.15, 0.15), (44, 0.12, 0.3))
     for (x0, x1, y0, y1) in ((-26, -12, -16, -8), (9, 48, -11.5, -7.5)):   # газоны с деревьями на площадке
@@ -591,28 +699,12 @@ def environment(center):
     for k in range(8):                                            # пешеходный переход у угла
         B.box(mark, (-19.0, -36.0 + k * 1.2 + 0.6, 0.025), (4.0, 0.6, 0.01))
     # соседние дома: межэтажные пояса, тёмный цоколь со светящимися витринами, техника на крыше
-    stone = principled('цоколь_соседи', (0.10, 0.095, 0.09), rough=0.7)
-    unit = principled('крышная_техника', (0.35, 0.35, 0.36), rough=0.6, metal=0.3)
-    for i, (x, y, L, D, nf, rot, col) in enumerate(O['neighbors']):
-        h = nf * 2.9 + 0.6; rz = math.radians(rot)
-        mat = windows_texture('соседи_%d' % i, col)
-        band = principled('пояс_соседи_%d' % i, tuple(min(1.0, c * 1.3 + 0.04) for c in col), rough=0.8)
-        B.box(mat, (x, y, h / 2), (L, D, h), rz)
-        B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.2, D + 0.2, 1.0), rz)
-        for k in range(2, nf + 1):
-            B.box(band, (x, y, k * 2.9 - 0.3), (L + 0.25, D + 0.25, 0.28), rz)
-        B.box(stone, (x, y, 1.6), (L + 0.3, D + 0.3, 3.2), rz)
-        c_, s_ = math.cos(rz), math.sin(rz)
-        for u in (-L * 0.3, 0.0, L * 0.3):  # три магазина в цоколе, не сплошная лента
-            B.box(glass('витрина_соседи', 0.35), (x + u * c_, y + u * s_, 1.5), (L * 0.22, D + 0.36, 1.9), rz, lit=lit_value(0.35))
-        B.box(stone, (x, y, 3.25), (L + 0.6, D + 0.6, 0.2), rz)                  # козырёк над витринами
-        c_, s_ = math.cos(rz), math.sin(rz)
-        for (u, v, sx, sy, sz) in ((-L * 0.3, 0, 3, 2.4, 2.2), (L * 0.15, -D * 0.2, 2, 2, 1.4), (L * 0.32, D * 0.15, 4, 2.5, 3.0)):
-            B.box(unit, (x + u * c_ - v * s_, y + u * s_ + v * c_, h + 1.0 + sz / 2), (sx, sy, sz), rz)
+    for i, nb in enumerate(O['neighbors']):
+        neighbor(B, i, *nb)
     # фонари: опора, консоль, светильник + настоящий свет вниз (пятна на мокром асфальте)
     pole = principled('опора', (0.10, 0.10, 0.11), rough=0.45, metal=0.7)
     lampm = principled('фонарь', (1, 1, 1), emit=((1.0, 0.72, 0.42), 30.0))
-    lamps = [((x, -23.6), 0.0) for x in range(-24, 150, 18)] + [((-33.6, y), -math.pi / 2) for y in range(-6, 150, 18)]
+    lamps = [((x, -23.6), 0.0) for x in range(-24, 150, 18)] + [((-33.6, y), -math.pi / 2) for y in range(-6, 150, 18)] + [((x, 19.2), math.pi) for x in (6, 22, 38)]
     for (lx, ly), a in lamps:
         dx, dy = -math.sin(a), -math.cos(a)                      # к дороге
         B.box(pole, (lx, ly, 4.5), (0.2, 0.2, 9.0)); B.box(pole, (lx, ly, 0.4), (0.36, 0.36, 0.8))
@@ -700,6 +792,9 @@ def trees_and_cars():
             if R.random() < 0.6:
                 car(-34.9, y, math.pi / 2 if R.random() < .5 else -math.pi / 2)
             y += R.uniform(5.6, 7.5)
+        for x in range(2, 44, 3):  # двор: парковка перпендикулярно
+            if R.random() < 0.6:
+                car(x, 28.6, math.pi / 2 if R.random() < .5 else -math.pi / 2)
         for (cx, cy_, r) in ((30, -32.6, math.pi), (78, -27.2, 0.0), (-42.3, 30, math.pi / 2)):  # едут по улице
             car(cx, cy_, r)
         log('машины: %d' % len(col.objects))
