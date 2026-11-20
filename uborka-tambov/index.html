@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Уборка участков в Тамбове — листва, снег, покос, вывоз мусора</title>
+<meta name="description" content="Уборка листвы и снега, покос травы, вывоз мусора в Тамбове и области. Покос от 2 000 ₽, вывоз мусора от 1 000 ₽. Рассчитайте стоимость онлайн.">
+<meta name="theme-color" content="#f3f4f1">
+<style>
+:root{
+  --bg:#f3f4f1; --card:#fff; --ink:#17201a; --mut:#66716a; --line:#e0e4dd;
+  --acc:#2f6b3a; --acc2:#3f8a4c; --hi:#e8a33d; --snow:#4a7fb5;
+  --f:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 var(--f);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+h1,h2,h3{margin:0 0 12px;line-height:1.06;letter-spacing:-.02em}
+h2{font-size:clamp(28px,4.4vw,46px);font-weight:800}
+.eyebrow{display:block;font-size:12px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--acc);margin-bottom:12px}
+.mut{color:var(--mut)}
+section{padding:90px 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 24px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:700 15px var(--f);cursor:pointer;text-decoration:none;transition:.2s;white-space:nowrap}
+.btn:hover{border-color:var(--ink)}
+.btn.dark{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.dark:hover{background:var(--acc2)}
+
+/* шапка */
+.top{position:fixed;inset:0 0 auto;z-index:30;background:rgba(243,244,241,.82);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:66px;gap:16px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:34px;height:34px}
+.logo b{font:800 19px var(--f);letter-spacing:.03em}
+.logo small{display:block;font-size:9px;letter-spacing:.3em;color:var(--mut);font-weight:700;text-transform:uppercase}
+nav{display:flex;gap:24px;font-size:14px;font-weight:600}
+nav a{text-decoration:none;color:var(--mut)} nav a:hover{color:var(--ink)}
+
+/* первый экран */
+.hero{position:relative;min-height:100vh;min-height:100svh;display:flex;align-items:flex-start;padding:100px 0 70px;overflow:hidden;
+  background:linear-gradient(180deg,#e9efe6 0%,#f3f4f1 55%,#dfe6d6 100%)}
+body.winter .hero{background:linear-gradient(180deg,#e6edf4 0%,#f1f4f7 55%,#e3e9ef 100%)}
+  .hero > .wrap{width:100%}
+#yard{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-card{position:relative;z-index:2;max-width:500px;background:rgba(255,255,255,.78);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.9);border-radius:24px;padding:28px;box-shadow:0 20px 50px rgba(20,35,25,.12)}
+.hero-card h1{font-size:clamp(30px,4.2vw,50px);font-weight:800;margin-bottom:12px}
+.hero-card h1 em{font-style:normal;color:var(--acc)}
+body.winter .hero-card h1 em{color:var(--snow)}
+.hero-card p{margin:0 0 20px;color:var(--mut);font-size:17px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.season{position:absolute;right:20px;top:86px;z-index:3;display:flex;background:rgba(255,255,255,.85);border:1px solid var(--line);border-radius:999px;padding:4px;backdrop-filter:blur(8px)}
+.season button{border:0;background:transparent;padding:9px 16px;border-radius:999px;font:700 14px var(--f);cursor:pointer;color:var(--mut)}
+.season button[aria-pressed="true"]{background:var(--ink);color:#fff}
+.hint{position:absolute;right:20px;bottom:22px;z-index:2;font-size:13px;color:var(--mut);background:rgba(255,255,255,.75);padding:7px 12px;border-radius:999px}
+
+/* услуги */
+.svc{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:34px}
+.svc article{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:24px;transition:.25s;position:relative;overflow:hidden}
+.svc article:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(20,35,25,.1)}
+.svc .ic{width:52px;height:52px;border-radius:16px;background:#eaf2e8;display:grid;place-items:center;margin-bottom:16px;font-size:26px}
+.svc h3{font-size:19px;margin-bottom:6px}
+.svc p{margin:0 0 16px;color:var(--mut);font-size:15px}
+.svc .price{display:inline-block;background:var(--ink);color:#fff;font-weight:800;padding:7px 12px;border-radius:10px}
+.svc .when{position:absolute;right:16px;top:18px;font-size:12px;font-weight:700;color:var(--mut)}
+
+/* калькулятор */
+.calc{display:grid;grid-template-columns:1.1fr .9fr;gap:20px;margin-top:30px;align-items:start}
+.box{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px}
+.field{margin-bottom:22px}
+.field label{display:flex;justify-content:space-between;font-size:14px;color:var(--mut);margin-bottom:8px}
+.field label b{color:var(--ink);font-size:16px}
+input[type=range]{width:100%;accent-color:var(--acc)}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips label{display:flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:12px;padding:10px 14px;cursor:pointer;font-weight:600;font-size:14px;user-select:none}
+.chips input{accent-color:var(--acc)}
+.chips label:has(input:checked){border-color:var(--acc);background:#eef5ec}
+.total{font-size:clamp(40px,6vw,58px);font-weight:800;margin:4px 0}
+.total small{font-size:.4em;color:var(--mut)}
+.lines{list-style:none;padding:0;margin:14px 0 18px;display:grid;gap:6px;font-size:14px;color:var(--mut)}
+.lines li{display:flex;justify-content:space-between;gap:10px}
+
+/* как работаем */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:30px;counter-reset:s}
+.steps div{background:#fff;border:1px solid var(--line);border-radius:20px;padding:22px}
+.steps div:before{counter-increment:s;content:counter(s);display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:var(--acc);color:#fff;font-weight:800;margin-bottom:12px}
+.steps p{margin:0;color:var(--mut);font-size:15px}
+
+/* заявка */
+.lead{display:grid;grid-template-columns:1fr 1fr;gap:36px;background:var(--acc);color:#fff;border-radius:28px;padding:44px}
+body.winter .lead{background:#2c4a6b}
+.lead .eyebrow{color:#cfe5c9}
+body.winter .lead .eyebrow{color:#cfe0f2}
+.lead p{color:#dcebd8}
+form{display:grid;gap:10px}
+form input,form select,form textarea{font:16px var(--f);padding:14px 15px;border-radius:12px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;width:100%}
+form input::placeholder,form textarea::placeholder{color:rgba(255,255,255,.7)}
+form select option{color:#000}
+.ok{display:none;padding:13px 15px;border-radius:12px;background:rgba(255,255,255,.18)}
+footer{padding:34px 0 100px;color:var(--mut);font-size:13px}
+footer .wrap{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.fab{display:none;position:fixed;left:16px;right:16px;bottom:16px;z-index:40}
+.fab .btn{width:100%;box-shadow:0 12px 30px rgba(0,0,0,.25)}
+.rv{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.rv.in{opacity:1;transform:none}
+
+@media (max-width:960px){
+  nav{display:none}
+  .svc{grid-template-columns:1fr 1fr}
+  .steps{grid-template-columns:1fr 1fr}
+  .calc,.lead{grid-template-columns:1fr}
+  .lead{padding:28px}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  section{padding:64px 0}
+  .svc,.steps{grid-template-columns:1fr}
+  .top .btn{display:none}
+  .fab{display:block}
+  .hero{padding-bottom:40px;padding-top:128px}
+  .hero-card{padding:18px}
+  .hero-card p{font-size:15px;margin-bottom:14px}
+  .hero-card .row .btn{min-height:44px;padding:0 16px;font-size:14px}
+  .season{right:16px;top:78px}
+  .hint{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}.rv{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#">
+      <svg viewBox="0 0 34 34" aria-hidden="true"><rect width="34" height="34" rx="10" fill="#2f6b3a"/><path d="M10 24c0-7 5-13 14-14-1 9-7 14-14 14z" fill="#e8a33d"/><path d="M10 24l9-9" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>
+      <span><b data-c="brand">ЧИСТЫЙ ДВОР</b><small>Уборка участков · Тамбов</small></span>
+    </a>
+    <nav><a href="#services">Услуги</a><a href="#calc">Цены</a><a href="#how">Как работаем</a><a href="#contacts">Контакты</a></nav>
+    <a class="btn dark" href="#contacts">Заказать уборку</a>
+  </div>
+</header>
+
+<main>
+<section class="hero">
+  <canvas id="yard" aria-hidden="true"></canvas>
+  <div class="season" role="group" aria-label="Сезон">
+    <button type="button" data-s="autumn">🍂 Осень</button><button type="button" data-s="winter">❄ Зима</button>
+  </div>
+  <div class="wrap">
+    <div class="hero-card">
+      <span class="eyebrow" data-c="region">Тамбов и область</span>
+      <h1 id="heroTitle">Уберём участок&nbsp;—<br><em>вы отдыхайте</em></h1>
+      <p id="heroText">Листва, трава, мусор — приедем, уберём и вывезем. Покос от 2 000 ₽, вывоз мусора от 1 000 ₽.</p>
+      <div class="row"><a class="btn dark" href="#calc">Рассчитать стоимость</a><a class="btn" data-c="phone-link" href="#">Позвонить</a></div>
+    </div>
+  </div>
+  <div class="hint">Проведите по двору — расчистите сами</div>
+</section>
+
+<section id="services">
+  <div class="wrap">
+    <span class="eyebrow rv">Услуги</span>
+    <h2 class="rv">Что мы делаем</h2>
+    <div class="svc">
+      <article class="rv"><span class="when">круглый год</span><div class="ic">🚛</div><h3>Вывоз мусора</h3><p>Строительный и бытовой мусор, ветки, старая мебель. Погрузим сами.</p><span class="price">от 1 000 ₽</span></article>
+      <article class="rv"><span class="when">осень</span><div class="ic">🍂</div><h3>Уборка листвы</h3><p>Соберём воздуходувом и граблями, упакуем в мешки и вывезем.</p><span class="price">от 1 000 ₽</span></article>
+      <article class="rv"><span class="when">лето</span><div class="ic">🌿</div><h3>Покос травы</h3><p>Триммером и газонокосилкой, вдоль заборов и в труднодоступных местах.</p><span class="price">от 2 000 ₽</span></article>
+      <article class="rv"><span class="when">зима</span><div class="ic">❄</div><h3>Уборка снега и наледи</h3><p>Дорожки, крыльцо, въезд, парковка. Сколем наледь, посыплем.</p><span class="price">от 2 000 ₽</span></article>
+    </div>
+  </div>
+</section>
+
+<section id="calc" style="padding-top:20px">
+  <div class="wrap">
+    <span class="eyebrow rv">Калькулятор</span>
+    <h2 class="rv">Сколько стоит</h2>
+    <p class="mut rv">Примерная стоимость — точную назовём после фото участка или выезда.</p>
+    <div class="calc">
+      <div class="box rv">
+        <div class="field"><label>Площадь участка <b id="vArea"></b></label><input type="range" id="area" min="2" max="30" step="1" value="6"></div>
+        <div class="field"><label>Что сделать</label>
+          <div class="chips" id="work">
+            <label><input type="checkbox" value="leaves" checked> 🍂 Листва</label>
+            <label><input type="checkbox" value="grass"> 🌿 Покос</label>
+            <label><input type="checkbox" value="snow"> ❄ Снег и наледь</label>
+            <label><input type="checkbox" value="trash"> 🚛 Вывоз мусора</label>
+          </div>
+        </div>
+        <div class="field" id="trashField"><label>Объём мусора <b id="vTrash"></b></label><input type="range" id="trash" min="1" max="10" step="1" value="2"></div>
+        <div class="field"><label>Как часто</label>
+          <div class="chips" id="freq">
+            <label><input type="radio" name="f" value="1" checked> Разово</label>
+            <label><input type="radio" name="f" value="0.85"> Каждую неделю −15%</label>
+          </div>
+        </div>
+      </div>
+      <aside class="box rv">
+        <span class="eyebrow">Примерно</span>
+        <div class="total" id="total">0 <small>₽</small></div>
+        <ul class="lines" id="lines"></ul>
+        <a class="btn dark" href="#contacts" style="width:100%">Заказать с этим расчётом</a>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<section id="how" style="padding-top:20px">
+  <div class="wrap">
+    <span class="eyebrow rv">Как работаем</span>
+    <h2 class="rv">Четыре шага</h2>
+    <div class="steps">
+      <div class="rv"><h3>Фото или звонок</h3><p>Пришлите фото участка в мессенджер — оценим за 10 минут.</p></div>
+      <div class="rv"><h3>Цена заранее</h3><p>Называем стоимость до выезда. Без доплат на месте.</p></div>
+      <div class="rv"><h3>Приезжаем со своим</h3><p>Инструмент, мешки и машина для вывоза — наши.</p></div>
+      <div class="rv"><h3>Чисто — платите</h3><p>Принимаете работу, оплата после. Наличными или переводом.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="contacts" style="padding-top:20px">
+  <div class="wrap">
+    <div class="lead rv">
+      <div>
+        <span class="eyebrow">Заявка</span>
+        <h2>Оставьте заявку — перезвоним</h2>
+        <p>Или сразу пишите и звоните: <a data-c="phone-link" href="#"><b data-c="phone"></b></a></p>
+        <p data-c="region-long">Работаем в Тамбове и по области.</p>
+      </div>
+      <form id="form" novalidate>
+        <input name="name" placeholder="Имя" autocomplete="name">
+        <input name="phone" type="tel" placeholder="Телефон" autocomplete="tel">
+        <input name="addr" placeholder="Адрес или район">
+        <input name="calc" id="calcField" placeholder="Что сделать" readonly>
+        <button class="btn" type="submit">Отправить заявку</button>
+        <div class="ok" id="ok">Заявка принята! Перезвоним в течение 15 минут.</div>
+        <p style="font-size:12px;margin:0;opacity:.75">Демо-версия: форма показывает, как будет выглядеть заявка.</p>
+      </form>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer><div class="wrap"><div><b style="color:var(--ink)" data-c="brand">ЧИСТЫЙ ДВОР</b> · уборка участков в Тамбове</div><div>Демо-сайт</div></div></footer>
+<div class="fab"><a class="btn dark" href="#calc">Рассчитать уборку</a></div>
+
+<script>
+/* ===== Настройки: меняются здесь ===== */
+const CFG = { brand: 'ЧИСТЫЙ ДВОР', phone: '+7 (900) 000-00-00', region: 'Тамбов и область' };
+const PRICE = {          // за участок до 6 соток, дальше за каждую сотку сверху
+  leaves: { name: 'Уборка листвы', base: 1000, per: 150 },
+  grass:  { name: 'Покос травы',   base: 2000, per: 250 },
+  snow:   { name: 'Снег и наледь', base: 2000, per: 200 },
+  trash:  { name: 'Вывоз мусора',  base: 1000, perM3: 700 },
+};
+
+const $ = s => document.querySelector(s);
+const fmt = n => Math.round(n / 50) * 50 === 0 ? '0' : (Math.round(n / 50) * 50).toLocaleString('ru-RU');
+document.querySelectorAll('[data-c="brand"]').forEach(e => e.textContent = CFG.brand);
+document.querySelectorAll('[data-c="phone"]').forEach(e => e.textContent = CFG.phone);
+document.querySelectorAll('[data-c="phone-link"]').forEach(e => e.href = 'tel:+' + CFG.phone.replace(/\D/g, ''));
+
+/* ---------- калькулятор ---------- */
+function calc() {
+  const area = +$('#area').value, trash = +$('#trash').value;
+  const k = +document.querySelector('#freq input:checked').value;
+  const sel = [...document.querySelectorAll('#work input:checked')].map(i => i.value);
+  $('#vArea').textContent = area + ' сот.'; $('#vTrash').textContent = '≈ ' + trash + ' м³';
+  $('#trashField').style.display = sel.includes('trash') ? '' : 'none';
+  let sum = 0; const rows = [];
+  for (const s of sel) {
+    const p = PRICE[s];
+    const v = s === 'trash' ? p.base + Math.max(0, trash - 1) * p.perM3 : p.base + Math.max(0, area - 6) * p.per;
+    sum += v; rows.push(`<li><span>${p.name}</span><span>${fmt(v)} ₽</span></li>`);
+  }
+  if (k < 1 && sum) rows.push(`<li><span>Скидка за регулярность</span><span>−15%</span></li>`);
+  sum *= k;
+  $('#total').innerHTML = (sum ? 'от ' + fmt(sum) : '0') + ' <small>₽</small>';
+  $('#lines').innerHTML = rows.join('') || '<li>Выберите работы</li>';
+  $('#calcField').value = sel.length ? `${area} сот.: ${sel.map(s => PRICE[s].name).join(', ')} — от ${fmt(sum)} ₽` : '';
+}
+document.querySelectorAll('#calc input').forEach(i => i.addEventListener('input', calc));
+calc();
+
+/* ---------- двор с воздуходувом ---------- */
+const cv = $('#yard'), ctx = cv.getContext('2d');
+const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H, dpr, parts = [], season = 'autumn', blower = { x: -200, y: 0, tx: 0, ty: 0, manual: 0 };
+const AUT = ['#d9822b', '#e8a33d', '#c4561f', '#a8461a', '#d1b13b', '#8c3b18'];
+function size() {
+  dpr = Math.min(devicePixelRatio || 1, 2);
+  W = cv.clientWidth; H = cv.clientHeight;
+  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+function spawn(n) {
+  parts = [];
+  for (let i = 0; i < n; i++) {
+    const gy = H * .62 + Math.random() * H * .36;
+    parts.push({ x: Math.random() * W, y: gy, gy, vx: 0, vy: 0, r: season === 'winter' ? 2 + Math.random() * 4 : 6 + Math.random() * 7,
+      a: Math.random() * 6.28, va: 0, c: season === 'winter' ? '#fff' : AUT[(Math.random() * AUT.length) | 0], home: true });
+  }
+}
+function setSeason(s) {
+  season = s; document.body.classList.toggle('winter', s === 'winter');
+  document.querySelectorAll('.season button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.s === s)));
+  $('#heroTitle').innerHTML = s === 'winter' ? 'Расчистим двор&nbsp;—<br><em>от снега и наледи</em>' : 'Уберём участок&nbsp;—<br><em>вы отдыхайте</em>';
+  $('#heroText').textContent = s === 'winter' ? 'Снег, наледь, мусор — приедем, расчистим и вывезем. Уборка снега от 2 000 ₽, вывоз мусора от 1 000 ₽.' : 'Листва, трава, мусор — приедем, уберём и вывезем. Покос от 2 000 ₽, вывоз мусора от 1 000 ₽.';
+  spawn(Math.round(Math.min(W, 1400) / (s === 'winter' ? 2.2 : 4.5)));
+}
+document.querySelectorAll('.season button').forEach(b => b.addEventListener('click', () => setSeason(b.dataset.s)));
+
+function drawBg() {
+  // земля: трава или снег
+  const g = ctx.createLinearGradient(0, H * .58, 0, H);
+  if (season === 'winter') { g.addColorStop(0, '#dfe7ee'); g.addColorStop(1, '#c9d5e0'); }
+  else { g.addColorStop(0, '#9cbf7d'); g.addColorStop(1, '#6f9a54'); }
+  ctx.fillStyle = g; ctx.fillRect(0, H * .58, W, H * .42);
+  // дорожка
+  ctx.fillStyle = season === 'winter' ? '#b8c3cd' : '#c9bfae';
+  ctx.beginPath(); ctx.moveTo(W * .55, H); ctx.lineTo(W * .72, H); ctx.lineTo(W * .66, H * .58); ctx.lineTo(W * .61, H * .58); ctx.fill();
+  // забор
+  ctx.fillStyle = season === 'winter' ? '#8a96a3' : '#7c6a55';
+  for (let x = 0; x < W; x += 26) ctx.fillRect(x, H * .5, 16, H * .09);
+  ctx.fillRect(0, H * .52, W, 4); ctx.fillRect(0, H * .565, W, 4);
+}
+function drawBlower(b) {
+  ctx.save(); ctx.translate(b.x, b.y);
+  // струя воздуха
+  const air = ctx.createLinearGradient(30, 0, 260, 0);
+  air.addColorStop(0, 'rgba(255,255,255,.55)'); air.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.fillStyle = air; ctx.beginPath(); ctx.moveTo(34, -6); ctx.lineTo(260, -40); ctx.lineTo(260, 40); ctx.lineTo(34, 6); ctx.fill();
+  for (let i = 0; i < 4; i++) {
+    const o = (performance.now() / 4 + i * 60) % 230;
+    ctx.strokeStyle = `rgba(255,255,255,${.5 - o / 520})`; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(34 + o, -4 - o * .12); ctx.lineTo(54 + o, -4 - o * .12); ctx.stroke();
+  }
+  // корпус воздуходува
+  ctx.fillStyle = '#e8a33d'; ctx.beginPath(); ctx.roundRect(-46, -20, 48, 34, 10); ctx.fill();
+  ctx.fillStyle = '#17201a'; ctx.fillRect(-36, -30, 26, 10);
+  ctx.fillStyle = '#2b2f2c'; ctx.beginPath(); ctx.moveTo(0, -6); ctx.lineTo(40, -4); ctx.lineTo(40, 4); ctx.lineTo(0, 6); ctx.fill();
+  ctx.restore();
+}
+function step(dt, t) {
+  // воздуходув сам ходит по двору, или идёт за пальцем
+  if (blower.manual > 0) blower.manual -= dt;
+  else { blower.tx = (Math.sin(t / 3200) * .5 + .5) * W * .8 - 40; blower.ty = H * .7 + Math.sin(t / 1700) * H * .1; }
+  blower.x += (blower.tx - blower.x) * Math.min(1, dt * 4);
+  blower.y += (blower.ty - blower.y) * Math.min(1, dt * 4);
+  for (const p of parts) {
+    const dx = p.x - (blower.x + 40), dy = p.y - blower.y;
+    if (dx > 0 && dx < 280 && Math.abs(dy) < 18 + dx * .2) {
+      const f = (1 - dx / 280) * 900;
+      p.vx += f * dt; p.vy += (-120 - Math.random() * 160) * dt * (1 - dx / 280) * 3; p.va += (Math.random() - .5) * 20 * dt; p.home = false;
+    }
+    p.vy += 220 * dt;                         // тяжесть
+    p.vx *= 1 - 1.6 * dt; p.vy *= 1 - .8 * dt;
+    p.x += p.vx * dt; p.y += p.vy * dt; p.a += p.va * dt; p.va *= 1 - dt;
+    if (p.y > p.gy) { p.y = p.gy; p.vy *= -.2; p.vx *= .6; }
+    if (p.x > W + 40) { p.x = -20 - Math.random() * 200; p.vx = 0; p.vy = 0; }   // улетевшие возвращаются слева
+  }
+}
+function drawParts() {
+  for (const p of parts) {
+    ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.a); ctx.fillStyle = p.c;
+    if (season === 'winter') { ctx.globalAlpha = .9; ctx.beginPath(); ctx.arc(0, 0, p.r, 0, 6.28); ctx.fill(); }
+    else { ctx.beginPath(); ctx.ellipse(0, 0, p.r, p.r * .55, 0, 0, 6.28); ctx.fill(); ctx.strokeStyle = 'rgba(0,0,0,.18)'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(-p.r, 0); ctx.lineTo(p.r, 0); ctx.stroke(); }
+    ctx.restore();
+  }
+}
+let last = 0;
+function loop(t) {
+  const dt = Math.min(.05, (t - last) / 1000 || 0); last = t;
+  ctx.clearRect(0, 0, W, H); drawBg();
+  if (!still) step(dt, t);
+  drawParts(); drawBlower(blower);
+  requestAnimationFrame(loop);
+}
+cv.addEventListener('pointermove', e => { const r = cv.getBoundingClientRect(); blower.tx = e.clientX - r.left - 60; blower.ty = Math.max(H * .6, e.clientY - r.top); blower.manual = 2.5; });
+cv.style.touchAction = 'pan-y';
+addEventListener('resize', () => { size(); spawn(parts.length || 200); });
+size();
+setSeason(new Date().getMonth() >= 10 || new Date().getMonth() <= 2 ? 'winter' : 'autumn');
+if (new Date().getMonth() === 10) setSeason('autumn');   // ноябрь — ещё листва
+blower.x = W * .1; blower.y = H * .7;
+requestAnimationFrame(loop);
+
+/* ---------- прочее ---------- */
+$('#form').addEventListener('submit', e => { e.preventDefault(); const p = e.target.phone; if (p.value.replace(/\D/g, '').length < 10) { p.focus(); p.style.outline = '2px solid #ffb4a8'; return; } p.style.outline = ''; $('#ok').style.display = 'block'; e.target.querySelector('button').disabled = true; });
+const io = new IntersectionObserver(es => es.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } }), { threshold: .12 });
+document.querySelectorAll('.rv').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
