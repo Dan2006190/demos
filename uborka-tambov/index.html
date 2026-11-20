@@ -405,6 +405,12 @@ blower.x = W * .1; blower.y = H * .7;
 requestAnimationFrame(loop);
 
 /* ---------- прочее ---------- */
+/* откуда пришёл клиент: метка ?src= в ссылке (визитка, авито, карты, 2гис) запоминается на время визита */
+const SRC_NAMES = { v: 'визитка/листовка', avito: 'Авито', maps: 'Яндекс Карты', '2gis': '2ГИС', vk: 'ВКонтакте' };
+let src = new URLSearchParams(location.search).get('src');
+try { if (src) sessionStorage.setItem('src', src); else src = sessionStorage.getItem('src'); } catch (e) {}
+const srcName = SRC_NAMES[src] || 'сайт';
+
 /* заявка уходит готовым сообщением в Telegram или WhatsApp — человеку остаётся нажать «Отправить» */
 if (!CFG.telegram) document.querySelector('[data-to="tg"]').remove();
 $('#form').addEventListener('submit', e => {
@@ -414,7 +420,8 @@ $('#form').addEventListener('submit', e => {
     f.name.value && 'Имя: ' + f.name.value,
     f.phone.value && 'Телефон: ' + f.phone.value,
     f.addr.value && 'Адрес: ' + f.addr.value,
-    f.calc.value && 'Нужно: ' + f.calc.value].filter(Boolean).join('\n');
+    f.calc.value && 'Нужно: ' + f.calc.value,
+    'Откуда: ' + srcName].filter(Boolean).join('\n');
   const url = to === 'tg' ? 'https://t.me/' + CFG.telegram + '?text=' + encodeURIComponent(msg)
                           : 'https://wa.me/' + CFG.whatsapp + '?text=' + encodeURIComponent(msg);
   $('#ok').style.display = 'block';
