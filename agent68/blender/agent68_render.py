@@ -460,7 +460,18 @@ def build_object_1():
         B.box(rail, (ux, uy, h + 1.1), (0.06, 0.06, 2.2))
         bpy.ops.mesh.primitive_cone_add(vertices=8, radius1=1.4, depth=0.6, location=(ux, uy, h + 2.3))
         u = bpy.context.active_object; u.data.materials.append(principled('зонт', (0.92, 0.90, 0.85)))
+    # крыша: выходы на кровлю, вентшахты, антенны
+    rt = top + 1.2
+    tech = principled('крышная_техника', (0.35, 0.35, 0.36), rough=0.6, metal=0.3)
+    for (x, y, sx, sy, sz) in ((9, 9, 2.4, 2.4, 2.2), (19, 10, 1.6, 1.2, 1.4), (27, 8, 2.4, 2.4, 2.2), (34, 11, 3.0, 2.0, 1.6)):
+        B.box(tech, (x, y, rt + sz / 2), (sx, sy, sz))
+    for (x, y) in ((14, 4), (31, 4)):
+        B.box(tech, (x, y, rt + 2.5), (0.08, 0.08, 5.0))
     objs = B.build('чичерина64')
+    # вывеска кафе на фризе: на торец и на главный фасад
+    sign('КАФЕ', (-w - 0.16, D / 2, h - 0.3), (math.pi / 2, 0, -math.pi / 2), 0.42)
+    if ext > 0:
+        sign('КАФЕ', (ext / 2, -w - 0.16, h - 0.3), (math.pi / 2, 0, 0), 0.42)
     # маска этажа: оболочка этажа квартиры чуть шире стен (корпус и цилиндр), только для --what mask
     f = o['floor'] - 1; z0, z1 = pl + f * fh, pl + (f + 1) * fh
     M = Builder()
@@ -474,33 +485,155 @@ def build_object_1():
     return objs, mask, center, ch
 
 
+def photo_mat(name, slug, scale, tint=(1.0, 1.0, 1.0), rough=(0.4, 0.9), wet=0.0, box=False):
+    """фото-фактура Poly Haven по координатам объекта (меши сцены — в мировых координатах).
+    wet — доля мокрых пятен: в лужах темнее, гладко (отражают фонари и окна), без рельефа"""
+    if name in MATS:
+        return MATS[name]
+    m = principled(name, tint, rough=rough[1])
+    try:
+        T = ph_texture(slug)
+    except Exception as e:
+        log('фактура %s не загрузилась (%s) — однотонно' % (slug, e)); return m
+    nt, L = m.node_tree, m.node_tree.links
+    b = nt.nodes['Principled BSDF']
+    tc = nt.nodes.new('ShaderNodeTexCoord'); mp = nt.nodes.new('ShaderNodeMapping')
+    mp.inputs['Scale'].default_value = (1 / scale,) * 3; L.new(tc.outputs['Object'], mp.inputs['Vector'])
+
+    def img(path, cs):
+        t = nt.nodes.new('ShaderNodeTexImage'); t.image = bpy.data.images.load(path, check_existing=True)
+        t.image.colorspace_settings.name = cs
+        if box: t.projection = 'BOX'; t.projection_blend = 0.2
+        L.new(mp.outputs['Vector'], t.inputs['Vector']); return t
+    col = nt.nodes.new('ShaderNodeMix'); col.data_type = 'RGBA'; col.blend_type = 'MULTIPLY'; col.inputs['Factor'].default_value = 1.0
+    L.new(img(T['Diffuse'], 'sRGB').outputs['Color'], col.inputs['A']); col.inputs['B'].default_value = (*tint, 1)
+    rr = nt.nodes.new('ShaderNodeMapRange'); L.new(img(T['Rough'], 'Non-Color').outputs['Color'], rr.inputs['Value'])
+    rr.inputs['To Min'].default_value, rr.inputs['To Max'].default_value = rough
+    nm = nt.nodes.new('ShaderNodeNormalMap'); nm.inputs['Strength'].default_value = 1.0
+    L.new(img(T['nor_gl'], 'Non-Color').outputs['Color'], nm.inputs['Color']); L.new(nm.outputs['Normal'], b.inputs['Normal'])
+    if wet <= 0:
+        L.new(col.outputs['Result'], b.inputs['Base Color']); L.new(rr.outputs['Result'], b.inputs['Roughness']); return m
+    # лужи: крупный шум по координатам → маска пятен
+    nz = nt.nodes.new('ShaderNodeTexNoise'); nz.inputs['Scale'].default_value = 0.22; nz.inputs['Detail'].default_value = 6; nz.inputs['Roughness'].default_value = 0.6
+    L.new(tc.outputs['Object'], nz.inputs['Vector'])
+    pm = nt.nodes.new('ShaderNodeMapRange'); L.new(nz.outputs['Fac'], pm.inputs['Value'])
+    pm.inputs['From Min'].default_value = 0.62 - 0.25 * wet; pm.inputs['From Max'].default_value = 0.70 - 0.25 * wet
+    dk = nt.nodes.new('ShaderNodeMix'); dk.data_type = 'RGBA'; dk.blend_type = 'MULTIPLY'; dk.inputs['B'].default_value = (0.5, 0.5, 0.52, 1)
+    L.new(pm.outputs['Result'], dk.inputs['Factor']); L.new(col.outputs['Result'], dk.inputs['A']); L.new(dk.outputs['Result'], b.inputs['Base Color'])
+    rm = nt.nodes.new('ShaderNodeMix'); rm.data_type = 'FLOAT'; L.new(pm.outputs['Result'], rm.inputs['Factor'])
+    L.new(rr.outputs['Result'], rm.inputs['A']); rm.inputs['B'].default_value = 0.03; L.new(rm.outputs['Result'], b.inputs['Roughness'])
+    ns = nt.nodes.new('ShaderNodeMath'); ns.operation = 'SUBTRACT'; ns.inputs[0].default_value = 1.0; L.new(pm.outputs['Result'], ns.inputs[1])
+    L.new(ns.outputs[0], nm.inputs['Strength'])
+    return m
+
+
+def sign(text, loc, rot, size=0.75, color=(1.0, 0.86, 0.62), power=9.0):
+    """светящаяся вывеска (объёмный текст → меш, чтобы маска его гасила)"""
+    cu = bpy.data.curves.new('вывеска', 'FONT'); cu.body = text; cu.size = size; cu.extrude = 0.04
+    cu.align_x = 'CENTER'; cu.align_y = 'CENTER'
+    o = bpy.data.objects.new('вывеска', cu); sc.collection.objects.link(o)
+    o.location = loc; o.rotation_euler = rot
+    o.data.materials.append(principled('вывеска', (1, 1, 1), emit=(color, power)))
+    bpy.context.view_layer.objects.active = o
+    for x in bpy.context.selected_objects: x.select_set(False)
+    o.select_set(True); bpy.ops.object.convert(target='MESH')
+    return o
+
+
+def lamp_light(name, loc, kind='SPOT', power=900.0, color=(1.0, 0.70, 0.42), size=0.4, rot=(0, 0, 0), spot=math.radians(120)):
+    ld = bpy.data.lights.new(name, kind); ld.energy = power; ld.color = color
+    if kind == 'SPOT':
+        ld.spot_size = spot; ld.spot_blend = 0.6; ld.shadow_soft_size = size
+    elif kind == 'AREA':
+        ld.shape = 'RECTANGLE'; ld.size, ld.size_y = size
+    else:
+        ld.shadow_soft_size = size
+    o = bpy.data.objects.new(name, ld); sc.collection.objects.link(o); o.location = loc; o.rotation_euler = rot
+    o.visible_camera = False
+    return o
+
+
 def environment(center):
-    """земля, газон, тротуары, дорога, соседние высотки, деревья и кусты"""
+    """мокрый асфальт, бордюры, плитка, газоны, фонари со светом, машины, деревья у тротуара, соседние дома с деталями"""
     B = Builder()
     grass = principled('газон', (0.035, 0.07, 0.02), rough=0.95)
-    walk = principled('тротуар', (0.42, 0.40, 0.38), rough=0.9)
-    road = principled('асфальт', (0.06, 0.06, 0.065), rough=0.9)
+    asph = photo_mat('асфальт', 'asphalt_02', 3.0, tint=(0.55, 0.55, 0.58), rough=(0.25, 0.6), wet=0.7)
+    pav = photo_mat('плитка', 'concrete_pavers_02', 2.0, tint=(0.75, 0.73, 0.70), rough=(0.3, 0.7))
+    curb = photo_mat('бордюр', 'brushed_concrete_03', 1.5, tint=(0.8, 0.8, 0.78), rough=(0.5, 0.9), box=True)
+    mark = principled('разметка', (0.85, 0.85, 0.82), rough=0.5)
     B.box(grass, (20, 20, -0.05), (500, 500, 0.1))
-    B.box(road, (20, -30, 0.01), (500, 14, 0.02))           # улица перед главным фасадом
-    B.box(road, (-40, 40, 0.01), (14, 500, 0.02))           # улица слева
-    B.box(walk, (20, -20, 0.03), (160, 5, 0.05))            # тротуар вдоль фасада
-    B.box(walk, (-30, 40, 0.03), (4, 160, 0.05))
-    for x in range(-30, 140, 12):                            # разметка
-        B.box(principled('разметка', (0.85, 0.85, 0.82)), (x, -30, 0.025), (5, 0.15, 0.01))
+    # улицы: перед главным фасадом (вдоль X) и слева у торца с кафе (вдоль Y)
+    B.box(asph, (20, -30, 0.01), (500, 14, 0.02))
+    B.box(asph, (-40, 40, 0.01), (14, 500, 0.02))
+    # тротуары и площадка у дома — плитка; бордюр вдоль дорог
+    B.box(pav, (30, -20, 0.06), (180, 6, 0.12))                   # тротуар вдоль главного фасада
+    B.box(pav, (-30, 40, 0.06), (6, 180, 0.12))                   # тротуар вдоль торца
+    B.box(pav, (11.5, 1.0, 0.05), (77, 37, 0.1))                  # площадка вокруг дома: x −27..50, y −17,5..19,5
+    B.box(grass, (28, -16.3, 0.12), (44, 1.6, 0.24))              # газон-полоса под живой изгородью
+    B.box(curb, (28, -17.15, 0.15), (44, 0.12, 0.3))
+    for (x0, x1, y0, y1) in ((-26, -12, -16, -8), (9, 48, -11.5, -7.5)):   # газоны с деревьями на площадке
+        B.box(grass, ((x0 + x1) / 2, (y0 + y1) / 2, 0.13), (x1 - x0, y1 - y0, 0.26))
+        B.box(curb, ((x0 + x1) / 2, y0, 0.15), (x1 - x0, 0.12, 0.3)); B.box(curb, ((x0 + x1) / 2, y1, 0.15), (x1 - x0, 0.12, 0.3))
+    # дальний город: кольцо высоток со светом в окнах — горизонт не пустой
+    far = principled('кровля', C['roof'])
+    for k in range(22):
+        a = 2 * math.pi * k / 22 + R.uniform(-0.08, 0.08); d = R.uniform(190, 320)
+        fx, fy = 12 + d * math.sin(a), 6 + d * math.cos(a)
+        nf_ = R.choice((9, 10, 12, 14, 16, 17)); h_ = nf_ * 2.9 + 0.6; L_ = R.uniform(24, 60); rz_ = a + R.choice((0, math.pi / 2))
+        col_ = R.choice(((0.62, 0.58, 0.52), (0.70, 0.66, 0.60), (0.55, 0.50, 0.46), (0.66, 0.52, 0.40)))
+        B.box(windows_texture('дальние_%d' % (k % 4), col_), (fx, fy, h_ / 2), (L_, 14, h_), rz_)
+        B.box(far, (fx, fy, h_ + 0.4), (L_ + 0.2, 14.2, 0.8), rz_)
+    B.box(curb, (30, -23.05, 0.08), (180, 0.25, 0.16)); B.box(curb, (-32.95, 40, 0.08), (0.25, 180, 0.16))
+    for x in range(-6, 140, 12):                                  # разметка: прерывистая по оси
+        B.box(mark, (x, -30, 0.025), (5, 0.15, 0.01))
+    for y in range(-20, 140, 12):
+        B.box(mark, (-40, y, 0.025), (0.15, 5, 0.01))
+    for k in range(8):                                            # пешеходный переход у угла
+        B.box(mark, (-19.0, -36.0 + k * 1.2 + 0.6, 0.025), (4.0, 0.6, 0.01))
+    # соседние дома: межэтажные пояса, тёмный цоколь со светящимися витринами, техника на крыше
+    stone = principled('цоколь_соседи', (0.10, 0.095, 0.09), rough=0.7)
+    unit = principled('крышная_техника', (0.35, 0.35, 0.36), rough=0.6, metal=0.3)
     for i, (x, y, L, D, nf, rot, col) in enumerate(O['neighbors']):
-        h = nf * 2.9 + 0.6
+        h = nf * 2.9 + 0.6; rz = math.radians(rot)
         mat = windows_texture('соседи_%d' % i, col)
-        B.box(mat, (x, y, h / 2), (L, D, h), math.radians(rot))
-        B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.2, D + 0.2, 1.0) if rot == 0 else (L + 0.2, D + 0.2, 1.0), math.radians(rot))
-    pole = principled('опора', (0.12, 0.12, 0.13), rough=0.5, metal=0.6)
-    lamp = principled('фонарь', (1, 1, 1), emit=((1.0, 0.72, 0.42), 30.0))
-    for x in range(-40, 150, 16):
-        B.box(pole, (x, -23.2, 4.5), (0.18, 0.18, 9.0)); B.box(pole, (x, -24.2, 8.9), (0.12, 2.0, 0.12))
-        B.box(lamp, (x, -25.0, 8.8), (0.5, 0.7, 0.12))
+        band = principled('пояс_соседи_%d' % i, tuple(min(1.0, c * 1.3 + 0.04) for c in col), rough=0.8)
+        B.box(mat, (x, y, h / 2), (L, D, h), rz)
+        B.box(principled('кровля', C['roof']), (x, y, h + 0.5), (L + 0.2, D + 0.2, 1.0), rz)
+        for k in range(2, nf + 1):
+            B.box(band, (x, y, k * 2.9 - 0.3), (L + 0.25, D + 0.25, 0.28), rz)
+        B.box(stone, (x, y, 1.6), (L + 0.3, D + 0.3, 3.2), rz)
+        c_, s_ = math.cos(rz), math.sin(rz)
+        for u in (-L * 0.3, 0.0, L * 0.3):  # три магазина в цоколе, не сплошная лента
+            B.box(glass('витрина_соседи', 0.35), (x + u * c_, y + u * s_, 1.5), (L * 0.22, D + 0.36, 1.9), rz, lit=lit_value(0.35))
+        B.box(stone, (x, y, 3.25), (L + 0.6, D + 0.6, 0.2), rz)                  # козырёк над витринами
+        c_, s_ = math.cos(rz), math.sin(rz)
+        for (u, v, sx, sy, sz) in ((-L * 0.3, 0, 3, 2.4, 2.2), (L * 0.15, -D * 0.2, 2, 2, 1.4), (L * 0.32, D * 0.15, 4, 2.5, 3.0)):
+            B.box(unit, (x + u * c_ - v * s_, y + u * s_ + v * c_, h + 1.0 + sz / 2), (sx, sy, sz), rz)
+    # фонари: опора, консоль, светильник + настоящий свет вниз (пятна на мокром асфальте)
+    pole = principled('опора', (0.10, 0.10, 0.11), rough=0.45, metal=0.7)
+    lampm = principled('фонарь', (1, 1, 1), emit=((1.0, 0.72, 0.42), 30.0))
+    lamps = [((x, -23.6), 0.0) for x in range(-24, 150, 18)] + [((-33.6, y), -math.pi / 2) for y in range(-6, 150, 18)]
+    for (lx, ly), a in lamps:
+        dx, dy = -math.sin(a), -math.cos(a)                      # к дороге
+        B.box(pole, (lx, ly, 4.5), (0.2, 0.2, 9.0)); B.box(pole, (lx, ly, 0.4), (0.36, 0.36, 0.8))
+        B.box(pole, (lx + dx * 0.9, ly + dy * 0.9, 8.95), (0.12 + abs(dx) * 1.7, 0.12 + abs(dy) * 1.7, 0.1))
+        B.box(pole, (lx + dx * 1.7, ly + dy * 1.7, 8.9), (0.7 if dx else 0.45, 0.45 if dx else 0.7, 0.18))
+        B.box(lampm, (lx + dx * 1.7, ly + dy * 1.7, 8.79), (0.55 if dx else 0.35, 0.35 if dx else 0.55, 0.04))
+        lamp_light('свет_фонаря', (lx + dx * 1.7, ly + dy * 1.7, 8.7), power=1400.0)
     objs = B.build('окружение')
-    # деревья и кусты Poly Haven (CC0): берём из ассетов Ардена, если есть; иначе — скачиваем
+    # свет из кафе на площадку: витрины — излучающие поверхности, а пятно тёплого света на плитке даёт этот свет
+    cf, D = O['cafe'], O['wing_a']['depth']
+    lamp_light('свет_кафе_торец', (-cf['w'] - 0.4, D / 2, 2.0), 'AREA', 260.0, (1.0, 0.68, 0.40), (D - 2, 2.6), (0, math.pi / 2, 0))
+    lamp_light('свет_кафе_фасад', (cf['along_a'] / 2, -cf['w'] - 0.4, 2.0), 'AREA', 90.0, (1.0, 0.68, 0.40), (cf['along_a'], 2.6), (-math.pi / 2, 0, 0))
+    lamp_light('свет_кафе_угол', (-cf['w'] * 0.75 - 0.5, -cf['w'] * 0.75 - 0.5, 2.0), 'AREA', 90.0, (1.0, 0.68, 0.40), (5.0, 2.6), (-math.pi / 2, 0, -math.pi / 4))
+    trees_and_cars()
+    return objs
+
+
+def trees_and_cars():
+    """деревья и кусты Poly Haven (CC0) и машины Ардена (Sketchfab, CC BY 4.0 — авторы в estate/blender assets/CREDITS.md)"""
+    sys.path.insert(0, os.path.join(HERE, '..', '..', 'estate', 'blender'))
     try:
-        sys.path.insert(0, os.path.join(HERE, '..', '..', 'estate', 'blender'))
         import arden_assets
         protos = []
         for slug in ('tree_small_02', 'shrub_02', 'shrub_04'):
@@ -517,22 +650,62 @@ def environment(center):
             for x in meshes:
                 x.hide_render = True; x.location = (0, 0, -500)
             protos.append((slug, meshes))
+
+        def put(k, x, y, s, name):
+            for m in protos[k][1]:
+                e = bpy.data.objects.new(name, m.data); sc.collection.objects.link(e)
+                e.location = (x, y, 0); e.scale = (s, s, s); e.rotation_euler = (0, 0, R.uniform(0, 6.28))
         spots = [(-44, -12), (-46, 10), (48, -14), (58, -12), (64, 6), (60, 30), (20, 44), (-42, 44), (-12, 50), (40, 46)]
-        for (x, y) in spots + [(R.uniform(-80, 140), R.uniform(-60, 120)) for _ in range(30)]:
+        west = [(R.uniform(-120, -50), R.uniform(-70, 120)) for _ in range(28)]   # за улицей у торца — сквер (видно сбоку)
+        for (x, y) in spots + west + [(R.uniform(-80, 140), R.uniform(-60, 120)) for _ in range(80)]:
             if -40 < x < 55 and -24 < y < 40:
                 continue  # не на дом
-            slug, ms = protos[0] if R.random() < .6 else R.choice(protos[1:])
-            s = R.uniform(1.6, 2.4) if slug.startswith('tree') else R.uniform(1.0, 1.6)
-            for m in ms:
-                e = bpy.data.objects.new(slug, m.data); sc.collection.objects.link(e)
-                e.location = (x, y, 0); e.scale = (s, s, s); e.rotation_euler = (0, 0, R.uniform(0, 6.28))
-        for x in range(-6, 50, 3):  # живая изгородь вдоль кафе и фасада
-            m = protos[1][1][0]
-            e = bpy.data.objects.new('изгородь', m.data); sc.collection.objects.link(e)
+            if abs(y + 30) < 8 or abs(x + 40) < 8:
+                continue  # не на дорогу
+            k = 0 if R.random() < .6 else R.choice((1, 2))
+            put(k, x, y, R.uniform(1.6, 2.4) if k == 0 else R.uniform(1.0, 1.6), 'дерево')
+        for (x, y) in ((-22, -13), (-16, -10.5), (12, -9.5), (20.5, -9.5), (29, -9.5), (37.5, -9.5), (46, -9.5)):  # деревья в газонах площадки
+            put(0, x, y, R.uniform(1.15, 1.35), 'дерево_двор')
+        for x in range(10, 47, 2):
+            put(R.choice((1, 2)), x + R.uniform(-.4, .4), -8.3, R.uniform(0.9, 1.2), 'куст')
+        for x in range(-15, 140, 18):  # деревья вдоль тротуара — между фонарями, не перед кафе
+            if -20 < x < 12: continue
+            put(0, x + 9, -21.2, R.uniform(1.3, 1.6), 'дерево_улица')
+        for y in range(22, 150, 18):
+            put(0, -31.2, y + 9, R.uniform(1.3, 1.6), 'дерево_улица')
+        for x in range(-4, 50, 3):  # живая изгородь вдоль фасада
+            if x < 6: continue  # перед кафе — открыто
+            e = bpy.data.objects.new('изгородь', protos[1][1][0].data); sc.collection.objects.link(e)
             e.location = (x, -16.5, 0); e.scale = (1.3, 1.3, 1.0)
     except Exception as e:  # без интернета и ассетов — без деревьев, сцена всё равно рендерится
         log('деревья не загрузились:', e)
-    return objs
+    try:
+        import arden_v2
+        S2 = arden_v2.Scene2(A.assets, {}, log)
+        cars = S2.load_cars()
+        if not cars:
+            raise RuntimeError('нет папки assets/cars в ' + A.assets)
+        col = bpy.data.collections.new('Машины'); sc.collection.children.link(col)
+
+        def car(x, y, rot):
+            e = bpy.data.objects.new('машина', None); e.instance_type = 'COLLECTION'; e.instance_collection = R.choice(cars)
+            e.location = (x, y, 0.02); e.rotation_euler = (0, 0, rot); col.objects.link(e)
+        x = -12.0
+        while x < 140:   # вдоль главного фасада — у бордюра, с пропусками
+            if R.random() < 0.7 and not (-24 < x < -14):
+                car(x, -24.9, 0.0 if R.random() < .5 else math.pi)
+            x += R.uniform(5.6, 7.5)
+        y = -14.0
+        while y < 140:   # у торца — у бордюра
+            if R.random() < 0.6:
+                car(-34.9, y, math.pi / 2 if R.random() < .5 else -math.pi / 2)
+            y += R.uniform(5.6, 7.5)
+        for (cx, cy_, r) in ((30, -32.6, math.pi), (78, -27.2, 0.0), (-42.3, 30, math.pi / 2)):  # едут по улице
+            car(cx, cy_, r)
+        log('машины: %d' % len(col.objects))
+    except Exception as e:
+        log('машины не загрузились:', e)
+
 
 
 # ============================================================================ СВЕТ, КАМЕРА, РЕНДЕР
