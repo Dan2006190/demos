@@ -10,13 +10,14 @@
 
 --what   test      по 2 кадра каждого вида: время кадра и прогноз на всё
          orbit     облёт: 144 кадра через 2,5° (Cycles + шумодав)
+         intro     вступление сквозь облака (как в Ардене): 8 с, 193 кадра, последний = кадр 0 облёта → intro.mp4
          approach  подлёт: 84 кадра (3,5 с при 24 к/с), последний = кадр 0 облёта (Cycles 64 выборки — стык с облётом
                    без скачка света; --eevee — быстрее, но свет другой)
          mask      маска этажа: тот же путь камеры, этаж белый, всё остальное чёрное, без света (секунды на кадр)
          still     один кадр (--view orbit --frame N | street | side | hero), для сверки с фото
          stills    главные кадры в полном качестве: hero, street, side → stills/{sm,md,hd}/<вид>.webp и .png
          manifest  manifest.json для сайта: кадры, папки, точка квартиры на экране по кадрам облёта и подлёта
-         all       облёт → подлёт → главные кадры → маска → manifest
+         all       облёт → подлёт → вступление → главные кадры → маска → manifest
 Готовые кадры пропускаются: прерванный рендер продолжается той же командой.
 Кадры — WebP трёх размеров sm/md/hd (640/1280/1920), как в Ардене: renders/obj1/orbit/{sm,md,hd}/000.webp …
 """
@@ -70,21 +71,21 @@ OBJECTS = {
         orbit=dict(center=(12.0, 6.0, 15.0), radius=108.0, height=22.0, start=212.0),
         # синий час: свет — процедурное небо (солнце на 2° под горизонтом за домом), в кадре — цветные облака HDRI
         sky=dict(hdri='nishita', rotate=47.0, strength=1.0, exposure=1.2,
-                 backdrop='industrial_sunset_puresky', backdrop_rotate=101.0, backdrop_strength=1.0),
+                 backdrop='evening_road_01_puresky', backdrop_rotate=101.0, backdrop_strength=1.0),   # слоистые облака (вариант 4)
     ),
 }
 
 # ============================================================================ ПАРАМЕТРЫ ЗАПУСКА
 argv = sys.argv[sys.argv.index('--') + 1:] if '--' in sys.argv else []
 ap = argparse.ArgumentParser(prog='agent68_render.py')
-ap.add_argument('--what', default='test', choices=['test', 'orbit', 'approach', 'mask', 'still', 'stills', 'manifest', 'all'])
+ap.add_argument('--what', default='test', choices=['test', 'orbit', 'approach', 'intro', 'mask', 'still', 'stills', 'manifest', 'all'])
 ap.add_argument('--object', type=int, default=1)
 ap.add_argument('--quality', default='final', choices=['draft', 'final'])
 ap.add_argument('--cpu', action='store_true', help='без видеокарты (только для проверки)')
 ap.add_argument('--eevee', action='store_true', help='подлёт в EEVEE (быстрее, но свет чуть иной — на стыке с облётом заметен скачок)')
 ap.add_argument('--frame', type=int, default=0, help='для --what still')
 ap.add_argument('--sky', default='', help='проба неба: slug HDRI Poly Haven или nishita; :поворот, :сила, :экспозиция')
-ap.add_argument('--view', default='orbit', choices=['orbit', 'street', 'side', 'hero'], help='для --what still: street — с улицы, как фото фасада; side — на торец, как фото 14; hero — главный кадр')
+ap.add_argument('--view', default='orbit', choices=['orbit', 'street', 'side', 'hero', 'intro'], help='для --what still: street — с улицы, как фото фасада; side — на торец, как фото 14; hero — главный кадр')
 ap.add_argument('--out', default=os.path.join(HERE, 'renders'))
 ap.add_argument('--assets', default=os.path.join(HERE, 'assets'), help='папка для деревьев Poly Haven')
 ap.add_argument('--percent', type=int, default=0, help='масштаб разрешения, %% (для проверки)')
@@ -95,6 +96,8 @@ DRAFT = A.quality == 'draft'
 W, H, FOV = 1920, 1080, 30.0   # длиннее фокус, чем у Ардена: дом крупно, без «дрона»
 ORBIT_N, ORBIT_STEP = 144, 2.5
 APPROACH_FPS, APPROACH_N = 24, 84
+INTRO_FPS, INTRO_SEC = 24, 8   # вступление сквозь облака, как в Ардене: 193 кадра, последний = кадр 0 облёта
+INTRO_N = INTRO_FPS * INTRO_SEC + 1
 SIZES = {'sm': (640, 60), 'md': (1280, 74), 'hd': (1920, 72)}  # ширина, качество WebP (как в Ардене)
 OUT = os.path.join(os.path.abspath(A.out), 'obj%d' % A.object)
 os.makedirs(OUT, exist_ok=True)
@@ -908,6 +911,9 @@ def light():
     return world
 
 
+POST = {}
+
+
 def post():
     """кадр как в рекламе: свечение огней, лёгкая дымка у горизонта, тёплые света / холодные тени, виньетка"""
     sc.use_nodes = True; t = sc.node_tree; t.nodes.clear(); n, l = t.nodes, t.links
@@ -917,19 +923,22 @@ def post():
             if i.name == name and (kind is None or i.type == kind) and hasattr(i, 'default_value'):
                 i.default_value = v; return
         if hasattr(node, name.lower()): setattr(node, name.lower(), v)
-    sc.view_layers[0].use_pass_mist = True
+    # дымка и маска неба — из второго слоя «дымка» без облаков, 16 выборок: Mist/Depth сквозь объём облаков шумят точками
+    vl2 = sc.view_layers.get('дымка') or sc.view_layers.new('дымка')
+    vl2.use_pass_mist = True; vl2.use_pass_z = True; vl2.samples = 16   # 16: сквозь стекло лоджий Mist усредняется без точек
+    rl2 = n.new('CompositorNodeRLayers'); rl2.layer = 'дымка'
     sc.world.mist_settings.start = 90; sc.world.mist_settings.depth = 520; sc.world.mist_settings.falloff = 'QUADRATIC'
     fog = n.new('CompositorNodeMixRGB'); fog.blend_type = 'MIX'
-    l.new(rl.outputs['Mist'], fog.inputs[0]); l.new(rl.outputs['Image'], fog.inputs[1]); fog.inputs[2].default_value = (0.30, 0.33, 0.42, 1)
+    l.new(rl.outputs['Image'], fog.inputs[1]); fog.inputs[2].default_value = (0.30, 0.33, 0.42, 1)
     fk = n.new('CompositorNodeMath'); fk.operation = 'MULTIPLY'; fk.inputs[1].default_value = 0.55
-    sc.view_layers[0].use_pass_z = True
-    zo = rl.outputs.get('Depth') or rl.outputs.get('Z')
-    geo = n.new('CompositorNodeMath'); geo.operation = 'LESS_THAN'; geo.inputs[1].default_value = 2500.0   # небо — без дымки: цвет HDRI не выбеляется
+    POST['fog'] = fk
+    zo = rl2.outputs.get('Depth') or rl2.outputs.get('Z')
+    geo = n.new('CompositorNodeMath'); geo.operation = 'LESS_THAN'; geo.inputs[1].default_value = 2500.0   # небо — без полной дымки: цвет HDRI не выбеляется
     l.new(zo, geo.inputs[0])
     geo2 = n.new('CompositorNodeMapRange'); geo2.inputs['To Min'].default_value = 0.45; geo2.inputs['To Max'].default_value = 1.0   # небу — половина дымки: горизонт без шва
-    l.new(geo.outputs[0], geo2.inputs['Value']); geo = geo2
+    l.new(geo.outputs[0], geo2.inputs['Value'])
     fk2 = n.new('CompositorNodeMath'); fk2.operation = 'MULTIPLY'
-    l.new(rl.outputs['Mist'], fk.inputs[0]); l.new(fk.outputs[0], fk2.inputs[0]); l.new(geo.outputs['Result'] if hasattr(geo.outputs, 'get') and geo.outputs.get('Result') else geo.outputs[0], fk2.inputs[1]); l.new(fk2.outputs[0], fog.inputs[0])
+    l.new(rl2.outputs['Mist'], fk.inputs[0]); l.new(fk.outputs[0], fk2.inputs[0]); l.new(geo2.outputs[0], fk2.inputs[1]); l.new(fk2.outputs[0], fog.inputs[0])
     gl = n.new('CompositorNodeGlare'); gl.glare_type = 'FOG_GLOW'
     put(gl, 'Threshold', 1.0); put(gl, 'Strength', 0.35); put(gl, 'Size', 0.6)
     l.new(fog.outputs[0], gl.inputs['Image'])
@@ -972,6 +981,126 @@ def approach_pose(f):
     s = f / (APPROACH_N - 1); e = s * s * (3 - 2 * s)
     return p0.lerp(p1, e), t0.lerp(t1, e)
 
+
+
+def ease(t):
+    t = min(1.0, max(0.0, t)); return t * t * (3 - 2 * t)
+
+
+def intro_pose(f):
+    """вступление: камера над слоем облаков, проходит сквозь него и выходит к кадру 0 облёта"""
+    p1, t1 = orbit_pose(0)
+    d = (p1 - t1); d.z = 0; d.normalize()
+    p0 = t1 + d * 520 + Vector((0, 0, 330)); t0 = t1 + d * 120 + Vector((0, 0, -40))   # сверху, взгляд вниз-вперёд
+    t = f / (INTRO_N - 1)
+    return p0.lerp(p1, ease(t)), t0.lerp(t1, ease(min(1.0, t * 1.25)))
+
+
+CLOUD = {}
+
+
+def clouds():
+    """слой облаков (объём, шум) на высоте 120–200 м — как во вступлении Ардена; плотность гаснет к концу пролёта"""
+    if CLOUD:
+        return CLOUD['obj']
+    c = Vector(O['orbit']['center'])
+    bpy.ops.mesh.primitive_cube_add()
+    cloud = bpy.context.active_object; cloud.name = 'Облака'; cloud.location = (c.x, c.y, 160); cloud.scale = (700, 700, 40)
+    cm = bpy.data.materials.new('Облака'); cm.use_nodes = True; cn, cl = cm.node_tree.nodes, cm.node_tree.links; cn.clear()
+    o_tc = cn.new('ShaderNodeTexCoord'); o_map = cn.new('ShaderNodeMapping'); o_map.inputs['Scale'].default_value = (700 / 700, 700 / 700, 40 / 160)   # крупные облака ~150 м
+    noise = cn.new('ShaderNodeTexNoise'); noise.inputs['Detail'].default_value = 5; noise.inputs['Roughness'].default_value = .5
+    cover = cn.new('ShaderNodeMapRange'); cover.inputs['From Min'].default_value = .42; cover.inputs['From Max'].default_value = .68
+    sep = cn.new('ShaderNodeSeparateXYZ'); habs = cn.new('ShaderNodeMath'); habs.operation = 'ABSOLUTE'
+    hgt = cn.new('ShaderNodeMapRange'); hgt.inputs['From Min'].default_value = .25; hgt.inputs['To Min'].default_value = 1; hgt.inputs['To Max'].default_value = 0
+    lift = cn.new('ShaderNodeMath'); lift.operation = 'MULTIPLY_ADD'; lift.inputs[1].default_value = -1.3; lift.inputs[2].default_value = .55
+    top = cn.new('ShaderNodeMath'); top.operation = 'ADD'
+    rad = cn.new('ShaderNodeVectorMath'); rad.operation = 'LENGTH'; flat = cn.new('ShaderNodeVectorMath'); flat.operation = 'MULTIPLY'; flat.inputs[1].default_value = (1, 1, 0)
+    edge = cn.new('ShaderNodeMapRange'); edge.inputs['From Min'].default_value = .55; edge.inputs['From Max'].default_value = .98; edge.inputs['To Min'].default_value = 1; edge.inputs['To Max'].default_value = 0
+    m1, m2, dens, dk = [cn.new('ShaderNodeMath') for _ in range(4)]
+    for m in (m1, m2, dens, dk): m.operation = 'MULTIPLY'
+    dk.inputs[1].default_value = .14
+    fade = cn.new('ShaderNodeValue'); fade.name = 'fade'; fade.outputs[0].default_value = 1
+    vol = cn.new('ShaderNodeVolumePrincipled'); vol.inputs['Color'].default_value = (1.0, 1.0, 1.0, 1); vol.inputs['Anisotropy'].default_value = .45
+    vout = cn.new('ShaderNodeOutputMaterial')
+    for a_, b_ in ((o_tc.outputs['Object'], o_map.inputs['Vector']), (o_map.outputs['Vector'], noise.inputs['Vector']), (noise.outputs['Fac'], cover.inputs['Value']),
+                   (o_tc.outputs['Object'], sep.inputs['Vector']), (sep.outputs['Z'], habs.inputs[0]), (noise.outputs['Fac'], lift.inputs[0]),
+                   (habs.outputs[0], top.inputs[0]), (lift.outputs[0], top.inputs[1]), (top.outputs[0], hgt.inputs['Value']),
+                   (o_tc.outputs['Object'], flat.inputs[0]), (flat.outputs['Vector'], rad.inputs[0]), (rad.outputs['Value'], edge.inputs['Value']),
+                   (cover.outputs['Result'], m2.inputs[0]), (edge.outputs['Result'], m2.inputs[1]), (m2.outputs[0], m1.inputs[0]), (hgt.outputs['Result'], m1.inputs[1]),
+                   (m1.outputs[0], dens.inputs[0]), (fade.outputs[0], dens.inputs[1]), (dens.outputs[0], dk.inputs[0]), (dk.outputs[0], vol.inputs['Density']),
+                   (vol.outputs['Volume'], vout.inputs['Volume'])):
+        cl.new(a_, b_)
+    cloud.data.materials.append(cm); cloud.hide_render = True
+    cc = bpy.data.collections.new('Облака_слой'); sc.collection.children.link(cc)
+    for u in list(cloud.users_collection): u.objects.unlink(cloud)
+    cc.objects.link(cloud)
+    if 'дымка' in sc.view_layers:
+        sc.view_layers['дымка'].layer_collection.children['Облака_слой'].exclude = True
+    # над облаками солнце ещё не село: тёплый низкий свет только на облака (light linking) — розово-золотые верхушки
+    sd = bpy.data.lights.new('Солнце_облака', 'SUN'); sd.energy = 9.0; sd.color = (1.0, 0.66, 0.46); sd.angle = math.radians(2)
+    sun = bpy.data.objects.new('Солнце_облака', sd); sc.collection.objects.link(sun)
+    az = math.radians(O['sky']['rotate'])
+    sun.rotation_euler = Euler((math.radians(86), 0, az), 'XYZ')
+    rc = bpy.data.collections.new('облака_приёмник'); rc.objects.link(cloud)
+    try:
+        sun.light_linking.receiver_collection = rc
+    except AttributeError:
+        log('light linking недоступен — облака без закатного света')
+    sun.hide_render = True
+    CLOUD.update(obj=cloud, fade=fade.outputs[0], sun=sun)
+    return cloud
+
+
+def set_clouds(fade):
+    """плотность облаков (0…1)"""
+    CLOUD['fade'].default_value = fade
+
+
+def intro_fade(f):
+    """облака тают, пока камера выходит из-под них (как в Ардене): 1 до 52 % пути, 0 после 74 %"""
+    t = f / (INTRO_N - 1)
+    return 1.0 if t < .52 else 0.0 if t > .74 else 1 - (t - .52) / .22   # гаснут, пока камера выходит из слоя: без тёмной «тени» на городе
+
+
+def encode(folder, path, fps):
+    """кадры hd/*.webp → MP4 (H.264) средствами Blender — ffmpeg в клубе не нужен"""
+    files = sorted(f for f in os.listdir(folder) if f.endswith('.webp'))
+    enc = bpy.data.scenes.new('Монтаж'); enc.render.fps = fps
+    enc.render.resolution_x, enc.render.resolution_y, enc.render.resolution_percentage = W, H, 100
+    enc.sequence_editor_create()
+    strips = enc.sequence_editor.strips if hasattr(enc.sequence_editor, 'strips') else enc.sequence_editor.sequences
+    st = strips.new_image('кадры', os.path.join(folder, files[0]), 1, 1)
+    for f in files[1:]: st.elements.append(f)
+    enc.frame_start, enc.frame_end = 1, len(files)
+    r = enc.render; r.image_settings.file_format = 'FFMPEG'; r.ffmpeg.format = 'MPEG4'; r.ffmpeg.codec = 'H264'
+    r.ffmpeg.constant_rate_factor = 'HIGH'; r.ffmpeg.gopsize = 24; r.filepath = path; r.use_file_extension = False
+    enc.view_settings.view_transform = 'Standard'
+    bpy.ops.render.render(animation=True, scene=enc.name)
+    bpy.data.scenes.remove(enc)
+    log('ролик:', path)
+
+
+def stage_intro():
+    """вступление сквозь облака: 193 кадра WebP (продолжается с места остановки) → intro.mp4"""
+    cloud = clouds(); cloud.hide_render = False; CLOUD['sun'].hide_render = False
+    setup_engine('cycles')
+    if not DRAFT:
+        sc.cycles.samples = 64                     # облака в движении — 64 выборки + шумодав
+    if hasattr(sc.cycles, 'volume_step_rate'): sc.cycles.volume_step_rate = 0.1; sc.cycles.volume_max_steps = 1024; sc.cycles.volume_bounces = 3   # облака светлые изнутри — многократное рассеяние
+    folder = os.path.join(OUT, 'intro')
+    STATUS.update(stage='вступление', total=INTRO_N, done=sum(os.path.exists(os.path.join(folder, 'hd', '%03d.webp' % k)) for k in range(INTRO_N)))
+    for k in range(INTRO_N):
+        set_clouds(intro_fade(k))
+        dt = shot(folder, k, intro_pose(k))
+        if dt is not None:
+            STATUS['done'] += 1; STATUS['times'].append(dt); log('вступление: кадр %d (%d/%d), %.1f с' % (k, STATUS['done'], INTRO_N, dt)); write_status()
+    cloud.hide_render = True; CLOUD['sun'].hide_render = True; set_clouds(0.0)
+    mp4 = os.path.join(OUT, 'intro.mp4')
+    if not os.path.exists(mp4) and all(os.path.exists(os.path.join(folder, 'hd', '%03d.webp' % k)) for k in range(INTRO_N)):
+        try:
+            encode(os.path.join(folder, 'hd'), mp4, INTRO_FPS)
+        except Exception as e:
+            log('ролик не собрался (%s) — кадры есть, соберу на своей стороне' % e)
 
 def setup_engine(kind):
     r = sc.render
@@ -1041,6 +1170,7 @@ def mask_mode(on, objs, mask):
     """маска этажа: этаж — белое излучение, всё остальное — чёрное (holdout не нужен), без неба и света"""
     if on:
         sc.use_nodes = False
+        if 'дымка' in sc.view_layers: sc.view_layers['дымка'].use = False
         wn = sc.world.node_tree; bk = wn.nodes.new('ShaderNodeBackground'); bk.inputs['Strength'].default_value = 0
         wn.links.new(bk.outputs[0], wn.nodes['World Output'].inputs['Surface'])          # небо чёрное и для камеры (облака HDRI — тоже)
         blk = bpy.data.materials.new('чёрный'); blk.use_nodes = True; bn = blk.node_tree; bn.nodes.clear()   # только излучение 0: без бликов от белого этажа
@@ -1113,7 +1243,7 @@ def cinema(on, view=''):
 VIEWS = {  # постоянные ракурсы: камера, цель, вертикальный угол обзора (°)
     'street': ((-22.0, -52.0, 1.7), (2.0, 0.0, 14.0), FOV),      # с тротуара напротив, как панорама Яндекса (фото 4–5)
     'side':   ((-58.0, -14.0, 1.7), (0.0, 4.0, 15.0), FOV),      # на торец с лоджиями и башней (фото 14)
-    'hero':   ((-46.0, -96.0, 4.0), (8.0, 2.0, 15.5), 21.0, 158.0, ('rosendal_park_sunset_puresky', 292.0, 0.12)),  # главный кадр: снизу, длинный фокус; облака HDRI развёрнуты — закат за домом
+    'hero':   ((-46.0, -96.0, 4.0), (8.0, 2.0, 15.5), 21.0, 158.0, ('evening_road_01_puresky', 292.0, 0.10)),  # главный кадр: снизу, длинный фокус; облака HDRI развёрнуты — закат за домом
 }
 
 
@@ -1142,9 +1272,12 @@ def view_pose(v):
 
 if A.what == 'still':
     setup_engine('cycles')
-    p, t = orbit_pose(A.frame) if A.view == 'orbit' else view_pose(A.view)
+    p, t = orbit_pose(A.frame) if A.view == 'orbit' else intro_pose(A.frame) if A.view == 'intro' else view_pose(A.view)
     cam.location, aim.location = p, t
-    if A.view != 'orbit':
+    if A.view == 'intro':
+        clouds().hide_render = False; CLOUD['sun'].hide_render = False; set_clouds(intro_fade(A.frame))
+        if hasattr(sc.cycles, 'volume_step_rate'): sc.cycles.volume_step_rate = 0.1; sc.cycles.volume_max_steps = 1024; sc.cycles.volume_bounces = 3   # облака светлые изнутри — многократное рассеяние
+    elif A.view != 'orbit':
         cinema(True, A.view)
     sc.render.filepath = os.path.join(OUT, 'still_%s_%03d.png' % (A.view, A.frame)); sc.render.image_settings.file_format = 'PNG'
     tt = time.time(); bpy.ops.render.render(write_still=True)
@@ -1174,6 +1307,8 @@ def manifest():
         'approach': {'dir': 'approach/{size}/%03d.webp', 'frames': APPROACH_N, 'fps': APPROACH_FPS, 'ends_at_orbit': 0, 'ready': have('approach'),
                      'label': track(APPROACH_N, approach_pose)},
         'mask': {'dir': 'mask/{size}/%03d.webp', 'frames': ORBIT_N, 'same_as': 'orbit', 'ready': have('mask')},
+        'intro': {'dir': 'intro/{size}/%03d.webp', 'file': 'intro.mp4', 'frames': INTRO_N, 'fps': INTRO_FPS, 'ends_at_orbit': 0,
+                  'clouds_until': 0.74, 'ready': os.path.exists(os.path.join(OUT, 'intro.mp4'))},
         'stills': {v: 'stills/{size}/%s.webp' % v for v in VIEWS},
         'quality': A.quality,
     }
@@ -1216,12 +1351,19 @@ if A.what == 'test':
     plan = []
     for name, eng, frames, pose, n in (('облёт', 'cycles', [0, 36], orbit_pose, ORBIT_N),
                                         ('подлёт', 'eevee' if A.eevee and not A.cpu else 'cycles', [0, 60], approach_pose, APPROACH_N),
+                                        ('вступление', 'cycles', [60, 140], intro_pose, INTRO_N),
                                         ('маска', 'mask', [0, 36], orbit_pose, ORBIT_N)):
         if name == 'маска':
             mask_mode(True, objs, mask)
+        if name == 'вступление':
+            clouds().hide_render = False; CLOUD['sun'].hide_render = False
+        elif CLOUD:
+            CLOUD['obj'].hide_render = True; CLOUD['sun'].hide_render = True; set_clouds(0.0)
         setup_engine(eng); STATUS['times'] = []
-        if name == 'подлёт' and eng == 'cycles' and not DRAFT:
+        if name in ('подлёт', 'вступление') and eng == 'cycles' and not DRAFT:
             sc.cycles.samples = 64
+        if name == 'вступление':
+            set_clouds(1.0)
         run('тест: ' + name, os.path.join(tdir, name), frames, pose)
         # первый кадр дольше (сборка сцены на видеокарте) — в прогноз берём второй
         plan.append((name, n, STATUS['times'][-1]))
@@ -1240,6 +1382,8 @@ if A.what in ('approach', 'all'):
     if sc.render.engine == 'CYCLES' and not DRAFT:
         sc.cycles.samples = 64                   # подлёт короткий и в движении — 64 выборки + шумодав, свет тот же, что в облёте
     run('подлёт', appr_dir, list(range(APPROACH_N)), approach_pose)
+if A.what in ('intro', 'all'):
+    stage_intro()
 if A.what == 'all':
     stills()
 if A.what in ('mask', 'all'):

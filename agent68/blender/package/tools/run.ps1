@@ -76,7 +76,7 @@ if (-not (Test-Path $bl)) {
 }
 Say ('Blender: ' + $bl)
 
-# 4. рендер: объект 1 — тест (TEST.bat) или всё: облёт → подлёт → главные кадры → маска → manifest.json
+# 4. рендер: объект 1 — тест (TEST.bat) или всё: облёт → подлёт → вступление → главные кадры → маска → manifest.json
 $what = if ($Mode -eq 'test') { 'test' } else { 'all' }
 $args_ = @('-b', '--factory-startup', '--python-exit-code', '1', '-P', (Join-Path $Root 'agent68_render.py'), '--',
            '--what', $what, '--object', '1', '--quality', 'final', '--out', (Join-Path $Root 'renders'), '--assets', (Join-Path $Root 'assets'))
