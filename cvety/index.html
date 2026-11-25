@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Цветы «Пример» — демо: букеты и напоминания о датах</title>
+<meta name="description" content="Обезличенное демо сайта цветочного магазина: каталог, заказ с доставкой и сервис напоминаний о важных датах. Все данные условные.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#f7f2ea">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,600&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="demo-bar">Демо-сайт · WEST DIGITAL · магазин, цены и номер условные</div>
+
+<header class="hdr"><div class="wrap">
+  <a class="logo" href="#top"><i>✿</i><b>Цветы «Пример»</b></a>
+  <nav class="nav"><a href="#catalog">Букеты</a><a href="#dates">Напоминания</a><a href="#how">Как это работает</a><a href="admin.html">Панель магазина</a></nav>
+  <button class="cartb" id="cartBtn" type="button">Корзина<span id="cartN">0</span></button>
+</div></header>
+
+<main id="top">
+<section class="hero"><div class="wrap">
+  <div>
+    <p class="eyebrow">Цветы с доставкой · Тамбов</p>
+    <h1>Мы напомним, <em>чтобы вам</em> не&nbsp;напомнили</h1>
+    <p class="lead">Запишите даты близких один раз — дни рождения, годовщины, праздники. За неделю, за три дня и утром придёт напоминание с букетом, который им нравится, и кнопкой «заказать».</p>
+    <div class="cta"><a class="btn pr" href="#dates">Запомнить даты</a><a class="btn gh" href="#catalog">Выбрать букет</a></div>
+    <div class="trust"><div><b>2 часа</b>доставка по городу</div><div><b>от 1 900 ₽</b>букеты</div><div><b>3 напоминания</b>до каждой даты</div></div>
+  </div>
+  <div class="hero-art" aria-hidden="true">
+    <div class="b b2" id="hb2"></div><div class="b b3" id="hb3"></div><div class="b b1" id="hb1"></div>
+    <div class="ping"><b>Через 3 дня</b>День рождения тёщи. Любит пионы — букет готов, доставим к 10:00</div>
+  </div>
+</div></section>
+
+<section id="catalog"><div class="wrap">
+  <div class="head"><div><p class="eyebrow">Каталог</p><h2>Букеты на каждый повод</h2><p>Соберём за час, привезём к нужному времени и приложим открытку с вашим текстом.</p></div>
+    <div class="chips" id="filters" role="group" aria-label="Фильтр">
+      <button class="chip" aria-pressed="true" data-f="all" type="button">Все</button>
+      <button class="chip" aria-pressed="false" data-f="love" type="button">Любимой</button>
+      <button class="chip" aria-pressed="false" data-f="mom" type="button">Маме</button>
+      <button class="chip" aria-pressed="false" data-f="work" type="button">Коллеге</button>
+      <button class="chip" aria-pressed="false" data-f="cheap" type="button">До 3 000 ₽</button>
+    </div></div>
+  <div class="grid" id="grid"></div>
+</div></section>
+
+<section id="dates" class="dates"><div class="wrap">
+  <div>
+    <p class="eyebrow">Сервис напоминаний</p>
+    <h2>Больше никаких <em>«ты опять забыл»</em></h2>
+    <p class="lead">Минута на анкету — и мы помним за вас. Напоминание придёт в Telegram или WhatsApp с подходящим букетом и ценой. Заказ — в одно касание.</p>
+    <ul class="steps"><li><b>1</b>Добавьте близких: кто, когда, что любит и бюджет</li><li><b>2</b>Получайте напоминания за 7 дней, за 3 дня и утром</li><li><b>3</b>Жмёте «Заказать» — букет приедет вовремя</li></ul>
+    <div class="cal"><h3>Ближайшие даты</h3><div class="evs" id="evs"><p class="empty">Пока пусто — заполните анкету справа.</p></div></div>
+    <div class="phone" aria-label="Пример напоминания"><div class="scr" id="scr"><div class="ttl">Цветы «Пример» · бот</div></div></div>
+  </div>
+  <form class="form" id="dform" novalidate>
+    <h3>Важные даты</h3>
+    <p class="sub">Заполняйте только то, что хотите. Данные видит только магазин.</p>
+    <div class="two"><div class="fld"><label for="dn">Ваше имя</label><input id="dn" autocomplete="name" placeholder="Как к вам обращаться"></div>
+    <div class="fld"><label for="dp">Телефон</label><input id="dp" type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></div></div>
+    <div class="fld"><span class="lbl">Куда напоминать</span><div class="opts" id="ch">
+      <label><input type="radio" name="ch" value="Telegram" checked><span>Telegram</span></label>
+      <label><input type="radio" name="ch" value="WhatsApp"><span>WhatsApp</span></label>
+      <label><input type="radio" name="ch" value="SMS"><span>SMS</span></label></div></div>
+    <div id="people"></div>
+    <button class="addp" id="addp" type="button">+ Добавить человека</button>
+    <label class="consent"><input type="checkbox" id="agree"><span>Согласен на обработку данных и напоминания. Можно отписаться в любой момент. <a href="#" id="pdl">Что мы храним</a></span></label>
+    <p class="err" id="derr">Отметьте согласие и укажите хотя бы одну дату</p>
+    <button class="btn pr" style="width:100%" type="submit">Сохранить даты</button>
+  </form>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="head"><div><p class="eyebrow">Как это работает</p><h2>Просто для вас, выгодно для нас</h2></div></div>
+  <div class="how">
+    <div><b>01</b><h3>Вы записываете даты</h3><p>После покупки — по QR на открытке или здесь на сайте. Без регистрации и паролей.</p></div>
+    <div><b>02</b><h3>Мы напоминаем заранее</h3><p>За неделю — чтобы подумать, за 3 дня — чтобы заказать, утром — на всякий случай.</p></div>
+    <div><b>03</b><h3>Заказ в одно касание</h3><p>В напоминании уже подобран букет под вкус и бюджет. Нажали — курьер привезёт.</p></div>
+  </div>
+</div></section>
+
+<section><div class="wrap"><div class="biz">
+  <div><p class="eyebrow">Для владельца магазина</p><h2>Клиенты возвращаются не только 8 марта</h2>
+    <ul><li>Каждая покупка превращается в 3–5 повторных поводов в год</li><li>Панель: заказы, ближайшие даты и выручка с напоминаний</li><li>Видно, сколько денег принёс сервис — каждый заказ с меткой</li></ul>
+    <p style="margin-top:18px"><a class="btn pr" href="admin.html">Открыть панель магазина</a></p></div>
+  <div class="stat"><div><b>4,2</b><span>даты в среднем оставляет один клиент</span></div><div><b>31%</b><span>напоминаний заканчиваются заказом*</span></div><div><b>+18</b><span>заказов в месяц без рекламы*</span></div><div><b>0 ₽</b><span>за каждое напоминание в Telegram</span></div></div>
+</div><p style="font-size:12px;color:var(--mut);margin-top:10px">* Пример расчёта для демо, не статистика реального магазина.</p></div></section>
+</main>
+
+<footer><div class="wrap"><span>Цветы «Пример» · Тамбов · +7 (000) 000-00-00</span><span>Демо-сайт WEST DIGITAL</span></div></footer>
+
+<div class="drawer" id="drawer" aria-hidden="true"><div class="ov" data-close></div><div class="pn" role="dialog" aria-label="Корзина">
+  <button class="x" data-close aria-label="Закрыть" type="button">×</button>
+  <h3>Корзина</h3><div id="lines"></div><div class="total"><span>Итого</span><span id="tot">0 ₽</span></div>
+  <div class="fld"><label for="oa">Адрес доставки</label><input id="oa" placeholder="Улица, дом, квартира"></div>
+  <div class="two"><div class="fld"><label for="od">Дата</label><input id="od" type="date"></div><div class="fld"><label for="ot">Время</label><select id="ot"><option>09:00–12:00</option><option>12:00–15:00</option><option>15:00–18:00</option><option>18:00–21:00</option></select></div></div>
+  <div class="fld"><label for="oc">Текст открытки</label><textarea id="oc" rows="2" placeholder="С днём рождения!"></textarea></div>
+  <button class="btn pr" id="order" type="button">Заказать в WhatsApp</button>
+  <p style="font-size:12px;color:var(--mut);margin:0">Демо: заказ также появится в панели магазина.</p>
+</div></div>
+
+<div class="modal" id="pd"><div class="in"><button class="x" data-mclose type="button" aria-label="Закрыть">×</button><h3>Что мы храним</h3>
+<p>Имя и телефон того, кто заполнил анкету; для каждого человека — кто он вам, имя, день и месяц даты, что любит и бюджет. Адрес — только когда вы оформляете заказ.</p>
+<p>Используем только для напоминаний и доставки. Не передаём третьим лицам. Отписаться — кнопкой «Стоп» в любом напоминании или словом «стоп» в чате.</p>
+<p>В демо данные хранятся только в вашем браузере.</p></div></div>
+<div class="toast" id="toast"></div>
+
+<script src="bouquet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

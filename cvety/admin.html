@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Панель магазина — Цветы «Пример» (демо)</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Manrope:wght@400;500;600;700;800&display=swap">
+<link rel="stylesheet" href="style.css">
+<style>
+body{background:#eef0ea}
+.top{background:var(--green);color:#fff}.top .wrap{display:flex;justify-content:space-between;align-items:center;height:60px}
+.top a{color:#cfdac9;font-size:14px;text-decoration:none}
+.kpi{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.kpi div{background:#fff;border-radius:16px;padding:16px 18px;border:1px solid var(--line)}
+.kpi b{display:block;font-family:"Cormorant Garamond",serif;font-size:34px;line-height:1.1}.kpi span{font-size:13px;color:var(--mut)}
+.cols{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.box{background:#fff;border-radius:18px;border:1px solid var(--line);padding:18px}
+.box h2{font-size:28px;margin-bottom:12px}
+.row{display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--line);font-size:14px}
+.row:first-of-type{border-top:0}
+.row .w{flex:0 0 70px;text-align:center;border-radius:12px;padding:6px 4px;background:var(--bg);line-height:1.1}
+.row .w b{display:block;font-size:20px;font-family:"Cormorant Garamond",serif}.row .w span{font-size:11px;color:var(--mut)}
+.row .m{flex:1}.row .m b{display:block}.row .m span{color:var(--mut)}
+.pill{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;white-space:nowrap}
+.p7{background:#fdf0d6;color:#7a5410}.p3{background:#f9d9df;color:#8c1d36}.p0{background:#d93b5a;color:#fff}.pn{background:#e7ece4;color:#46684d}
+.src{font-size:11px;font-weight:700;border-radius:6px;padding:2px 7px;background:#e7ece4;color:var(--green)}
+.src.r{background:#f9d9df;color:#8c1d36}
+.send{border:0;background:var(--green);color:#fff;border-radius:10px;padding:8px 10px;font:700 12px Manrope;cursor:pointer}
+.note{font-size:12px;color:var(--mut);margin-top:14px}
+.bar{height:10px;border-radius:999px;background:var(--bg);overflow:hidden;margin:6px 0 2px}.bar i{display:block;height:100%;background:var(--rose)}
+@media(max-width:900px){.kpi{grid-template-columns:1fr 1fr}.cols{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="top"><div class="wrap"><b class="serif" style="font-size:22px">Панель · Цветы «Пример»</b><a href="index.html">← На сайт</a></div></div>
+<div class="wrap">
+  <div class="kpi">
+    <div><b id="k1">0</b><span>клиентов оставили даты</span></div>
+    <div><b id="k2">0</b><span>дат в базе</span></div>
+    <div><b id="k3">0</b><span>напоминаний на этой неделе</span></div>
+    <div><b id="k4">0 ₽</b><span>выручка с напоминаний за месяц</span></div>
+  </div>
+  <div class="cols">
+    <div class="box"><h2>Ближайшие даты</h2><div id="up"></div><p class="note">Напоминания уходят сами: за 7 дней, за 3 дня и утром. Кнопка «Отправить» — вручную, если клиент попросил.</p></div>
+    <div>
+      <div class="box"><h2>Заказы</h2><div id="ord"></div></div>
+      <div class="box" style="margin-top:18px"><h2>Откуда заказы</h2><div id="srcs"></div></div>
+    </div>
+  </div>
+  <p class="note" style="margin:22px 0 40px">Демо: данные условные, хранятся только в этом браузере. Заполните анкету на сайте — ваши даты появятся здесь.</p>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), nf=new Intl.NumberFormat('ru-RU'), rub=n=>nf.format(n)+' ₽';
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const get=(k,d)=>{try{return JSON.parse(localStorage.getItem('cvety_'+k))??d}catch(e){return d}};
+const MON=['янв','фев','мар','апр','мая','июн','июл','авг','сен','окт','ноя','дек'];
+const today=new Date();today.setHours(0,0,0,0);
+const off=n=>{const d=new Date(today);d.setDate(d.getDate()+n);return d};
+// условная база клиентов + то, что оставили на сайте
+const demo=[
+ {name:'Сергей',phone:'+7 9•• •••-12-40',ch:'Telegram',people:[{role:'Жена',name:'Ольга',occ:'День рождения',d:off(2),like:'пионы'}]},
+ {name:'Андрей',phone:'+7 9•• •••-77-03',ch:'WhatsApp',people:[{role:'Тёща',name:'Галина',occ:'Именины',d:off(0),like:'розы'},{role:'Мама',name:'',occ:'День рождения',d:off(19),like:'тюльпаны'}]},
+ {name:'Илья',phone:'+7 9•• •••-50-18',ch:'Telegram',people:[{role:'Девушка',name:'Катя',occ:'Годовщина',d:off(6),like:'розы'}]},
+ {name:'Павел',phone:'+7 9•• •••-31-95',ch:'SMS',people:[{role:'Коллега',name:'Ирина Петровна',occ:'День рождения',d:off(9),like:'не знаю'}]},
+ {name:'Дмитрий',phone:'+7 9•• •••-08-66',ch:'Telegram',people:[{role:'Сестра',name:'Лена',occ:'День рождения',d:off(13),like:'полевые'}]}
+];
+const site=get('clients',[]).map(c=>({...c,mine:1,people:c.people.map(p=>{let d=new Date(today.getFullYear(),p.mon,p.day);if(d<today)d=new Date(today.getFullYear()+1,p.mon,p.day);return{...p,d}})}));
+const all=[...site,...demo];
+const evs=[];all.forEach(c=>c.people.forEach(p=>evs.push({c,p,left:Math.round((p.d-today)/864e5)})));
+evs.sort((a,b)=>a.left-b.left);
+$('#k1').textContent=all.length;$('#k2').textContent=evs.length;$('#k3').textContent=evs.filter(e=>e.left<=7).length*2;
+const pill=l=>l===0?'<span class="pill p0">сегодня</span>':l<=3?`<span class="pill p3">через ${l} дн.</span>`:l<=7?`<span class="pill p7">через ${l} дн.</span>`:`<span class="pill pn">через ${l} дн.</span>`;
+$('#up').innerHTML=evs.slice(0,8).map(({c,p,left},i)=>`<div class="row"><div class="w"><b>${p.d.getDate()}</b><span>${MON[p.d.getMonth()]}</span></div><div class="m"><b>${esc(p.occ)} — ${esc(p.role.toLowerCase())}${p.name?' ('+esc(p.name)+')':''}${c.mine?' <span class="src r">с сайта</span>':''}</b><span>клиент ${esc(c.name||'—')} · ${esc(c.ch||'')} · любит ${esc(p.like)}</span></div>${pill(left)}<button class="send" data-i="${i}" type="button">Отправить</button></div>`).join('');
+$('#up').addEventListener('click',e=>{const b=e.target.closest('.send');if(!b)return;b.textContent='✓ Отправлено';b.disabled=true;toast('Напоминание отправлено клиенту')});
+const orders=[...get('orders',[]).map(o=>({...o,mine:1})),
+ {t:+off(-1),items:['Сливки × 1 — 5 200 ₽'],sum:5200,when:'сегодня 12:00–15:00',src:'напоминание'},
+ {t:+off(-2),items:['Классика × 1 — 6 500 ₽'],sum:6500,when:'вчера',src:'напоминание'},
+ {t:+off(-3),items:['Весна × 2 — 5 400 ₽'],sum:5400,when:'2 дня назад',src:'сайт'},
+ {t:+off(-5),items:['Нежность × 1 — 4 900 ₽'],sum:4900,when:'4 дня назад',src:'QR на открытке'},
+ {t:+off(-8),items:['Коробка × 1 — 3 500 ₽'],sum:3500,when:'неделю назад',src:'напоминание'}];
+$('#ord').innerHTML=orders.slice(0,7).map(o=>`<div class="row"><div class="m"><b>${esc(o.items.join(', '))}${o.mine?' <span class="src r">ваш</span>':''}</b><span>${esc(o.when||'')}${o.addr?' · '+esc(o.addr):''}</span></div><span class="src${o.src==='напоминание'?' r':''}">${esc(o.src)}</span><b>${rub(o.sum)}</b></div>`).join('');
+const fromR=orders.filter(o=>o.src==='напоминание').reduce((s,o)=>s+o.sum,0)+28400;
+$('#k4').textContent=rub(fromR);
+const by={};orders.forEach(o=>by[o.src]=(by[o.src]||0)+o.sum);by['напоминание']=(by['напоминание']||0)+28400;
+const tot=Object.values(by).reduce((a,b)=>a+b,0);
+$('#srcs').innerHTML=Object.entries(by).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="margin-bottom:10px;font-size:14px"><div style="display:flex;justify-content:space-between"><span>${esc(k)}</span><b>${rub(v)}</b></div><div class="bar"><i style="width:${Math.round(v/tot*100)}%"></i></div></div>`).join('');
+let tt;function toast(t){const el=$('#toast');el.textContent=t;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),2200)}
+})();
+</script>
+</body>
+</html>
