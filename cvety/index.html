@@ -17,7 +17,7 @@
 
 <header class="hdr"><div class="wrap">
   <a class="logo" href="#top"><i>✿</i><b>Цветы «Пример»</b></a>
-  <nav class="nav"><a href="#catalog">Букеты</a><a href="#dates">Напоминания</a><a href="#how">Как это работает</a><a href="admin.html">Панель магазина</a></nav>
+  <nav class="nav"><a href="#catalog">Букеты</a><a href="#build">Собрать букет</a><a href="#dates">Напоминания</a><a href="#how">Как это работает</a><a href="admin.html">Панель магазина</a></nav>
   <button class="cartb" id="cartBtn" type="button">Корзина<span id="cartN">0</span></button>
 </div></header>
 
@@ -32,6 +32,7 @@
   </div>
   <div class="hero-art" aria-hidden="true">
     <div class="b b2" id="hb2"></div><div class="b b3" id="hb3"></div><div class="b b1" id="hb1"></div>
+    <canvas class="hero-cv" id="heroCv" aria-label="3D-букет, можно покрутить"></canvas>
     <div class="ping"><b>Через 3 дня</b>День рождения тёщи. Любит пионы — букет готов, доставим к 10:00</div>
   </div>
 </div></section>
@@ -46,6 +47,24 @@
       <button class="chip" aria-pressed="false" data-f="cheap" type="button">До 3 000 ₽</button>
     </div></div>
   <div class="grid" id="grid"></div>
+</div></section>
+
+
+<section id="build"><div class="wrap">
+  <div class="head"><div><p class="eyebrow">Конструктор</p><h2>Соберите свой букет</h2><p>Напишите словами или выберите цветы — букет соберётся в 3D сразу. Покрутите его пальцем или мышкой.</p></div></div>
+  <div class="bld">
+    <div class="stage"><canvas id="bldCv" aria-label="3D-модель вашего букета"></canvas><div class="stage-tip">↔ Покрутите букет</div><div class="nogl" id="nogl" hidden>3D не поддерживается этим браузером — состав и цена всё равно считаются.</div></div>
+    <div class="panel">
+      <form class="say" id="sayF"><input id="say" placeholder="Например: 15 красных роз и 5 белых пионов" autocomplete="off"><button class="btn pr" type="submit">Собрать</button></form>
+      <div class="ex" id="ex"><button type="button">15 красных роз и 5 белых пионов</button><button type="button">11 сиреневых тюльпанов и эвкалипт в белой упаковке</button><button type="button">25 бордовых роз в чёрной бумаге</button></div>
+      <div class="lbl" style="margin:14px 0 6px">Состав</div>
+      <div id="rows"></div>
+      <div class="addt" id="addt"></div>
+      <div class="lbl" style="margin:14px 0 6px">Упаковка</div><div class="sw" id="wraps"></div>
+      <div class="lbl" style="margin:12px 0 6px">Лента</div><div class="sw" id="ribs"></div>
+      <div class="sum"><div><span>Итого</span><b id="bsum">0 ₽</b><small id="bcnt"></small></div><button class="btn rs" id="bAdd" type="button">В корзину</button></div>
+    </div>
+  </div>
 </div></section>
 
 <section id="dates" class="dates"><div class="wrap">
@@ -110,6 +129,7 @@
 <div class="toast" id="toast"></div>
 
 <script src="bouquet.js"></script>
-<script src="app.js"></script>
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js","three/addons/":"./vendor/addons/"}}</script>
+<script type="module" src="app.js"></script>
 </body>
 </html>
